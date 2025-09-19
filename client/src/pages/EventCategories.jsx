@@ -2,10 +2,8 @@ import { useState, useEffect } from 'react';
 import { FaHeart, FaBriefcase, FaBirthdayCake, FaGlassCheers, FaGraduationCap, FaHandshake } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import EventInquiryForm from '../components/user/EventInquiryForm';
-import axios from 'axios';
+import axiosInstance from '../utils/axiosConfig';
 import { toast } from 'react-hot-toast';
-
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 function EventCategories() {
   const navigate = useNavigate();
@@ -42,7 +40,17 @@ function EventCategories() {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(`${API_BASE_URL}/api/content/events/categories`);
+      setError(null);
+      console.log('Fetching categories from: /api/content/events/categories');
+      
+      const response = await axiosInstance.get('/api/content/events/categories');
+      console.log('API Response:', response.data);
+      
+      // Check if response is HTML (indicates wrong endpoint)
+      if (typeof response.data === 'string' && response.data.includes('<!doctype html>')) {
+        throw new Error('Backend server not running - received HTML instead of JSON');
+      }
+      
       if (response.data.success) {
         setCategories(response.data.data);
         setLastUpdate(new Date().toISOString());
@@ -51,7 +59,27 @@ function EventCategories() {
       }
     } catch (error) {
       console.error('Error fetching categories:', error);
-      setError(error.message || 'Failed to fetch categories');
+      
+      // Provide more specific error messages
+      let errorMessage = 'Failed to fetch categories';
+      
+      if (typeof error.response?.data === 'string' && error.response.data.includes('<!doctype html>')) {
+        errorMessage = 'Backend server not running - please start the server on port 3000';
+      } else if (error.message.includes('Backend server not running')) {
+        errorMessage = error.message;
+      } else if (error.code === 'NETWORK_ERROR' || error.message === 'Network Error') {
+        errorMessage = 'Network error - please check if the backend server is running on port 3000';
+      } else if (error.response) {
+        // Server responded with error status
+        errorMessage = error.response.data?.message || `Server error: ${error.response.status}`;
+      } else if (error.request) {
+        // Network error or server not responding
+        errorMessage = 'Unable to connect to backend server - please check if it\'s running on port 3000';
+      } else {
+        errorMessage = error.message || 'An unexpected error occurred';
+      }
+      
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -59,7 +87,7 @@ function EventCategories() {
 
   const checkForUpdates = async () => {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/content/events/categories`);
+      const response = await axiosInstance.get('/api/content/events/categories');
       if (response.data.success) {
         // Compare the new data with current data
         const newData = response.data.data;
@@ -81,7 +109,8 @@ function EventCategories() {
       }
     } catch (error) {
       console.error('Error checking for updates:', error);
-      // Don't set error state here to avoid disrupting the UI
+      // Don't set error state here to avoid disrupting the UI during background updates
+      // If there are repeated failures, consider stopping the polling
     }
   };
 
@@ -108,14 +137,24 @@ function EventCategories() {
       <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-red-600 mb-4">Error</h1>
-            <p className="text-gray-600">{error}</p>
-            <button
-              onClick={fetchCategories}
-              className="mt-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              Try Again
-            </button>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
+              <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
+                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <h1 className="text-xl font-bold text-red-600 mb-2">Unable to Load Categories</h1>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <div className="space-y-2">
+                <button
+                  onClick={fetchCategories}
+                  className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  Try Again
+                </button>
+                <p className="text-sm text-gray-500">Check if backend server is running on port 3000</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -160,27 +199,47 @@ function EventCategories() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-          {categories.map((category) => {
-            const IconComponent = iconMap[category.icon] || FaHeart;
-            return (
-              <div
-                key={category._id}
-                className={`bg-white rounded-xl shadow-md overflow-hidden cursor-pointer transform transition-all duration-300 hover:shadow-xl ${
-                  selectedCategory?._id === category._id ? 'ring-2 ring-purple-500' : ''
-                }`}
-                onClick={() => setSelectedCategory(category)}
-              >
-                <div className="p-6">
-                  <div className="flex items-center justify-center mb-4">
-                    <IconComponent className="text-4xl text-purple-500" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-center mb-2">{category.title}</h3>
-                  <p className="text-gray-600 text-center mb-2">{category.description}</p>
-                  <p className="text-sm text-gray-500 text-center">Capacity: {category.capacity}</p>
+          {categories.length === 0 ? (
+            <div className="col-span-full text-center py-12">
+              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-md mx-auto">
+                <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-yellow-100 rounded-full">
+                  <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
                 </div>
+                <h3 className="text-lg font-medium text-yellow-800 mb-2">No Categories Available</h3>
+                <p className="text-yellow-700 mb-4">There are currently no event categories configured.</p>
+                <button
+                  onClick={fetchCategories}
+                  className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
+                >
+                  Refresh
+                </button>
               </div>
-            );
-          })}
+            </div>
+          ) : (
+            categories.map((category) => {
+              const IconComponent = iconMap[category.icon] || FaHeart;
+              return (
+                <div
+                  key={category._id}
+                  className={`bg-white rounded-xl shadow-md overflow-hidden cursor-pointer transform transition-all duration-300 hover:shadow-xl ${
+                    selectedCategory?._id === category._id ? 'ring-2 ring-purple-500' : ''
+                  }`}
+                  onClick={() => setSelectedCategory(category)}
+                >
+                  <div className="p-6">
+                    <div className="flex items-center justify-center mb-4">
+                      <IconComponent className="text-4xl text-purple-500" />
+                    </div>
+                    <h3 className="text-xl font-semibold text-center mb-2">{category.title}</h3>
+                    <p className="text-gray-600 text-center mb-2">{category.description}</p>
+                    <p className="text-sm text-gray-500 text-center">Capacity: {category.capacity}</p>
+                  </div>
+                </div>
+              );
+            })
+          )}
         </div>
 
         {selectedCategory && (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React,{ useState, useEffect } from 'react';
 import { FaArrowLeft, FaArrowRight, FaCalendar, FaUsers, FaGem, FaClock, FaDownload } from 'react-icons/fa';
 import axios from 'axios';
 import NoticeModal from '../components/NoticeModal';
@@ -99,18 +99,18 @@ function Home() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-50 to-indigo-50">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-mesh">
         <div className="text-center">
           <div className="relative">
-            <div className="w-20 h-20 border-4 border-purple-200 rounded-full animate-spin"></div>
-            <div className="w-20 h-20 border-4 border-transparent border-t-purple-600 rounded-full animate-spin absolute top-0 left-0"></div>
-            <div className="w-20 h-20 border-4 border-transparent border-r-indigo-600 rounded-full animate-spin absolute top-0 left-0" style={{animationDirection: 'reverse', animationDuration: '1.5s'}}></div>
+            <div className="w-20 h-20 border-4 border-neutral-600/30 rounded-full animate-spin"></div>
+            <div className="w-20 h-20 border-4 border-transparent border-t-electric-500 rounded-full animate-spin absolute top-0 left-0"></div>
+            <div className="w-20 h-20 border-4 border-transparent border-r-neon-500 rounded-full animate-spin absolute top-0 left-0" style={{animationDirection: 'reverse', animationDuration: '1.5s'}}></div>
           </div>
-          <p className="mt-6 text-xl font-semibold text-gray-700 animate-pulse">Loading amazing content...</p>
+          <p className="mt-6 text-xl font-semibold text-white animate-pulse">Loading amazing content...</p>
           <div className="mt-4 flex justify-center space-x-2">
-            <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
-            <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-            <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+            <div className="w-2 h-2 bg-electric-500 rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-neon-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+            <div className="w-2 h-2 bg-secondary-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
           </div>
         </div>
       </div>
@@ -119,18 +119,18 @@ function Home() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-red-50 to-pink-50">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-mesh">
         <div className="text-center max-w-md mx-auto px-6">
-          <div className="w-24 h-24 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse">
-            <svg className="w-12 h-12 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse border border-red-500/30">
+            <svg className="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.732 16.5c-.77.833.192 2.5 1.732 2.5z" />
             </svg>
           </div>
-          <h2 className="text-3xl font-bold text-red-600 mb-4">Oops! Something went wrong</h2>
-          <p className="text-lg text-red-500 mb-8 leading-relaxed">{error}</p>
+          <h2 className="text-3xl font-bold text-red-400 mb-4">Oops! Something went wrong</h2>
+          <p className="text-lg text-neutral-300 mb-8 leading-relaxed">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
-            className="px-8 py-4 bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold rounded-2xl hover:from-red-600 hover:to-pink-600 transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl"
+            className="btn-primary transform hover:scale-105 shadow-lg hover:shadow-xl"
           >
             Try Again
           </button>
@@ -170,10 +170,10 @@ function Home() {
                           {slide.description}
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-                          <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold rounded-full hover:from-purple-700 hover:to-indigo-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-sm sm:text-base">
+                          <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-electric text-white font-semibold rounded-full hover:shadow-lg hover:shadow-electric-500/30 transform hover:scale-105 transition-all duration-300 shadow-lg text-sm sm:text-base">
                             Explore Events
                           </button>
-                          <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-purple-600 transform hover:scale-105 transition-all duration-300 text-sm sm:text-base">
+                          <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-neutral-900 transform hover:scale-105 transition-all duration-300 text-sm sm:text-base">
                             Learn More
                           </button>
                         </div>

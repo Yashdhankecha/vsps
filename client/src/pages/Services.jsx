@@ -21,9 +21,14 @@ function Services() {
     const fetchFormStatus = async () => {
       try {
         const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/forms/public/status`);
-        setFormStatus(response.data);
+        setFormStatus(response.data || {
+          samuhLagan: { active: false, isCurrentlyActive: false },
+          studentAwards: { active: false, isCurrentlyActive: false },
+          teamRegistration: { active: false, isCurrentlyActive: false }
+        });
       } catch (error) {
         console.error('Error fetching form status:', error);
+        // Keep the default formStatus values on error
       } finally {
         setLoading(false);
       }
@@ -66,21 +71,21 @@ function Services() {
       icon: <FaClipboardList className="text-4xl text-purple-600" />,
       description: 'Register for Samuh Lagan ceremony',
       route: '/samuh-lagan',
-      isActive: formStatus.samuhLagan.isCurrentlyActive
+      isActive: formStatus.samuhLagan?.isCurrentlyActive || false
     },
     {
       title: 'Student Award Registration',
       icon: <FaAward className="text-4xl text-purple-600" />,
       description: 'Register for student awards',
       route: '/student-awards',
-      isActive: formStatus.studentAwards.isCurrentlyActive
+      isActive: formStatus.studentAwards?.isCurrentlyActive || false
     },
     {
       title: 'Team Registration',
       icon: <FaUsers className="text-4xl text-purple-600" />,
       description: 'Register your team for sports tournaments',
       route: '/team-registration',
-      isActive: formStatus.teamRegistration.isCurrentlyActive
+      isActive: formStatus.teamRegistration?.isCurrentlyActive || false
     }
   ];
 

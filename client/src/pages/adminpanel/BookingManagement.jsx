@@ -11,20 +11,31 @@ axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem(
 axios.defaults.baseURL = 'http://localhost:3000';
 
 const Notification = ({ message, type, onClose }) => {
-  const bgColor = type === 'success' ? 'bg-green-50' : 'bg-red-50';
-  const textColor = type === 'success' ? 'text-green-800' : 'text-red-800';
-  const borderColor = type === 'success' ? 'border-green-200' : 'border-red-200';
-
+  const Icon = type === 'success' ? CheckIcon : XMarkIcon;
+  const colorClasses = type === 'success' 
+    ? 'notification-success'
+    : 'notification-error';
+  
   return (
-    <div className="fixed top-4 right-4 z-50 animate-slide-in">
-      <div className={`rounded-lg p-4 shadow-lg ${bgColor} border ${borderColor}`}>
-        <div className="flex items-center">
-          {type === 'success' ? (
-            <CheckIcon className="h-5 w-5 text-green-400 mr-2" />
-          ) : (
-            <XMarkIcon className="h-5 w-5 text-red-400 mr-2" />
-          )}
-          <p className={`text-sm font-medium ${textColor}`}>{message}</p>
+    <div className="fixed top-6 right-6 z-50 animate-slide-left">
+      <div className={`notification max-w-sm p-4 ${colorClasses}`}>
+        <div className="flex items-start space-x-3">
+          <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+            type === 'success' ? 'bg-accent-100' : 'bg-red-100'
+          }`}>
+            <Icon className={`w-5 h-5 ${
+              type === 'success' ? 'text-accent-600' : 'text-red-600'
+            }`} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-medium">{message}</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="flex-shrink-0 text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
+          >
+            <XMarkIcon className="w-5 h-5" />
+          </button>
         </div>
       </div>
     </div>
@@ -35,22 +46,26 @@ const RejectionModal = ({ onClose, onSubmit, bookingType }) => {
   const [reason, setReason] = useState('');
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
-          Enter Rejection Reason for {bookingType || 'Booking'}
-        </h3>
-        <textarea
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          rows="4"
-          placeholder="Please provide a reason for rejection..."
-        />
-        <div className="mt-4 flex justify-end space-x-3">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+      <div className="glass-effect border border-white/10 rounded-xl shadow-2xl max-w-md w-full mx-4 animate-fade-in-up">
+        <div className="px-6 py-4 border-b border-white/10">
+          <h3 className="text-lg font-semibold text-white">
+            Enter Rejection Reason for {bookingType || 'Booking'}
+          </h3>
+        </div>
+        <div className="px-6 py-4">
+          <textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            className="input-field resize-none"
+            rows="4"
+            placeholder="Please provide a reason for rejection..."
+          />
+        </div>
+        <div className="px-6 py-4 flex justify-end space-x-3 border-t border-white/10">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-md"
+            className="btn-secondary"
           >
             Cancel
           </button>
@@ -61,7 +76,7 @@ const RejectionModal = ({ onClose, onSubmit, bookingType }) => {
                 onClose();
               }
             }}
-            className="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
+            className="btn-danger"
           >
             Reject
           </button>

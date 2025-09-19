@@ -182,20 +182,63 @@ exports.getAllBookings = async (req, res) => {
 };
 
 
-exports.getUserBookings = async (req, res) => {
+exports.updateBooking = async (req, res) => {
   try {
-    console.log('getUserBookings called for user:', req.user.email);
-    
-    const bookings = await Booking.find({ email: req.user.email })
-      .sort({ createdAt: -1 })
-      .select('-__v');
-    
-    console.log(`Found ${bookings.length} bookings for user ${req.user.email}`);
-    
-    res.status(200).json(bookings);
+    const { id } = req.params;
+    const updateData = req.body;
+
+    console.log('Updating booking/award:', id, 'with data:', updateData);
+
+    const booking = await Booking.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!booking) {
+      return res.status(404).json({ message: 'Booking not found' });
+    }
+
+    res.status(200).json({
+      message: 'Booking updated successfully',
+      booking
+    });
   } catch (error) {
-    console.error('Error in getUserBookings:', error);
-    res.status(500).json({ message: 'Error fetching user bookings', error: error.message });
+    console.error('Error updating booking:', error);
+    res.status(500).json({
+      message: 'Error updating booking',
+      error: error.message
+    });
+  }
+};
+
+exports.updateStudentAward = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    console.log('Updating student award:', id, 'with data:', updateData);
+
+    const award = await StudentAward.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!award) {
+      return res.status(404).json({ message: 'Student award not found' });
+    }
+
+    res.status(200).json({
+      message: 'Student award updated successfully',
+      award
+    });
+  } catch (error) {
+    console.error('Error updating student award:', error);
+    res.status(500).json({
+      message: 'Error updating student award',
+      error: error.message
+    });
   }
 };
 
@@ -974,6 +1017,23 @@ exports.rejectStudentAwardRequest = async (req, res) => {
       message: 'Error rejecting request', 
       error: error.message,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
+  }
+};
+
+// Get user's bookings
+exports.getUserBookings = async (req, res) => {
+  try {
+    const bookings = await Booking.find({ 
+      email: req.user.email 
+    }).sort({ createdAt: -1 });
+    
+    res.status(200).json(bookings);
+  } catch (error) {
+    console.error('Error fetching user bookings:', error);
+    res.status(500).json({ 
+      message: 'Error fetching bookings', 
+      error: error.message 
     });
   }
 };

@@ -17,12 +17,21 @@ export function AuthProvider({ children }) {
           localStorage.removeItem('token');
           setUser(null);
         } else {
-          
+          // Normalize user data and ensure role is valid
           const normalizedUser = {
             ...decodedToken,
-            _id: decodedToken._id || decodedToken.id || decodedToken.userId
+            _id: decodedToken._id || decodedToken.id || decodedToken.userId,
+            role: decodedToken.role || 'user' // Default to 'user' if no role
           };
-          setUser(normalizedUser);
+          
+          // Validate role
+          if (!['user', 'committee', 'admin'].includes(normalizedUser.role)) {
+            console.error('Invalid user role:', normalizedUser.role);
+            localStorage.removeItem('token');
+            setUser(null);
+          } else {
+            setUser(normalizedUser);
+          }
         }
       } catch (error) {
         console.error('Error decoding token:', error);
@@ -35,10 +44,24 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }, []);
 
+  // Helper functions for role checking
+  const isAdmin = () => user?.role === 'admin';
+  const isCommittee = () => user?.role === 'committee';
+  const isUser = () => user?.role === 'user';
+  const hasAdminAccess = () => user?.role === 'admin';
+  const hasCommitteeAccess = () => ['committee', 'admin'].includes(user?.role);
+  const hasUserAccess = () => ['user', 'committee', 'admin'].includes(user?.role);
+
   const value = {
     user,
     loading,
-    setUser
+    setUser,
+    isAdmin,
+    isCommittee,
+    isUser,
+    hasAdminAccess,
+    hasCommitteeAccess,
+    hasUserAccess
   };
 
   return (

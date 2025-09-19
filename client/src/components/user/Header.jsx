@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+  import { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaVideo, FaUser, FaBars, FaTimes, FaBell } from 'react-icons/fa';
 
@@ -88,15 +88,15 @@ function Header() {
   };
 
   return (
-    <header className="bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 text-white shadow-2xl relative z-50 backdrop-blur-sm">
+    <header className="bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white shadow-2xl relative z-50 backdrop-blur-xl border-b border-white/10">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center group-hover:bg-white/30 transition-all duration-300 group-hover:scale-110">
+            <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-electric-500 group-hover:to-neon-500 transition-all duration-300 group-hover:scale-110 shadow-lg hover:shadow-electric-500/50">
               <FaVideo className="text-xl" />
             </div>
-            <span className="text-3xl font-bold bg-gradient-to-r from-white to-purple-200 bg-clip-text text-transparent group-hover:from-purple-200 group-hover:to-white transition-all duration-300">
+            <span className="text-3xl font-bold text-gradient group-hover:text-shimmer transition-all duration-300">
               VSPS
             </span>
           </Link>
@@ -113,10 +113,10 @@ function Header() {
                 {item.dropdown ? (
                   <div>
                     <button
-                      className={`px-4 py-3 rounded-xl transition-all duration-300 flex items-center space-x-2 font-semibold
+                      className={`px-4 py-3 rounded-xl transition-all duration-300 flex items-center space-x-2 font-semibold glass-effect
                         ${activeDropdown === index 
-                          ? 'bg-white/20 text-white shadow-lg transform scale-105' 
-                          : 'hover:bg-white/10 hover:scale-105'}`}
+                          ? 'bg-electric-500/20 text-white shadow-lg transform scale-105 border-electric-500/30' 
+                          : 'hover:bg-white/10 hover:scale-105 border-white/10'}`}
                     >
                       <span>{item.label}</span>
                       <svg
@@ -132,7 +132,7 @@ function Header() {
                     </button>
                     {/* Dropdown */}
                     <div
-                      className={`absolute left-0 mt-3 w-56 rounded-2xl shadow-2xl bg-white/95 backdrop-blur-sm ring-1 ring-white/20 
+                      className={`absolute left-0 mt-3 w-56 rounded-2xl shadow-2xl bg-neutral-800/95 backdrop-blur-xl border border-white/20 
                         ${activeDropdown === index ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'} 
                         transition-all duration-300 transform origin-top z-50`}
                     >
@@ -141,7 +141,7 @@ function Header() {
                           <Link
                             key={dropdownIndex}
                             to={dropdownItem.path}
-                            className="block px-6 py-3 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 transition-all duration-200 font-medium"
+                            className="block px-6 py-3 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white transition-all duration-200 font-medium border-l-2 border-transparent hover:border-electric-400"
                           >
                             {dropdownItem.label}
                           </Link>
@@ -152,10 +152,10 @@ function Header() {
                 ) : (
                   <Link
                     to={item.path}
-                    className={`px-4 py-3 rounded-xl transition-all duration-300 font-semibold
+                    className={`px-4 py-3 rounded-xl transition-all duration-300 font-semibold glass-effect border
                       ${isActive(item.path) 
-                        ? 'bg-white/20 text-white shadow-lg transform scale-105' 
-                        : 'hover:bg-white/10 hover:scale-105'}`}
+                        ? 'bg-electric-500/20 text-white shadow-lg transform scale-105 border-electric-500/30' 
+                        : 'hover:bg-white/10 hover:scale-105 border-white/10'}`}
                   >
                     {item.label}
                   </Link>
@@ -168,24 +168,24 @@ function Header() {
               <div className="relative">
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="ml-4 px-6 py-3 bg-white/10 rounded-2xl hover:bg-white/20 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-lg"
+                  className="ml-4 px-6 py-3 glass-effect rounded-2xl hover:bg-electric-500/20 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-lg hover:shadow-electric-500/30 border border-white/10 hover:border-electric-500/30"
                 >
-                  <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gradient-electric rounded-full flex items-center justify-center">
                     <FaUser className="w-4 h-4" />
                   </div>
                   <span>Profile</span>
                 </button>
                 {/* Profile Dropdown Menu */}
                 {isProfileDropdownOpen && (
-                  <div className="absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl bg-white/95 backdrop-blur-sm ring-1 ring-white/20 z-50">
+                  <div className="absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl bg-neutral-800/95 backdrop-blur-xl border border-white/20 z-50">
                     <div className="py-3">
-                      <div className="px-6 py-3 border-b border-gray-200">
-                        <p className="text-sm text-gray-500">Welcome back!</p>
-                        <p className="font-semibold text-gray-900">User Profile</p>
+                      <div className="px-6 py-3 border-b border-white/10">
+                        <p className="text-sm text-neutral-400">Welcome back!</p>
+                        <p className="font-semibold text-white">User Profile</p>
                       </div>
                       <Link
                         to="/notifications"
-                        className="flex px-6 py-4 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 items-center justify-between transition-all duration-200"
+                        className="flex px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white items-center justify-between transition-all duration-200"
                         onClick={() => setIsProfileDropdownOpen(false)}
                       >
                         <span className="flex items-center font-medium">
@@ -200,22 +200,22 @@ function Header() {
                       </Link>
                       <Link
                         to="/profile-settings"
-                        className="block px-6 py-4 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 font-medium transition-all duration-200"
+                        className="block px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white font-medium transition-all duration-200"
                         onClick={() => setIsProfileDropdownOpen(false)}
                       >
                         Profile Settings
                       </Link>
                       <Link
                         to="/recently-booked"
-                        className="block px-6 py-4 text-sm text-gray-700 hover:bg-gradient-to-r hover:from-purple-50 hover:to-indigo-50 hover:text-purple-600 font-medium transition-all duration-200"
+                        className="block px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white font-medium transition-all duration-200"
                         onClick={() => setIsProfileDropdownOpen(false)}
                       >
                         Recent Bookings
                       </Link>
-                      <div className="border-t border-gray-200 mt-2">
+                      <div className="border-t border-white/10 mt-2">
                         <button
                           onClick={handleLogout}
-                          className="block w-full text-left px-6 py-4 text-sm text-red-600 hover:bg-red-50 font-medium transition-all duration-200"
+                          className="block w-full text-left px-6 py-4 text-sm text-red-400 hover:bg-red-500/20 font-medium transition-all duration-200"
                         >
                           Logout
                         </button>
@@ -227,7 +227,7 @@ function Header() {
             ) : (
               <Link
                 to="/auth"
-                className="ml-4 px-6 py-3 bg-gradient-to-r from-white/10 to-white/20 rounded-2xl hover:from-white/20 hover:to-white/30 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-lg"
+                className="ml-4 px-6 py-3 bg-gradient-electric rounded-2xl hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-lg"
               >
                 <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                   <FaUser className="w-4 h-4" />
@@ -236,6 +236,7 @@ function Header() {
               </Link>
             )}
           </nav>
+
 
           {/* Mobile Menu Button */}
           <button
@@ -254,7 +255,7 @@ function Header() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <nav className="lg:hidden py-6 border-t border-white/20 bg-gradient-to-b from-purple-600/90 to-indigo-600/90 backdrop-blur-sm">
+          <nav className="lg:hidden py-6 border-t border-white/20 bg-gradient-to-b from-neutral-800/95 to-neutral-900/95 backdrop-blur-xl">
             {/* Notifications Section for Mobile */}
             {isLoggedIn && (
               <div className="px-6 py-4 mb-4">

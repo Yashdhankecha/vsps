@@ -193,8 +193,8 @@ function Auth() {
 
   if (showOTPVerification) {
     return (
-      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gradient-mesh py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8 glass-effect p-8 rounded-xl shadow-lg border border-white/10">
           {verificationSuccess ? (
             <div className="text-center">
               <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 animate-bounce">
@@ -257,7 +257,7 @@ function Auth() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className={`w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 ${
+                    className={`w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electric-500 ${
                       isLoading ? 'opacity-70 cursor-not-allowed' : ''
                     }`}
                   >
@@ -266,14 +266,14 @@ function Auth() {
 
                   <div className="mt-4">
                     {resendTimer > 0 ? (
-                      <p className="text-sm text-gray-600">
+                      <p className="text-sm text-neutral-400">
                         Resend OTP in {resendTimer} seconds
                       </p>
                     ) : (
                       <button
                         type="button"
                         onClick={handleResendOTP}
-                        className="text-sm text-purple-600 hover:text-purple-500"
+                        className="text-sm text-electric-400 hover:text-electric-300"
                       >
                         Resend OTP
                       </button>
@@ -289,8 +289,8 @@ function Auth() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-xl shadow-lg">
+    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gradient-mesh py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 glass-effect p-8 rounded-xl shadow-lg border border-white/10">
         {isSubmitted ? (
           <div className="text-center py-8">
             {/* Success Animation */}
@@ -309,14 +309,14 @@ function Auth() {
                 />
               </svg>
             </div>
-            <h3 className="mt-4 text-lg font-medium text-gray-900">Check your email</h3>
-            <p className="mt-2 text-sm text-gray-600">
-              We've sent a verification link to <span className="font-semibold">{formData.email}</span>.
+            <h3 className="mt-4 text-lg font-medium text-white">Check your email</h3>
+            <p className="mt-2 text-sm text-neutral-300">
+              We've sent a verification link to <span className="font-semibold text-electric-400">{formData.email}</span>.
             </p>
             <div className="mt-6">
               <button
                 onClick={() => setIsLogin(true)}
-                className="text-purple-600 hover:text-purple-500 font-medium"
+                className="text-electric-400 hover:text-electric-300 font-medium"
               >
                 Return to login
               </button>
@@ -325,20 +325,20 @@ function Auth() {
         ) : (
           <>
             <div>
-              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+              <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
                 {isLogin ? 'Sign in to your account' : 'Create your account'}
               </h2>
-              <p className="mt-2 text-center text-sm text-gray-600">
+              <p className="mt-2 text-center text-sm text-neutral-300">
                 {isLogin ? "Don't have an account? " : "Already have an account? "}
                 <button
                   onClick={() => setIsLogin(!isLogin)}
-                  className="font-medium text-purple-600 hover:text-purple-500"
+                  className="font-medium text-electric-400 hover:text-electric-300"
                 >
                   {isLogin ? 'Register here' : 'Sign in'}
                 </button>
               </p>
             </div>
-            {error && <p className="text-red-500 text-center">{error}</p>}
+            {error && <p className="text-red-400 text-center">{error}</p>}
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
               <div className="rounded-md shadow-sm space-y-4">
                 {!isLogin && (
@@ -348,14 +348,14 @@ function Auth() {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaUser className="h-5 w-5 text-gray-400" />
+                        <FaUser className="h-5 w-5 text-neutral-400" />
                       </div>
                       <input
                         id="name"
                         name="name"
                         type="text"
                         required
-                        className="appearance-none rounded-lg relative block w-full pl-10 px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
+                        className="appearance-none rounded-lg relative block w-full pl-10 px-3 py-3 bg-neutral-800/50 border border-white/20 placeholder-neutral-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
                         placeholder="Full Name"
                         value={formData.name}
                         onChange={handleChange}
@@ -369,7 +369,7 @@ function Auth() {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FaEnvelope className="h-5 w-5 text-gray-400" />
+                      <FaEnvelope className="h-5 w-5 text-neutral-400" />
                     </div>
                     <input
                       id="email"
@@ -377,7 +377,7 @@ function Auth() {
                       type="email"
                       autoComplete="email"
                       required
-                      className="appearance-none rounded-lg relative block w-full pl-10 px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
+                      className="appearance-none rounded-lg relative block w-full pl-10 px-3 py-3 bg-neutral-800/50 border border-white/20 placeholder-neutral-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
                       placeholder="Email address"
                       value={formData.email}
                       onChange={handleChange}
@@ -390,7 +390,7 @@ function Auth() {
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <FaLock className="h-5 w-5 text-gray-400" />
+                      <FaLock className="h-5 w-5 text-neutral-400" />
                     </div>
                     <input
                       id="password"
@@ -398,7 +398,7 @@ function Auth() {
                       type={showPassword ? "text" : "password"}
                       autoComplete="current-password"
                       required
-                      className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
+                      className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 bg-neutral-800/50 border border-white/20 placeholder-neutral-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
                       placeholder="Password"
                       value={formData.password}
                       onChange={handleChange}
@@ -409,9 +409,9 @@ function Auth() {
                       onClick={() => setShowPassword(!showPassword)}
                     >
                       {showPassword ? (
-                        <FaEyeSlash className="h-5 w-5 text-gray-400" />
+                        <FaEyeSlash className="h-5 w-5 text-neutral-400" />
                       ) : (
-                        <FaEye className="h-5 w-5 text-gray-400" />
+                        <FaEye className="h-5 w-5 text-neutral-400" />
                       )}
                     </button>
                   </div>
@@ -423,14 +423,14 @@ function Auth() {
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaLock className="h-5 w-5 text-gray-400" />
+                        <FaLock className="h-5 w-5 text-neutral-400" />
                       </div>
                       <input
                         id="confirmPassword"
                         name="confirmPassword"
                         type={showConfirmPassword ? "text" : "password"}
                         required
-                        className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-purple-500 focus:border-purple-500 focus:z-10 sm:text-sm"
+                        className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 bg-neutral-800/50 border border-white/20 placeholder-neutral-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
                         placeholder="Confirm Password"
                         value={formData.confirmPassword}
                         onChange={handleChange}
@@ -441,9 +441,9 @@ function Auth() {
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                       >
                         {showConfirmPassword ? (
-                          <FaEyeSlash className="h-5 w-5 text-gray-400" />
+                          <FaEyeSlash className="h-5 w-5 text-neutral-400" />
                         ) : (
-                          <FaEye className="h-5 w-5 text-gray-400" />
+                          <FaEye className="h-5 w-5 text-neutral-400" />
                         )}
                       </button>
                     </div>
@@ -458,15 +458,15 @@ function Auth() {
                       id="remember-me"
                       name="remember-me"
                       type="checkbox"
-                      className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
+                      className="h-4 w-4 text-electric-500 focus:ring-electric-500 border-white/20 bg-neutral-800/50 rounded"
                     />
-                    <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
+                    <label htmlFor="remember-me" className="ml-2 block text-sm text-neutral-300">
                       Remember me
                     </label>
                   </div>
 
                   <div className="text-sm">
-                    <Link to="/ForgotPassword" className="font-medium text-purple-600 hover:text-purple-500">
+                    <Link to="/ForgotPassword" className="font-medium text-electric-400 hover:text-electric-300">
                       Forgot your password?
                     </Link>
                   </div>
@@ -477,7 +477,7 @@ function Auth() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200 ${
+                  className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electric-500 transition-all duration-200 ${
                     isLoading ? 'opacity-70 cursor-not-allowed' : ''
                   }`}
                 >
@@ -489,23 +489,23 @@ function Auth() {
             <div className="mt-6">
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-300"></div>
+                  <div className="w-full border-t border-white/20"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                  <span className="px-2 glass-effect text-neutral-300">Or continue with</span>
                 </div>
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors duration-200"
+                  className="w-full inline-flex justify-center py-2 px-4 border border-white/20 rounded-lg shadow-sm glass-effect text-sm font-medium text-neutral-300 hover:bg-white/10 transition-colors duration-200"
                 >
                   Google
                 </button>
                 <button
                   type="button"
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 transition-colors duration-200"
+                  className="w-full inline-flex justify-center py-2 px-4 border border-white/20 rounded-lg shadow-sm glass-effect text-sm font-medium text-neutral-300 hover:bg-white/10 transition-colors duration-200"
                 >
                   Facebook
                 </button>

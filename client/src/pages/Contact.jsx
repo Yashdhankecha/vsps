@@ -78,7 +78,7 @@ function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-mesh">
       {/* Success Popup */}
       {showSuccessPopup && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
@@ -93,7 +93,7 @@ function Contact() {
               </p>
               <button
                 onClick={() => setShowSuccessPopup(false)}
-                className="px-8 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 font-semibold transform hover:scale-105 shadow-lg"
+                className="px-8 py-3 bg-gradient-electric text-white rounded-xl hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 font-semibold transform hover:scale-105 shadow-lg"
               >
                 Close
               </button>
@@ -103,8 +103,8 @@ function Contact() {
       )}
 
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 text-white py-20">
-        <div className="absolute inset-0 bg-black/20"></div>
+      <div className="relative bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white py-20">
+        <div className="absolute inset-0 bg-gradient-mesh opacity-20"></div>
         <div className="relative container mx-auto px-4 text-center">
           <div className="inline-block mb-6">
             <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm">
@@ -125,43 +125,43 @@ function Contact() {
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-3 gap-8 mb-16">
             {/* Contact Cards */}
-            <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 text-center transform hover:-translate-y-2 border border-gray-100">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <FaPhone className="text-purple-600 text-2xl" />
+            <div className="group glass-effect p-8 rounded-2xl hover:shadow-2xl transition-all duration-500 text-center transform hover:-translate-y-2 border border-white/10 hover:border-electric-500/30">
+              <div className="w-16 h-16 bg-gradient-electric rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <FaPhone className="text-white text-2xl" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">Phone</h3>
-              <p className="text-lg font-semibold text-gray-700 mb-2">9106110380</p>
-              <p className="text-gray-600">Mon-Fri 9am-6pm</p>
+              <h3 className="text-xl font-bold text-white mb-4 group-hover:text-electric-400 transition-colors">Phone</h3>
+              <p className="text-lg font-semibold text-neutral-300 mb-2">9106110380</p>
+              <p className="text-neutral-400">Mon-Fri 9am-6pm</p>
             </div>
 
-            <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 text-center transform hover:-translate-y-2 border border-gray-100">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <FaEnvelope className="text-purple-600 text-2xl" />
+            <div className="group glass-effect p-8 rounded-2xl hover:shadow-2xl transition-all duration-500 text-center transform hover:-translate-y-2 border border-white/10 hover:border-electric-500/30">
+              <div className="w-16 h-16 bg-gradient-electric rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <FaEnvelope className="text-white text-2xl" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">Email</h3>
-              <p className="text-lg font-semibold text-gray-700 break-all">insanethunder.2103@gmail.com</p>
+              <h3 className="text-xl font-bold text-white mb-4 group-hover:text-electric-400 transition-colors">Email</h3>
+              <p className="text-lg font-semibold text-neutral-300 break-all">insanethunder.2103@gmail.com</p>
             </div>
 
-            <div className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 text-center transform hover:-translate-y-2 border border-gray-100">
-              <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
-                <FaMapMarkerAlt className="text-purple-600 text-2xl" />
+            <div className="group glass-effect p-8 rounded-2xl hover:shadow-2xl transition-all duration-500 text-center transform hover:-translate-y-2 border border-white/10 hover:border-electric-500/30">
+              <div className="w-16 h-16 bg-gradient-electric rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300">
+                <FaMapMarkerAlt className="text-white text-2xl" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">Location</h3>
-              <p className="text-lg font-semibold text-gray-700 mb-1">Vansol Village Bhalej Road</p>
-              <p className="text-gray-600">Anand, Gujarat 388001</p>
+              <h3 className="text-xl font-bold text-white mb-4 group-hover:text-electric-400 transition-colors">Location</h3>
+              <p className="text-lg font-semibold text-neutral-300 mb-1">Vansol Village Bhalej Road</p>
+              <p className="text-neutral-400">Anand, Gujarat 388001</p>
             </div>
           </div>
 
           {/* Contact Form */}
-          <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12">
+          <div className="glass-effect rounded-2xl shadow-2xl p-8 md:p-12 border border-white/10">
             <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">Send us a Message</h2>
-              <p className="text-lg text-gray-600">We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
+              <h2 className="text-3xl font-bold text-white mb-4">Send us a Message</h2>
+              <p className="text-lg text-neutral-300">We'd love to hear from you. Send us a message and we'll respond as soon as possible.</p>
             </div>
             <form onSubmit={handleSubmit} className="space-y-8">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label htmlFor="name" className="block text-sm font-semibold text-neutral-300 mb-2">
                     Full Name *
                   </label>
                   <input
@@ -170,14 +170,14 @@ function Contact() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 font-medium"
+                    className="w-full px-4 py-3 bg-neutral-800/50 border border-white/20 text-white rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium placeholder-neutral-400"
                     placeholder="Enter your full name"
                     required
                   />
                 </div>
 
                 <div>
-                  <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                  <label htmlFor="email" className="block text-sm font-semibold text-neutral-300 mb-2">
                     Email Address *
                   </label>
                   <input
@@ -186,7 +186,7 @@ function Contact() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 font-medium"
+                    className="w-full px-4 py-3 bg-neutral-800/50 border border-white/20 text-white rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium placeholder-neutral-400"
                     placeholder="Enter your email address"
                     required
                   />
@@ -194,7 +194,7 @@ function Contact() {
               </div>
 
               <div>
-                <label htmlFor="phone" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="phone" className="block text-sm font-semibold text-neutral-300 mb-2">
                   Phone Number
                 </label>
                 <input
@@ -203,13 +203,13 @@ function Contact() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 font-medium"
+                  className="w-full px-4 py-3 bg-neutral-800/50 border border-white/20 text-white rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium placeholder-neutral-400"
                   placeholder="Enter your phone number"
                 />
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label htmlFor="message" className="block text-sm font-semibold text-neutral-300 mb-2">
                   Message *
                 </label>
                 <textarea
@@ -218,15 +218,15 @@ function Contact() {
                   value={formData.message}
                   onChange={handleChange}
                   rows="6"
-                  className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition-all duration-300 font-medium resize-none"
+                  className="w-full px-4 py-3 bg-neutral-800/50 border border-white/20 text-white rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium resize-none placeholder-neutral-400"
                   placeholder="Tell us about your event or any questions you have..."
                   required
                 ></textarea>
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 rounded-xl p-4">
-                  <p className="text-red-600 font-medium">{error}</p>
+                <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4">
+                  <p className="text-red-400 font-medium">{error}</p>
                 </div>
               )}
 
@@ -235,8 +235,8 @@ function Contact() {
                 disabled={isLoading}
                 className={`w-full py-4 px-8 rounded-xl font-bold text-lg transition-all duration-300 transform ${
                   isLoading 
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 hover:scale-105 shadow-lg hover:shadow-xl'
+                    ? 'bg-neutral-600 cursor-not-allowed' 
+                    : 'bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/30 hover:scale-105 shadow-lg'
                 } text-white`}
               >
                 {isLoading ? (

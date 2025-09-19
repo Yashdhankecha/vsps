@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const router = express.Router();
 const { authMiddleware } = require('../middleware/authMiddleware');
+const { adminAuth, userAuth, committeeAuth, authorizeRoles } = require('../middleware/auth');
 const Booking = require('../models/Booking');
 
 
@@ -76,13 +77,13 @@ const studentAwardUpload = multer({
 router.post('/submit', bookingController.submitBookingRequest);
 
 
-router.get('/', bookingController.getAllBookings);
+router.get('/', committeeAuth, bookingController.getAllBookings);
 
 
-router.put('/approve/:bookingId', bookingController.approveBooking);
+router.put('/approve/:bookingId', committeeAuth, bookingController.approveBooking);
 
 
-router.put('/reject/:bookingId', bookingController.rejectBooking);
+router.put('/reject/:bookingId', committeeAuth, bookingController.rejectBooking);
 
 router.put('/confirm-payment/:bookingId', bookingController.confirmPayment);
 
@@ -147,10 +148,11 @@ router.post('/student-awards/register',
   bookingController.submitStudentAwardRequest
 );
 
-router.get('/student-awards', bookingController.getAllStudentAwardRequests);
-router.get('/student-awards/:id', bookingController.getStudentAwardRequestById);
-router.put('/student-awards/approve/:requestId', bookingController.approveStudentAwardRequest);
-router.put('/student-awards/reject/:requestId', bookingController.rejectStudentAwardRequest);
+router.get('/student-awards', committeeAuth, bookingController.getAllStudentAwardRequests);
+router.get('/student-awards/:id', committeeAuth, bookingController.getStudentAwardRequestById);
+router.put('/student-awards/approve/:requestId', committeeAuth, bookingController.approveStudentAwardRequest);
+router.put('/student-awards/reject/:requestId', committeeAuth, bookingController.rejectStudentAwardRequest);
+router.patch('/student-awards/:id', committeeAuth, bookingController.updateStudentAward);
 
 // Add delete route for bookings
 router.delete('/:id', authMiddleware, async (req, res) => {

@@ -3,6 +3,17 @@ import { FaCalendarAlt, FaClock, FaCheckCircle, FaExclamationTriangle, FaHourgla
 import axios from 'axios';
 import { useAuth } from '../../contexts/AuthContext';
 import { Navigate } from 'react-router-dom';
+import { 
+  ClockIcon,
+  CalendarIcon,
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+  CogIcon
+} from '@heroicons/react/24/outline';
+import {
+  CheckCircleIcon as CheckCircleIconSolid,
+  ExclamationTriangleIcon as ExclamationTriangleIconSolid
+} from '@heroicons/react/24/solid';
 
 // Define API base URL with fallback and trailing slash handling
 const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
@@ -240,8 +251,19 @@ const FormManagement = () => {
 
   if (authLoading) {
     return (
-      <div className="flex justify-center items-center h-screen">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-mesh">
+        <div className="text-center">
+          <div className="relative">
+            <div className="w-16 h-16 mx-auto mb-4">
+              <div className="absolute inset-0 rounded-full border-4 border-neutral-600/30 animate-pulse"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-t-electric-500 animate-spin"></div>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <h3 className="text-lg font-semibold text-white">Loading Form Management</h3>
+            <p className="text-neutral-300">Please wait while we load the form configuration...</p>
+          </div>
+        </div>
       </div>
     );
   }
@@ -255,49 +277,58 @@ const FormManagement = () => {
       <h1 className="text-2xl font-bold mb-6">Form Management</h1>
       
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
+        <div className="glass-effect border border-red-500/30 bg-red-500/10 text-red-300 px-6 py-4 rounded-xl mb-6 animate-fade-in-up">
+          <div className="flex items-center space-x-3">
+            <ExclamationTriangleIconSolid className="w-5 h-5 text-red-400 flex-shrink-0" />
+            <span className="font-medium">{error}</span>
+          </div>
         </div>
       )}
 
       {success && (
-        <div className="bg-green-50 border-l-4 border-green-400 p-4 mb-6">
-          <div className="flex">
+        <div className="glass-effect border border-neon-500/30 bg-neon-500/10 p-6 mb-8 rounded-xl animate-fade-in-up">
+          <div className="flex items-center space-x-3">
             <div className="flex-shrink-0">
-              <FaCheckCircle className="h-5 w-5 text-green-400" />
+              <CheckCircleIconSolid className="h-6 w-6 text-neon-400" />
             </div>
-            <div className="ml-3">
-              <p className="text-sm text-green-700">{success}</p>
+            <div>
+              <p className="text-neon-300 font-medium">{success}</p>
             </div>
           </div>
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
         {/* Samuh Lagan Form */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Samuh Lagan Registration Form</h2>
+        <div className="card-hover p-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-neon opacity-20 rounded-bl-3xl"></div>
+          <h2 className="text-xl font-semibold mb-4 text-white">Samuh Lagan Registration</h2>
           <div className="space-y-4">
             <div className="flex items-center">
-              <span className="font-medium mr-2">Status:</span>
-              <span className={getFormStatus(forms.samuhLagan).color}>
+              <span className="font-medium mr-2 text-neutral-300">Status:</span>
+              <span className={`font-semibold ${
+                getFormStatus(forms.samuhLagan).color === 'text-red-500' ? 'text-red-400' :
+                getFormStatus(forms.samuhLagan).color === 'text-green-500' ? 'text-neon-400' :
+                getFormStatus(forms.samuhLagan).color === 'text-orange-500' ? 'text-sunset-400' :
+                'text-electric-400'
+              }`}>
                 {getFormStatus(forms.samuhLagan).text}
               </span>
             </div>
-            <div className="flex items-center">
-              <FaCalendarAlt className="mr-2" />
+            <div className="flex items-center text-neutral-300">
+              <CalendarIcon className="w-4 h-4 mr-2 text-neon-400" />
               <span>Event Date: {formatDate(forms.samuhLagan?.eventDate)}</span>
             </div>
-            <div className="flex items-center">
-              <FaClock className="mr-2" />
-              <span>Start Time: {formatDateTime(forms.samuhLagan?.startTime)}</span>
+            <div className="flex items-center text-neutral-300">
+              <ClockIcon className="w-4 h-4 mr-2 text-electric-400" />
+              <span>Start: {formatDateTime(forms.samuhLagan?.startTime)}</span>
             </div>
-            <div className="flex items-center">
-              <FaClock className="mr-2" />
-              <span>End Time: {formatDateTime(forms.samuhLagan?.endTime)}</span>
+            <div className="flex items-center text-neutral-300">
+              <ClockIcon className="w-4 h-4 mr-2 text-secondary-400" />
+              <span>End: {formatDateTime(forms.samuhLagan?.endTime)}</span>
             </div>
             {forms.samuhLagan?.lastUpdated && (
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-neutral-400 border-t border-white/10 pt-3 mt-3">
                 Last Updated: {formatDateTime(forms.samuhLagan.lastUpdated)}
               </div>
             )}
@@ -305,29 +336,35 @@ const FormManagement = () => {
         </div>
 
         {/* Student Awards Form */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Student Awards Registration Form</h2>
+        <div className="card-hover p-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-secondary opacity-20 rounded-bl-3xl"></div>
+          <h2 className="text-xl font-semibold mb-4 text-white">Student Awards Registration</h2>
           <div className="space-y-4">
             <div className="flex items-center">
-              <span className="font-medium mr-2">Status:</span>
-              <span className={getFormStatus(forms.studentAwards).color}>
+              <span className="font-medium mr-2 text-neutral-300">Status:</span>
+              <span className={`font-semibold ${
+                getFormStatus(forms.studentAwards).color === 'text-red-500' ? 'text-red-400' :
+                getFormStatus(forms.studentAwards).color === 'text-green-500' ? 'text-neon-400' :
+                getFormStatus(forms.studentAwards).color === 'text-orange-500' ? 'text-sunset-400' :
+                'text-electric-400'
+              }`}>
                 {getFormStatus(forms.studentAwards).text}
               </span>
             </div>
-            <div className="flex items-center">
-              <FaCalendarAlt className="mr-2" />
+            <div className="flex items-center text-neutral-300">
+              <CalendarIcon className="w-4 h-4 mr-2 text-secondary-400" />
               <span>Event Date: {formatDate(forms.studentAwards?.eventDate)}</span>
             </div>
-            <div className="flex items-center">
-              <FaClock className="mr-2" />
-              <span>Start Time: {formatDateTime(forms.studentAwards?.startTime)}</span>
+            <div className="flex items-center text-neutral-300">
+              <ClockIcon className="w-4 h-4 mr-2 text-electric-400" />
+              <span>Start: {formatDateTime(forms.studentAwards?.startTime)}</span>
             </div>
-            <div className="flex items-center">
-              <FaClock className="mr-2" />
-              <span>End Time: {formatDateTime(forms.studentAwards?.endTime)}</span>
+            <div className="flex items-center text-neutral-300">
+              <ClockIcon className="w-4 h-4 mr-2 text-secondary-400" />
+              <span>End: {formatDateTime(forms.studentAwards?.endTime)}</span>
             </div>
             {forms.studentAwards?.lastUpdated && (
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-neutral-400 border-t border-white/10 pt-3 mt-3">
                 Last Updated: {formatDateTime(forms.studentAwards.lastUpdated)}
               </div>
             )}
@@ -335,29 +372,35 @@ const FormManagement = () => {
         </div>
 
         {/* Team Registration Form */}
-        <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Team Registration Form</h2>
+        <div className="card-hover p-6 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-electric opacity-20 rounded-bl-3xl"></div>
+          <h2 className="text-xl font-semibold mb-4 text-white">Team Registration</h2>
           <div className="space-y-4">
             <div className="flex items-center">
-              <span className="font-medium mr-2">Status:</span>
-              <span className={getFormStatus(forms.teamRegistration).color}>
+              <span className="font-medium mr-2 text-neutral-300">Status:</span>
+              <span className={`font-semibold ${
+                getFormStatus(forms.teamRegistration).color === 'text-red-500' ? 'text-red-400' :
+                getFormStatus(forms.teamRegistration).color === 'text-green-500' ? 'text-neon-400' :
+                getFormStatus(forms.teamRegistration).color === 'text-orange-500' ? 'text-sunset-400' :
+                'text-electric-400'
+              }`}>
                 {getFormStatus(forms.teamRegistration).text}
               </span>
             </div>
-            <div className="flex items-center">
-              <FaCalendarAlt className="mr-2" />
+            <div className="flex items-center text-neutral-300">
+              <CalendarIcon className="w-4 h-4 mr-2 text-electric-400" />
               <span>Event Date: {formatDate(forms.teamRegistration?.eventDate)}</span>
             </div>
-            <div className="flex items-center">
-              <FaClock className="mr-2" />
-              <span>Start Time: {formatDateTime(forms.teamRegistration?.startTime)}</span>
+            <div className="flex items-center text-neutral-300">
+              <ClockIcon className="w-4 h-4 mr-2 text-electric-400" />
+              <span>Start: {formatDateTime(forms.teamRegistration?.startTime)}</span>
             </div>
-            <div className="flex items-center">
-              <FaClock className="mr-2" />
-              <span>End Time: {formatDateTime(forms.teamRegistration?.endTime)}</span>
+            <div className="flex items-center text-neutral-300">
+              <ClockIcon className="w-4 h-4 mr-2 text-secondary-400" />
+              <span>End: {formatDateTime(forms.teamRegistration?.endTime)}</span>
             </div>
             {forms.teamRegistration?.lastUpdated && (
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-neutral-400 border-t border-white/10 pt-3 mt-3">
                 Last Updated: {formatDateTime(forms.teamRegistration.lastUpdated)}
               </div>
             )}
@@ -366,18 +409,23 @@ const FormManagement = () => {
       </div>
 
       {/* Form Timer Settings */}
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Set Form Timer</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="glass-effect rounded-xl shadow-lg p-8 border border-white/10 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+        <div className="flex items-center space-x-3 mb-6">
+          <div className="w-8 h-8 bg-gradient-electric rounded-lg flex items-center justify-center">
+            <ClockIcon className="w-5 h-5 text-white" />
+          </div>
+          <h2 className="text-2xl font-semibold text-white">Set Form Timer</h2>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="form-label">
               Form Type
             </label>
             <select
               name="formName"
               value={formData.formName}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field"
             >
               <option value="samuhLagan">Samuh Lagan Registration</option>
               <option value="studentAwards">Student Awards Registration</option>
@@ -386,7 +434,7 @@ const FormManagement = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="form-label">
               Event Date
             </label>
             <input
@@ -394,13 +442,13 @@ const FormManagement = () => {
               name="eventDate"
               value={formData.eventDate}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="form-label">
               Start Time
             </label>
             <input
@@ -408,13 +456,13 @@ const FormManagement = () => {
               name="startTime"
               value={formData.startTime}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="form-label">
               End Time
             </label>
             <input
@@ -422,7 +470,7 @@ const FormManagement = () => {
               name="endTime"
               value={formData.endTime}
               onChange={handleInputChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="input-field"
               required
             />
           </div>
@@ -430,13 +478,21 @@ const FormManagement = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-2 px-4 rounded-md text-white font-medium ${
-              loading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-purple-600 hover:bg-purple-700'
+            className={`btn-primary w-full flex items-center justify-center space-x-2 ${
+              loading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
-            {loading ? 'Setting Timer...' : 'Set Timer'}
+            {loading ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <span>Setting Timer...</span>
+              </>
+            ) : (
+              <>
+                <ClockIcon className="w-4 h-4" />
+                <span>Set Timer</span>
+              </>
+            )}
           </button>
         </form>
       </div>

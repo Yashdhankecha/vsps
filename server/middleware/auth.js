@@ -1,102 +1,58 @@
 const jwt = require('jsonwebtoken');
 
-const adminAuth = (req, res, next) => {
-  try {
-    console.log('Checking admin auth...');
-    const token = req.headers.authorization?.split(' ')[1];
-    
-    if (!token) {
-      console.log('No token provided');
-      return res.status(401).json({ message: 'No token provided' });
-    }
+// Generic role-based authorization middleware
+const authorizeRoles = (...roles) => {
+  return (req, res, next) => {
+    try {
+      const token = req.headers.authorization?.split(' ')[1];
+      
+      if (!token) {
+        return res.status(401).json({ message: 'No token provided' });
+      }
 
-    console.log('Verifying token...');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Token decoded:', decoded);
-    
-    if (!decoded.role) {
-      console.log('No role found in token');
-      return res.status(403).json({ message: 'No role found in token' });
-    }
-    
-    if (decoded.role !== 'admin') {
-      console.log('User is not an admin, role:', decoded.role);
-      return res.status(403).json({ message: 'Access denied. Admin privileges required.' });
-    }
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      
+      if (!decoded.role) {
+        return res.status(403).json({ message: 'No role found in token' });
+      }
+      
+      if (!roles.includes(decoded.role)) {
+        return res.status(403).json({ 
+          message: `Access denied. Required roles: ${roles.join(', ')}, your role: ${decoded.role}` 
+        });
+      }
 
-    req.user = decoded;
-    console.log('Admin auth successful');
-    next();
-  } catch (error) {
-    console.error('Auth error:', error);
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ message: 'Invalid token' });
+      // Normalize user ID
+      const userId = decoded._id || decoded.id || decoded.userId;
+      req.user = {
+        ...decoded,
+        _id: userId
+      };
+      
+      next();
+    } catch (error) {
+      console.error('Auth error:', error);
+      if (error.name === 'JsonWebTokenError') {
+        return res.status(401).json({ message: 'Invalid token' });
+      }
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'Token expired' });
+      }
+      res.status(500).json({ 
+        message: 'Server error',
+        error: error.message 
+      });
     }
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ message: 'Token expired' });
-    }
-    res.status(500).json({ 
-      message: 'Server error',
-      error: error.message,
-      stack: error.stack 
-    });
-  }
+  };
 };
 
+// Committee member authorization (committee + admin)
+const committeeAuth = authorizeRoles('committee', 'admin');
 
-const userAuth = (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(' ')[1];
-    
-    if (!token) {
-      console.log('No token provided');
-      return res.status(401).json({ message: 'No token provided' });
-    }
+// Admin only authorization
+const adminAuth = authorizeRoles('admin');
 
-    console.log('Verifying token...');
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log('Token decoded:', decoded);
-    
-    if (!decoded._id && !decoded.id && !decoded.userId) {
-      console.log('No user ID found in token');
-      return res.status(401).json({ message: 'Invalid token format' });
-    }
+// User authorization (all authenticated users)
+const userAuth = authorizeRoles('user', 'committee', 'admin');
 
-    // Normalize user ID
-    const userId = decoded._id || decoded.id || decoded.userId;
-    
-    if (!decoded.role) {
-      console.log('No role found in token');
-      return res.status(403).json({ message: 'No role found in token' });
-    }
-    
-    if (decoded.role !== 'user' && decoded.role !== 'admin') {
-      console.log('User has invalid role, role:', decoded.role);
-      return res.status(403).json({ message: 'Access denied. Invalid user role.' });
-    }
-
-    // Set user object with normalized ID
-    req.user = {
-      ...decoded,
-      _id: userId
-    };
-    
-    console.log('User auth successful');
-    next();
-  } catch (error) {
-    console.error('Auth error:', error);
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ message: 'Invalid token' });
-    }
-    if (error.name === 'TokenExpiredError') {
-      return res.status(401).json({ message: 'Token expired' });
-    }
-    res.status(500).json({ 
-      message: 'Server error',
-      error: error.message,
-      stack: error.stack 
-    });
-  }
-};
-
-module.exports = { adminAuth, userAuth }; 
+module.exports = { adminAuth, userAuth, committeeAuth, authorizeRoles }; 
