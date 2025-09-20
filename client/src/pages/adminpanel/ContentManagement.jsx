@@ -16,7 +16,7 @@ import {
   updateGalleryItem,
   deleteGalleryItem
 } from "../../services/crudapi";
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosConfig';
 import { FaCalendar, FaUsers, FaGem, FaClock, FaDownload } from 'react-icons/fa';
 import { toast } from 'react-hot-toast';
 import { uploadToCloudinary, deleteFromCloudinary, FOLDERS } from '../../config/cloudinary';
@@ -86,7 +86,7 @@ const ContentManagement = () => {
     try {
       if (activeTab === 'home') {
         // Fetch home page content from MongoDB
-        const response = await axios.get('/api/content/home');
+        const response = await axiosInstance.get('/api/content/home');
         if (response.data.success) {
           setHomeContent(response.data.data);
         } else {
@@ -94,17 +94,10 @@ const ContentManagement = () => {
         }
       } else if (activeTab === 'events') {
         try {
-          // First try to get the token
-          const token = localStorage.getItem('token');
-          if (!token) {
-            throw new Error('Authentication token not found');
-          }
-
           console.log('Fetching event categories from:', `${API_BASE_URL}/api/content/events/categories`);
           
-          const response = await axios.get(`${API_BASE_URL}/api/content/events/categories`, {
+          const response = await axiosInstance.get(`${API_BASE_URL}/api/content/events/categories`, {
             headers: {
-              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             }
           });
@@ -176,11 +169,7 @@ const ContentManagement = () => {
 
       console.log('Deleting item:', { id, type, endpoint });
 
-      const response = await axios.delete(endpoint, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
-        }
-      });
+      const response = await axiosInstance.delete(endpoint);
 
       if (response.data.success) {
         showNotification('Item deleted successfully');
@@ -366,7 +355,7 @@ const ContentManagement = () => {
         case 'heroSlider':
           // Update the entire hero slider
           const slidesData = JSON.parse(formData.get('heroSlider'));
-          response = await axios.put('/api/content/home/hero-slider', {
+          response = await axiosInstance.put('/api/content/home/hero-slider', {
             heroSlider: slidesData  // Changed from slides to heroSlider
           });
           break;
@@ -385,7 +374,7 @@ const ContentManagement = () => {
               isActive: formData.get('isActive') === 'true',
               order: parseInt(formData.get('order') || '0')
             };
-            response = await axios.put(`/api/content/home/hero-slide/${editingItem._id}`, slideData);
+            response = await axiosInstance.put(`/api/content/home/hero-slide/${editingItem._id}`, slideData);
           } else {
             console.log('Creating new slide with data:', {
               formData: Object.fromEntries(formData.entries())
@@ -398,7 +387,7 @@ const ContentManagement = () => {
               isActive: formData.get('isActive') === 'true',
               order: parseInt(formData.get('order') || '0')
             };
-            response = await axios.post(`/api/content/home/hero-slide`, slideData);
+            response = await axiosInstance.post(`/api/content/home/hero-slide`, slideData);
           }
           break;
           
@@ -419,7 +408,7 @@ const ContentManagement = () => {
             introFormData.append('pdfFile', pdfFile);
           }
           
-          response = await axios.put(`/api/content/home/introduction`, introFormData, {
+          response = await axiosInstance.put(`/api/content/home/introduction`, introFormData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
@@ -427,7 +416,7 @@ const ContentManagement = () => {
           break;
           
         case 'about':
-          response = await axios.put(`/api/content/home/about`, formData, {
+          response = await axiosInstance.put(`/api/content/home/about`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
@@ -436,7 +425,7 @@ const ContentManagement = () => {
           
         case 'leadership':
           // Update the leadership section with all members in one request
-          response = await axios.put(`/api/content/home/leadership`, formData, {
+          response = await axiosInstance.put(`/api/content/home/leadership`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data'
             }
@@ -445,13 +434,13 @@ const ContentManagement = () => {
           
         case 'gallery':
           if (editingItem._id) {
-            response = await axios.put(`/api/content/gallery/${editingItem._id}`, formData, {
+            response = await axiosInstance.put(`/api/content/gallery/${editingItem._id}`, formData, {
               headers: {
                 'Content-Type': 'multipart/form-data'
               }
             });
           } else {
-            response = await axios.post(`/api/content/gallery`, formData, {
+            response = await axiosInstance.post(`/api/content/gallery`, formData, {
               headers: {
                 'Content-Type': 'multipart/form-data'
               }
@@ -524,26 +513,24 @@ const ContentManagement = () => {
             if (editingItem._id) {
               // Update existing category
               console.log('Updating existing category:', editingItem._id);
-              response = await axios.put(
+              response = await axiosInstance.put(
                 `${API_BASE_URL}/api/content/events/categories/${editingItem._id}`,
                 formData,
                 {
                   headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Content-Type': 'multipart/form-data'
                   }
                 }
               );
             } else {
               // Create new category
               console.log('Creating new category');
-              response = await axios.post(
+              response = await axiosInstance.post(
                 `${API_BASE_URL}/api/content/events/categories`,
                 formData,
                 {
                   headers: {
-                    'Content-Type': 'multipart/form-data',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'Content-Type': 'multipart/form-data'
                   }
                 }
               );
@@ -1930,86 +1917,99 @@ const ContentManagement = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow">
-      <div className="p-6 border-b">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Content Management</h2>
-          <div className="flex space-x-2">
-            <button 
-              onClick={fetchAllContent}
-              className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg"
-              title="Refresh"
-            >
-              <ArrowPathIcon className="h-5 w-5" />
-            </button>
-            <button 
-              onClick={() => {
-                if (activeTab === 'home') {
-                  setEditingItem({ 
-                    _contentType: 'hero-slide',
-                    image: '',
-                    title: '',
-                    description: '',
-                    isActive: true
-                  });
-                } else if (activeTab === 'events') {
-                  setEditingItem({ 
-                    _contentType: 'event-category',
-                    title: '',
-                    description: '',
-                    capacity: '',
-                    image: '',
-                    membershipPricing: {
-                      samajMember: '',
-                      nonSamajMember: ''
-                    },
-                    features: [],
-                    packages: [],
-                    isActive: true
-                  });
-                } else if (activeTab === 'gallery') {
-                  setEditingItem({ 
-                    _contentType: 'gallery',
-                    type: galleryTab === 'photos' ? 'photo' : 'video',
-                    url: '',
-                    thumbnail: '',
-                    category: 'weddings'
-                  });
-                }
-                setIsAdding(true);
-              }}
-              className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              Add New
-            </button>
+    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
+      {/* Main Content Container */}
+      <div className="card-glass animate-fade-in-up">
+        {/* Header Section - Responsive */}
+        <div className="border-b border-white/10 pb-6 mb-6">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                <PencilIcon className="w-6 h-6 text-white" />
+              </div>
+              <h2 className="text-xl sm:text-2xl font-bold text-white">Content Management</h2>
+            </div>
+            
+            <div className="flex flex-wrap gap-2 justify-center sm:justify-end">
+              <button 
+                onClick={fetchAllContent}
+                className="btn-secondary flex items-center space-x-2"
+                title="Refresh"
+              >
+                <ArrowPathIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Refresh</span>
+              </button>
+              <button 
+                onClick={() => {
+                  if (activeTab === 'home') {
+                    setEditingItem({ 
+                      _contentType: 'hero-slide',
+                      image: '',
+                      title: '',
+                      description: '',
+                      isActive: true
+                    });
+                  } else if (activeTab === 'events') {
+                    setEditingItem({ 
+                      _contentType: 'event-category',
+                      title: '',
+                      description: '',
+                      capacity: '',
+                      image: '',
+                      membershipPricing: {
+                        samajMember: '',
+                        nonSamajMember: ''
+                      },
+                      features: [],
+                      packages: [],
+                      isActive: true
+                    });
+                  } else if (activeTab === 'gallery') {
+                    setEditingItem({ 
+                      _contentType: 'gallery',
+                      type: galleryTab === 'photos' ? 'photo' : 'video',
+                      url: '',
+                      thumbnail: '',
+                      category: 'weddings'
+                    });
+                  }
+                  setIsAdding(true);
+                }}
+                className="btn-primary flex items-center space-x-2"
+              >
+                <PlusIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Add New</span>
+                <span className="sm:hidden">Add</span>
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="p-6">
-        {/* Content Type Tabs */}
-        <div className="flex space-x-4 mb-6">
-          {contentTypes.map((type) => (
-            <button
-              key={type.id}
-              onClick={() => setActiveTab(type.id)}
-              className={`px-4 py-2 rounded-lg font-medium ${
-                activeTab === type.id
-                  ? 'bg-purple-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {type.name}
-            </button>
-          ))}
+        <div className="space-y-6">
+          {/* Content Type Tabs - Responsive */}
+          <div className="flex flex-wrap gap-2 sm:gap-4">
+            {contentTypes.map((type) => (
+              <button
+                key={type.id}
+                onClick={() => setActiveTab(type.id)}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  activeTab === type.id
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow'
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                {type.name}
+              </button>
+            ))}
+          </div>
+
+          {/* Content Display */}
+          {renderContent()}
         </div>
 
-        {/* Content Display */}
-        {renderContent()}
+        {/* Edit/Add Modal */}
+        {(isEditing || isAdding) && renderEditForm()}
       </div>
-
-      {/* Edit/Add Modal */}
-      {(isEditing || isAdding) && renderEditForm()}
     </div>
   );
 };

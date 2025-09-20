@@ -28,7 +28,7 @@ import {
   CurrencyDollarIcon as CurrencyDollarIconSolid,
   ChartBarIcon as ChartBarIconSolid
 } from '@heroicons/react/24/solid';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosConfig';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
@@ -58,6 +58,9 @@ const Dashboard = () => {
   }, []);
 
   const calculateRevenue = (bookings) => {
+    // Ensure bookings is always an array (Array Method Safety Pattern)
+    const safeBookings = Array.isArray(bookings) ? bookings : [];
+    
     const now = new Date();
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
@@ -68,8 +71,8 @@ const Dashboard = () => {
     const monthlyBreakdown = Array(12).fill(0);
     const yearlyBreakdown = {};
 
-    bookings.forEach(booking => {
-      if (booking.status === 'Booked' && booking.paymentConfirmed) {
+    safeBookings.forEach(booking => {
+      if (booking && booking.status === 'Booked' && booking.paymentConfirmed) {
         const bookingDate = new Date(booking.date);
         const bookingMonth = bookingDate.getMonth();
         const bookingYear = bookingDate.getFullYear();
@@ -110,16 +113,44 @@ const Dashboard = () => {
       
       // Fetch bookings and other data
       const [bookingsRes, samuhLaganRes, studentAwardRes, teamRegRes] = await Promise.all([
-        axios.get('/api/bookings'),
-        axios.get('/api/bookings/samuh-lagan'),
-        axios.get('/api/bookings/student-awards'),
-        axios.get('/api/admin/forms/team-registrations')
+        axiosInstance.get('/api/bookings'),
+        axiosInstance.get('/api/bookings/samuh-lagan'),
+        axiosInstance.get('/api/bookings/student-awards'),
+        axiosInstance.get('/api/admin/forms/team-registrations')
       ]);
 
-      const bookings = bookingsRes.data || [];
-      const samuhLagan = samuhLaganRes.data || [];
-      const studentAwards = studentAwardRes.data || [];
-      const teamRegistrations = teamRegRes.data || [];
+      // Debug: Log the actual API response structure
+      console.log('API Response structures:', {
+        bookings: bookingsRes.data,
+        samuhLagan: samuhLaganRes.data,
+        studentAwards: studentAwardRes.data,
+        teamRegistrations: teamRegRes.data
+      });
+
+      // Ensure arrays with proper fallbacks (Array Method Safety Pattern)
+      const bookings = Array.isArray(bookingsRes.data) ? bookingsRes.data : 
+                      Array.isArray(bookingsRes.data?.bookings) ? bookingsRes.data.bookings : 
+                      Array.isArray(bookingsRes.data?.data) ? bookingsRes.data.data : [];
+      
+      const samuhLagan = Array.isArray(samuhLaganRes.data) ? samuhLaganRes.data :
+                         Array.isArray(samuhLaganRes.data?.bookings) ? samuhLaganRes.data.bookings :
+                         Array.isArray(samuhLaganRes.data?.data) ? samuhLaganRes.data.data : [];
+      
+      const studentAwards = Array.isArray(studentAwardRes.data) ? studentAwardRes.data :
+                            Array.isArray(studentAwardRes.data?.awards) ? studentAwardRes.data.awards :
+                            Array.isArray(studentAwardRes.data?.data) ? studentAwardRes.data.data : [];
+      
+      const teamRegistrations = Array.isArray(teamRegRes.data) ? teamRegRes.data :
+                                Array.isArray(teamRegRes.data?.registrations) ? teamRegRes.data.registrations :
+                                Array.isArray(teamRegRes.data?.data) ? teamRegRes.data.data : [];
+
+      // Debug: Log the processed arrays
+      console.log('Processed arrays:', {
+        bookingsLength: bookings.length,
+        samuhLaganLength: samuhLagan.length,
+        studentAwardsLength: studentAwards.length,
+        teamRegistrationsLength: teamRegistrations.length
+      });
 
       // Calculate statistics
       const pendingBookings = bookings.filter(b => b.status === 'Pending');
@@ -168,7 +199,31 @@ const Dashboard = () => {
       setError(null);
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      setError('Failed to load dashboard data. Please try again later.');
+      
+      // Handle different types of errors
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        if (error.response.status === 401) {
+          setError('Session expired. Please log in again.');
+          // The axiosInstance interceptor should handle redirect to /auth
+        } else if (error.response.status === 403) {
+          setError('Access denied. Admin privileges required.');
+        } else {
+          setError(`Server error: ${error.response.data?.message || 'Unable to fetch dashboard data'}`);
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        // Check if the response is HTML (indicates frontend server is serving instead of backend)
+        const responseText = error.request.responseText;
+        if (responseText && responseText.includes('<html')) {
+          setError('Backend server is not running. Please start the server and try again.');
+        } else {
+          setError('Unable to connect to the server. Please check your connection and try again.');
+        }
+      } else {
+        // Something happened in setting up the request
+        setError('An unexpected error occurred. Please try again later.');
+      }
     } finally {
       setLoading(false);
     }

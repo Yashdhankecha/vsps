@@ -1,14 +1,8 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CheckIcon, XMarkIcon, EyeIcon, PencilIcon, DocumentIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosConfig';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-
-// Configure axios defaults
-axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-
-// Set axios base URL
-axios.defaults.baseURL = 'http://localhost:3000';
 
 const Notification = ({ message, type, onClose }) => {
   const Icon = type === 'success' ? CheckIcon : XMarkIcon;
@@ -224,9 +218,21 @@ const BookingManagement = () => {
   const fetchBookings = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/bookings');
-      // Handle the response data directly since we modified the controller
-      setBookings(response.data || []);
+      const response = await axiosInstance.get('/api/bookings');
+      
+      // Debug: Log the actual API response structure
+      console.log('BookingManagement API Response:', {
+        data: response.data,
+        type: typeof response.data,
+        isArray: Array.isArray(response.data)
+      });
+      
+      // Enhanced Array Safety - handle multiple possible API response structures
+      const bookingsData = Array.isArray(response.data) ? response.data : 
+                          Array.isArray(response.data?.bookings) ? response.data.bookings : 
+                          Array.isArray(response.data?.data) ? response.data.data : [];
+      
+      setBookings(bookingsData);
       setError(null);
     } catch (error) {
       console.error('Error fetching bookings:', error);
@@ -239,18 +245,14 @@ const BookingManagement = () => {
 
   const fetchSamuhLaganRequests = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showNotification('Please login again', 'error');
-        return;
-      }
-
-      const response = await axios.get('/api/bookings/samuh-lagan', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      setSamuhLaganRequests(response.data);
+      const response = await axiosInstance.get('/api/bookings/samuh-lagan');
+      
+      // Enhanced Array Safety - handle multiple possible API response structures
+      const samuhLaganData = Array.isArray(response.data) ? response.data : 
+                            Array.isArray(response.data?.bookings) ? response.data.bookings : 
+                            Array.isArray(response.data?.data) ? response.data.data : [];
+      
+      setSamuhLaganRequests(samuhLaganData);
     } catch (error) {
       console.error('Error fetching Samuh Lagan requests:', error);
       if (error.response?.status === 401) {
@@ -258,32 +260,30 @@ const BookingManagement = () => {
       } else {
         showNotification('Failed to fetch Samuh Lagan requests', 'error');
       }
+      setSamuhLaganRequests([]);
     }
   };
 
   const fetchStudentAwardRequests = async () => {
     try {
-      const response = await axios.get('/api/bookings/student-awards');
-      setStudentAwardRequests(response.data);
+      const response = await axiosInstance.get('/api/bookings/student-awards');
+      
+      // Enhanced Array Safety - handle multiple possible API response structures
+      const studentAwardData = Array.isArray(response.data) ? response.data : 
+                              Array.isArray(response.data?.awards) ? response.data.awards : 
+                              Array.isArray(response.data?.data) ? response.data.data : [];
+      
+      setStudentAwardRequests(studentAwardData);
     } catch (error) {
       console.error('Error fetching Student Award requests:', error);
       showNotification('Failed to fetch Student Award requests', 'error');
+      setStudentAwardRequests([]);
     }
   };
 
   const fetchTeamRegistrationRequests = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showNotification('Please login again', 'error');
-        return;
-      }
-
-      const response = await axios.get('/api/admin/forms/team-registrations', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axiosInstance.get('/api/admin/forms/team-registrations');
       
       // Ensure we're setting an array, even if the response is empty
       setTeamRegistrationRequests(Array.isArray(response.data) ? response.data : []);
@@ -302,7 +302,7 @@ const BookingManagement = () => {
   const handleApprove = async (id) => {
     try {
       setLoadingActions(prev => ({ ...prev, approve: { ...prev.approve, [id]: true } }));
-      const response = await axios.put(`/api/bookings/approve/${id}`);
+      const response = await axiosInstance.put(`/api/bookings/approve/${id}`);
 
       if (response.data) {
         showNotification('Booking approved successfully');
@@ -329,7 +329,7 @@ const BookingManagement = () => {
       
       switch(rejectionType) {
         case 'booking':
-          response = await axios.put(`/api/bookings/reject/${rejectionBookingId}`, { 
+          response = await axiosInstance.put(`/api/bookings/reject/${rejectionBookingId}`, { 
             bookingId: rejectionBookingId, 
             rejectionReason: reason 
           });
@@ -340,18 +340,8 @@ const BookingManagement = () => {
           break;
           
         case 'samuhLagan':
-          const token = localStorage.getItem('token');
-          if (!token) {
-            showNotification('Please login again', 'error');
-            return;
-          }
-          
-          response = await axios.patch(`/api/bookings/samuh-lagan/${rejectionBookingId}/reject`, { 
+          response = await axiosInstance.patch(`/api/bookings/samuh-lagan/${rejectionBookingId}/reject`, { 
             reason: reason
-          }, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
           });
           
           if (response.data) {
@@ -361,7 +351,7 @@ const BookingManagement = () => {
           break;
           
         case 'studentAward':
-          response = await axios.put(`/api/bookings/student-awards/reject/${rejectionBookingId}`, { 
+          response = await axiosInstance.put(`/api/bookings/student-awards/reject/${rejectionBookingId}`, { 
             rejectionReason: reason 
           });
           
@@ -372,7 +362,7 @@ const BookingManagement = () => {
           break;
           
         case 'teamRegistration':
-          response = await axios.put(`/api/team-registrations/reject/${rejectionBookingId}`, { 
+          response = await axiosInstance.put(`/api/team-registrations/reject/${rejectionBookingId}`, { 
             rejectionReason: reason 
           });
           if (response.data) {
@@ -401,7 +391,7 @@ const BookingManagement = () => {
 
   const handleConfirmPayment = async (id) => {
     try {
-      await axios.put(`/api/bookings/confirm-payment/${id}`, {
+      await axiosInstance.put(`/api/bookings/confirm-payment/${id}`, {
         bookingId: id
       });
       showNotification('Payment confirmed successfully');
@@ -415,7 +405,7 @@ const BookingManagement = () => {
   const handleConfirmBooking = async (id) => {
     try {
       setLoadingActions(prev => ({ ...prev, confirm: { ...prev.confirm, [id]: true } }));
-      const response = await axios.put(`/api/bookings/confirm-booking/${id}`);
+      const response = await axiosInstance.put(`/api/bookings/confirm-booking/${id}`);
 
       if (response.data) {
         showNotification('Booking confirmed successfully');
@@ -468,9 +458,9 @@ const BookingManagement = () => {
 
       let response;
       if (editedData.eventType === 'Samuh Lagan') {
-        response = await axios.put(`/api/bookings/samuh-lagan/update/${editedData._id}`, formattedData);
+        response = await axiosInstance.put(`/api/bookings/samuh-lagan/update/${editedData._id}`, formattedData);
       } else {
-        response = await axios.put(`/api/bookings/update/${editedData._id}`, formattedData);
+        response = await axiosInstance.put(`/api/bookings/update/${editedData._id}`, formattedData);
       }
 
       if (response.data) {
@@ -504,18 +494,7 @@ const BookingManagement = () => {
 
   const handleApproveSamuhLagan = async (id) => {
     try {
-      // Get fresh token
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showNotification('Please login again', 'error');
-        return;
-      }
-
-      await axios.patch(`/api/bookings/samuh-lagan/${id}/approve`, {}, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      await axiosInstance.patch(`/api/bookings/samuh-lagan/${id}/approve`, {});
       showNotification('Samuh Lagan request approved successfully');
       fetchSamuhLaganRequests();
     } catch (error) {
@@ -536,18 +515,7 @@ const BookingManagement = () => {
 
   const handleConfirmSamuhLagan = async (id) => {
     try {
-      // Get fresh token
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showNotification('Please login again', 'error');
-        return;
-      }
-
-      await axios.patch(`/api/bookings/samuh-lagan/${id}/confirm-payment`, {}, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      await axiosInstance.patch(`/api/bookings/samuh-lagan/${id}/confirm-payment`, {});
       showNotification('Samuh Lagan request confirmed successfully');
       fetchSamuhLaganRequests();
     } catch (error) {
@@ -567,7 +535,7 @@ const BookingManagement = () => {
         formData.append(type, file);
       });
 
-      const response = await axios.post('/api/bookings/upload-document', formData, {
+      const response = await axiosInstance.post('/api/bookings/upload-document', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -583,7 +551,7 @@ const BookingManagement = () => {
 
   const handleApproveStudentAward = async (id) => {
     try {
-      await axios.put(`/api/bookings/student-awards/approve/${id}`);
+      await axiosInstance.put(`/api/bookings/student-awards/approve/${id}`);
       showNotification('Student Award request approved successfully');
       fetchStudentAwardRequests();
     } catch (error) {
@@ -607,20 +575,11 @@ const BookingManagement = () => {
   const handleDeleteConfirm = async () => {
     try {
       setLoadingActions(prev => ({ ...prev, delete: { ...prev.delete, [deleteBookingId]: true } }));
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showNotification('Please login again', 'error');
-        return;
-      }
 
       let response;
       switch(deleteBookingType) {
         case 'booking':
-          response = await axios.delete(`/api/bookings/${deleteBookingId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
+          response = await axiosInstance.delete(`/api/bookings/${deleteBookingId}`);
           if (response.data) {
             showNotification('Booking deleted successfully');
             fetchBookings();
@@ -628,11 +587,7 @@ const BookingManagement = () => {
           break;
 
         case 'samuhLagan':
-          response = await axios.delete(`/api/bookings/samuh-lagan/${deleteBookingId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
+          response = await axiosInstance.delete(`/api/bookings/samuh-lagan/${deleteBookingId}`);
           if (response.data) {
             showNotification('Samuh Lagan registration deleted successfully');
             fetchSamuhLaganRequests();
@@ -640,11 +595,7 @@ const BookingManagement = () => {
           break;
 
         case 'studentAward':
-          response = await axios.delete(`/api/bookings/student-awards/${deleteBookingId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
+          response = await axiosInstance.delete(`/api/bookings/student-awards/${deleteBookingId}`);
           if (response.data) {
             showNotification('Student Award registration deleted successfully');
             fetchStudentAwardRequests();
@@ -652,11 +603,7 @@ const BookingManagement = () => {
           break;
 
         case 'teamRegistration':
-          response = await axios.delete(`/api/bookings/team-registrations/${deleteBookingId}`, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          });
+          response = await axiosInstance.delete(`/api/bookings/team-registrations/${deleteBookingId}`);
           if (response.data) {
             showNotification('Team Registration deleted successfully');
             fetchTeamRegistrationRequests();
@@ -683,17 +630,7 @@ const BookingManagement = () => {
 
   const handleApproveTeamRegistration = async (id) => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showNotification('Please login again', 'error');
-        return;
-      }
-
-      await axios.put(`/api/admin/forms/team-registrations/${id}/approve`, {}, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      await axiosInstance.put(`/api/admin/forms/team-registrations/${id}/approve`, {});
       showNotification('Team Registration request approved successfully');
       fetchTeamRegistrationRequests();
     } catch (error) {
@@ -727,21 +664,21 @@ const BookingManagement = () => {
     doc.setFontSize(12);
     doc.text('Summary:', 14, 35);
     doc.setFontSize(10);
-    doc.text(`Total Event Bookings: ${bookings.length}`, 20, 42);
-    doc.text(`Total Samuh Lagan Requests: ${samuhLaganRequests.length}`, 20, 49);
-    doc.text(`Total Student Award Requests: ${studentAwardRequests.length}`, 20, 56);
-    doc.text(`Total Team Registration Requests: ${teamRegistrationRequests.length}`, 20, 63);
+    doc.text(`Total Event Bookings: ${(bookings || []).length}`, 20, 42);
+    doc.text(`Total Samuh Lagan Requests: ${(samuhLaganRequests || []).length}`, 20, 49);
+    doc.text(`Total Student Award Requests: ${(studentAwardRequests || []).length}`, 20, 56);
+    doc.text(`Total Team Registration Requests: ${(teamRegistrationRequests || []).length}`, 20, 63);
     
     let yPosition = 75;
 
     // Event Bookings Section
-    if (bookings.length > 0) {
+    if ((bookings || []).length > 0) {
       doc.setFontSize(14);
       doc.text('Event Bookings', 14, yPosition);
       yPosition += 10;
 
       const eventBookingsColumns = ['Customer', 'Service', 'Date', 'Status', 'Guest Count'];
-      const eventBookingsRows = bookings.map(booking => [
+      const eventBookingsRows = (bookings || []).map(booking => [
         booking.firstName && booking.surname ? `${booking.firstName} ${booking.surname}` : 'N/A',
         booking.eventType || 'N/A',
         new Date(booking.date).toLocaleDateString(),
@@ -769,13 +706,13 @@ const BookingManagement = () => {
     }
 
     // Samuh Lagan Section
-    if (samuhLaganRequests.length > 0) {
+    if ((samuhLaganRequests || []).length > 0) {
       doc.setFontSize(14);
       doc.text('Samuh Lagan Requests', 14, yPosition);
       yPosition += 10;
 
       const samuhLaganColumns = ['Bride', 'Groom', 'Date', 'Status', 'Guest Count'];
-      const samuhLaganRows = samuhLaganRequests.map(request => [
+      const samuhLaganRows = (samuhLaganRequests || []).map(request => [
         request.bride?.name || 'N/A',
         request.groom?.name || 'N/A',
         new Date(request.ceremonyDate).toLocaleDateString(),
@@ -803,13 +740,13 @@ const BookingManagement = () => {
     }
 
     // Student Award Section
-    if (studentAwardRequests.length > 0) {
+    if ((studentAwardRequests || []).length > 0) {
       doc.setFontSize(14);
       doc.text('Student Award Requests', 14, yPosition);
       yPosition += 10;
 
       const studentAwardColumns = ['Student Name', 'School', 'Percentage', 'Rank', 'Status'];
-      const studentAwardRows = studentAwardRequests.map(request => [
+      const studentAwardRows = (studentAwardRequests || []).map(request => [
         request.name || 'N/A',
         request.schoolName || 'N/A',
         `${request.totalPercentage}%` || 'N/A',
@@ -837,13 +774,13 @@ const BookingManagement = () => {
     }
 
     // Team Registration Section
-    if (teamRegistrationRequests.length > 0) {
+    if ((teamRegistrationRequests || []).length > 0) {
       doc.setFontSize(14);
       doc.text('Team Registration Requests', 14, yPosition);
       yPosition += 10;
 
       const teamRegistrationColumns = ['Game Name', 'Team Name', 'Captain', 'Contact', 'Status'];
-      const teamRegistrationRows = teamRegistrationRequests.map(request => [
+      const teamRegistrationRows = (teamRegistrationRequests || []).map(request => [
         request.gameName || 'N/A',
         request.teamName || 'N/A',
         request.captainName || 'N/A',
@@ -887,9 +824,9 @@ const BookingManagement = () => {
 
     switch(section) {
       case 'Event Bookings':
-        if (bookings.length > 0) {
+        if ((bookings || []).length > 0) {
           const columns = ['Customer', 'Service', 'Date', 'Status', 'Guest Count'];
-          const rows = bookings.map(booking => [
+          const rows = (bookings || []).map(booking => [
             booking.firstName && booking.surname ? `${booking.firstName} ${booking.surname}` : 'N/A',
             booking.eventType || 'N/A',
             new Date(booking.date).toLocaleDateString(),
@@ -916,9 +853,9 @@ const BookingManagement = () => {
         break;
 
       case 'Samuh Lagan':
-        if (samuhLaganRequests.length > 0) {
+        if ((samuhLaganRequests || []).length > 0) {
           const columns = ['Bride', 'Groom', 'Date', 'Status', 'Guest Count'];
-          const rows = samuhLaganRequests.map(request => [
+          const rows = (samuhLaganRequests || []).map(request => [
             request.bride?.name || 'N/A',
             request.groom?.name || 'N/A',
             new Date(request.ceremonyDate).toLocaleDateString(),
@@ -945,9 +882,9 @@ const BookingManagement = () => {
         break;
 
       case 'Student Award':
-        if (studentAwardRequests.length > 0) {
+        if ((studentAwardRequests || []).length > 0) {
           const columns = ['Student Name', 'School', 'Percentage', 'Rank', 'Status'];
-          const rows = studentAwardRequests.map(request => [
+          const rows = (studentAwardRequests || []).map(request => [
             request.name || 'N/A',
             request.schoolName || 'N/A',
             `${request.totalPercentage}%` || 'N/A',
@@ -974,9 +911,9 @@ const BookingManagement = () => {
         break;
 
       case 'Team Registration':
-        if (teamRegistrationRequests.length > 0) {
+        if ((teamRegistrationRequests || []).length > 0) {
           const columns = ['Game Name', 'Team Name', 'Captain', 'Contact', 'Status'];
-          const rows = teamRegistrationRequests.map(request => [
+          const rows = (teamRegistrationRequests || []).map(request => [
             request.gameName || 'N/A',
             request.teamName || 'N/A',
             request.captainName || 'N/A',
@@ -1007,32 +944,71 @@ const BookingManagement = () => {
     doc.save(`${section.toLowerCase().replace(' ', '-')}-report-${new Date().toISOString().split('T')[0]}.pdf`);
   };
 
-  // Filter bookings based on active category
-  const filteredBookings = bookings.filter(booking => {
+  // Filter bookings based on active category (Enhanced Array Method Safety Pattern)
+  const safeBookings = Array.isArray(bookings) ? bookings : [];
+  const filteredBookings = safeBookings.filter(booking => {
     if (activeCategory === 'all') return true;
     if (activeCategory === 'samuh-lagan') return booking.eventType === 'Samuh Lagan';
     if (activeCategory === 'student-award') return booking.eventType === 'Student Award Registration';
     return true;
   });
 
+  // Debug: Log the actual data types to understand API response structure
+  console.log('BookingManagement - Data types:', {
+    bookings: typeof bookings,
+    isArray: Array.isArray(bookings),
+    bookingsValue: bookings,
+    safeBookingsLength: safeBookings.length
+  });
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl">Loading bookings...</div>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative mb-6">
+            <div className="w-20 h-20 mx-auto">
+              <div className="absolute inset-0 rounded-full border-4 border-neutral-600/30 animate-pulse"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-t-electric-500 animate-spin"></div>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold text-white">Loading Booking Management</h3>
+            <p className="text-neutral-300">Please wait while we fetch the booking data...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="text-xl text-red-600">{error}</div>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center p-4">
+        <div className="max-w-md w-full">
+          <div className="card-glass p-8 text-center animate-fade-in-up">
+            <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
+              <XMarkIcon className="w-8 h-8 text-red-400" />
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">Error Loading Bookings</h3>
+            <p className="text-neutral-300 mb-6">{error}</p>
+            <button
+              onClick={() => {
+                fetchBookings();
+                fetchSamuhLaganRequests();
+                fetchStudentAwardRequests();
+                fetchTeamRegistrationRequests();
+              }}
+              className="btn-primary w-full"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
+    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
       {notification && (
         <Notification
           message={notification.message}
@@ -1079,212 +1055,323 @@ const BookingManagement = () => {
         />
       )}
 
-      <div className="border-b pb-6">
-        <div className="flex justify-between items-center">
-          <h2 className="text-xl font-semibold">Booking Management</h2>
-          <div className="flex items-center space-x-4">
-            <div className="text-sm text-gray-500">
-              <div className="flex items-center">
+      {/* Main Content Container */}
+      <div className="card-glass animate-fade-in-up">
+        {/* Header Section - Responsive */}
+        <div className="border-b border-white/10 pb-6 mb-6">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
+            {/* Title and Stats */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                  <DocumentIcon className="w-6 h-6 text-white" />
+                </div>
+                <h2 className="text-xl sm:text-2xl font-bold text-white">Booking Management</h2>
+              </div>
+              
+              {/* Stats Display */}
+              <div className="glass-effect px-4 py-2 rounded-lg border border-white/10">
                 <div className="text-center">
-                  <div className="font-medium">
+                  <div className="text-sm font-medium text-neutral-300">
                     {activeCategory === 'all' ? 'Event Bookings' :
                      activeCategory === 'samuh-lagan' ? 'Samuh Lagan' :
                      activeCategory === 'student-award' ? 'Student Award' :
                      'Team Registration'}
                   </div>
-                  <div className="text-purple-600">
-                    {activeCategory === 'all' ? bookings.length :
-                     activeCategory === 'samuh-lagan' ? samuhLaganRequests.length :
-                     activeCategory === 'student-award' ? studentAwardRequests.length :
-                     teamRegistrationRequests.length}
+                  <div className="text-lg font-bold text-electric-400">
+                    {activeCategory === 'all' ? safeBookings.length :
+                     activeCategory === 'samuh-lagan' ? (Array.isArray(samuhLaganRequests) ? samuhLaganRequests.length : 0) :
+                     activeCategory === 'student-award' ? (Array.isArray(studentAwardRequests) ? studentAwardRequests.length : 0) :
+                     (Array.isArray(teamRegistrationRequests) ? teamRegistrationRequests.length : 0)}
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex space-x-2">
+
+            {/* Action Buttons - Responsive */}
+            <div className="flex flex-wrap gap-2 justify-center lg:justify-end">
               <button
                 onClick={() => generateSectionPDF('Event Bookings')}
-                className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                className="btn-secondary flex items-center space-x-2 text-xs sm:text-sm"
                 title="Download Event Bookings"
               >
-                <ArrowDownTrayIcon className="h-4 w-4 mr-1" />
-                Event
+                <ArrowDownTrayIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Event</span>
+                <span className="sm:hidden">E</span>
               </button>
               <button
                 onClick={() => generateSectionPDF('Samuh Lagan')}
-                className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                className="btn-secondary flex items-center space-x-2 text-xs sm:text-sm"
                 title="Download Samuh Lagan"
               >
-                <ArrowDownTrayIcon className="h-4 w-4 mr-1" />
-                Samuh
+                <ArrowDownTrayIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Samuh</span>
+                <span className="sm:hidden">S</span>
               </button>
               <button
                 onClick={() => generateSectionPDF('Student Award')}
-                className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                className="btn-secondary flex items-center space-x-2 text-xs sm:text-sm"
                 title="Download Student Award"
               >
-                <ArrowDownTrayIcon className="h-4 w-4 mr-1" />
-                Award
+                <ArrowDownTrayIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Award</span>
+                <span className="sm:hidden">A</span>
               </button>
               <button
                 onClick={() => generateSectionPDF('Team Registration')}
-                className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                className="btn-secondary flex items-center space-x-2 text-xs sm:text-sm"
                 title="Download Team Registration"
               >
-                <ArrowDownTrayIcon className="h-4 w-4 mr-1" />
-                Team
+                <ArrowDownTrayIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Team</span>
+                <span className="sm:hidden">T</span>
               </button>
               <button
                 onClick={generatePDF}
-                className="inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                className="btn-primary flex items-center space-x-2 text-xs sm:text-sm"
                 title="Download All Reports"
               >
-                <ArrowDownTrayIcon className="h-4 w-4 mr-1" />
-                All
+                <ArrowDownTrayIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">All</span>
+                <span className="sm:hidden">All</span>
+              </button>
+            </div>
+          </div>
+          
+          {/* Category Tabs - Responsive */}
+          <div className="mt-6">
+            <div className="flex flex-wrap gap-2 sm:gap-4">
+              <button
+                onClick={() => setActiveCategory('all')}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  activeCategory === 'all' 
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                <span className="hidden sm:inline">Event Bookings</span>
+                <span className="sm:hidden">Events</span>
+              </button>
+              <button
+                onClick={() => setActiveCategory('samuh-lagan')}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  activeCategory === 'samuh-lagan' 
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                <span className="hidden sm:inline">Samuh Lagan</span>
+                <span className="sm:hidden">Samuh</span>
+              </button>
+              <button
+                onClick={() => setActiveCategory('student-award')}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  activeCategory === 'student-award' 
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                <span className="hidden sm:inline">Student Award</span>
+                <span className="sm:hidden">Awards</span>
+              </button>
+              <button
+                onClick={() => setActiveCategory('team-registration')}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  activeCategory === 'team-registration' 
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                <span className="hidden sm:inline">Team Registration</span>
+                <span className="sm:hidden">Teams</span>
               </button>
             </div>
           </div>
         </div>
-        
-        {/* Category Tabs */}
-        <div className="mt-4 flex space-x-4">
-          <button
-            onClick={() => setActiveCategory('all')}
-            className={`px-4 py-2 rounded-lg ${
-              activeCategory === 'all' 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Event Bookings
-          </button>
-          <button
-            onClick={() => setActiveCategory('samuh-lagan')}
-            className={`px-4 py-2 rounded-lg ${
-              activeCategory === 'samuh-lagan' 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Samuh Lagan
-          </button>
-          <button
-            onClick={() => setActiveCategory('student-award')}
-            className={`px-4 py-2 rounded-lg ${
-              activeCategory === 'student-award' 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Student Award
-          </button>
-          <button
-            onClick={() => setActiveCategory('team-registration')}
-            className={`px-4 py-2 rounded-lg ${
-              activeCategory === 'team-registration' 
-                ? 'bg-purple-600 text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-          >
-            Team Registration
-          </button>
-        </div>
-      </div>
 
       {activeCategory === 'student-award' ? (
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-full">
-            <thead>
-              <tr className="text-left border-b">
-                <th className="py-4 px-2">Student Name</th>
-                <th className="py-4 px-2">School</th>
-                <th className="py-4 px-2">Percentage</th>
-                <th className="py-4 px-2">Rank</th>
-                <th className="py-4 px-2">Status</th>
-                <th className="py-4 px-2">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {studentAwardRequests.map((request) => (
-                <tr key={request._id} className="border-b hover:bg-gray-50">
-                  <td className="py-4 px-2">{request.name}</td>
-                  <td className="py-4 px-2">{request.schoolName}</td>
-                  <td className="py-4 px-2">{request.totalPercentage}%</td>
-                  <td className="py-4 px-2">{request.rank}</td>
-                  <td className="py-4 px-2">
-                    <span className={`px-2 py-1 rounded-full text-sm ${
-                      request.status === 'approved' ? 'bg-green-100 text-green-800' :
-                      request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      request.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-800'
+        <div className="space-y-4">
+          {/* Mobile Card View */}
+          <div className="block sm:hidden space-y-4">
+            {(Array.isArray(studentAwardRequests) ? studentAwardRequests : []).map((request) => (
+              <div key={request._id} className="card-hover p-4">
+                <div className="flex flex-col space-y-3">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="font-semibold text-white">{request.name}</h3>
+                      <p className="text-sm text-neutral-300">{request.schoolName}</p>
+                    </div>
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                      request.status === 'approved' ? 'bg-accent-500/20 text-accent-400 border border-accent-500/30' :
+                      request.status === 'pending' ? 'bg-secondary-500/20 text-secondary-400 border border-secondary-500/30' :
+                      request.status === 'rejected' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
+                      'bg-neutral-500/20 text-neutral-400 border border-neutral-500/30'
                     }`}>
                       {request.status}
                     </span>
-                  </td>
-                  <td className="py-4 px-2">
-                    <div className="flex space-x-2">
-                      {request.status === 'pending' && (
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-4 text-sm">
+                    <div>
+                      <span className="text-neutral-400">Percentage:</span>
+                      <span className="text-white ml-2">{request.totalPercentage}%</span>
+                    </div>
+                    <div>
+                      <span className="text-neutral-400">Rank:</span>
+                      <span className="text-white ml-2">{request.rank}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-2 pt-2">
+                    {request.status === 'pending' && (
+                      <>
+                        <button 
+                          onClick={() => handleApproveStudentAward(request._id)} 
+                          className="btn-accent flex-1 min-w-[100px] text-xs"
+                          title="Approve Request"
+                          disabled={loadingActions.approve[request._id]}
+                        >
+                          {loadingActions.approve[request._id] ? (
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          ) : (
+                            <>
+                              <CheckIcon className="h-4 w-4 mr-1" />
+                              Approve
+                            </>
+                          )}
+                        </button>
+                        <button 
+                          onClick={() => handleRejectStudentAward(request._id)} 
+                          className="btn-danger flex-1 min-w-[100px] text-xs"
+                          title="Reject Request"
+                          disabled={loadingActions.reject[request._id]}
+                        >
+                          {loadingActions.reject[request._id] ? (
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                          ) : (
+                            <>
+                              <XMarkIcon className="h-4 w-4 mr-1" />
+                              Reject
+                            </>
+                          )}
+                        </button>
+                      </>
+                    )}
+                    <button 
+                      onClick={() => handleViewBooking(request)} 
+                      className="btn-secondary flex-1 min-w-[100px] text-xs"
+                      title="View Details"
+                    >
+                      <EyeIcon className="h-4 w-4 mr-1" />
+                      View
+                    </button>
+                    <button
+                      onClick={() => handleDelete(request._id, 'studentAward')}
+                      className="btn-danger flex-1 min-w-[100px] text-xs"
+                      title="Delete Registration"
+                      disabled={loadingActions.delete[request._id]}
+                    >
+                      {loadingActions.delete[request._id] ? (
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                      ) : (
                         <>
-                          <button 
-                            onClick={() => handleApproveStudentAward(request._id)} 
-                            className="p-2 text-green-600 hover:bg-green-50 rounded"
-                            title="Approve Request"
-                            disabled={loadingActions.approve[request._id]}
-                          >
-                            {loadingActions.approve[request._id] ? (
-                              <svg className="animate-spin h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                            ) : (
-                              <CheckIcon className="h-5 w-5" />
-                            )}
-                          </button>
-                          <button 
-                            onClick={() => handleRejectStudentAward(request._id)} 
-                            className="p-2 text-red-600 hover:bg-red-50 rounded"
-                            title="Reject Request"
-                            disabled={loadingActions.reject[request._id]}
-                          >
-                            {loadingActions.reject[request._id] ? (
-                              <svg className="animate-spin h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                            ) : (
-                              <XMarkIcon className="h-5 w-5" />
-                            )}
-                          </button>
+                          <XMarkIcon className="h-4 w-4 mr-1" />
+                          Delete
                         </>
                       )}
-                      <button 
-                        onClick={() => handleViewBooking(request)} 
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded"
-                        title="View Details"
-                      >
-                        <EyeIcon className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => handleDelete(request._id, 'studentAward')}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded"
-                        title="Delete Registration"
-                        disabled={loadingActions.delete[request._id]}
-                      >
-                        {loadingActions.delete[request._id] ? (
-                          <svg className="animate-spin h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                        ) : (
-                          <XMarkIcon className="h-5 w-5" />
-                        )}
-                      </button>
-                    </div>
-                  </td>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          
+          {/* Desktop Table View */}
+          <div className="hidden sm:block overflow-x-auto">
+            <table className="w-full min-w-full">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">Student Name</th>
+                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">School</th>
+                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">Percentage</th>
+                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">Rank</th>
+                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">Status</th>
+                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {(Array.isArray(studentAwardRequests) ? studentAwardRequests : []).map((request) => (
+                  <tr key={request._id} className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200">
+                    <td className="py-4 px-4 text-white">{request.name}</td>
+                    <td className="py-4 px-4 text-neutral-300">{request.schoolName}</td>
+                    <td className="py-4 px-4 text-neutral-300">{request.totalPercentage}%</td>
+                    <td className="py-4 px-4 text-neutral-300">{request.rank}</td>
+                    <td className="py-4 px-4">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        request.status === 'approved' ? 'bg-accent-500/20 text-accent-400 border border-accent-500/30' :
+                        request.status === 'pending' ? 'bg-secondary-500/20 text-secondary-400 border border-secondary-500/30' :
+                        request.status === 'rejected' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
+                        'bg-neutral-500/20 text-neutral-400 border border-neutral-500/30'
+                      }`}>
+                        {request.status}
+                      </span>
+                    </td>
+                    <td className="py-4 px-4">
+                      <div className="flex space-x-2">
+                        {request.status === 'pending' && (
+                          <>
+                            <button 
+                              onClick={() => handleApproveStudentAward(request._id)} 
+                              className="p-2 text-accent-400 hover:bg-accent-500/20 rounded-lg transition-colors duration-200"
+                              title="Approve Request"
+                              disabled={loadingActions.approve[request._id]}
+                            >
+                              {loadingActions.approve[request._id] ? (
+                                <div className="w-5 h-5 border-2 border-accent-400/30 border-t-accent-400 rounded-full animate-spin" />
+                              ) : (
+                                <CheckIcon className="h-5 w-5" />
+                              )}
+                            </button>
+                            <button 
+                              onClick={() => handleRejectStudentAward(request._id)} 
+                              className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors duration-200"
+                              title="Reject Request"
+                              disabled={loadingActions.reject[request._id]}
+                            >
+                              {loadingActions.reject[request._id] ? (
+                                <div className="w-5 h-5 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
+                              ) : (
+                                <XMarkIcon className="h-5 w-5" />
+                              )}
+                            </button>
+                          </>
+                        )}
+                        <button 
+                          onClick={() => handleViewBooking(request)} 
+                          className="p-2 text-electric-400 hover:bg-electric-500/20 rounded-lg transition-colors duration-200"
+                          title="View Details"
+                        >
+                          <EyeIcon className="h-5 w-5" />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(request._id, 'studentAward')}
+                          className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors duration-200"
+                          title="Delete Registration"
+                          disabled={loadingActions.delete[request._id]}
+                        >
+                          {loadingActions.delete[request._id] ? (
+                            <div className="w-5 h-5 border-2 border-red-400/30 border-t-red-400 rounded-full animate-spin" />
+                          ) : (
+                            <XMarkIcon className="h-5 w-5" />
+                          )}
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       ) : activeCategory === 'samuh-lagan' ? (
         <div className="overflow-x-auto">
@@ -2451,27 +2538,34 @@ const BookingManagement = () => {
           </div>
         </div>
       )}
+      
+      {/* Closing divs for main content container and main wrapper */}
+      </div>
     </div>
   );
 };
 
 const DeleteConfirmationModal = ({ onClose, onConfirm }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div className="bg-white rounded-lg p-6 max-w-md w-full mx-4">
-      <h3 className="text-lg font-medium mb-4">Confirm Deletion</h3>
-      <p className="text-gray-600 mb-6">
-        Are you sure you want to delete this registration? This action cannot be undone.
-      </p>
-      <div className="flex justify-end space-x-4">
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div className="glass-effect border border-white/10 rounded-xl shadow-2xl max-w-md w-full mx-4 animate-fade-in-up">
+      <div className="px-6 py-4 border-b border-white/10">
+        <h3 className="text-lg font-semibold text-white">Confirm Deletion</h3>
+      </div>
+      <div className="px-6 py-4">
+        <p className="text-neutral-300">
+          Are you sure you want to delete this registration? This action cannot be undone.
+        </p>
+      </div>
+      <div className="px-6 py-4 flex justify-end space-x-3 border-t border-white/10">
         <button
           onClick={onClose}
-          className="px-4 py-2 text-gray-600 hover:text-gray-800"
+          className="btn-secondary"
         >
           Cancel
         </button>
         <button
           onClick={onConfirm}
-          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+          className="btn-danger"
         >
           Delete
         </button>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { AdminLayoutProvider, useAdminLayout } from "./contexts/AdminLayoutContext";
 import Footer from "./components/user/Footer";
 import Auth from "./pages/Auth";
 import Home from "./pages/Home";
@@ -21,8 +22,8 @@ import BookingManagement from "./pages/adminpanel/BookingManagement";
 import ContentManagement from "./pages/adminpanel/ContentManagement";
 import LiveStreams from "./pages/adminpanel/LiveStreams";
 import Reports from "./pages/adminpanel/Reports";
-import AdminHeader from "./components/admin/AdminHeader";
-import AdminSidebar from "./components/admin/AdminSidebar"; 
+import AdminSidebar from "./components/admin/AdminSidebar";
+import AdminPageContainer from "./components/admin/AdminPageContainer"; 
 import Header from "./components/user/Header";
 import ProfileSettings from './pages/ProfileSettings';
 import RecentBookings from './pages/RecentBookings';
@@ -205,11 +206,10 @@ function AppContent() {
       
       {isAdminRoute ? (
         user?.role === "admin" ? (
-          <div className="flex">
-            <AdminSidebar />
-            <div className="flex-grow">
-              <AdminHeader />
-              <main className="p-6">
+          <AdminLayoutProvider>
+            <div className="flex min-h-screen bg-gradient-mesh">
+              <AdminSidebar />
+              <AdminPageContainer>
                 <Routes>
                   <Route path="/admin/dashboard" element={<Dashboard />} />
                   <Route path="/admin/content-management" element={<ContentManagement />} />
@@ -222,9 +222,9 @@ function AppContent() {
                   <Route path="/admin/booked-dates" element={<BookedDatesCalendar />} />
                   <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
                 </Routes>
-              </main>
+              </AdminPageContainer>
             </div>
-          </div>
+          </AdminLayoutProvider>
         ) : (
           <Navigate to="/auth" />
         )

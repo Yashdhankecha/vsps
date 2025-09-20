@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosConfig';
 import { 
   CheckCircleIcon, 
   XCircleIcon, 
@@ -12,9 +12,6 @@ import {
   CheckCircleIcon as CheckCircleIconSolid,
   XCircleIcon as XCircleIconSolid
 } from '@heroicons/react/24/solid';
-
-axios.defaults.headers.common['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
-axios.defaults.baseURL = 'http://localhost:3000';
 
 const Notification = ({ message, type, onClose }) => {
   const Icon = type === 'success' ? CheckCircleIconSolid : XCircleIconSolid;
@@ -129,7 +126,7 @@ const ContactManagement = () => {
   const fetchContacts = async () => {
     setLoading(true);
     try {
-      const res = await axios.get('/api/contacts');
+      const res = await axiosInstance.get('/api/contacts');
       setContacts(res.data || []);
     } catch (err) {
       setNotification({ message: 'Failed to fetch contacts', type: 'error' });
@@ -145,7 +142,7 @@ const ContactManagement = () => {
 
   const handleSendReply = async (reply) => {
     try {
-      await axios.post(`/api/contacts/${selectedContact._id}/reply`, { reply });
+      await axiosInstance.post(`/api/contacts/${selectedContact._id}/reply`, { reply });
       setNotification({ message: 'Reply sent successfully', type: 'success' });
       setReplyModalOpen(false);
       fetchContacts();

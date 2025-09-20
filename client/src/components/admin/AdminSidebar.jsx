@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAdminLayout } from '../../contexts/AdminLayoutContext';
 import { 
   HomeIcon, 
   PhotoIcon, 
@@ -25,7 +26,7 @@ import {
 } from '@heroicons/react/24/solid';
 
 const Sidebar = () => {
-  const [expanded, setExpanded] = useState(true);
+  const { sidebarExpanded, toggleSidebar } = useAdminLayout();
   const location = useLocation();
 
   const menuItems = [
@@ -111,13 +112,13 @@ const Sidebar = () => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <div className={`${expanded ? 'w-72' : 'w-20'} transition-all duration-300 ease-in-out glass-effect border-r border-white/10 h-screen flex flex-col backdrop-blur-xl fixed left-0 top-0 z-50`}>
+    <div className={`${sidebarExpanded ? 'w-72' : 'w-20'} transition-all duration-300 ease-in-out glass-effect border-r border-white/10 h-screen flex flex-col backdrop-blur-xl fixed left-0 top-0 z-50 animate-fade-in-right`}>
       {/* Toggle Button */}
       <button
-        onClick={() => setExpanded(!expanded)}
+        onClick={toggleSidebar}
         className="absolute -right-3 top-8 w-6 h-6 glass-effect border border-white/20 rounded-full flex items-center justify-center text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-200 shadow-lg z-10"
       >
-        {expanded ? <ChevronLeftIcon className="w-4 h-4" /> : <ChevronRightIcon className="w-4 h-4" />}
+        {sidebarExpanded ? <ChevronLeftIcon className="w-4 h-4" /> : <ChevronRightIcon className="w-4 h-4" />}
       </button>
 
       {/* Header */}
@@ -126,7 +127,7 @@ const Sidebar = () => {
           <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg">
             <ShieldCheckIcon className="w-6 h-6 text-white" />
           </div>
-          {expanded && (
+          {sidebarExpanded && (
             <div className="animate-fade-in-right">
               <h2 className="text-xl font-bold text-white">Admin Panel</h2>
               <p className="text-xs text-neutral-300 font-medium">Management Dashboard</p>
@@ -167,7 +168,7 @@ const Sidebar = () => {
               </div>
               
               {/* Label */}
-              {expanded && (
+              {sidebarExpanded && (
                 <span className="truncate animate-fade-in-right">
                   {item.name}
                 </span>
@@ -185,12 +186,12 @@ const Sidebar = () => {
       {/* Footer */}
       <div className="p-4 border-t border-white/10">
         <div className={`flex items-center space-x-3 p-3 rounded-xl bg-neutral-800/30 border border-white/10 ${
-          expanded ? '' : 'justify-center'
+          sidebarExpanded ? '' : 'justify-center'
         }`}>
           <div className="w-8 h-8 bg-gradient-secondary rounded-lg flex items-center justify-center">
             <CogIcon className="w-4 h-4 text-white" />
           </div>
-          {expanded && (
+          {sidebarExpanded && (
             <div className="animate-fade-in-right">
               <p className="text-sm font-medium text-white">Settings</p>
               <p className="text-xs text-neutral-400">Manage preferences</p>

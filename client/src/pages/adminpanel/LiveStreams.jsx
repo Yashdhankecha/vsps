@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SignalIcon, EyeIcon, PlusIcon } from '@heroicons/react/24/outline';
-import axios from 'axios';
+import axiosInstance from '../../utils/axiosConfig';
 
 const LiveStreams = () => {
   const [streams, setStreams] = useState([]);
@@ -10,8 +10,8 @@ const LiveStreams = () => {
   const fetchStreams = async () => {
     try {
       const [liveResponse, upcomingResponse] = await Promise.all([
-        axios.get(`${import.meta.env.VITE_API_URL}/api/youtube/check-live`),
-        axios.get(`${import.meta.env.VITE_API_URL}/api/youtube/upcoming`)
+        axiosInstance.get('/api/youtube/check-live'),
+        axiosInstance.get('/api/youtube/upcoming')
       ]);
 
       const allStreams = [
@@ -38,57 +38,84 @@ const LiveStreams = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+        <div className="text-center">
+          <div className="relative mb-6">
+            <div className="w-20 h-20 mx-auto">
+              <div className="absolute inset-0 rounded-full border-4 border-neutral-600/30 animate-pulse"></div>
+              <div className="absolute inset-0 rounded-full border-4 border-t-electric-500 animate-spin"></div>
+            </div>
+          </div>
+          <div className="space-y-3">
+            <h3 className="text-xl font-bold text-white">Loading Streams</h3>
+            <p className="text-neutral-300">Please wait while we fetch live stream data...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-center py-12">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 max-w-md mx-auto">
-          <p className="text-red-600 font-medium mb-2">Error Loading Streams</p>
-          <p className="text-red-500 text-sm mb-4">{error}</p>
-          {error.includes('YouTube API configuration missing') && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded p-3 mb-4">
-              <p className="text-yellow-700 text-sm">
-                Please configure YouTube API credentials in the server's .env file:
-              </p>
-              <pre className="text-xs mt-2 bg-yellow-100 p-2 rounded">
-                YOUTUBE_API_KEY=your_api_key_here<br/>
-                YOUTUBE_CHANNEL_ID=your_channel_id_here
-              </pre>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+        <div className="max-w-md w-full">
+          <div className="glass-effect p-8 text-center animate-fade-in-up border border-white/10">
+            <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
+              <SignalIcon className="w-8 h-8 text-red-400" />
             </div>
-          )}
-          <button
-            onClick={fetchStreams}
-            className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
-          >
-            Retry
-          </button>
+            <h3 className="text-xl font-bold text-white mb-2">Error Loading Streams</h3>
+            <p className="text-neutral-300 mb-6">{error}</p>
+            {error.includes('YouTube API configuration missing') && (
+              <div className="bg-sunset-500/10 border border-sunset-500/30 rounded-xl p-4 mb-6">
+                <p className="text-sunset-300 text-sm mb-3">
+                  Please configure YouTube API credentials in the server's .env file:
+                </p>
+                <pre className="text-xs bg-neutral-800/50 p-3 rounded-lg text-neutral-300 overflow-x-auto">
+                  YOUTUBE_API_KEY=your_api_key_here<br/>
+                  YOUTUBE_CHANNEL_ID=your_channel_id_here
+                </pre>
+              </div>
+            )}
+            <button
+              onClick={fetchStreams}
+              className="btn-primary w-full"
+            >
+              Try Again
+            </button>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Live Streams</h2>
+    <div className="min-h-screen bg-gradient-mesh p-6">
+      {/* Header Section */}
+      <div className="mb-8 animate-fade-in-up">
+        <div className="flex items-center space-x-3 mb-2">
+          <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg">
+            <SignalIcon className="w-6 h-6 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-white">Live Streams</h1>
+        </div>
+        <p className="text-neutral-300 text-lg">Manage and monitor your live streaming content</p>
+      </div>
+
+      <div className="glass-effect rounded-xl shadow-lg p-6 border border-white/10 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
+          <h2 className="text-xl font-semibold text-white">Stream Management</h2>
           <button
             onClick={() => window.open('https://studio.youtube.com/channel/upload', '_blank')}
-            className="flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+            className="btn-primary flex items-center space-x-2 mt-4 lg:mt-0"
           >
-            <PlusIcon className="h-5 w-5 mr-2" />
-            Create Stream
+            <PlusIcon className="h-5 w-5" />
+            <span>Create Stream</span>
           </button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {streams.map((stream) => (
-            <div key={stream.videoId} className="border rounded-lg overflow-hidden">
+            <div key={stream.videoId} className="card-hover overflow-hidden">
               <div className="relative">
                 <img
                   src={stream.thumbnailUrl}
@@ -96,22 +123,24 @@ const LiveStreams = () => {
                   className="w-full h-48 object-cover"
                 />
                 {stream.live && (
-                  <div className="absolute top-4 left-4 flex items-center bg-red-500 text-white px-2 py-1 rounded-full">
+                  <div className="absolute top-4 left-4 flex items-center bg-red-500 text-white px-3 py-1 rounded-full border border-red-400 shadow-lg">
                     <SignalIcon className="h-4 w-4 mr-1" />
-                    <span className="text-sm">Live</span>
+                    <span className="text-sm font-medium">Live</span>
                   </div>
                 )}
               </div>
               <div className="p-4">
-                <h3 className="font-semibold truncate">{stream.title}</h3>
-                <p className="text-gray-500 text-sm mt-1 truncate">{stream.description}</p>
+                <h3 className="font-semibold truncate text-white">{stream.title}</h3>
+                <p className="text-neutral-300 text-sm mt-1 truncate">{stream.description}</p>
                 <div className="mt-4 flex justify-between items-center">
-                  <div className="flex items-center text-gray-500">
+                  <div className="flex items-center text-neutral-400">
                     <EyeIcon className="h-5 w-5 mr-1" />
                     <span>{stream.viewerCount || '0'}</span>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-sm ${
-                    stream.live ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                  <span className={`px-3 py-1 rounded-full text-sm font-medium border ${
+                    stream.live 
+                      ? 'bg-red-500/20 text-red-300 border-red-500/30' 
+                      : 'bg-electric-500/20 text-electric-300 border-electric-500/30'
                   }`}>
                     {stream.live ? 'Live Now' : new Date(stream.scheduledStartTime).toLocaleString()}
                   </span>
@@ -119,13 +148,13 @@ const LiveStreams = () => {
                 <div className="mt-4 flex space-x-2">
                   <button
                     onClick={() => window.open(`https://studio.youtube.com/video/${stream.videoId}/edit`, '_blank')}
-                    className="flex-1 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded"
+                    className="flex-1 btn-secondary text-sm"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => window.open(`https://youtube.com/watch?v=${stream.videoId}`, '_blank')}
-                    className="flex-1 px-3 py-1 text-sm bg-purple-100 hover:bg-purple-200 text-purple-700 rounded"
+                    className="flex-1 btn-accent text-sm"
                   >
                     View
                   </button>
@@ -137,10 +166,13 @@ const LiveStreams = () => {
 
         {streams.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-500">No streams found</p>
+            <div className="w-16 h-16 mx-auto mb-4 bg-neutral-700/30 rounded-full flex items-center justify-center">
+              <SignalIcon className="w-8 h-8 text-neutral-400" />
+            </div>
+            <p className="text-neutral-400 mb-4">No streams found</p>
             <button
               onClick={() => window.open('https://studio.youtube.com/channel/upload', '_blank')}
-              className="mt-4 px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700"
+              className="btn-primary"
             >
               Create Your First Stream
             </button>
