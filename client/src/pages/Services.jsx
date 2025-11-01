@@ -3,7 +3,7 @@ import { FaUtensils, FaChair, FaMusic, FaCamera, FaClipboardList, FaAward, FaUse
 import { useNavigate } from 'react-router-dom';
 import ServiceInquiryForm from '../components/user/ServiceInquiryForm';
 import { useAuth } from '../contexts/AuthContext';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 
 function Services() {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ function Services() {
   useEffect(() => {
     const fetchFormStatus = async () => {
       try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/forms/public/status`);
+        const response = await axios.get('/api/admin/forms/public/status');
         setFormStatus(response.data || {
           samuhLagan: { active: false, isCurrentlyActive: false },
           studentAwards: { active: false, isCurrentlyActive: false },
@@ -45,22 +45,22 @@ function Services() {
   const services = [
     {
       title: 'Catering Services',
-      icon: <FaUtensils className="text-4xl text-purple-600" />,
+      icon: <FaUtensils className="text-4xl text-white" />,
       description: 'Professional catering services for all your events'
     },
     {
       title: 'Venue Setup',
-      icon: <FaChair className="text-4xl text-purple-600" />,
+      icon: <FaChair className="text-4xl text-white" />,
       description: 'Custom venue setup and decoration services'
     },
     {
       title: 'Entertainment',
-      icon: <FaMusic className="text-4xl text-purple-600" />,
+      icon: <FaMusic className="text-4xl text-white" />,
       description: 'Live music and entertainment options'
     },
     {
       title: 'Photography',
-      icon: <FaCamera className="text-4xl text-purple-600" />,
+      icon: <FaCamera className="text-4xl text-white" />,
       description: 'Professional photography and videography services'
     }
   ];
@@ -68,21 +68,21 @@ function Services() {
   const forms = [
     {
       title: 'Samuh Lagan Registration',
-      icon: <FaClipboardList className="text-4xl text-purple-600" />,
+      icon: <FaClipboardList className="text-4xl text-white" />,
       description: 'Register for Samuh Lagan ceremony',
       route: '/samuh-lagan',
       isActive: formStatus.samuhLagan?.isCurrentlyActive || false
     },
     {
       title: 'Student Award Registration',
-      icon: <FaAward className="text-4xl text-purple-600" />,
+      icon: <FaAward className="text-4xl text-white" />,
       description: 'Register for student awards',
       route: '/student-awards',
       isActive: formStatus.studentAwards?.isCurrentlyActive || false
     },
     {
       title: 'Team Registration',
-      icon: <FaUsers className="text-4xl text-purple-600" />,
+      icon: <FaUsers className="text-4xl text-white" />,
       description: 'Register your team for sports tournaments',
       route: '/team-registration',
       isActive: formStatus.teamRegistration?.isCurrentlyActive || false
@@ -91,18 +91,18 @@ function Services() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
         <div className="text-center">
           <div className="relative">
-            <div className="w-20 h-20 border-4 border-purple-200 rounded-full animate-spin"></div>
-            <div className="w-20 h-20 border-4 border-transparent border-t-purple-600 rounded-full animate-spin absolute top-0 left-0"></div>
-            <div className="w-20 h-20 border-4 border-transparent border-r-indigo-600 rounded-full animate-spin absolute top-0 left-0" style={{animationDirection: 'reverse', animationDuration: '1.5s'}}></div>
+            <div className="w-20 h-20 border-4 border-neutral-600/30 rounded-full animate-spin"></div>
+            <div className="w-20 h-20 border-4 border-transparent border-t-electric-500 rounded-full animate-spin absolute top-0 left-0"></div>
+            <div className="w-20 h-20 border-4 border-transparent border-r-neon-500 rounded-full animate-spin absolute top-0 left-0" style={{animationDirection: 'reverse', animationDuration: '1.5s'}}></div>
           </div>
-          <p className="mt-6 text-xl font-semibold text-gray-700 animate-pulse">Loading services...</p>
+          <p className="mt-6 text-xl font-semibold text-white animate-pulse">Loading services...</p>
           <div className="mt-4 flex justify-center space-x-2">
-            <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce"></div>
-            <div className="w-2 h-2 bg-indigo-600 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-            <div className="w-2 h-2 bg-purple-600 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+            <div className="w-2 h-2 bg-electric-500 rounded-full animate-bounce"></div>
+            <div className="w-2 h-2 bg-neon-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
+            <div className="w-2 h-2 bg-secondary-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
           </div>
         </div>
       </div>
@@ -110,13 +110,13 @@ function Services() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-mesh">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 text-white py-20">
-        <div className="absolute inset-0 bg-black/20"></div>
+      <div className="relative bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white py-20">
+        <div className="absolute inset-0 bg-gradient-mesh opacity-20"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm">
+            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-white/10">
               Our Services
             </span>
           </div>
@@ -134,8 +134,8 @@ function Services() {
         {/* Services Grid */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Our Core Services</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Our Core Services</h2>
+            <p className="text-lg text-neutral-300 max-w-3xl mx-auto">
               Professional services tailored to make your event exceptional
             </p>
           </div>
@@ -143,26 +143,26 @@ function Services() {
             {services.map((service, index) => (
               <div
                 key={index}
-                className="group bg-white p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2 border border-gray-100 hover:border-purple-200"
+                className="group glass-effect p-8 rounded-2xl hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2 border border-white/10 hover:border-electric-500/30"
                 onClick={() => handleBookService(service)}
               >
                 <div className="flex flex-col items-center text-center">
-                  <div className="w-20 h-20 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-20 h-20 bg-gradient-electric rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                     {service.icon}
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-4 group-hover:text-purple-600 transition-colors">
+                  <h3 className="text-xl font-bold text-white mb-4 group-hover:text-electric-400 transition-colors">
                     {service.title}
                   </h3>
-                  <p className="text-gray-600 mb-6 leading-relaxed">{service.description}</p>
+                  <p className="text-neutral-300 mb-6 leading-relaxed">{service.description}</p>
                   {!user && (
                     <div className="mt-auto">
-                      <span className="inline-flex items-center px-4 py-2 bg-purple-50 text-purple-600 rounded-full text-sm font-medium">
+                      <span className="inline-flex items-center px-4 py-2 bg-white/10 text-white rounded-full text-sm font-medium border border-white/10">
                         Login required to submit inquiry
                       </span>
                     </div>
                   )}
                   <div className="mt-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="text-purple-600 font-semibold text-sm">Click to inquire →</span>
+                    <span className="text-electric-400 font-semibold text-sm">Click to inquire →</span>
                   </div>
                 </div>
               </div>
@@ -171,10 +171,10 @@ function Services() {
         </div>
 
         {/* Forms Section */}
-        <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl p-8 md:p-12">
+        <div className="glass-effect rounded-3xl p-8 md:p-12 border border-white/10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Registration Forms</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Registration Forms</h2>
+            <p className="text-lg text-neutral-300 max-w-3xl mx-auto">
               Access our specialized registration forms for various events and programs
             </p>
           </div>
@@ -182,29 +182,29 @@ function Services() {
             {forms.map((form, index) => (
               <div
                 key={index}
-                className="group bg-white rounded-2xl shadow-lg p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100"
+                className="group glass-effect rounded-2xl p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/10"
               >
                 <div className="text-center mb-6">
-                  <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-16 h-16 bg-gradient-electric rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                     {form.icon}
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-purple-600 transition-colors">
+                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-electric-400 transition-colors">
                     {form.title}
                   </h3>
-                  <p className="text-gray-600 mb-6 leading-relaxed">{form.description}</p>
+                  <p className="text-neutral-300 mb-6 leading-relaxed">{form.description}</p>
                 </div>
                 <div className="text-center">
                   {form.isActive ? (
                     <button
                       onClick={() => navigate(form.route)}
-                      className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 font-semibold transform hover:scale-105 shadow-lg hover:shadow-xl"
+                      className="w-full bg-gradient-electric text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 font-semibold transform hover:scale-105 shadow-lg"
                     >
                       Open Form
                     </button>
                   ) : (
                     <button
                       disabled
-                      className="w-full bg-gray-200 text-gray-500 px-6 py-3 rounded-xl cursor-not-allowed font-semibold"
+                      className="w-full bg-neutral-700 text-neutral-400 px-6 py-3 rounded-xl cursor-not-allowed font-semibold"
                     >
                       Form Closed
                     </button>

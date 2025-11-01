@@ -8,10 +8,9 @@ import enUS from 'date-fns/locale/en-US';
 import { FaCalendarAlt, FaUserFriends, FaClock, FaEnvelope, FaPhone, FaUser, FaCheckCircle, FaEye, FaTimes, FaMapMarkerAlt, FaChevronDown } from 'react-icons/fa';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import "react-datepicker/dist/react-datepicker.css";
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { useNavigate } from 'react-router-dom';
-
-axios.defaults.baseURL = 'http://localhost:3000';
+import { Button, Input, TextArea } from '../components';
 
 const locales = {
   'en-US': enUS
@@ -74,11 +73,7 @@ function Booking() {
       // Fetch user profile to get email
       const fetchUserProfile = async () => {
         try {
-          const response = await axios.get('/api/users/profile', {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          });
+          const response = await axios.get('/api/users/profile');
           
           if (response.data && response.data.email) {
             setFormData(prev => ({
@@ -122,7 +117,12 @@ function Booking() {
       setError(null);
     } catch (error) {
       console.error('Error fetching bookings:', error);
-      setError('Failed to load bookings. Please try again later.');
+      // Handle 401/403 errors specifically
+      if (error.response?.status === 401 || error.response?.status === 403) {
+        setError('You do not have permission to view bookings. Only committee members can access this.');
+      } else {
+        setError('Failed to load bookings. Please try again later.');
+      }
     }
   };
 
@@ -242,11 +242,7 @@ function Booking() {
 
       console.log('Submitting booking data:', bookingData);
 
-      const response = await axios.post('/api/bookings/submit', bookingData, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+      const response = await axios.post('/api/bookings/submit', bookingData);
       
       if (response.data) {
         setShowSuccessPopup(true);
@@ -321,8 +317,7 @@ function Booking() {
 
         const response = await axios.post('/api/bookings/upload-document', formData, {
           headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`
+            'Content-Type': 'multipart/form-data'
           }
         });
         
@@ -495,17 +490,17 @@ function Booking() {
   // Show loading state while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-mesh">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading booking page...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-electric-500 mx-auto"></div>
+          <p className="mt-4 text-neutral-300">Loading booking page...</p>
         </div>
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-mesh">
       {/* Document Viewer Modal */}
       {showDocumentViewer && selectedDocument && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
@@ -543,19 +538,19 @@ function Booking() {
       {/* Success Popup */}
       {showSuccessPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 transform transition-all">
+          <div className="glass-effect rounded-lg p-8 max-w-md w-full mx-4 transform transition-all">
             <div className="text-center">
-              <FaCheckCircle className="text-green-500 text-5xl mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-gray-900 mb-2">Booking Request Submitted!</h3>
-              <p className="text-gray-600 mb-6">
+              <FaCheckCircle className="text-green-400 text-5xl mx-auto mb-4" />
+              <h3 className="text-2xl font-bold text-white mb-2">Booking Request Submitted!</h3>
+              <p className="text-neutral-300 mb-6">
                 Your booking request has been submitted successfully. We'll review it and get back to you shortly.
               </p>
-              <button
+              <Button
                 onClick={() => setShowSuccessPopup(false)}
-                className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                variant="primary"
               >
                 Close
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -584,29 +579,29 @@ function Booking() {
 
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="bg-white rounded-2xl shadow-lg p-6">
+          <div className="glass-effect rounded-2xl p-6 border border-white/10">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Select Your Date</h3>
+              <h3 className="text-xl font-bold text-white mb-4">Select Your Date</h3>
               <div className="flex flex-wrap gap-4 text-sm">
-                <div className="flex items-center bg-violet-50 px-3 py-2 rounded-lg">
-                  <div className="w-3 h-3 rounded-full bg-violet-600 mr-2"></div>
-                  <span className="font-medium text-violet-900">Available</span>
+                <div className="flex items-center bg-violet-500/20 px-3 py-2 rounded-lg border border-violet-500/30">
+                  <div className="w-3 h-3 rounded-full bg-violet-500 mr-2"></div>
+                  <span className="font-medium text-violet-300">Available</span>
                 </div>
-                <div className="flex items-center bg-red-50 px-3 py-2 rounded-lg">
+                <div className="flex items-center bg-red-500/20 px-3 py-2 rounded-lg border border-red-500/30">
                   <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-                  <span className="font-medium text-red-900">Booked</span>
+                  <span className="font-medium text-red-300">Booked</span>
                 </div>
-                <div className="flex items-center bg-amber-50 px-3 py-2 rounded-lg">
+                <div className="flex items-center bg-amber-500/20 px-3 py-2 rounded-lg border border-amber-500/30">
                   <div className="w-3 h-3 rounded-full bg-amber-500 mr-2"></div>
-                  <span className="font-medium text-amber-900">Pending</span>
+                  <span className="font-medium text-amber-300">Pending</span>
                 </div>
-                <div className="flex items-center bg-gray-50 px-3 py-2 rounded-lg">
-                  <div className="w-3 h-3 rounded-full bg-gray-400 mr-2"></div>
-                  <span className="font-medium text-gray-600">Past Date</span>
+                <div className="flex items-center bg-gray-500/20 px-3 py-2 rounded-lg border border-gray-500/30">
+                  <div className="w-3 h-3 rounded-full bg-gray-500 mr-2"></div>
+                  <span className="font-medium text-gray-300">Past Date</span>
                 </div>
               </div>
-              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-                <p className="text-blue-700 text-sm">
+              <div className="mt-4 p-3 bg-blue-500/20 border border-blue-500/30 rounded-lg">
+                <p className="text-blue-300 text-sm">
                   <strong>Note:</strong> You cannot book dates in the past. Please select a future date.
                 </p>
               </div>
@@ -641,183 +636,158 @@ function Booking() {
           {/* Booking Form Section */}
           <div className="lg:col-span-1">
             {showForm ? (
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <div className="mb-6 p-4 bg-violet-50 rounded-xl border border-violet-200">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              <div className="glass-effect rounded-2xl p-6 border border-white/10">
+                <div className="mb-6 p-4 bg-gradient-electric rounded-xl border border-white/10">
+                  <h2 className="text-2xl font-bold text-white mb-2">
                     Selected Date:
                   </h2>
-                  <div className="text-3xl font-bold text-violet-700">
+                  <div className="text-3xl font-bold text-white">
                     {selectedDate && format(selectedDate, 'MMMM d, yyyy')}
                   </div>
-                  <div className="mt-2 text-sm text-violet-600">
+                  <div className="mt-2 text-lg text-white">
                     {selectedDate && format(selectedDate, 'EEEE')}
                   </div>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        First Name
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <FaUser className="text-gray-400" />
-                        </div>
-                        <input
-                          type="text"
-                          name="firstName"
-                          value={formData.firstName}
-                          onChange={handleChange}
-                          className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                          required
-                        />
-                      </div>
-                      {formErrors.firstName && <p className="text-red-500 text-xs mt-1">{formErrors.firstName}</p>}
+                      <Input
+                        label="First Name"
+                        type="text"
+                        name="firstName"
+                        value={formData.firstName}
+                        onChange={handleChange}
+                        required
+                        error={formErrors.firstName}
+                      />
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">
-                        Surname
-                      </label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                          <FaUser className="text-gray-400" />
-                        </div>
-                        <input
-                          type="text"
-                          name="surname"
-                          value={formData.surname}
-                          onChange={handleChange}
-                          className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                          required
-                        />
-                      </div>
-                      {formErrors.surname && <p className="text-red-500 text-xs mt-1">{formErrors.surname}</p>}
+                      <Input
+                        label="Surname"
+                        type="text"
+                        name="surname"
+                        value={formData.surname}
+                        onChange={handleChange}
+                        required
+                        error={formErrors.surname}
+                      />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-semibold text-neutral-200 mb-2">
                       Email
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaEnvelope className="text-gray-400" />
+                        <FaEnvelope className="text-neutral-400" />
                       </div>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         disabled
-                        className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 cursor-not-allowed"
+                        className="pl-10 w-full px-4 py-3 bg-neutral-900/70 backdrop-blur-sm border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300"
                         required
                       />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaPhone className="text-gray-400" />
-                      </div>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={formData.phone}
-                        onChange={handleChange}
-                        className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                        required
-                      />
-                    </div>
-                    {formErrors.phone && <p className="text-red-500 text-xs mt-1">{formErrors.phone}</p>}
+                    <Input
+                      label="Phone"
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      required
+                      error={formErrors.phone}
+                    />
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-semibold text-neutral-200 mb-2">
                       Village Name (for Samaj Verification)
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaMapMarkerAlt className="text-gray-400" />
+                        <FaMapMarkerAlt className="text-neutral-400" />
                       </div>
                       <select
                         name="villageName"
                         value={formData.villageName}
                         onChange={handleChange}
-                        className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent appearance-none"
+                        className="pl-10 w-full px-4 py-3 bg-neutral-800/50 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                         required
                       >
                         {villageOptions.map((option) => (
-                          <option key={option.value} value={option.value}>
+                          <option key={option.value} value={option.value} className="bg-neutral-800 text-white">
                             {option.label}
                           </option>
                         ))}
                       </select>
                       <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <FaChevronDown className="text-gray-400" />
+                        <FaChevronDown className="text-neutral-400" />
                       </div>
                     </div>
-                    {formErrors.villageName && <p className="text-red-500 text-xs mt-1">{formErrors.villageName}</p>}
-                    <p className="mt-1 text-sm text-gray-500">
+                    {formErrors.villageName && <p className="text-sm text-red-400 mt-1">{formErrors.villageName}</p>}
+                    <p className="mt-1 text-sm text-neutral-400">
                       Select your village to verify Samaj membership and get appropriate pricing.
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-semibold text-neutral-200 mb-2">
                       Event Type
                     </label>
                     <select
                       name="eventType"
                       value={formData.eventType}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-neutral-800/50 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                       required
                     >
-                      <option value="">Select Event Type</option>
-                      <option value="wedding">Wedding</option>
-                      <option value="corporate">Corporate Event</option>
-                      <option value="birthday">Birthday Party</option>
-                      <option value="social">Social Gathering</option>
+                      <option value="" className="bg-neutral-800 text-white">Select Event Type</option>
+                      <option value="wedding" className="bg-neutral-800 text-white">Wedding</option>
+                      <option value="corporate" className="bg-neutral-800 text-white">Corporate Event</option>
+                      <option value="birthday" className="bg-neutral-800 text-white">Birthday Party</option>
+                      <option value="social" className="bg-neutral-800 text-white">Social Gathering</option>
                     </select>
-                    {formErrors.eventType && <p className="text-red-500 text-xs mt-1">{formErrors.eventType}</p>}
+                    {formErrors.eventType && <p className="text-sm text-red-400 mt-1">{formErrors.eventType}</p>}
                   </div>
 
-                  <div className="relative mb-4">
-                    <FaUserFriends className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                    <input
+                  <div>
+                    <Input
+                      label="Number of Guests"
                       type="number"
                       name="guestCount"
                       value={formData.guestCount}
                       onChange={handleChange}
-                      placeholder="Number of Guests (e.g., 150)"
-                      className={`w-full pl-10 pr-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 ${formErrors.guestCount || guestCountError ? 'border-red-500' : 'border-gray-300'}`}
+                      placeholder="e.g., 150"
                       required
                       min="0"
                       max="1000"
+                      error={formErrors.guestCount || guestCountError}
                     />
-                    {(formErrors.guestCount || guestCountError) && <p className="text-red-500 text-sm mt-1">{formErrors.guestCount || guestCountError}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-semibold text-neutral-200 mb-2">
                       Event Documents
                     </label>
                     <div className="mb-2">
-                      <p className="text-sm text-gray-600 mb-2">
+                      <p className="text-sm text-neutral-400 mb-2">
                         Please upload one or more of the following documents:
                       </p>
-                      <ul className="text-sm text-gray-600 list-disc pl-5 mb-3">
+                      <ul className="text-sm text-neutral-400 list-disc pl-5 mb-3">
                         <li>Government-issued ID (Aadhar Card, PAN Card, or Passport)</li>
                         <li>Event invitation or announcement</li>
                         <li>Organization letterhead (for corporate events)</li>
                         <li>Birth certificate (for birthday parties)</li>
                         <li>Marriage certificate (for weddings)</li>
                       </ul>
-                      <p className="text-sm text-gray-600 mb-2">
+                      <p className="text-sm text-neutral-400 mb-2">
                         Accepted formats: PDF, DOC, DOCX (Max size: 5MB per file)
                       </p>
                     </div>
@@ -826,32 +796,32 @@ function Booking() {
                       accept=".pdf,.doc,.docx"
                       onChange={handleFileChange}
                       multiple
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                      className="w-full px-4 py-3 bg-neutral-800/50 backdrop-blur-sm border border-white/20 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-electric file:text-white hover:file:opacity-90 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300"
                       required={formData.eventDocuments.length === 0}
                     />
-                    {formErrors.eventDocuments && <p className="text-red-500 text-xs mt-1">{formErrors.eventDocuments}</p>}
+                    {formErrors.eventDocuments && <p className="text-sm text-red-400 mt-1">{formErrors.eventDocuments}</p>}
                     
                     {formData.eventDocuments.length > 0 && (
                       <div className="mt-4">
-                        <h4 className="text-sm font-medium text-gray-700 mb-2">Uploaded Documents:</h4>
+                        <h4 className="text-sm font-medium text-neutral-200 mb-2">Uploaded Documents:</h4>
                         <ul className="space-y-2">
                           {formData.eventDocuments.map((doc, index) => (
-                            <li key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded-lg">
-                              <span className="text-sm text-gray-700 truncate">
+                            <li key={index} className="flex items-center justify-between glass-effect p-2 rounded-lg border border-white/10">
+                              <span className="text-sm text-neutral-300 truncate">
                                 {doc.split('/').pop()} ({formData.documentTypes[index]})
                               </span>
                               <div className="flex space-x-2">
                                 <button
                                   type="button"
                                   onClick={() => viewDocument(doc, formData.documentTypes[index])}
-                                  className="text-blue-500 hover:text-blue-700 flex items-center"
+                                  className="text-electric-400 hover:text-electric-300 flex items-center"
                                 >
                                   <FaEye className="mr-1" /> View
                                 </button>
                                 <button
                                   type="button"
                                   onClick={() => removeDocument(index)}
-                                  className="text-red-500 hover:text-red-700"
+                                  className="text-red-400 hover:text-red-300"
                                 >
                                   Remove
                                 </button>
@@ -864,26 +834,20 @@ function Booking() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Additional Notes
-                    </label>
-                    <textarea
+                    <TextArea
+                      label="Additional Notes"
                       name="additionalNotes"
                       value={formData.additionalNotes}
                       onChange={handleChange}
                       rows="4"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    ></textarea>
+                    />
                   </div>
 
-                  <button
+                  <Button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`w-full py-3 px-6 rounded-lg text-white transition-colors ${
-                      isSubmitting 
-                        ? 'bg-purple-400 cursor-not-allowed' 
-                        : 'bg-purple-600 hover:bg-purple-700'
-                    }`}
+                    variant="primary"
+                    className="w-full"
                   >
                     {isSubmitting ? (
                       <div className="flex items-center justify-center">
@@ -893,22 +857,22 @@ function Booking() {
                     ) : (
                       'Submit Booking Request'
                     )}
-                  </button>
+                  </Button>
                 </form>
               </div>
             ) : (
-              <div className="bg-white rounded-2xl shadow-lg p-6">
+              <div className="glass-effect rounded-2xl p-6 border border-white/10">
                 <div className="text-center">
-                  <FaCalendarAlt className="text-6xl text-purple-600 mx-auto mb-4" />
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
+                  <FaCalendarAlt className="text-6xl text-electric-400 mx-auto mb-4" />
+                  <h2 className="text-2xl font-bold text-white mb-2">
                     Select a Date
                   </h2>
-                  <p className="text-gray-600">
+                  <p className="text-neutral-300">
                     Click on your preferred date in the calendar to start your booking
                   </p>
                   {!isAuthenticated && (
-                    <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-                      <p className="text-yellow-700 text-sm">
+                    <div className="mt-4 p-3 bg-yellow-500/20 border border-yellow-500/30 rounded-lg">
+                      <p className="text-yellow-300 text-sm">
                         You need to login to book an event. Click on a date to be redirected to the login page.
                       </p>
                     </div>

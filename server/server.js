@@ -20,7 +20,51 @@ const eventCategoryRoutes = require('./routes/eventCategoryRoutes');
 const teamRegistrationRoutes = require('./routes/teamRegistrationRoutes');
 
 dotenv.config();
+
+// Debug logging for email configuration
+console.log('Environment variables check:');
+console.log('EMAIL_USER:', process.env.EMAIL_USER);
+console.log('EMAIL_PASS:', process.env.EMAIL_PASS ? '****' + process.env.EMAIL_PASS.substring(process.env.EMAIL_PASS.length - 4) : 'Not found');
+console.log('EMAIL_FROM:', process.env.EMAIL_FROM);
+
 connectDB();
+
+// Test email configuration on startup
+const testEmailConfig = async () => {
+  console.log('Testing email configuration...');
+  try {
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+      console.warn('Email configuration warning: EMAIL_USER or EMAIL_PASS not set in .env file');
+      return;
+    }
+    
+    const nodemailer = require('nodemailer');
+    const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS,
+      },
+      tls: {
+        rejectUnauthorized: false
+      }
+    });
+    
+    // Verify connection configuration
+    await transporter.verify();
+    console.log('Email configuration: OK');
+  } catch (error) {
+    console.error('Email configuration error:', error.message);
+    console.warn('Email service may not work properly. Please check your email configuration in .env file.');
+    console.warn('For Gmail, you need to use an App Password, not your regular password.');
+    console.warn('Visit: https://myaccount.google.com/apppasswords to generate an App Password');
+  }
+};
+
+// Test email configuration after DB connection
+setTimeout(() => {
+  testEmailConfig();
+}, 2000);
 
 const app = express();
 
@@ -178,8 +222,48 @@ app.use('/api/team-registrations', teamRegistrationRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  console.error('Unhandled error:', err);
+  
+  // Mongoose validation error
+  if (err.name === 'ValidationError') {
+    const errors = Object.values(err.errors).map(e => e.message);
+    return res.status(400).json({
+      success: false,
+      message: 'Validation Error',
+      errors
+    });
+  }
+  
+  // Mongoose duplicate key error
+  if (err.code === 11000) {
+    return res.status(400).json({
+      success: false,
+      message: 'Duplicate field value entered'
+    });
+  }
+  
+  // Mongoose bad ObjectId
+  if (err.name === 'CastError') {
+    return res.status(400).json({
+      success: false,
+      message: 'Resource not found'
+    });
+  }
+  
+  // JWT error
+  if (err.name === 'JsonWebTokenError') {
+    return res.status(401).json({
+      success: false,
+      message: 'Not authorized, token failed'
+    });
+  }
+  
+  res.status(500).json({
+    success: false,
+    message: 'Internal Server Error',
+    // Only show error in development
+    error: process.env.NODE_ENV === 'development' ? err.message : {}
+  });
 });
 
 app.use(express.static(path.join(__dirname, 'public')));

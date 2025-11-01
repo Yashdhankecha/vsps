@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { FaStar, FaCamera } from 'react-icons/fa';
+import { Card, Input, TextArea, Button } from '../components';
 
 function SubmitReview() {
   const [formData, setFormData] = useState({
@@ -37,56 +38,55 @@ function SubmitReview() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gradient-mesh py-12">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Share Your Experience</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <div className="inline-block mb-6">
+            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-white/10">
+              Share Your Experience
+            </span>
+          </div>
+          <h1 className="text-4xl font-bold text-white mb-4">Share Your Experience</h1>
+          <p className="text-lg text-neutral-300 max-w-2xl mx-auto">
             Your feedback helps us improve and helps others make informed decisions. 
             Tell us about your experience at our venue.
           </p>
         </div>
 
         {/* Review Form */}
-        <div className="max-w-2xl mx-auto">
-          <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-8">
+        <Card className="max-w-2xl mx-auto p-8 glass-effect border border-white/10">
+          <form onSubmit={handleSubmit} className="space-y-8">
             {/* Personal Information */}
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
-              <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  required
-                />
-              </div>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  required
-                />
-              </div>
+            <div className="grid md:grid-cols-2 gap-6">
+              <Input
+                label="Full Name"
+                type="text"
+                id="name"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="Enter your full name"
+                variant="dark"
+                required
+              />
+              <Input
+                label="Email Address"
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="Enter your email address"
+                variant="dark"
+                required
+              />
             </div>
 
             {/* Event Details */}
-            <div className="grid md:grid-cols-2 gap-6 mb-8">
+            <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="eventType" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="eventType" className="block text-sm font-semibold text-neutral-200 mb-2">
                   Event Type
                 </label>
                 <select
@@ -94,7 +94,7 @@ function SubmitReview() {
                   name="eventType"
                   value={formData.eventType}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-neutral-800/50 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                   required
                 >
                   <option value="">Select Event Type</option>
@@ -105,7 +105,7 @@ function SubmitReview() {
                 </select>
               </div>
               <div>
-                <label htmlFor="eventDate" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="eventDate" className="block text-sm font-semibold text-neutral-200 mb-2">
                   Event Date
                 </label>
                 <input
@@ -114,15 +114,15 @@ function SubmitReview() {
                   name="eventDate"
                   value={formData.eventDate}
                   onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="w-full px-4 py-3 bg-neutral-800/50 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                   required
                 />
               </div>
             </div>
 
             {/* Rating */}
-            <div className="mb-8">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div>
+              <label className="block text-sm font-semibold text-neutral-200 mb-3">
                 Overall Rating
               </label>
               <div className="flex space-x-2">
@@ -133,13 +133,13 @@ function SubmitReview() {
                     onMouseEnter={() => setHoverRating(star)}
                     onMouseLeave={() => setHoverRating(0)}
                     onClick={() => handleRatingClick(star)}
-                    className="focus:outline-none"
+                    className="focus:outline-none transition-transform duration-200 hover:scale-110"
                   >
                     <FaStar
                       className={`text-3xl ${
                         star <= (hoverRating || formData.rating)
                           ? 'text-yellow-400'
-                          : 'text-gray-300'
+                          : 'text-neutral-500'
                       }`}
                     />
                   </button>
@@ -148,66 +148,59 @@ function SubmitReview() {
             </div>
 
             {/* Review Title */}
-            <div className="mb-8">
-              <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-1">
-                Review Title
-              </label>
-              <input
-                type="text"
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                required
-                placeholder="Sum up your experience in a short title"
-              />
-            </div>
+            <Input
+              label="Review Title"
+              type="text"
+              id="title"
+              name="title"
+              value={formData.title}
+              onChange={handleChange}
+              placeholder="Sum up your experience in a short title"
+              variant="dark"
+              required
+            />
 
             {/* Review Content */}
-            <div className="mb-8">
-              <label htmlFor="review" className="block text-sm font-medium text-gray-700 mb-1">
-                Your Review
-              </label>
-              <textarea
-                id="review"
-                name="review"
-                value={formData.review}
-                onChange={handleChange}
-                rows="6"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                required
-                placeholder="Tell us about your experience..."
-              ></textarea>
-            </div>
+            <TextArea
+              label="Your Review"
+              id="review"
+              name="review"
+              value={formData.review}
+              onChange={handleChange}
+              rows="6"
+              placeholder="Tell us about your experience..."
+              variant="dark"
+              required
+            />
 
             {/* Image Upload */}
-            <div className="mb-8">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+            <div>
+              <label className="block text-sm font-semibold text-neutral-200 mb-3">
                 Add Photos (Optional)
               </label>
-              <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <FaCamera className="text-4xl text-gray-400 mx-auto mb-4" />
-                <p className="text-gray-600 mb-2">Drag and drop your photos here</p>
-                <p className="text-sm text-gray-500">or</p>
-                <button
-                  type="button"
-                  className="mt-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
-                >
+              <div className="border-2 border-dashed border-white/20 rounded-2xl p-8 text-center bg-neutral-800/20 backdrop-blur-xl">
+                <FaCamera className="text-4xl text-neutral-400 mx-auto mb-4" />
+                <p className="text-neutral-300 mb-2">Drag and drop your photos here</p>
+                <p className="text-sm text-neutral-400 mb-4">or</p>
+                <Button variant="ghost">
                   Browse Files
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* Submit Button */}
-            <button
-              type="submit"
-              className="w-full px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-            >
-              Submit Review
-            </button>
+            <div className="text-center pt-4">
+              <Button 
+                type="submit" 
+                variant="primary" 
+                size="lg"
+                className="w-full sm:w-auto"
+              >
+                Submit Review
+              </Button>
+            </div>
           </form>
-        </div>
+        </Card>
       </div>
     </div>
   );

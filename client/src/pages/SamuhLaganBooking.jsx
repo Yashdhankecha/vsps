@@ -18,9 +18,7 @@ import {
 } from '@mui/material';
 import { PhotoCamera, CloudUpload, AccessTime, Person, Email, Phone, Home, Badge, Upload } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
-
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import axios from '../utils/axiosConfig';
 
 
 const colors = {
@@ -501,27 +499,19 @@ const SamuhLaganBooking = ({ formDetails }) => {
         ceremonyDate: formDetails.eventDate
       });
 
-      const response = await fetch(`${API_BASE_URL}/api/bookings/samuh-lagan/submit`, {
-        method: 'POST',
+      const response = await axios.post(`/api/bookings/samuh-lagan/submit`, formDataToSend, {
         headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formDataToSend
+          'Content-Type': 'multipart/form-data'
+        }
       });
 
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.message || 'Failed to submit form');
-      }
-
-      if (data.success) {
+      if (response.data.success) {
         setSubmitSuccess(true);
         setTimeout(() => {
           navigate('/dashboard');
         }, 3000);
       } else {
-        throw new Error(data.message || 'Failed to submit form');
+        throw new Error(response.data.message || 'Failed to submit form');
       }
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -966,7 +956,7 @@ const SamuhLaganBooking = ({ formDetails }) => {
                   >
                     {isSubmitting ? (
                       <>
-                          <CircularProgress size={24} sx={{ mr: 1, color: 'white' }} />
+                        <CircularProgress size={24} sx={{ mr: 1, color: 'white' }} />
                         Submitting...
                       </>
                     ) : (
@@ -975,8 +965,7 @@ const SamuhLaganBooking = ({ formDetails }) => {
                     </StyledButton>
                 </Box>
               </Grid>
-            </Grid>
-          </form>
+            </form>
           )}
         </Suspense>
     </Box>

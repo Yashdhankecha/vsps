@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { FaEnvelope, FaLock, FaUser, FaArrowLeft, FaEye, FaEyeSlash } from 'react-icons/fa';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { useNavigate, Link } from 'react-router-dom';
 import { verifyEmailOTP, resendOTP } from '../api/auth'; // Import the API function
 
@@ -81,7 +81,7 @@ function Auth() {
       return;
     }
   
-    const url = isLogin ? 'http://localhost:3000/api/auth/login' : 'http://localhost:3000/api/auth/register';
+    const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
   
     const data = isLogin
       ? { email: formData.email, password: formData.password }
@@ -91,7 +91,7 @@ function Auth() {
     setError('');
   
     try {
-      const response = await axios.post(url, data);
+      const response = await axios.post(endpoint, data);
   
       if (isLogin) {
         if (response.data.token) {

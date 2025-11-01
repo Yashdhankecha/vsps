@@ -1,19 +1,13 @@
-import axios from 'axios';
-
-// Check your API_BASE_URL - it should NOT include /api/content
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+import axios from '../utils/axiosConfig';
 
 // Helper function for API calls
 const apiRequest = async (method, endpoint, data = null, params = null) => {
   try {
-    const token = localStorage.getItem('token');
-    
     const config = {
       method,
-      url: `${API_BASE_URL}${endpoint}`,
+      url: endpoint,
       headers: {
         'Content-Type': data instanceof FormData ? 'multipart/form-data' : 'application/json',
-        'Authorization': token ? `Bearer ${token}` : '',
       },
       params,
       data,
@@ -31,7 +25,7 @@ const apiRequest = async (method, endpoint, data = null, params = null) => {
 // Home Content
 export const getHomeContent = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/content/home`);
+    const response = await axios.get('/api/content/home');
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -44,7 +38,7 @@ export const updateHomeContent = async (id, data) => {
 
 export const addSlide = async (formData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/api/content/home/slides`, formData, {
+    const response = await axios.post('/api/content/home/slides', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return handleResponse(response);
@@ -55,7 +49,7 @@ export const addSlide = async (formData) => {
 
 export const updateSlide = async (id, formData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/slides/${id}`, formData, {
+    const response = await axios.put(`/api/content/home/slides/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return handleResponse(response);
@@ -66,7 +60,7 @@ export const updateSlide = async (id, formData) => {
 
 export const deleteSlide = async (id) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/api/content/home/slides/${id}`);
+    const response = await axios.delete(`/api/content/home/slides/${id}`);
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -91,10 +85,9 @@ export const updateAboutSection = async (formData) => {
       });
     }
 
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/about`, data, {
+    const response = await axios.put('/api/content/home/about', data, {
       headers: {
-        'Content-Type': 'multipart/form-data',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        'Content-Type': 'multipart/form-data'
       }
     });
 
@@ -111,7 +104,7 @@ export const updateAboutSection = async (formData) => {
 
 export const addLeader = async (formData) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/api/content/home/leadership`, formData, {
+    const response = await axios.post('/api/content/home/leadership', formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return handleResponse(response);
@@ -122,7 +115,7 @@ export const addLeader = async (formData) => {
 
 export const updateLeader = async (id, formData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/leadership/${id}`, formData, {
+    const response = await axios.put(`/api/content/home/leadership/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return handleResponse(response);
@@ -133,7 +126,7 @@ export const updateLeader = async (id, formData) => {
 
 export const deleteLeader = async (id) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/api/content/home/leadership/${id}`);
+    const response = await axios.delete(`/api/content/home/leadership/${id}`);
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -143,7 +136,7 @@ export const deleteLeader = async (id) => {
 // Event Categories
 export const getEventCategories = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/content/events/categories`);
+    const response = await axios.get('/api/content/events/categories');
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -153,12 +146,11 @@ export const getEventCategories = async () => {
 export const createEventCategory = async (formData) => {
   try {
     const response = await axios.post(
-      `${API_BASE_URL}/api/content/events/categories`,
+      '/api/content/events/categories',
       formData,
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'multipart/form-data'
         }
       }
     );
@@ -192,36 +184,25 @@ export const updateEventCategory = async (id, formData) => {
     }
 
     const response = await axios.put(
-      `${API_BASE_URL}/api/content/events/categories/${id}`,
+      `/api/content/events/categories/${id}`,
       data,
       {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
+          'Content-Type': 'multipart/form-data'
         }
       }
     );
-
-    if (!response.data.success) {
-      throw new Error(response.data.message || 'Failed to update event category');
-    }
-
-    return response.data;
+    return handleResponse(response);
   } catch (error) {
     console.error('Error updating event category:', error);
-    throw new Error(error.response?.data?.message || error.message || 'Failed to update event category');
+    return handleError(error);
   }
 };
 
 export const deleteEventCategory = async (id) => {
   try {
     const response = await axios.delete(
-      `${API_BASE_URL}/api/content/events/categories/${id}`,
-      {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      }
+      `/api/content/events/categories/${id}`,
     );
     return handleResponse(response);
   } catch (error) {
@@ -232,7 +213,7 @@ export const deleteEventCategory = async (id) => {
 // Gallery
 export const getGalleryItems = async (type) => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/content/gallery${type ? `?type=${type}` : ''}`);
+    const response = await axios.get(`/api/content/gallery${type ? `?type=${type}` : ''}`);
     return response.data;
   } catch (error) {
     throw new Error(`Failed to fetch gallery items: ${error.message}`);
@@ -247,7 +228,7 @@ export const createGalleryItem = async (formData) => {
       type: formData.get('type')
     });
     
-    const response = await axios.post(`${API_BASE_URL}/api/content/gallery`, formData, {
+    const response = await axios.post(`/api/content/gallery`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -268,7 +249,7 @@ export const createGalleryItem = async (formData) => {
 
 export const updateGalleryItem = async (id, formData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/api/content/gallery/${id}`, formData);
+    const response = await axios.put(`/api/content/gallery/${id}`, formData);
     return response.data;
   } catch (error) {
     throw new Error(`Failed to update gallery item: ${error.message}`);
@@ -277,7 +258,7 @@ export const updateGalleryItem = async (id, formData) => {
 
 export const deleteGalleryItem = async (id) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/api/content/gallery/${id}`);
+    const response = await axios.delete(`/api/content/gallery/${id}`);
     return response.data;
   } catch (error) {
     throw new Error(`Failed to delete gallery item: ${error.message}`);
@@ -327,7 +308,7 @@ const handleError = (error) => {
 // Home Content API
 export const getHomeContentAPI = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/content/home`);
+    const response = await axios.get(`/api/content/home`);
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -346,7 +327,7 @@ export const addSlideAPI = async (slideData) => {
       }
     });
     
-    const response = await axios.post(`${API_BASE_URL}/api/content/home/slides`, formData, {
+    const response = await axios.post(`/api/content/home/slides`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return handleResponse(response);
@@ -366,7 +347,7 @@ export const updateSlideAPI = async (id, slideData) => {
       }
     });
     
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/slides/${id}`, formData, {
+    const response = await axios.put(`/api/content/home/slides/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return handleResponse(response);
@@ -377,7 +358,7 @@ export const updateSlideAPI = async (id, slideData) => {
 
 export const deleteSlideAPI = async (id) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/api/content/home/slides/${id}`);
+    const response = await axios.delete(`/api/content/home/slides/${id}`);
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -396,7 +377,7 @@ export const addLeaderAPI = async (leaderData) => {
       }
     });
     
-    const response = await axios.post(`${API_BASE_URL}/api/content/home/leadership`, formData, {
+    const response = await axios.post(`/api/content/home/leadership`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return handleResponse(response);
@@ -416,7 +397,7 @@ export const updateLeaderAPI = async (id, leaderData) => {
       }
     });
     
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/leadership/${id}`, formData, {
+    const response = await axios.put(`/api/content/home/leadership/${id}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return handleResponse(response);
@@ -427,7 +408,7 @@ export const updateLeaderAPI = async (id, leaderData) => {
 
 export const deleteLeaderAPI = async (id) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/api/content/home/leadership/${id}`);
+    const response = await axios.delete(`/api/content/home/leadership/${id}`);
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -448,7 +429,7 @@ export const updateAboutAPI = async (aboutData) => {
       }
     });
     
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/about`, formData, {
+    const response = await axios.put(`/api/content/home/about`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return handleResponse(response);
@@ -460,7 +441,7 @@ export const updateAboutAPI = async (aboutData) => {
 // Stats API
 export const updateStatsAPI = async (statsData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/stats`, { stats: statsData });
+    const response = await axios.put(`/api/content/home/stats`, { stats: statsData });
     return handleResponse(response);
   } catch (error) {
     return handleError(error);
@@ -469,11 +450,7 @@ export const updateStatsAPI = async (statsData) => {
 
 export const updateStats = async (stats) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/stats`, { stats }, {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    });
+    const response = await axios.put(`/api/content/home/stats`, { stats });
     return handleResponse(response);
   } catch (error) {
     console.error('Error updating stats:', error);
@@ -484,7 +461,7 @@ export const updateStats = async (stats) => {
 // New Home Content API calls
 export const getHomeContentNew = async () => {
   try {
-    const response = await axios.get(`${API_BASE_URL}/api/content/home`);
+    const response = await axios.get(`/api/content/home`);
     return response.data;
   } catch (error) {
     console.error('Error fetching home content:', error);
@@ -494,7 +471,7 @@ export const getHomeContentNew = async () => {
 
 export const updateHomeContentNew = async (contentId, content) => {
   try {
-    const response = await axios.post(`${API_BASE_URL}/api/content/home/${contentId}`, content);
+    const response = await axios.post(`/api/content/home/${contentId}`, content);
     return response.data;
   } catch (error) {
     console.error('Error updating home content:', error);
@@ -514,7 +491,7 @@ export const addSlideNew = async (slideData) => {
       }
     });
     
-    const response = await axios.post(`${API_BASE_URL}/api/content/home/slides`, formData, {
+    const response = await axios.post(`/api/content/home/slides`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
@@ -535,7 +512,7 @@ export const updateSlideNew = async (slideId, slideData) => {
       }
     });
     
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/slides/${slideId}`, formData, {
+    const response = await axios.put(`/api/content/home/slides/${slideId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
@@ -547,7 +524,7 @@ export const updateSlideNew = async (slideId, slideData) => {
 
 export const deleteSlideNew = async (slideId) => {
   try {
-    const response = await axios.delete(`${API_BASE_URL}/api/content/home/slides/${slideId}`);
+    const response = await axios.delete(`/api/content/home/slides/${slideId}`);
     return response.data;
   } catch (error) {
     console.error('Error deleting slide:', error);
@@ -558,7 +535,7 @@ export const deleteSlideNew = async (slideId) => {
 // Introduction Section API calls
 export const updateIntroduction = async (contentId, introductionData) => {
   try {
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/introduction/${contentId}`, introductionData);
+    const response = await axios.put(`/api/content/home/introduction/${contentId}`, introductionData);
     return response.data;
   } catch (error) {
     console.error('Error updating introduction:', error);
@@ -578,7 +555,7 @@ export const updateAboutNew = async (contentId, aboutData) => {
       }
     });
     
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/about/${contentId}`, formData, {
+    const response = await axios.put(`/api/content/home/about/${contentId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;
@@ -602,7 +579,7 @@ export const updateLeadership = async (contentId, leadershipData) => {
       }
     });
     
-    const response = await axios.put(`${API_BASE_URL}/api/content/home/leadership/${contentId}`, formData, {
+    const response = await axios.put(`/api/content/home/leadership/${contentId}`, formData, {
       headers: { 'Content-Type': 'multipart/form-data' }
     });
     return response.data;

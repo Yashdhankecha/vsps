@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import EventInquiryForm from '../components/user/EventInquiryForm';
 import axiosInstance from '../utils/axiosConfig';
 import { toast } from 'react-hot-toast';
+import { Button, Card } from '../components';
 
 function EventCategories() {
   const navigate = useNavigate();
@@ -126,35 +127,36 @@ function EventCategories() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen bg-gradient-mesh py-12 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gradient-mesh py-12">
         <div className="container mx-auto px-4">
           <div className="text-center">
-            <div className="bg-red-50 border border-red-200 rounded-lg p-6 max-w-md mx-auto">
-              <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-100 rounded-full">
-                <svg className="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <Card className="max-w-md mx-auto p-6">
+              <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-red-500/20 rounded-full border border-red-500/30">
+                <svg className="w-6 h-6 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
               </div>
-              <h1 className="text-xl font-bold text-red-600 mb-2">Unable to Load Categories</h1>
-              <p className="text-gray-600 mb-4">{error}</p>
+              <h1 className="text-xl font-bold text-red-400 mb-2">Unable to Load Categories</h1>
+              <p className="text-neutral-300 mb-4">{error}</p>
               <div className="space-y-2">
-                <button
+                <Button
                   onClick={fetchCategories}
-                  className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  variant="primary"
+                  className="w-full"
                 >
                   Try Again
-                </button>
-                <p className="text-sm text-gray-500">Check if backend server is running on port 3000</p>
+                </Button>
+                <p className="text-sm text-neutral-400">Check if backend server is running on port 3000</p>
               </div>
-            </div>
+            </Card>
           </div>
         </div>
       </div>
@@ -162,22 +164,22 @@ function EventCategories() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gradient-mesh py-12">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Event Categories</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-white mb-4">Event Categories</h1>
+          <p className="text-lg text-neutral-300 max-w-2xl mx-auto">
             Explore our versatile venue options for different types of events. 
             Select a category to learn more about our specialized services.
           </p>
-          <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-500">
+          <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-neutral-400">
             <span>Last updated: {lastUpdate ? new Date(lastUpdate).toLocaleString() : 'Never'}</span>
             <button
               onClick={() => {
                 fetchCategories();
                 toast.success('Categories refreshed');
               }}
-              className="ml-2 p-2 text-purple-600 hover:text-purple-700 focus:outline-none"
+              className="ml-2 p-2 text-electric-400 hover:text-electric-300 focus:outline-none"
               title="Refresh categories"
             >
               <svg
@@ -201,76 +203,75 @@ function EventCategories() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
           {categories.length === 0 ? (
             <div className="col-span-full text-center py-12">
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-6 max-w-md mx-auto">
-                <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-yellow-100 rounded-full">
-                  <svg className="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <Card className="max-w-md mx-auto p-6">
+                <div className="flex items-center justify-center w-12 h-12 mx-auto mb-4 bg-yellow-500/20 rounded-full border border-yellow-500/30">
+                  <svg className="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-yellow-800 mb-2">No Categories Available</h3>
-                <p className="text-yellow-700 mb-4">There are currently no event categories configured.</p>
-                <button
+                <h3 className="text-lg font-medium text-yellow-300 mb-2">No Categories Available</h3>
+                <p className="text-neutral-300 mb-4">There are currently no event categories configured.</p>
+                <Button
                   onClick={fetchCategories}
-                  className="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors"
+                  variant="primary"
                 >
                   Refresh
-                </button>
-              </div>
+                </Button>
+              </Card>
             </div>
           ) : (
             categories.map((category) => {
               const IconComponent = iconMap[category.icon] || FaHeart;
               return (
-                <div
+                <Card 
                   key={category._id}
-                  className={`bg-white rounded-xl shadow-md overflow-hidden cursor-pointer transform transition-all duration-300 hover:shadow-xl ${
-                    selectedCategory?._id === category._id ? 'ring-2 ring-purple-500' : ''
+                  className={`p-6 cursor-pointer transform transition-all duration-300 hover:shadow-xl ${
+                    selectedCategory?._id === category._id ? 'ring-2 ring-electric-500 border-electric-500' : 'border-white/10'
                   }`}
+                  hoverEffect={true}
                   onClick={() => setSelectedCategory(category)}
                 >
-                  <div className="p-6">
-                    <div className="flex items-center justify-center mb-4">
-                      <IconComponent className="text-4xl text-purple-500" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-center mb-2">{category.title}</h3>
-                    <p className="text-gray-600 text-center mb-2">{category.description}</p>
-                    <p className="text-sm text-gray-500 text-center">Capacity: {category.capacity}</p>
+                  <div className="flex items-center justify-center mb-4">
+                    <IconComponent className="text-4xl text-white" />
                   </div>
-                </div>
+                  <h3 className="text-xl font-semibold text-center mb-2 text-white">{category.title}</h3>
+                  <p className="text-neutral-300 text-center mb-2">{category.description}</p>
+                  <p className="text-sm text-neutral-400 text-center">Capacity: {category.capacity}</p>
+                </Card>
               );
             })
           )}
         </div>
 
         {selectedCategory && (
-          <div className="bg-white rounded-xl shadow-lg p-8 mb-12 animate-fade-in">
+          <Card className="p-8 mb-12 animate-fade-in">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-center mb-6">{selectedCategory.title}</h2>
+              <h2 className="text-3xl font-bold text-center mb-6 text-white">{selectedCategory.title}</h2>
               
               <div className="mb-8">
-                <h3 className="text-xl font-semibold text-center mb-4">Venue Pricing</h3>
+                <h3 className="text-xl font-semibold text-center mb-4 text-white">Venue Pricing</h3>
                 <div className="grid grid-cols-2 gap-6 max-w-2xl mx-auto">
-                  <div className="bg-purple-50 rounded-lg p-6 text-center">
-                    <h4 className="font-medium text-gray-800 mb-2">Samaj Member</h4>
-                    <p className="text-2xl font-bold text-purple-600">
+                  <Card className="p-6 text-center bg-gradient-electric">
+                    <h4 className="font-medium text-white mb-2">Samaj Member</h4>
+                    <p className="text-2xl font-bold text-white">
                       {selectedCategory.membershipPricing.samajMember}
                     </p>
-                  </div>
-                  <div className="bg-purple-50 rounded-lg p-6 text-center">
-                    <h4 className="font-medium text-gray-800 mb-2">Non-Samaj Member</h4>
-                    <p className="text-2xl font-bold text-purple-600">
+                  </Card>
+                  <Card className="p-6 text-center bg-gradient-neon">
+                    <h4 className="font-medium text-white mb-2">Non-Samaj Member</h4>
+                    <p className="text-2xl font-bold text-white">
                       {selectedCategory.membershipPricing.nonSamajMember}
                     </p>
-                  </div>
+                  </Card>
                 </div>
               </div>
 
               <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-4">Features</h3>
+                <h3 className="text-xl font-semibold mb-4 text-white">Features</h3>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {selectedCategory.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                    <li key={index} className="flex items-center text-neutral-300">
+                      <span className="w-2 h-2 bg-electric-500 rounded-full mr-2"></span>
                       {feature}
                     </li>
                   ))}
@@ -279,58 +280,58 @@ function EventCategories() {
 
               {selectedCategory.packages && selectedCategory.packages.length > 0 && (
                 <div className="mb-8">
-                  <h3 className="text-xl font-semibold mb-4">Available Packages</h3>
+                  <h3 className="text-xl font-semibold mb-4 text-white">Available Packages</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {selectedCategory.packages.map((pkg, index) => (
-                      <div 
+                      <Card 
                         key={index}
-                        className={`bg-white rounded-lg p-6 border ${
-                          pkg.isPopular ? 'border-purple-500 shadow-lg' : 'border-gray-200'
+                        className={`p-6 ${
+                          pkg.isPopular ? 'border-electric-500 shadow-lg' : 'border-white/10'
                         }`}
                       >
                         {pkg.isPopular && (
-                          <div className="bg-purple-500 text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-2">
+                          <div className="bg-gradient-electric text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-2">
                             Popular Choice
                           </div>
                         )}
-                        <h4 className="text-lg font-semibold mb-2">{pkg.name}</h4>
-                        <p className="text-2xl font-bold text-purple-600 mb-4">{pkg.price}</p>
+                        <h4 className="text-lg font-semibold mb-2 text-white">{pkg.name}</h4>
+                        <p className="text-2xl font-bold text-electric-400 mb-4">{pkg.price}</p>
                         <ul className="space-y-2">
                           {pkg.includes.map((item, i) => (
-                            <li key={i} className="flex items-start">
-                              <span className="text-green-500 mr-2">✓</span>
+                            <li key={i} className="flex items-start text-neutral-300">
+                              <span className="text-green-400 mr-2">✓</span>
                               {item}
                             </li>
                           ))}
                         </ul>
-                      </div>
+                      </Card>
                     ))}
                   </div>
                 </div>
               )}
 
               <div className="mt-8 text-center">
-                <button 
+                <Button 
                   onClick={() => handleBookNow(selectedCategory.title)}
-                  className="px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                  variant="primary"
                 >
                   Book Now
-                </button>
+                </Button>
               </div>
             </div>
-          </div>
+          </Card>
         )}
 
         <div className="text-center">
-          <p className="text-lg text-gray-600 mb-6">
+          <p className="text-lg text-neutral-300 mb-6">
             Need a custom package or have specific requirements?
           </p>
-          <button 
+          <Button 
             onClick={handleContactClick}
-            className="px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            variant="primary"
           >
             Contact Our Team
-          </button>
+          </Button>
         </div>
       </div>
 

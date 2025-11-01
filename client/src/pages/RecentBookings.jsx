@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { FaCalendar, FaClock, FaUsers, FaFileAlt, FaCheckCircle, FaTimesCircle, FaClock as FaClockPending, FaTimes } from 'react-icons/fa';
-
-// Set axios base URL
-axios.defaults.baseURL = 'http://localhost:3000';
+import { Card, Button } from '../components';
 
 const DocumentViewer = ({ documentUrl, documentType, onClose }) => {
   console.log('Viewing document in RecentBookings:', { documentUrl, documentType });
@@ -20,35 +18,35 @@ const DocumentViewer = ({ documentUrl, documentType, onClose }) => {
   }
   
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-lg font-medium">{documentType} Viewer</h3>
+    <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+      <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-white/10">
+        <div className="flex justify-between items-center p-4 border-b border-white/10">
+          <h3 className="text-lg font-medium text-white">{documentType} Viewer</h3>
           <button
             onClick={onClose}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-neutral-400 hover:text-white transition-colors"
           >
             <FaTimes className="h-6 w-6" />
           </button>
         </div>
-        <div className="flex-1 overflow-hidden flex flex-col items-center justify-center">
+        <div className="flex-1 overflow-hidden flex items-center justify-center p-4">
           <img 
             src={documentUrl} 
             alt={documentType} 
-            className="max-w-full max-h-[80vh] object-contain"
+            className="max-w-full max-h-[70vh] object-contain"
             onError={(e) => {
               console.error('Error loading image:', e);
               e.target.style.display = 'none';
               e.target.parentElement.innerHTML = `
                 <div class="text-center p-4">
-                  <p class="text-red-500 mb-2">Error loading image</p>
-                  <a href="${documentUrl}" target="_blank" class="text-indigo-600 hover:underline">Open in new tab</a>
+                  <p class="text-red-400 mb-2">Error loading image</p>
+                  <a href="${documentUrl}" target="_blank" class="text-electric-400 hover:text-electric-300 underline">Open in new tab</a>
                 </div>
               `;
             }}
           />
         </div>
-      </div>
+      </Card>
     </div>
   );
 };
@@ -82,11 +80,7 @@ const RecentBookings = () => {
 
       console.log('Fetching user bookings with token:', token.substring(0, 10) + '...');
       
-      const response = await axios.get('/api/users/bookings', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
+      const response = await axios.get('/api/users/bookings');
 
       console.log('Bookings response:', response.data);
       setBookings(response.data || []);
@@ -109,28 +103,28 @@ const RecentBookings = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Booked':
-        return 'bg-green-100 text-green-800';
+        return 'bg-green-500/20 text-green-300 border border-green-500/30';
       case 'Pending':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30';
       case 'Rejected':
-        return 'bg-red-100 text-red-800';
+        return 'bg-red-500/20 text-red-300 border border-red-500/30';
       case 'Approved':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-blue-500/20 text-blue-300 border border-blue-500/30';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30';
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
       case 'Booked':
-        return <FaCheckCircle className="h-5 w-5 text-green-500" />;
+        return <FaCheckCircle className="h-5 w-5 text-green-400" />;
       case 'Pending':
-        return <FaClockPending className="h-5 w-5 text-yellow-500" />;
+        return <FaClockPending className="h-5 w-5 text-yellow-400" />;
       case 'Rejected':
-        return <FaTimesCircle className="h-5 w-5 text-red-500" />;
+        return <FaTimesCircle className="h-5 w-5 text-red-400" />;
       case 'Approved':
-        return <FaCheckCircle className="h-5 w-5 text-blue-500" />;
+        return <FaCheckCircle className="h-5 w-5 text-blue-400" />;
       default:
         return null;
     }
@@ -153,30 +147,39 @@ const RecentBookings = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-500"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-red-600 text-center p-4 bg-red-50 rounded-md">
-        <p className="font-bold">Error loading bookings</p>
-        <p>{error}</p>
-        <p className="mt-2 text-sm">Please check your authentication and try again.</p>
-        <button 
-          onClick={fetchUserBookings} 
-          className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-        >
-          Retry
-        </button>
+      <div className="min-h-screen bg-gradient-mesh py-12">
+        <div className="container mx-auto px-4">
+          <Card className="max-w-md mx-auto p-6 glass-effect border border-white/10">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/30">
+                <FaTimesCircle className="h-8 w-8 text-red-400" />
+              </div>
+              <h3 className="text-lg font-bold text-red-400 mb-2">Error loading bookings</h3>
+              <p className="text-neutral-300 mb-4">{error}</p>
+              <p className="text-sm text-neutral-400 mb-6">Please check your authentication and try again.</p>
+              <Button 
+                onClick={fetchUserBookings} 
+                variant="primary"
+              >
+                Retry
+              </Button>
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
+    <div className="min-h-screen bg-gradient-mesh py-12">
       {showDocumentViewer && (
         <DocumentViewer
           documentUrl={selectedDocument}
@@ -189,95 +192,95 @@ const RecentBookings = () => {
         />
       )}
 
-      <h1 className="text-3xl font-bold mb-6">Recent Bookings</h1>
-      
-      {bookings.length === 0 ? (
-        <div className="text-center py-8 bg-white rounded-lg shadow-md">
-          <p className="text-gray-500">You haven't made any bookings yet.</p>
-          <a
-            href="/booking"
-            className="mt-4 inline-block px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
-          >
-            Book Now
-          </a>
+      <div className="container mx-auto px-4 max-w-4xl">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Recent Bookings</h1>
+          <p className="text-neutral-300">View and manage your event bookings</p>
         </div>
-      ) : (
-        <div className="space-y-4">
-          {bookings.map((booking) => (
-            <div
-              key={booking._id}
-              className="bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow"
-            >
-              <div className="flex justify-between items-start mb-4">
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-900">
-                    {booking.eventType}
-                  </h2>
-                  <p className="text-sm text-gray-500">
-                    Booking ID: {booking._id.slice(-6).toUpperCase()}
-                  </p>
-                </div>
-                <div className={`flex items-center space-x-2 px-3 py-1 rounded-full ${getStatusColor(booking.status)}`}>
-                  {getStatusIcon(booking.status)}
-                  <span className="text-sm font-medium">{booking.status}</span>
-                </div>
+        
+        {bookings.length === 0 ? (
+          <Card className="text-center p-12 glass-effect border border-white/10">
+            <div className="max-w-md mx-auto">
+              <div className="w-20 h-20 bg-neutral-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <FaCalendar className="h-10 w-10 text-neutral-400" />
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex items-center space-x-3">
-                  <FaCalendar className="h-5 w-5 text-gray-400" />
+              <h3 className="text-xl font-bold text-white mb-3">No Bookings Yet</h3>
+              <p className="text-neutral-300 mb-6">You haven't made any bookings yet.</p>
+              <Button 
+                variant="primary"
+                onClick={() => window.location.href = '/booking'}
+              >
+                Book an Event
+              </Button>
+            </div>
+          </Card>
+        ) : (
+          <div className="space-y-6">
+            {bookings.map((booking) => (
+              <Card 
+                key={booking._id} 
+                className="p-6 glass-effect border border-white/10 hover:shadow-xl transition-all duration-300"
+                hoverEffect={true}
+              >
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                   <div>
-                    <p className="text-sm text-gray-500">Date</p>
-                    <p className="font-medium">
-                      {new Date(booking.date).toLocaleDateString()}
-                    </p>
+                    <h3 className="text-xl font-bold text-white mb-1">{booking.eventType}</h3>
+                    <p className="text-neutral-300">Booking ID: {booking._id}</p>
                   </div>
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)}`}>
+                    {getStatusIcon(booking.status)}
+                    <span className="ml-2">{booking.status}</span>
+                  </span>
                 </div>
-
-                <div className="flex items-center space-x-3">
-                  <FaClock className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Time</p>
-                    <p className="font-medium">
-                      {booking.startTime} - {booking.endTime}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-3">
-                  <FaUsers className="h-5 w-5 text-gray-400" />
-                  <div>
-                    <p className="text-sm text-gray-500">Guests</p>
-                    <p className="font-medium">{booking.guestCount}</p>
-                  </div>
-                </div>
-
-                {booking.eventDocument && (
-                  <div className="flex items-center space-x-3">
-                    <FaFileAlt className="h-5 w-5 text-gray-400" />
+                
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                  <div className="flex items-center text-neutral-300">
+                    <FaCalendar className="mr-3 text-electric-400" />
                     <div>
-                      <p className="text-sm text-gray-500">Document</p>
-                      <button
-                        onClick={() => handleViewDocument(booking.eventDocument, booking.documentType)}
-                        className="text-indigo-600 hover:text-indigo-800"
-                      >
-                        View Document
-                      </button>
+                      <p className="text-sm text-neutral-400">Date</p>
+                      <p className="font-medium text-white">{new Date(booking.date).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center text-neutral-300">
+                    <FaUsers className="mr-3 text-electric-400" />
+                    <div>
+                      <p className="text-sm text-neutral-400">Guests</p>
+                      <p className="font-medium text-white">{booking.guestCount}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center text-neutral-300">
+                    <FaClock className="mr-3 text-electric-400" />
+                    <div>
+                      <p className="text-sm text-neutral-400">Submitted</p>
+                      <p className="font-medium text-white">{new Date(booking.createdAt).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                </div>
+                
+                {booking.eventDocuments && booking.eventDocuments.length > 0 && (
+                  <div className="border-t border-white/10 pt-4">
+                    <h4 className="font-medium text-white mb-3">Documents</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {booking.eventDocuments.map((doc, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleViewDocument(doc.url, doc.type)}
+                          className="inline-flex items-center px-3 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors border border-white/10"
+                        >
+                          <FaFileAlt className="mr-2" />
+                          <span className="text-sm">{doc.type || `Document ${index + 1}`}</span>
+                        </button>
+                      ))}
                     </div>
                   </div>
                 )}
-              </div>
-
-              {booking.additionalNotes && (
-                <div className="mt-4 pt-4 border-t">
-                  <p className="text-sm text-gray-500">Additional Notes:</p>
-                  <p className="mt-1 text-gray-700">{booking.additionalNotes}</p>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
+              </Card>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 };

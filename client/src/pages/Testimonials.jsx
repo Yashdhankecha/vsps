@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { FaStar, FaQuoteLeft, FaUser } from 'react-icons/fa';
+import { Card, Button } from '../components';
 
 function Testimonials() {
   const [filter, setFilter] = useState('all');
 
   const testimonials = [
-    
+    // Testimonial data would go here
   ];
 
   const filteredTestimonials = filter === 'all' 
@@ -22,13 +23,13 @@ function Testimonials() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-mesh">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 text-white py-20">
-        <div className="absolute inset-0 bg-black/20"></div>
+      <div className="relative bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white py-20">
+        <div className="absolute inset-0 bg-gradient-mesh opacity-20"></div>
         <div className="relative container mx-auto px-4 text-center">
           <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm">
+            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-white/10">
               Testimonials
             </span>
           </div>
@@ -46,15 +47,15 @@ function Testimonials() {
 
         {/* Filter Buttons */}
         <div className="flex justify-center space-x-2 mb-16">
-          <div className="bg-white rounded-2xl shadow-lg p-2">
+          <div className="glass-effect rounded-2xl p-2 border border-white/10">
             {['all', 'wedding', 'corporate', 'birthday'].map((type) => (
               <button
                 key={type}
                 onClick={() => setFilter(type)}
                 className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                   filter === type
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg transform scale-105'
-                    : 'text-gray-600 hover:bg-purple-50 hover:text-purple-600'
+                    ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
+                    : 'text-neutral-300 hover:bg-white/10 hover:text-white'
                 }`}
               >
                 {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -66,55 +67,51 @@ function Testimonials() {
         {/* Testimonials Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
           {filteredTestimonials.map((testimonial) => (
-            <div
+            <Card 
               key={testimonial.id}
-              className="group bg-white rounded-2xl shadow-lg overflow-hidden transform transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border border-gray-100"
+              className="p-8 glass-effect border border-white/10 hover:shadow-xl hover:-translate-y-2 transition-all duration-500"
+              hoverEffect={true}
             >
-              <div className="p-8">
-                <div className="flex items-center mb-6">
-                  <div className="w-16 h-16 rounded-2xl overflow-hidden mr-4 bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center">
-                    <FaUser className="w-8 h-8 text-purple-600" />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors">{testimonial.name}</h3>
-                    <p className="text-sm text-gray-500 font-medium">{testimonial.event}</p>
-                  </div>
-                  <div className="text-right">
-                    <div className="flex space-x-1 mb-2">
-                      {renderStars(testimonial.rating)}
-                    </div>
-                    <p className="text-sm text-gray-500">{testimonial.date}</p>
-                  </div>
+              <div className="flex items-center mb-6">
+                <div className="w-16 h-16 rounded-2xl overflow-hidden mr-4 bg-gradient-electric flex items-center justify-center">
+                  <FaUser className="w-8 h-8 text-white" />
                 </div>
-                <div className="mb-6">
-                  <FaQuoteLeft className="text-purple-200 text-4xl mb-4" />
-                  <p className="text-gray-600 italic text-lg leading-relaxed">{testimonial.comment}</p>
+                <div className="flex-1">
+                  <h3 className="text-xl font-bold text-white group-hover:text-electric-400 transition-colors">{testimonial.name}</h3>
+                  <p className="text-sm text-neutral-300 font-medium">{testimonial.event}</p>
                 </div>
-                <img
-                  src={testimonial.image}
-                  alt={testimonial.event}
-                  className="w-full h-48 object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
-                />
+                <div className="text-right">
+                  <div className="flex space-x-1 mb-2">
+                    {renderStars(testimonial.rating)}
+                  </div>
+                  <p className="text-sm text-neutral-400">{testimonial.date}</p>
+                </div>
               </div>
-            </div>
+              <div className="mb-6">
+                <FaQuoteLeft className="text-electric-200 text-4xl mb-4" />
+                <p className="text-neutral-300 italic text-lg leading-relaxed">{testimonial.comment}</p>
+              </div>
+              <img
+                src={testimonial.image}
+                alt={testimonial.event}
+                className="w-full h-48 object-cover rounded-xl group-hover:scale-105 transition-transform duration-500"
+              />
+            </Card>
           ))}
         </div>
 
         {/* Call to Action */}
-        <div className="text-center bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl p-12">
-          <h3 className="text-3xl font-bold text-gray-900 mb-4">
+        <Card className="text-center p-12 glass-effect border border-white/10">
+          <h3 className="text-3xl font-bold text-white mb-4">
             Share Your Experience
           </h3>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-300 mb-8 max-w-2xl mx-auto">
             Had an event at our venue? We'd love to hear about your experience! Your feedback helps us improve and helps other clients make informed decisions.
           </p>
-          <a
-            href="/reviews/submit-review"
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 font-bold text-lg transform hover:scale-105 shadow-lg hover:shadow-xl"
-          >
+          <Button variant="primary" size="lg">
             Share Your Experience
-          </a>
-        </div>
+          </Button>
+        </Card>
       </div>
     </div>
   );

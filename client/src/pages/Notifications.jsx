@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react';
 import { FaBell, FaCheck, FaTrash, FaFilter, FaClipboardList } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { getNotifications } from '../services/notificationService';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
+import { Card, Button } from '../components';
 
 function Notifications() {
   const navigate = useNavigate();
@@ -53,12 +54,7 @@ function Notifications() {
 
   const handleMarkAsRead = async (notificationId) => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/notifications/${notificationId}/read`, null, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      await axios.put(`/api/notifications/${notificationId}/read`);
       setNotifications(notifications.map(notification =>
         notification.id === notificationId
           ? { ...notification, read: true }
@@ -71,12 +67,7 @@ function Notifications() {
 
   const handleMarkAllAsRead = async () => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/api/notifications/mark-all-read`, null, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      await axios.put('/api/notifications/mark-all-read');
       setNotifications(notifications.map(notification => ({ ...notification, read: true })));
     } catch (error) {
       console.error('Error marking all notifications as read:', error);
@@ -85,12 +76,7 @@ function Notifications() {
 
   const handleDelete = async (notificationId) => {
     try {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/api/notifications/${notificationId}`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      await axios.delete(`/api/notifications/${notificationId}`);
       setNotifications(notifications.filter(notification => notification.id !== notificationId));
     } catch (error) {
       console.error('Error deleting notification:', error);
@@ -126,9 +112,9 @@ function Notifications() {
   const getNotificationIcon = (type, formType) => {
     switch (type) {
       case 'form':
-        return <FaClipboardList className="text-purple-600 text-xl" />;
+        return <FaClipboardList className="text-electric-400 text-xl" />;
       default:
-        return <FaBell className="text-gray-500 text-xl" />;
+        return <FaBell className="text-neutral-400 text-xl" />;
     }
   };
 
@@ -146,41 +132,49 @@ function Notifications() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+    <div className="min-h-screen bg-gradient-mesh py-12">
+      <div className="container mx-auto px-4 max-w-4xl">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2 flex items-center justify-center">
+            <FaBell className="mr-3 text-electric-400" />
+            Notifications
+          </h1>
+          <p className="text-neutral-300">Stay updated with the latest announcements and alerts</p>
+        </div>
+        
+        <Card className="glass-effect border border-white/10 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-r from-purple-600 to-indigo-600 px-6 py-4">
-            <div className="flex items-center justify-between">
-              <h1 className="text-2xl font-bold text-white flex items-center">
-                <FaBell className="mr-3" />
-                Notifications
-              </h1>
+          <div className="bg-gradient-to-r from-neutral-800 to-neutral-900 px-6 py-4 border-b border-white/10">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h2 className="text-xl font-bold text-white">
+                Your Notifications
+              </h2>
               {notifications.some(n => !n.read) && (
-                <button
+                <Button
                   onClick={handleMarkAllAsRead}
-                  className="px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg text-white flex items-center transition-colors"
+                  variant="secondary"
+                  size="sm"
                 >
                   <FaCheck className="mr-2" />
                   Mark all as read
-                </button>
+                </Button>
               )}
             </div>
           </div>
 
           {/* Filters */}
-          <div className="px-6 py-4 border-b border-gray-200">
-            <div className="flex items-center space-x-4">
-              <FaFilter className="text-gray-500" />
+          <div className="px-6 py-4 border-b border-white/10">
+            <div className="flex flex-wrap items-center gap-4">
+              <FaFilter className="text-neutral-400" />
               <div className="flex flex-wrap gap-2">
                 {['all', 'unread', 'form'].map((filterType) => (
                   <button
                     key={filterType}
                     onClick={() => setFilter(filterType)}
-                    className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                       filter === filterType
-                        ? 'bg-purple-100 text-purple-600'
-                        : 'text-gray-600 hover:bg-gray-100'
+                        ? 'bg-gradient-electric text-white shadow-lg'
+                        : 'text-neutral-300 hover:bg-white/10 hover:text-white border border-white/10'
                     }`}
                   >
                     {filterType.charAt(0).toUpperCase() + filterType.slice(1)}
@@ -191,73 +185,72 @@ function Notifications() {
           </div>
 
           {/* Notifications List */}
-          <div className="divide-y divide-gray-200">
+          <div className="divide-y divide-white/10">
             {isLoading ? (
-              <div className="p-8 text-center text-gray-500">
-                <div className="animate-spin inline-block w-6 h-6 border-2 border-purple-600 border-t-transparent rounded-full mb-2"></div>
-                <p>Loading notifications...</p>
+              <div className="p-8 text-center">
+                <div className="animate-spin inline-block w-8 h-8 border-2 border-electric-500 border-t-transparent rounded-full mb-4 mx-auto"></div>
+                <p className="text-neutral-300">Loading notifications...</p>
               </div>
             ) : filteredNotifications.length > 0 ? (
               filteredNotifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 hover:bg-gray-50 transition-colors cursor-pointer ${
-                    !notification.read ? 'bg-purple-50' : ''
-                  }`}
                   onClick={() => handleNotificationClick(notification)}
+                  className={`p-6 cursor-pointer transition-all duration-300 ${
+                    notification.read 
+                      ? 'bg-neutral-800/30 hover:bg-neutral-800/50' 
+                      : 'bg-gradient-electric/10 hover:bg-gradient-electric/20 border-l-4 border-electric-500'
+                  }`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start space-x-4">
-                      <div className="mt-1">
-                        {getNotificationIcon(notification.type, notification.formType)}
-                      </div>
-                      <div>
-                        <p className={`text-gray-800 ${!notification.read ? 'font-medium' : ''}`}>
+                  <div className="flex items-start">
+                    <div className="flex-shrink-0 mt-1">
+                      {getNotificationIcon(notification.type, notification.formType)}
+                    </div>
+                    <div className="ml-4 flex-1">
+                      <div className="flex items-center justify-between">
+                        <p className={`text-sm font-medium ${notification.read ? 'text-neutral-300' : 'text-white font-semibold'}`}>
                           {notification.message}
                         </p>
-                        <p className="text-sm text-gray-500 mt-1">
-                          {formatTimestamp(notification.createdAt)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {!notification.read && (
                         <button
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleMarkAsRead(notification.id);
+                            handleDelete(notification.id);
                           }}
-                          className="p-2 text-gray-500 hover:text-purple-600 transition-colors"
-                          title="Mark as read"
+                          className="text-neutral-400 hover:text-red-400 transition-colors ml-2"
                         >
-                          <FaCheck />
+                          <FaTrash className="w-4 h-4" />
                         </button>
-                      )}
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(notification.id);
-                        }}
-                        className="p-2 text-gray-500 hover:text-red-600 transition-colors"
-                        title="Delete notification"
-                      >
-                        <FaTrash />
-                      </button>
+                      </div>
+                      <div className="mt-2 flex items-center text-xs text-neutral-400">
+                        <span>{formatTimestamp(notification.createdAt)}</span>
+                        {!notification.read && (
+                          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-electric-500/20 text-electric-300 border border-electric-500/30">
+                            New
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </div>
               ))
             ) : (
-              <div className="p-8 text-center text-gray-500">
-                <FaBell className="mx-auto text-4xl mb-2 text-gray-300" />
-                <p>No notifications found</p>
+              <div className="p-12 text-center">
+                <div className="w-16 h-16 bg-neutral-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FaBell className="text-neutral-400 text-2xl" />
+                </div>
+                <h3 className="text-lg font-medium text-white mb-2">No notifications</h3>
+                <p className="text-neutral-400">
+                  {filter === 'unread' 
+                    ? "You're all caught up! No unread notifications." 
+                    : "You don't have any notifications at the moment."}
+                </p>
               </div>
             )}
           </div>
-        </div>
+        </Card>
       </div>
     </div>
   );
 }
 
-export default Notifications; 
+export default Notifications;

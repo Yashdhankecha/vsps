@@ -1,28 +1,14 @@
-import axios from 'axios';
-
-const API_URL = import.meta.env.VITE_API_URL;
+import axios from '../utils/axiosConfig';
 
 export const createFormNotification = async (formType, message) => {
   try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.log('User not authenticated, skipping notification creation');
-      return null;
-    }
-
     const response = await axios.post(
-      `${API_URL}/api/notifications`,
+      '/api/notifications',
       {
         type: 'form',
         formType,
         message,
         read: false
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
       }
     );
 
@@ -36,20 +22,9 @@ export const createFormNotification = async (formType, message) => {
 
 export const getNotifications = async () => {
   try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      console.log('User not authenticated, returning empty notifications');
-      return [];
-    }
-
-    console.log('Fetching notifications from:', `${API_URL}/api/notifications`);
+    console.log('Fetching notifications from: /api/notifications');
     
-    const response = await axios.get(`${API_URL}/api/notifications`, {
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      }
-    });
+    const response = await axios.get('/api/notifications');
 
     console.log('Notifications API response:', response.data);
 
@@ -75,4 +50,4 @@ export const getNotifications = async () => {
    
     return [];
   }
-}; 
+};

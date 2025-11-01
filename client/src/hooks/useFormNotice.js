@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { createFormNotification } from '../services/notificationService';
 
 const NOTICE_SHOWN_KEY = 'notice_shown';
@@ -43,12 +43,7 @@ const useFormNotice = () => {
         
         for (const form of forms) {
           try {
-            const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/admin/forms/check-form-visibility/${form.name}`, {
-              headers: {
-                'Authorization': `Bearer ${localStorage.getItem('token')}`,
-                'Content-Type': 'application/json'
-              }
-            });
+            const response = await axios.get(`/api/admin/forms/check-form-visibility/${form.name}`);
             
             if (!mounted) return;
 
@@ -135,4 +130,4 @@ const useFormNotice = () => {
   };
 };
 
-export default useFormNotice; 
+export default useFormNotice;

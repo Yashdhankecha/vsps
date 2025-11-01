@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { FaCamera } from 'react-icons/fa';
-import axios from 'axios';
+import { FaCamera, FaUser, FaEnvelope, FaPhone, FaBuilding, FaMapMarkerAlt } from 'react-icons/fa';
+import axios from '../utils/axiosConfig';
+import { Card, Input, Button } from '../components';
 
 function ProfileSettings() {
   const [profileData, setProfileData] = useState({
@@ -28,17 +29,7 @@ function ProfileSettings() {
       setIsLoading(true);
       setError(null);
       
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-
-      const response = await axios.get('http://localhost:3000/api/users/profile', {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        withCredentials: true
-      });
+      const response = await axios.get('/api/users/profile');
 
       const userData = response.data;
       setProfileData({
@@ -77,16 +68,13 @@ function ProfileSettings() {
         const formData = new FormData();
         formData.append('image', file);
         
-        const token = localStorage.getItem('token');
         const response = await axios.put(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/users/profile-image`,
+          '/api/users/profile-image',
           formData,
           {
             headers: {
-              'Authorization': `Bearer ${token}`,
               'Content-Type': 'multipart/form-data'
-            },
-            withCredentials: true
+            }
           }
         );
 
@@ -111,20 +99,9 @@ function ProfileSettings() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-
       const response = await axios.put(
-        'http://localhost:3000/api/users/profile',
-        profileData,
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-          withCredentials: true
-        }
+        '/api/users/profile',
+        profileData
       );
 
       if (response.data) {
@@ -139,129 +116,183 @@ function ProfileSettings() {
 
   if (isLoading) {
     return (
-      <div className="flex justify-center items-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-500"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="text-red-600 text-center p-4 bg-red-50 rounded-md">
-        {error}
+      <div className="min-h-screen bg-gradient-mesh py-12">
+        <div className="container mx-auto px-4">
+          <Card className="max-w-md mx-auto p-6">
+            <div className="text-red-400 text-center">
+              {error}
+            </div>
+          </Card>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-4xl">
-      <h1 className="text-3xl font-bold mb-6">Profile Settings</h1>
-      
-      <div className="bg-white p-6 rounded-lg shadow-md space-y-6">
-        {/* Profile Photo Section */}
-        <div className="flex flex-col items-center mb-6">
-          <div className="relative">
-            <div className="w-32 h-32 rounded-full overflow-hidden bg-gray-100">
-              {previewImage ? (
-                <img
-                  src={previewImage}
-                  alt="Profile"
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    console.error('Image failed to load:', e);
-                    e.target.src = 'https://your-default-avatar-url.com/default.png';
-                  }}
-                />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center bg-gray-200">
-                  <FaCamera className="text-gray-400 text-3xl" />
-                </div>
-              )}
-            </div>
-            <label className="absolute bottom-0 right-0 bg-indigo-600 p-2 rounded-full cursor-pointer hover:bg-indigo-700 transition-colors">
-              <FaCamera className="text-white" />
-              <input
-                type="file"
-                className="hidden"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-            </label>
-          </div>
-          <p className="text-sm text-gray-500 mt-2">Click to upload profile picture</p>
+    <div className="min-h-screen bg-gradient-mesh py-12">
+      <div className="container mx-auto px-4 max-w-4xl">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-white mb-2">Profile Settings</h1>
+          <p className="text-neutral-300">Manage your account information and preferences</p>
         </div>
+        
+        <Card className="p-6 glass-effect border border-white/10">
+          {/* Profile Photo Section */}
+          <div className="flex flex-col items-center mb-8">
+            <div className="relative">
+              <div className="w-32 h-32 rounded-full overflow-hidden bg-neutral-800/50 border-2 border-white/20">
+                {previewImage ? (
+                  <img
+                    src={previewImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      console.error('Image failed to load:', e);
+                      e.target.src = 'https://your-default-avatar-url.com/default.png';
+                    }}
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-neutral-700/50">
+                    <FaUser className="text-neutral-400 text-4xl" />
+                  </div>
+                )}
+              </div>
+              <label className="absolute bottom-0 right-0 bg-gradient-electric p-3 rounded-full cursor-pointer hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 transform hover:scale-105 shadow-lg">
+                <FaCamera className="text-white" />
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                />
+              </label>
+            </div>
+            <p className="text-sm text-neutral-400 mt-3">Click to upload profile picture</p>
+          </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          {/* Basic Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Name</label>
-              <input
+          <form onSubmit={handleSubmit} className="space-y-6">
+            {/* Basic Information */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Input
+                label="Name"
                 type="text"
                 name="username"
                 value={profileData.username}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Enter your name"
+                variant="dark"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <input
+              
+              <Input
+                label="Email"
                 type="email"
                 name="email"
                 value={profileData.email}
-                readOnly
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm bg-gray-50"
+                onChange={handleInputChange}
+                placeholder="Enter your email"
+                variant="dark"
               />
-              <p className="mt-1 text-sm text-gray-500">Email cannot be changed</p>
-            </div>
-          </div>
-
-          {/* Additional Information */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Phone Number</label>
-              <input
+              
+              <Input
+                label="Phone"
                 type="tel"
                 name="phone"
                 value={profileData.phone}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Enter your phone number"
+                variant="dark"
               />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Company/Organization</label>
-              <input
+              
+              <Input
+                label="Company"
                 type="text"
                 name="company"
                 value={profileData.company}
                 onChange={handleInputChange}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                placeholder="Enter your company"
+                variant="dark"
               />
             </div>
-          </div>
-
-          {/* Address */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Address</label>
-            <textarea
+            
+            <Input
+              label="Address"
+              type="text"
               name="address"
               value={profileData.address}
               onChange={handleInputChange}
-              rows="3"
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              placeholder="Enter your address"
+              variant="dark"
             />
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              className="inline-flex justify-center py-2 px-6 border border-transparent shadow-md text-sm font-semibold rounded-md text-white bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 transition-colors duration-200"
-            >
-              Save Changes
-            </button>
-          </div>
-        </form>
+            
+            {/* Notification Preferences */}
+            <Card className="p-6 glass-effect border border-white/10">
+              <h3 className="text-xl font-bold text-white mb-4">Notification Preferences</h3>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <FaEnvelope className="text-electric-400 mr-3" />
+                    <span className="text-neutral-200">Email Notifications</span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={profileData.notifications.email}
+                      onChange={(e) => setProfileData(prev => ({
+                        ...prev,
+                        notifications: {
+                          ...prev.notifications,
+                          email: e.target.checked
+                        }
+                      }))}
+                    />
+                    <div className="w-11 h-6 bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-electric"></div>
+                  </label>
+                </div>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center">
+                    <FaPhone className="text-electric-400 mr-3" />
+                    <span className="text-neutral-200">SMS Notifications</span>
+                  </div>
+                  <label className="relative inline-flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={profileData.notifications.sms}
+                      onChange={(e) => setProfileData(prev => ({
+                        ...prev,
+                        notifications: {
+                          ...prev.notifications,
+                          sms: e.target.checked
+                        }
+                      }))}
+                    />
+                    <div className="w-11 h-6 bg-neutral-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-neutral-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gradient-electric"></div>
+                  </label>
+                </div>
+              </div>
+            </Card>
+            
+            <div className="flex justify-end">
+              <Button 
+                type="submit" 
+                variant="primary"
+                size="lg"
+              >
+                Save Changes
+              </Button>
+            </div>
+          </form>
+        </Card>
       </div>
     </div>
   );

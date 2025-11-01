@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import axios from 'axios'; // Import Axios for API calls
+import axios from '../utils/axiosConfig'; // Import Axios for API calls
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaCheckCircle, FaTimes } from 'react-icons/fa';
 
 function Contact() {
@@ -28,29 +28,17 @@ function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      alert('Please log in to send a message.');
-      return;
-    }
-
     setIsLoading(true);
     setError('');
 
     try {
       const response = await axios.post(
-        `${import.meta.env.VITE_API_URL}/api/contacts`,
+        '/api/contacts',
         {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
           message: formData.message
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
         }
       );
 

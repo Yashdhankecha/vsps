@@ -34,7 +34,7 @@ import SamuhLaganBooking from './pages/SamuhLaganBooking';
 import StudentAwardRegistration from './pages/StudentAwardRegistration';
 import AdminRoute from './components/AdminRoute';
 import BookedDatesCalendar from './pages/adminpanel/BookedDatesCalendar';
-import axios from 'axios';
+import axios from './utils/axiosConfig';
 import React from 'react';
 import TeamRegistration from './pages/TeamRegistration';
 import ContactManagement from './pages/adminpanel/ContactManagement';
@@ -55,7 +55,7 @@ function AppContent() {
   useEffect(() => {
     const fetchFormStatus = async () => {
       try {
-        const response = await axios.get(`${API_BASE_URL}/api/admin/forms/public/status`);
+        const response = await axios.get('/api/admin/forms/public/status');
         setFormStatus(response.data);
       } catch (error) {
         console.error('Error fetching form status:', error);

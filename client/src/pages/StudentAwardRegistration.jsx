@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { FaUser, FaEnvelope, FaPhone, FaCalendarAlt, FaMapMarkerAlt, FaSchool, FaGraduationCap, FaTrophy, FaFileUpload, FaCheck, FaExclamationCircle, FaClock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { useAuth } from '../contexts/AuthContext';
 
-
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 const StudentAwardRegistration = () => {
   const navigate = useNavigate();
@@ -32,36 +30,20 @@ const StudentAwardRegistration = () => {
           return;
         }
         
-        // Get the authentication token
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setError('Authentication token not found. Please log in again.');
-          navigate('/auth');
-          return;
-        }
-        
-        
-        const visibilityResponse = await axios.get(`${API_BASE_URL}/api/admin/forms/check-form-visibility/studentAwardForm`);
-        
+        // Check form visibility
+        const visibilityResponse = await axios.get('/api/admin/forms/check-form-visibility/studentAwardForm');
         
         if (!visibilityResponse.data.visible) {
           setError('This form is not currently available. Please check back later.');
           return;
         }
         
-      
+        // Check if user can access the form
         try {
-          const accessResponse = await axios.get(
-            `${API_BASE_URL}/api/admin/forms/can-access-form/studentAwardForm`,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`
-              }
-            }
-          );
+          const accessResponse = await axios.get('/api/admin/forms/can-access-form/studentAwardForm');
           
           if (!accessResponse.data.canAccess) {
-            
+            // Get form status details
             const formStatus = accessResponse.data.formStatus;
             
             if (!formStatus.active) {
@@ -80,29 +62,29 @@ const StudentAwardRegistration = () => {
             return;
           }
           
-          
+          // User can access the form
           setError(null);
           setCanAccessForm(true);
         } catch (accessError) {
           console.error('Error checking form access:', accessError);
           
-          
+          // Handle authentication errors
           if (accessError.response && accessError.response.status === 401) {
             setError('Your session has expired. Please log in again.');
             navigate('/auth');
             return;
           }
           
-          
+          // Handle other errors
           setError('Unable to verify form access. Please try again later.');
           return;
         }
         
-        
-        const publicStatusResponse = await axios.get(`${API_BASE_URL}/api/admin/forms/public/status`);
+        // Get public form status
+        const publicStatusResponse = await axios.get('/api/admin/forms/public/status');
         const studentAwardForm = publicStatusResponse.data.studentAwards;
         
-        
+        // Set form timing information
         if (studentAwardForm.startTime) {
           setFormStartTime(new Date(studentAwardForm.startTime));
         }
@@ -241,10 +223,9 @@ const StudentAwardRegistration = () => {
         userId: userId
       });
 
-      const response = await axios.post(`${API_BASE_URL}/api/bookings/student-awards/register`, formDataToSend, {
+      const response = await axios.post(`/api/bookings/student-awards/register`, formDataToSend, {
         headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`
+          'Content-Type': 'multipart/form-data'
         }
       });
 

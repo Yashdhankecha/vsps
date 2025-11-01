@@ -1,11 +1,9 @@
-import axios from 'axios';
-
-const API_URL = 'http://localhost:3000/api/auth';
+import axios from '../utils/axiosConfig';
 
 // Register user
 export const registerUser = async (userData) => {
   try {
-    const response = await axios.post(`${API_URL}/register`, userData);
+    const response = await axios.post('/api/auth/register', userData);
     return response.data;
   } catch (error) {
     throw error.response?.data || { msg: 'Registration failed' };
@@ -15,7 +13,7 @@ export const registerUser = async (userData) => {
 // Verify Email OTP
 export const verifyEmailOTP = async (email, otp) => {
   try {
-    const response = await axios.post(`${API_URL}/verify-otp`, { 
+    const response = await axios.post('/api/auth/verify-otp', { 
       email, 
       otp
     });
@@ -28,7 +26,7 @@ export const verifyEmailOTP = async (email, otp) => {
 // Forgot Password - Send OTP
 export const forgotPassword = async (email) => {
   try {
-    const response = await axios.post(`${API_URL}/forgot-password`, { email });
+    const response = await axios.post('/api/auth/forgot-password', { email });
     return response.data;
   } catch (error) {
     throw error.response?.data || { msg: 'Failed to send OTP' };
@@ -38,7 +36,7 @@ export const forgotPassword = async (email) => {
 // Reset Password with new password
 export const resetPassword = async (token, password) => {
   try {
-    const response = await axios.post(`${API_URL}/reset-password`, { token, password });
+    const response = await axios.post('/api/auth/reset-password', { token, password });
     return response.data;
   } catch (error) {
     throw error.response?.data || { msg: 'Failed to reset password' };
@@ -48,7 +46,7 @@ export const resetPassword = async (token, password) => {
 // Verify Reset Password OTP
 export const verifyResetOTP = async (email, otp) => {
   try {
-    const response = await axios.post(`${API_URL}/verify-reset-otp`, { 
+    const response = await axios.post('/api/auth/verify-reset-otp', { 
       email, 
       otp 
     });
@@ -61,7 +59,7 @@ export const verifyResetOTP = async (email, otp) => {
 // Resend OTP
 export const resendOTP = async (email, type = 'email') => {
   try {
-    const response = await axios.post(`${API_URL}/resend-otp`, { 
+    const response = await axios.post('/api/auth/resend-otp', { 
       email,
       type 
     });

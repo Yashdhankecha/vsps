@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { FaUsers, FaUser, FaEnvelope, FaPhone, FaPlus, FaTrash, FaClock, FaExclamationCircle } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import { useAuth } from '../contexts/AuthContext';
-
-const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 const TeamRegistration = () => {
   const navigate = useNavigate();
@@ -42,28 +40,14 @@ const TeamRegistration = () => {
           return;
         }
         
-        const token = localStorage.getItem('token');
-        if (!token) {
-          setError('Authentication token not found. Please log in again.');
-          navigate('/auth');
-          return;
-        }
-        
-        const visibilityResponse = await axios.get(`${API_BASE_URL}/api/admin/forms/check-form-visibility/teamRegistrationForm`);
+        const visibilityResponse = await axios.get('/api/admin/forms/check-form-visibility/teamRegistrationForm');
         
         if (!visibilityResponse.data.visible) {
           setError('This form is not currently available. Please check back later.');
           return;
         }
         
-        const accessResponse = await axios.get(
-          `${API_BASE_URL}/api/admin/forms/can-access-form/teamRegistrationForm`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
+        const accessResponse = await axios.get('/api/admin/forms/can-access-form/teamRegistrationForm');
         
         if (!accessResponse.data.canAccess) {
           const formStatus = accessResponse.data.formStatus;
@@ -85,7 +69,7 @@ const TeamRegistration = () => {
         }
 
         // Get form timing details
-        const publicStatusResponse = await axios.get(`${API_BASE_URL}/api/admin/forms/public/status`);
+        const publicStatusResponse = await axios.get('/api/admin/forms/public/status');
         const teamRegistrationForm = publicStatusResponse.data.teamRegistration;
         
         if (teamRegistrationForm.startTime) {
@@ -205,7 +189,7 @@ const TeamRegistration = () => {
       }
 
       const response = await axios.post(
-        `${API_BASE_URL}/api/admin/forms/team-registrations`,
+        '/api/admin/forms/team-registrations',
         formData,
         {
           headers: {

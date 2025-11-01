@@ -1,6 +1,6 @@
 import React,{ useState, useEffect } from 'react';
 import { FaArrowLeft, FaArrowRight, FaCalendar, FaUsers, FaGem, FaClock, FaDownload } from 'react-icons/fa';
-import axios from 'axios';
+import axios from '../utils/axiosConfig';
 import NoticeModal from '../components/NoticeModal';
 import useFormNotice from '../hooks/useFormNotice';
 
@@ -228,37 +228,37 @@ function Home() {
         </div>
 
         {/* Introduction Section */}
-        <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-50 to-white relative overflow-hidden">
+        <section className="py-16 sm:py-20 lg:py-24 bg-gradient-mesh relative overflow-hidden">
           {/* Background decoration */}
-          <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-purple-100 rounded-full -translate-y-32 sm:-translate-y-48 translate-x-32 sm:translate-x-48 opacity-20"></div>
-          <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-80 sm:h-80 bg-indigo-100 rounded-full translate-y-20 sm:translate-y-40 -translate-x-20 sm:-translate-x-40 opacity-20"></div>
+          <div className="absolute top-0 right-0 w-64 h-64 sm:w-96 sm:h-96 bg-purple-100 rounded-full -translate-y-32 sm:-translate-y-48 translate-x-32 sm:translate-x-48 opacity-5"></div>
+          <div className="absolute bottom-0 left-0 w-48 h-48 sm:w-80 sm:h-80 bg-indigo-100 rounded-full translate-y-20 sm:translate-y-40 -translate-x-20 sm:-translate-x-40 opacity-5"></div>
           
           <div className="container mx-auto px-4 sm:px-6 relative z-10">
             <div className="text-center max-w-6xl mx-auto">
               <div className="inline-block mb-4 sm:mb-6">
-                <span className="px-3 sm:px-4 py-2 bg-purple-100 text-purple-600 rounded-full text-xs sm:text-sm font-semibold">
+                <span className="px-3 sm:px-4 py-2 bg-white/10 text-white rounded-full text-xs sm:text-sm font-semibold backdrop-blur-sm border border-white/10">
                   Welcome to VSPS
                 </span>
               </div>
-              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 sm:mb-8 leading-tight px-2">
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 sm:mb-8 leading-tight px-2">
                 {homeContent.introduction.heading}
               </h2>
-              <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-12 sm:mb-16 leading-relaxed max-w-5xl mx-auto px-2">
+              <p className="text-lg sm:text-xl md:text-2xl text-neutral-300 mb-12 sm:mb-16 leading-relaxed max-w-5xl mx-auto px-2">
                 {homeContent.introduction.description}
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12 sm:mb-16">
                 {(homeContent.introduction.highlights || []).map((highlight, index) => (
                   <div 
                     key={index} 
-                    className="group text-center p-6 sm:p-8 bg-white rounded-2xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-gray-100 hover:border-purple-200"
+                    className="group text-center glass-effect p-6 sm:p-8 rounded-2xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 border border-white/10 hover:border-electric-500/30"
                   >
-                    <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-electric rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 group-hover:scale-110 transition-transform duration-300">
                       {getIconComponent(highlight.icon)}
                     </div>
-                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 group-hover:text-purple-600 transition-colors">
+                    <h3 className="text-lg sm:text-xl font-bold text-white mb-3 sm:mb-4 group-hover:text-electric-400 transition-colors">
                       {highlight.title}
                     </h3>
-                    <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{highlight.subtitle}</p>
+                    <p className="text-sm sm:text-base text-neutral-300 leading-relaxed">{highlight.subtitle}</p>
                   </div>
                 ))}
               </div>
@@ -267,7 +267,7 @@ function Home() {
                 <a
                   href="/assets/wadi_instructions%20.pdf"
                   download="wadi_instructions.pdf"
-                  className="group inline-flex items-center justify-center px-6 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-bold rounded-2xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 text-sm sm:text-base lg:text-lg shadow-lg hover:shadow-2xl transform hover:scale-105"
+                  className="group inline-flex items-center justify-center px-6 sm:px-8 lg:px-10 py-3 sm:py-4 lg:py-5 bg-gradient-electric text-white font-bold rounded-2xl hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 text-sm sm:text-base lg:text-lg shadow-lg hover:scale-105 transform"
                 >
                   <FaDownload className="mr-2 sm:mr-3 w-4 h-4 sm:w-5 sm:h-5 lg:w-6 lg:h-6 group-hover:animate-bounce" />
                   <span className="hidden sm:inline">Download Instructions PDF</span>
@@ -277,9 +277,9 @@ function Home() {
             </div>
           </div>
         </section>
-        <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-white to-gray-50 relative overflow-hidden">
+        <section className="py-16 sm:py-20 lg:py-24 bg-gradient-mesh relative overflow-hidden">
           {/* Background decoration */}
-          <div className="absolute top-1/2 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-gradient-to-br from-purple-200 to-indigo-200 rounded-full -translate-y-1/2 translate-x-16 sm:translate-x-24 lg:translate-x-32 opacity-30"></div>
+          <div className="absolute top-1/2 right-0 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-gradient-electric rounded-full -translate-y-1/2 translate-x-16 sm:translate-x-24 lg:translate-x-32 opacity-10"></div>
           
           <div className="container mx-auto px-4 sm:px-6 relative z-10">
             <div className="grid lg:grid-cols-2 gap-12 sm:gap-16 lg:gap-20 items-center">
@@ -298,34 +298,34 @@ function Home() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
                 </div>
-                <div className="absolute -bottom-4 -right-4 sm:-bottom-8 sm:-right-8 w-20 h-20 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl sm:rounded-3xl -z-10 group-hover:scale-110 transition-transform duration-500"></div>
-                <div className="absolute -top-2 -left-2 sm:-top-4 sm:-left-4 w-12 h-12 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-xl sm:rounded-2xl -z-10 group-hover:scale-110 transition-transform duration-500"></div>
+                <div className="absolute -bottom-4 -right-4 sm:-bottom-8 sm:-right-8 w-20 h-20 sm:w-32 sm:h-32 lg:w-40 lg:h-40 bg-gradient-electric rounded-2xl sm:rounded-3xl -z-10 group-hover:scale-110 transition-transform duration-500"></div>
+                <div className="absolute -top-2 -left-2 sm:-top-4 sm:-left-4 w-12 h-12 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-neon rounded-xl sm:rounded-2xl -z-10 group-hover:scale-110 transition-transform duration-500"></div>
               </div>
               <div className="space-y-6 sm:space-y-8 lg:space-y-10 order-1 lg:order-2">
                 <div>
                   <div className="inline-block mb-3 sm:mb-4">
-                    <span className="px-3 sm:px-4 py-2 bg-purple-100 text-purple-600 rounded-full text-xs sm:text-sm font-semibold">
+                    <span className="px-3 sm:px-4 py-2 bg-white/10 text-white rounded-full text-xs sm:text-sm font-semibold backdrop-blur-sm border border-white/10">
                       About Us
                     </span>
                   </div>
-                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4 sm:mb-6">
+                  <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-white leading-tight mb-4 sm:mb-6">
                     {homeContent.about.heading}
                   </h2>
-                  <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
+                  <p className="text-lg sm:text-xl text-neutral-300 leading-relaxed">
                     {homeContent.about.description}
                   </p>
                 </div>
                 <div className="space-y-4 sm:space-y-6 lg:space-y-8">
                   {homeContent.about.features.map((feature, index) => (
-                    <div key={index} className="group flex items-start space-x-4 sm:space-x-6 p-4 sm:p-6 rounded-2xl hover:bg-white hover:shadow-lg transition-all duration-300">
-                      <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-purple-100 to-indigo-100 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                        <span className="text-purple-600 text-lg sm:text-xl font-bold">✓</span>
+                    <div key={index} className="group flex items-start space-x-4 sm:space-x-6 glass-effect p-4 sm:p-6 rounded-2xl hover:shadow-lg transition-all duration-300 border border-white/10">
+                      <div className="flex-shrink-0 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-gradient-electric flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                        <span className="text-white text-lg sm:text-xl font-bold">✓</span>
                       </div>
                       <div>
-                        <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3 group-hover:text-purple-600 transition-colors">
+                        <h3 className="text-lg sm:text-xl font-bold text-white mb-2 sm:mb-3 group-hover:text-electric-400 transition-colors">
                           {feature.title}
                         </h3>
-                        <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{feature.description}</p>
+                        <p className="text-sm sm:text-base text-neutral-300 leading-relaxed">{feature.description}</p>
                       </div>
                     </div>
                   ))}
@@ -336,32 +336,32 @@ function Home() {
         </section>
 
         {/* Leadership Section */}
-        <section className="py-16 sm:py-20 lg:py-24 bg-gradient-to-br from-gray-900 via-purple-900 to-indigo-900 relative overflow-hidden">
+        <section className="py-16 sm:py-20 lg:py-24 bg-gradient-mesh relative overflow-hidden">
           {/* Background decoration */}
           <div className="absolute top-0 left-0 w-full h-full">
-            <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-16 h-16 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-purple-500 rounded-full opacity-10"></div>
-            <div className="absolute bottom-10 sm:bottom-20 right-10 sm:right-20 w-24 h-24 sm:w-36 sm:h-36 lg:w-48 lg:h-48 bg-indigo-500 rounded-full opacity-10"></div>
-            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-pink-500 rounded-full opacity-5"></div>
+            <div className="absolute top-10 sm:top-20 left-10 sm:left-20 w-16 h-16 sm:w-24 sm:h-24 lg:w-32 lg:h-32 bg-electric-500 rounded-full opacity-10"></div>
+            <div className="absolute bottom-10 sm:bottom-20 right-10 sm:right-20 w-24 h-24 sm:w-36 sm:h-36 lg:w-48 lg:h-48 bg-neon-500 rounded-full opacity-10"></div>
+            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-32 h-32 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-secondary-500 rounded-full opacity-5"></div>
           </div>
           
           <div className="container mx-auto px-4 sm:px-6 relative z-10">
             <div className="text-center mb-12 sm:mb-16 lg:mb-20">
               <div className="inline-block mb-4 sm:mb-6">
-                <span className="px-3 sm:px-4 py-2 bg-white/10 text-white rounded-full text-xs sm:text-sm font-semibold backdrop-blur-sm">
+                <span className="px-3 sm:px-4 py-2 bg-white/10 text-white rounded-full text-xs sm:text-sm font-semibold backdrop-blur-sm border border-white/10">
                   Our Leadership
                 </span>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 sm:mb-8 leading-tight px-2">
                 {homeContent.leadership.heading}
               </h2>
-              <p className="text-lg sm:text-xl text-gray-300 max-w-5xl mx-auto leading-relaxed px-2">
+              <p className="text-lg sm:text-xl text-neutral-300 max-w-5xl mx-auto leading-relaxed px-2">
                 {homeContent.leadership.description}
               </p>
             </div>
             
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-12 mb-12 sm:mb-16 lg:mb-20 max-w-7xl mx-auto">
               {homeContent.leadership.members.map((member, index) => (
-                <div key={index} className="group bg-white/5 backdrop-blur-sm rounded-2xl sm:rounded-3xl overflow-hidden hover:bg-white/10 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl border border-white/10">
+                <div key={index} className="group glass-effect rounded-2xl sm:rounded-3xl overflow-hidden hover:bg-white/10 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl border border-white/10">
                   <div className="relative overflow-hidden">
                     <div className="aspect-w-4 aspect-h-5">
                       <img 
@@ -378,19 +378,19 @@ function Home() {
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                     <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-6 lg:p-8 text-white">
-                      <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 group-hover:text-purple-300 transition-colors">
+                      <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 group-hover:text-electric-400 transition-colors">
                         {member.name}
                       </h3>
-                      <p className="text-purple-200 font-semibold text-sm sm:text-base lg:text-lg">
+                      <p className="text-electric-300 font-semibold text-sm sm:text-base lg:text-lg">
                         {member.title}
                       </p>
                     </div>
-                    <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:bg-white/30 transition-colors">
+                    <div className="absolute top-4 right-4 sm:top-6 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm group-hover:bg-white/30 transition-colors border border-white/10">
                       <span className="text-white text-sm sm:text-base lg:text-xl">👑</span>
                     </div>
                   </div>
                   <div className="p-4 sm:p-6 lg:p-8">
-                    <p className="text-gray-300 leading-relaxed text-sm sm:text-base lg:text-lg">
+                    <p className="text-neutral-300 leading-relaxed text-sm sm:text-base lg:text-lg">
                       {member.description}
                     </p>
                   </div>
@@ -400,8 +400,8 @@ function Home() {
             
             {homeContent.leadership.note && (
               <div className="max-w-5xl mx-auto text-center px-2">
-                <div className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 sm:p-8 border border-white/10">
-                  <p className="text-lg sm:text-xl text-gray-300 italic leading-relaxed">
+                <div className="glass-effect rounded-2xl p-6 sm:p-8 border border-white/10">
+                  <p className="text-lg sm:text-xl text-neutral-300 italic leading-relaxed">
                     {homeContent.leadership.note}
                   </p>
                 </div>
@@ -424,15 +424,15 @@ function Home() {
 const getIconComponent = (iconName) => {
   switch (iconName) {
     case 'fa-calendar':
-      return <FaCalendar className="text-2xl text-purple-600" />;
+      return <FaCalendar className="text-2xl text-white" />;
     case 'fa-users':
-      return <FaUsers className="text-2xl text-purple-600" />;
+      return <FaUsers className="text-2xl text-white" />;
     case 'fa-gem':
-      return <FaGem className="text-2xl text-purple-600" />;
+      return <FaGem className="text-2xl text-white" />;
     case 'fa-clock':
-      return <FaClock className="text-2xl text-purple-600" />;
+      return <FaClock className="text-2xl text-white" />;
     case 'fa-download':
-      return <FaDownload className="text-2xl text-purple-600" />;
+      return <FaDownload className="text-2xl text-white" />;
     default:
       return null;
   }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { FaDownload, FaBook, FaLightbulb, FaClipboardList, FaCalendarAlt, FaPalette, FaUtensils, FaMusic } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import { Card, Button } from '../components';
 
 function Resources() {
   const navigate = useNavigate();
@@ -87,13 +88,13 @@ function Resources() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
+    <div className="min-h-screen bg-gradient-mesh">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 text-white py-20">
-        <div className="absolute inset-0 bg-black/20"></div>
+      <div className="relative bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white py-20">
+        <div className="absolute inset-0 bg-gradient-mesh opacity-20"></div>
         <div className="relative container mx-auto px-4 text-center">
           <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm">
+            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-white/10">
               Resources
             </span>
           </div>
@@ -111,15 +112,15 @@ function Resources() {
 
         {/* Category Filter */}
         <div className="flex flex-wrap justify-center gap-2 mb-16">
-          <div className="bg-white rounded-2xl shadow-lg p-2">
+          <div className="glass-effect rounded-2xl p-2 border border-white/10">
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
                 className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
                   selectedCategory === category.id
-                    ? 'bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-lg transform scale-105'
-                    : 'text-gray-600 hover:bg-purple-50 hover:text-purple-600'
+                    ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
+                    : 'text-neutral-300 hover:bg-white/10 hover:text-white'
                 }`}
               >
                 {category.label}
@@ -131,48 +132,45 @@ function Resources() {
         {/* Resources Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {filteredResources.map((resource) => (
-            <div
+            <Card 
               key={resource.id}
-              className="group bg-white rounded-2xl shadow-lg p-8 transform transition-all duration-500 hover:shadow-2xl hover:-translate-y-2 border border-gray-100"
+              className="p-8 glass-effect border border-white/10 hover:shadow-xl hover:-translate-y-2 transition-all duration-500"
+              hoverEffect={true}
             >
               <div className="flex items-center mb-6">
-                <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-indigo-100 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                  <resource.icon className="text-3xl text-purple-600" />
+                <div className="w-16 h-16 bg-gradient-electric rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                  <resource.icon className="text-3xl text-white" />
                 </div>
                 <div className="ml-4 flex-1">
-                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-purple-600 transition-colors mb-2">{resource.title}</h3>
-                  <p className="text-sm text-gray-500 font-medium">{resource.type} • {resource.size}</p>
+                  <h3 className="text-xl font-bold text-white group-hover:text-electric-400 transition-colors mb-2">{resource.title}</h3>
+                  <p className="text-sm text-neutral-400 font-medium">{resource.type} • {resource.size}</p>
                 </div>
               </div>
-              <p className="text-gray-600 mb-6 leading-relaxed">{resource.description}</p>
-              <a
-                href={resource.downloadLink}
-                className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 font-semibold transform hover:scale-105 shadow-lg hover:shadow-xl"
-              >
+              <p className="text-neutral-300 mb-6 leading-relaxed">{resource.description}</p>
+              <Button variant="primary" className="w-full">
                 <FaDownload className="mr-2" />
                 Download Resource
-              </a>
-            </div>
+              </Button>
+            </Card>
           ))}
         </div>
 
-
-
         {/* Call to Action */}
-        <div className="text-center bg-gradient-to-br from-purple-50 to-indigo-50 rounded-3xl p-12">
-          <h3 className="text-3xl font-bold text-gray-900 mb-4">
+        <Card className="text-center p-12 glass-effect border border-white/10">
+          <h3 className="text-3xl font-bold text-white mb-4">
             Need Personalized Assistance?
           </h3>
-          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-neutral-300 mb-8 max-w-2xl mx-auto">
             Our event planning experts are here to help you create the perfect event. Get personalized guidance and support for your special occasion.
           </p>
-          <button 
+          <Button 
             onClick={handleContactClick}
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-300 font-bold text-lg transform hover:scale-105 shadow-lg hover:shadow-xl"
+            variant="primary"
+            size="lg"
           >
             Contact Our Team
-          </button>
-        </div>
+          </Button>
+        </Card>
       </div>
     </div>
   );
