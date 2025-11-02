@@ -940,35 +940,36 @@ const SamuhLaganBooking = ({ formDetails }) => {
           ) : (
             <form onSubmit={handleSubmit}>
               <Grid container spacing={4}>
-                <Grid columns={{ xs: 12, md: 6 }}>
+                <Grid item xs={12} md={6}>
                   {renderFormSection('bride', 'Bride Details', bridePhotoPreview)}
                 </Grid>
-                <Grid columns={{ xs: 12, md: 6 }}>
+                <Grid item xs={12} md={6}>
                   {renderFormSection('groom', 'Groom Details', groomPhotoPreview)}
                 </Grid>
-                <Grid columns={{ xs: 12 }}>
+                <Grid item xs={12}>
                   <Box display="flex" justifyContent="center">
                     <StyledButton
-                    type="submit"
-                    variant="contained"
-                    disabled={isSubmitting}
+                      type="submit"
+                      variant="contained"
+                      disabled={isSubmitting}
                       size="large"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <CircularProgress size={24} sx={{ mr: 1, color: 'white' }} />
-                        Submitting...
-                      </>
-                    ) : (
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <CircularProgress size={24} sx={{ mr: 1, color: 'white' }} />
+                          Submitting...
+                        </>
+                      ) : (
                         'Submit Registration'
-                    )}
+                      )}
                     </StyledButton>
-                </Box>
+                  </Box>
+                </Grid>
               </Grid>
             </form>
           )}
         </Suspense>
-    </Box>
+      </Box>
     </Container>
   );
 };

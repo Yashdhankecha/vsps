@@ -87,6 +87,9 @@ function Booking() {
       };
       
       fetchUserProfile();
+      
+      // Fetch bookings only when authenticated
+      fetchBookings();
     }
     
     // Check if there's a stored booking date from previous session
@@ -97,9 +100,8 @@ function Booking() {
       localStorage.removeItem('selectedBookingDate');
     }
     
-    fetchBookings();
     setIsLoading(false);
-  }, []);
+  }, [isAuthenticated]);
 
   const fetchBookings = async () => {
     try {
@@ -119,7 +121,8 @@ function Booking() {
       console.error('Error fetching bookings:', error);
       // Handle 401/403 errors specifically
       if (error.response?.status === 401 || error.response?.status === 403) {
-        setError('You do not have permission to view bookings. Only committee members can access this.');
+        // Don't show error for unauthorized users, just don't show bookings
+        setBookedEvents([]);
       } else {
         setError('Failed to load bookings. Please try again later.');
       }
@@ -537,17 +540,20 @@ function Booking() {
       
       {/* Success Popup */}
       {showSuccessPopup && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="glass-effect rounded-lg p-8 max-w-md w-full mx-4 transform transition-all">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-effect rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all animate-fade-in-up border border-white/10 shadow-2xl">
             <div className="text-center">
-              <FaCheckCircle className="text-green-400 text-5xl mx-auto mb-4" />
-              <h3 className="text-2xl font-bold text-white mb-2">Booking Request Submitted!</h3>
-              <p className="text-neutral-300 mb-6">
+              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30">
+                <FaCheckCircle className="text-green-400 text-4xl" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-4">Booking Request Submitted!</h3>
+              <p className="text-neutral-300 mb-8 leading-relaxed">
                 Your booking request has been submitted successfully. We'll review it and get back to you shortly.
               </p>
               <Button
                 onClick={() => setShowSuccessPopup(false)}
                 variant="primary"
+                className="w-full"
               >
                 Close
               </Button>

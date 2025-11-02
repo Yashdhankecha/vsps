@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { useAdminLayout } from '../../contexts/AdminLayoutContext';
 import { 
   HomeIcon, 
-  PhotoIcon, 
+  PhotoIcon,
   VideoCameraIcon,
   CalendarIcon,
   ChartBarIcon,
@@ -15,7 +15,8 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon,
   CogIcon,
-  ShieldCheckIcon
+  ShieldCheckIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline';
 import {
   HomeIcon as HomeIconSolid,
@@ -89,6 +90,14 @@ const Sidebar = () => {
       color: 'text-neon-400',
       bgColor: 'bg-neon-500/20',
       borderColor: 'border-neon-500/30'
+    },
+    { 
+      name: 'Reviews Management', 
+      icon: ChatBubbleLeftRightIcon, 
+      path: '/admin/reviews',
+      color: 'text-purple-400',
+      bgColor: 'bg-purple-500/20',
+      borderColor: 'border-purple-500/30'
     },
     { 
       name: 'Live Streams', 

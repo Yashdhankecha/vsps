@@ -1,4 +1,4 @@
-  import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaVideo, FaUser, FaBars, FaTimes, FaBell } from 'react-icons/fa';
 
@@ -10,12 +10,27 @@ function Header() {
   const [notifications, setNotifications] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
+  const profileDropdownRef = useRef(null);
 
   // Check authentication status when component mounts or location changes
   useEffect(() => {
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
   }, [location.pathname]);
+
+  // Close profile dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
+        setIsProfileDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
 
   // Calculate unread notifications count
   const unreadNotificationsCount = notifications.filter(n => !n.read).length;
@@ -46,21 +61,15 @@ function Header() {
     },
     {
       label: 'Live',
-      dropdown: [
-        { label: 'Live Events', path: '/live-streaming' },
-        { label: 'Upcoming Broadcasts', path: '/live-streaming' }
-      ]
+      path: '/live-streaming'
     },
     {
       label: 'Gallery',
       path: '/gallery'
     },
     {
-      label: 'Services',
-      dropdown: [
-        { label: 'Our Services', path: '/services' },
-        { label: 'Amenities', path: '/services/amenities' }
-      ]
+      label: 'Forms',
+      path: '/services'
     },
     {
       label: 'Reviews',
@@ -165,7 +174,7 @@ function Header() {
 
             {/* Profile Dropdown */}
             {isLoggedIn ? (
-              <div className="relative">
+              <div className="relative" ref={profileDropdownRef}>
                 <button
                   onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
                   className="ml-4 px-6 py-3 glass-effect rounded-2xl hover:bg-electric-500/20 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-lg hover:shadow-electric-500/30 border border-white/10 hover:border-electric-500/30"

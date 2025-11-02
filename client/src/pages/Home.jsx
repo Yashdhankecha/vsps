@@ -170,13 +170,20 @@ function Home() {
                           {slide.description}
                         </p>
                         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-                          <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-electric text-white font-semibold rounded-full hover:shadow-lg hover:shadow-electric-500/30 transform hover:scale-105 transition-all duration-300 shadow-lg text-sm sm:text-base">
+                          <button 
+                            className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 bg-gradient-electric text-white font-semibold rounded-full hover:shadow-lg hover:shadow-electric-500/30 transform hover:scale-105 transition-all duration-300 shadow-lg text-sm sm:text-base"
+                            onClick={() => window.location.href = '/events/categories'}
+                          >
                             Explore Events
                           </button>
-                          <button className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-neutral-900 transform hover:scale-105 transition-all duration-300 text-sm sm:text-base">
+                          <button 
+                            className="w-full sm:w-auto px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white font-semibold rounded-full hover:bg-white hover:text-neutral-900 transform hover:scale-105 transition-all duration-300 text-sm sm:text-base"
+                            onClick={() => window.location.href = '/services'}
+                          >
                             Learn More
                           </button>
                         </div>
+
                       </div>
                     </div>
                   </div>

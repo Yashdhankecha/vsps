@@ -8,7 +8,6 @@ import Home from "./pages/Home";
 import Contact from "./pages/Contact";
 import Gallery from "./pages/Gallery";
 import Services from "./pages/Services";
-import Amenities from "./pages/Amenities";
 import Testimonials from "./pages/Testimonials";
 import SubmitReview from "./pages/SubmitReview";
 import Resources from "./pages/Resources";
@@ -38,6 +37,7 @@ import axios from './utils/axiosConfig';
 import React from 'react';
 import TeamRegistration from './pages/TeamRegistration';
 import ContactManagement from './pages/adminpanel/ContactManagement';
+import Reviews from './pages/adminpanel/Reviews';
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
 
@@ -220,6 +220,7 @@ function AppContent() {
                   <Route path="/admin/users" element={<Users />} />
                   <Route path="/admin/form-management" element={<FormManagement />} />
                   <Route path="/admin/booked-dates" element={<BookedDatesCalendar />} />
+                  <Route path="/admin/reviews" element={<Reviews />} />
                   <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
                 </Routes>
               </AdminPageContainer>
@@ -240,7 +241,6 @@ function AppContent() {
                   <Route path="/contact" element={<Contact />} />
                   <Route path="/gallery" element={<Gallery />} />
                   <Route path="/services" element={<Services />} />
-                  <Route path="/services/amenities" element={<Amenities />} />
                   <Route path="/testimonials" element={<Testimonials />} />
                   <Route path="/resources" element={<Resources />} />
                   <Route path="/events/categories" element={<EventCategories />} />

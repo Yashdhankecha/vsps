@@ -1009,13 +1009,15 @@ const BookingManagement = () => {
 
   return (
     <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
-      {notification && (
-        <Notification
-          message={notification.message}
-          type={notification.type}
-          onClose={() => setNotification(null)}
-        />
-      )}
+      {/* Main Content Container */}
+      <div className="card-glass animate-fade-in-up">
+        {notification && (
+          <Notification
+            message={notification.message}
+            type={notification.type}
+            onClose={() => setNotification(null)}
+          />
+        )}
 
       {showDocumentViewer && (
         <DocumentViewer
@@ -1055,8 +1057,7 @@ const BookingManagement = () => {
         />
       )}
 
-      {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up">
+      {/* Main Content */}
         {/* Header Section - Responsive */}
         <div className="border-b border-white/10 pb-6 mb-6">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">

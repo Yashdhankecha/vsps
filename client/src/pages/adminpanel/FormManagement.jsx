@@ -260,6 +260,8 @@ const FormManagement = () => {
 
   return (
     <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
+      {/* Main Content Container */}
+      <div className="card-glass animate-fade-in-up">
       {/* Header Section */}
       <div className="mb-6 sm:mb-8 animate-fade-in-up">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -519,6 +521,7 @@ const FormManagement = () => {
         </form>
       </div>
     </div>
+  </div>
   );
 };
 

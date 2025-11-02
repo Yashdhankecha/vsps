@@ -22,17 +22,28 @@ const sendOTPEmail = async (email, otp, type = 'registration') => {
       throw new Error('Email configuration is incomplete. Please check EMAIL_USER and EMAIL_PASS in .env file.');
     }
 
-    // Alternative Gmail transporter configuration
+    // Clean the password by removing any spaces
+    const cleanPassword = process.env.EMAIL_PASS.replace(/\s+/g, '');
+    console.log('Cleaned EMAIL_PASS:', cleanPassword ? '****' + cleanPassword.substring(cleanPassword.length - 4) : 'Not found');
+
+    // Gmail transporter configuration with more specific settings
     const transporter = nodemailer.createTransport({
       service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        pass: cleanPassword, // Use cleaned password
       },
       tls: {
         rejectUnauthorized: false
       }
     });
+
+    // Verify transporter configuration
+    await transporter.verify();
+    console.log('Email transporter verified successfully');
 
     let subject, heading;
     if (type === 'registration') {
@@ -53,11 +64,11 @@ const sendOTPEmail = async (email, otp, type = 'registration') => {
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #6B46C1; text-align: center;">${heading}</h2>
-          <p style="text-align: center; color: #4B5563;">Your ${type === 'registration' ? 'verification' : 'reset'} OTP is:</p>
+          <p style="text-align: center; color: #374151;">Your ${type === 'registration' ? 'verification' : 'reset'} OTP is:</p>
           <div style="background-color: #f3f4f6; padding: 20px; border-radius: 8px; margin: 20px 0; text-align: center;">
-            <h1 style="letter-spacing: 8px; font-size: 32px; margin: 0; color: #4B5563;">${otp}</h1>
+            <h1 style="letter-spacing: 8px; font-size: 32px; margin: 0; color: #111827;">${otp}</h1>
           </div>
-          <p style="color: #4B5563; text-align: center;">This OTP will expire in 10 minutes.</p>
+          <p style="color: #374151; text-align: center;">This OTP will expire in 10 minutes.</p>
           ${type === 'registration' 
             ? '<p style="color: #6B7280; text-align: center; font-size: 14px;">Please use this OTP to verify your email address.</p>'
             : '<p style="color: #6B7280; text-align: center; font-size: 14px;">If you did not request this password reset, please ignore this email.</p>'
@@ -67,14 +78,18 @@ const sendOTPEmail = async (email, otp, type = 'registration') => {
     };
 
     await transporter.sendMail(mailOptions);
+    console.log('OTP email sent successfully to:', email);
   } catch (error) {
     console.error('Error sending OTP email:', error);
     // Provide more specific error messages
     if (error.code === 'EAUTH') {
-      throw new Error('Email authentication failed. Please check EMAIL_USER and EMAIL_PASS in .env file.');
+      throw new Error('Email authentication failed. Please check EMAIL_USER and EMAIL_PASS in .env file. For Gmail, you need to use an App Password, not your regular password. Visit https://myaccount.google.com/apppasswords to generate an App Password.');
     }
     if (error.code === 'ECONNREFUSED') {
       throw new Error('Could not connect to email server. Please check your network connection.');
+    }
+    if (error.message.includes('Invalid login')) {
+      throw new Error('Email authentication failed. Please check EMAIL_USER and EMAIL_PASS in .env file. For Gmail, you need to use an App Password, not your regular password. Visit https://myaccount.google.com/apppasswords to generate an App Password.');
     }
     throw new Error(`Failed to send email: ${error.message}`);
   }
@@ -85,24 +100,49 @@ exports.register = async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
+    // Check if user already exists with the same email
     let user = await User.findOne({ email });
     if (user) {
-      return res.status(400).json({ msg: 'User already exists' });
+      if (user.isVerified) {
+        return res.status(400).json({ msg: 'User already exists' });
+      } else {
+        // User exists but is not verified, we can update the user details
+        user.username = username;
+        user.password = password;
+        user.updatedAt = Date.now();
+      }
+    } else {
+      // Check if username is already taken by another user
+      const existingUserWithUsername = await User.findOne({ username });
+      if (existingUserWithUsername) {
+        if (existingUserWithUsername.isVerified) {
+          return res.status(400).json({ msg: 'Username already taken' });
+        } else {
+          // Existing user with this username is not verified, we can reuse this document
+          user = existingUserWithUsername;
+          user.email = email;
+          user.password = password;
+          user.updatedAt = Date.now();
+        }
+      } else {
+        // Create new user
+        user = new User({
+          username,
+          email,
+          password
+        });
+      }
     }
 
-   
+    // Generate new OTP for registration
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); 
+    const otpExpiry = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    user = new User({
-      username,
-      email,
-      password,
-      otp: {
-        code: otp,
-        expiresAt: otpExpiry
-      }
-    });
+    user.otp = {
+      code: otp,
+      expiresAt: otpExpiry
+    };
+    user.isVerified = false; // Ensure user is not verified
 
     await user.save();
 
@@ -113,7 +153,7 @@ exports.register = async (req, res) => {
       console.error('Failed to send OTP email during registration:', emailError);
       // Still register the user but inform them about email issue
       return res.status(201).json({ 
-        msg: 'Registration successful but failed to send verification email. Please contact support.',
+        msg: 'Registration successful but failed to send verification email. Please contact support or try again later.',
         email: email,
         userId: user._id
       });
@@ -125,6 +165,13 @@ exports.register = async (req, res) => {
     });
   } catch (err) {
     console.error('Registration Error:', err);
+    // Handle MongoDB duplicate key errors specifically
+    if (err.code === 11000) {
+      const duplicateField = Object.keys(err.keyPattern)[0];
+      return res.status(400).json({ 
+        msg: `A user with this ${duplicateField} already exists. Please choose a different ${duplicateField} or login if this is your account.` 
+      });
+    }
     // Provide more specific error information
     if (err.name === 'ValidationError') {
       return res.status(400).json({ msg: 'Validation error', error: err.message });

@@ -69,19 +69,19 @@ function Contact() {
     <div className="min-h-screen bg-gradient-mesh">
       {/* Success Popup */}
       {showSuccessPopup && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-white rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all animate-scale-in shadow-2xl">
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-effect rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all animate-fade-in-up border border-white/10 shadow-2xl">
             <div className="text-center">
-              <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaCheckCircle className="text-green-500 text-4xl" />
+              <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30">
+                <FaCheckCircle className="text-green-400 text-4xl" />
               </div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Message Sent Successfully!</h3>
-              <p className="text-gray-600 mb-8 leading-relaxed">
+              <h3 className="text-2xl font-bold text-white mb-4">Message Sent Successfully!</h3>
+              <p className="text-neutral-300 mb-8 leading-relaxed">
                 Thank you for your message. We will get back to you soon!
               </p>
               <button
                 onClick={() => setShowSuccessPopup(false)}
-                className="px-8 py-3 bg-gradient-electric text-white rounded-xl hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 font-semibold transform hover:scale-105 shadow-lg"
+                className="px-8 py-3 bg-gradient-electric text-white rounded-xl hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 font-semibold transform hover:scale-105 shadow-lg w-full"
               >
                 Close
               </button>

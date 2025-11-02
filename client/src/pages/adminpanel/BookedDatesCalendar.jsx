@@ -242,6 +242,8 @@ const BookedDatesCalendar = () => {
 
   return (
     <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
+      {/* Main Content Container */}
+      <div className="card-glass animate-fade-in-up">
       {/* Header Section */}
       <div className="mb-6 sm:mb-8 animate-fade-in-up">
         <div className="flex items-center space-x-3 mb-2">
@@ -401,6 +403,7 @@ const BookedDatesCalendar = () => {
         </div>
       )}
     </div>
+  </div>
   );
 
 };

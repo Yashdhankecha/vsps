@@ -20,13 +20,15 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
     maxWidth: '500px',
     width: '95%',
     margin: '16px',
-    boxShadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
     animation: 'fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-    border: '1px solid rgba(124, 58, 237, 0.1)',
     overflow: 'hidden',
+    backgroundColor: 'rgba(30, 30, 30, 0.2)',
+    backdropFilter: 'blur(24px)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    boxShadow: '0 8px 32px 0 rgba(0, 0, 0, 0.37)',
   },
   '& .MuiBackdrop-root': {
-    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
     backdropFilter: 'blur(4px)',
   },
   '@keyframes fadeIn': {
@@ -60,12 +62,14 @@ const StyledButton = styled(Button)(({ theme }) => ({
   backgroundColor: '#7c3aed',
   color: '#ffffff',
   padding: '10px 32px',
-  borderRadius: '8px',
+  borderRadius: '12px',
   fontSize: '0.95rem',
   fontWeight: 600,
   textTransform: 'none',
+  boxShadow: '0 4px 12px rgba(124, 58, 237, 0.25)',
   '&:hover': {
     backgroundColor: '#6d28d9',
+    boxShadow: '0 6px 16px rgba(124, 58, 237, 0.35)',
   },
   '&.MuiButton-outlined': {
     borderColor: '#7c3aed',
@@ -81,18 +85,18 @@ const StyledButton = styled(Button)(({ theme }) => ({
 const ContentBox = styled(Box)(({ theme }) => ({
   padding: theme.spacing(3),
   '& .MuiTypography-h6': {
-    color: '#1f2937',
+    color: '#ffffff',
     fontSize: '1.25rem',
     fontWeight: 600,
     marginBottom: theme.spacing(1),
   },
   '& .MuiTypography-body1': {
-    color: '#4b5563',
+    color: '#d1d5db',
     fontSize: '1rem',
     lineHeight: 1.6,
   },
   '& .MuiTypography-body2': {
-    color: '#6b7280',
+    color: '#9ca3af',
     fontSize: '0.875rem',
     marginTop: theme.spacing(2),
     display: 'flex',
@@ -200,4 +204,4 @@ const NoticeModal = ({
   );
 };
 
-export default NoticeModal; 
+export default NoticeModal;

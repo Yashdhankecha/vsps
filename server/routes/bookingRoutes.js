@@ -77,7 +77,7 @@ const studentAwardUpload = multer({
 router.post('/submit', bookingController.submitBookingRequest);
 
 
-router.get('/', committeeAuth, bookingController.getAllBookings);
+router.get('/', userAuth, bookingController.getAllBookings);
 
 
 router.put('/approve/:bookingId', committeeAuth, bookingController.approveBooking);

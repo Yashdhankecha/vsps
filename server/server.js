@@ -18,6 +18,7 @@ const samuhLaganRoutes = require('./routes/samuhLagan');
 const youtubeRoutes = require('./routes/youtube');
 const eventCategoryRoutes = require('./routes/eventCategoryRoutes');
 const teamRegistrationRoutes = require('./routes/teamRegistrationRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
 
 dotenv.config();
 
@@ -38,12 +39,19 @@ const testEmailConfig = async () => {
       return;
     }
     
+    // Clean the password by removing any spaces
+    const cleanPassword = process.env.EMAIL_PASS.replace(/\s+/g, '');
+    console.log('Cleaned EMAIL_PASS for testing:', cleanPassword ? '****' + cleanPassword.substring(cleanPassword.length - 4) : 'Not found');
+    
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
       service: 'gmail',
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
+        pass: cleanPassword, // Use cleaned password
       },
       tls: {
         rejectUnauthorized: false
@@ -58,6 +66,7 @@ const testEmailConfig = async () => {
     console.warn('Email service may not work properly. Please check your email configuration in .env file.');
     console.warn('For Gmail, you need to use an App Password, not your regular password.');
     console.warn('Visit: https://myaccount.google.com/apppasswords to generate an App Password');
+    console.warn('Make sure 2-factor authentication is enabled on your Gmail account.');
   }
 };
 
@@ -219,6 +228,7 @@ app.use('/api/admin/forms', formRoutes);
 app.use('/api/student-awards', studentAwardRoutes);
 app.use('/api/youtube', youtubeRoutes);
 app.use('/api/team-registrations', teamRegistrationRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
