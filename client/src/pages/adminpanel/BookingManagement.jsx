@@ -104,9 +104,9 @@ const DocumentViewer = ({ documentUrl, documentType, onClose }) => {
   
   return (
     <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 max-w-6xl w-full mx-4 max-h-[95vh] overflow-hidden flex flex-col">
+      <div className="card-glass rounded-lg p-6 max-w-6xl w-full mx-4 max-h-[95vh] overflow-hidden flex flex-col border border-white/10">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-medium">{documentType} Viewer</h3>
+          <h3 className="text-xl font-medium text-white">{documentType} Viewer</h3>
           <div className="flex space-x-2">
             <button 
               onClick={() => {
@@ -118,20 +118,20 @@ const DocumentViewer = ({ documentUrl, documentType, onClose }) => {
                 link.click();
                 document.body.removeChild(link);
               }}
-              className="px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 text-sm"
+              className="px-3 py-1 bg-gradient-electric text-white rounded-md hover:from-electric-600 hover:to-electric-700 text-sm"
             >
               Open with Default Application
             </button>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-neutral-400 hover:text-white"
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
         </div>
         <div className="flex-1 overflow-hidden">
-          <div className="w-full h-full flex items-center justify-center bg-gray-100">
+          <div className="w-full h-full flex items-center justify-center bg-neutral-800/50">
             <img 
               src={documentUrl} 
               alt={documentType} 
@@ -160,7 +160,7 @@ function CollapsibleSection({ title, children, defaultOpen = false }) {
   return (
     <div className="mb-4 border rounded-lg">
       <button
-        className="w-full flex justify-between items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-t-lg focus:outline-none"
+        className="w-full flex justify-between items-center px-4 py-2 bg-neutral-800/50 hover:bg-neutral-700/50 rounded-t-lg focus:outline-none"
         onClick={() => setOpen(!open)}
         type="button"
       >
@@ -1008,9 +1008,9 @@ const BookingManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
+    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6 flex flex-col">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up">
+      <div className="card-glass animate-fade-in-up flex-grow flex flex-col">
         {notification && (
           <Notification
             message={notification.message}
@@ -1059,7 +1059,7 @@ const BookingManagement = () => {
 
       {/* Main Content */}
         {/* Header Section - Responsive */}
-        <div className="border-b border-white/10 pb-6 mb-6">
+        <div className="border-b border-white/10 pb-6 mb-6 flex-shrink-0">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
             {/* Title and Stats */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -1191,9 +1191,9 @@ const BookingManagement = () => {
         </div>
 
       {activeCategory === 'student-award' ? (
-        <div className="space-y-4">
+        <div className="space-y-4 flex-grow">
           {/* Mobile Card View */}
-          <div className="block sm:hidden space-y-4">
+          <div className="block sm:hidden space-y-4 flex-grow">
             {(Array.isArray(studentAwardRequests) ? studentAwardRequests : []).map((request) => (
               <div key={request._id} className="card-hover p-4">
                 <div className="flex flex-col space-y-3">
@@ -1233,7 +1233,7 @@ const BookingManagement = () => {
                           disabled={loadingActions.approve[request._id]}
                         >
                           {loadingActions.approve[request._id] ? (
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-electric-400 rounded-full animate-spin" />
                           ) : (
                             <>
                               <CheckIcon className="h-4 w-4 mr-1" />
@@ -1248,7 +1248,7 @@ const BookingManagement = () => {
                           disabled={loadingActions.reject[request._id]}
                         >
                           {loadingActions.reject[request._id] ? (
-                            <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            <div className="w-4 h-4 border-2 border-white/30 border-t-electric-400 rounded-full animate-spin" />
                           ) : (
                             <>
                               <XMarkIcon className="h-4 w-4 mr-1" />
@@ -1273,7 +1273,7 @@ const BookingManagement = () => {
                       disabled={loadingActions.delete[request._id]}
                     >
                       {loadingActions.delete[request._id] ? (
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <div className="w-4 h-4 border-2 border-white/30 border-t-electric-400 rounded-full animate-spin" />
                       ) : (
                         <>
                           <XMarkIcon className="h-4 w-4 mr-1" />
@@ -1288,7 +1288,7 @@ const BookingManagement = () => {
           </div>
           
           {/* Desktop Table View */}
-          <div className="hidden sm:block overflow-x-auto">
+          <div className="hidden sm:block overflow-x-auto flex-grow">
             <table className="w-full min-w-full">
               <thead>
                 <tr className="border-b border-white/10">
@@ -1302,7 +1302,7 @@ const BookingManagement = () => {
               </thead>
               <tbody>
                 {(Array.isArray(studentAwardRequests) ? studentAwardRequests : []).map((request) => (
-                  <tr key={request._id} className="border-b border-white/5 hover:bg-white/5 transition-colors duration-200">
+                  <tr key={request._id} className="border-b border-white/5 hover:bg-white/10 transition-colors duration-200">
                     <td className="py-4 px-4 text-white">{request.name}</td>
                     <td className="py-4 px-4 text-neutral-300">{request.schoolName}</td>
                     <td className="py-4 px-4 text-neutral-300">{request.totalPercentage}%</td>
@@ -1335,7 +1335,7 @@ const BookingManagement = () => {
                             </button>
                             <button 
                               onClick={() => handleRejectStudentAward(request._id)} 
-                              className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors duration-200"
+                              className="p-2 text-red-400 hover:bg-red-500/200/20 rounded-lg transition-colors duration-200"
                               title="Reject Request"
                               disabled={loadingActions.reject[request._id]}
                             >
@@ -1356,7 +1356,7 @@ const BookingManagement = () => {
                         </button>
                         <button
                           onClick={() => handleDelete(request._id, 'studentAward')}
-                          className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors duration-200"
+                          className="p-2 text-red-400 hover:bg-red-500/200/20 rounded-lg transition-colors duration-200"
                           title="Delete Registration"
                           disabled={loadingActions.delete[request._id]}
                         >
@@ -1375,7 +1375,7 @@ const BookingManagement = () => {
           </div>
         </div>
       ) : activeCategory === 'samuh-lagan' ? (
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto flex-grow">
           <table className="w-full min-w-full">
             <thead>
               <tr className="text-left border-b">
@@ -1388,7 +1388,7 @@ const BookingManagement = () => {
             </thead>
             <tbody>
               {samuhLaganRequests.map((request) => (
-                <tr key={request._id} className="border-b hover:bg-gray-50">
+                <tr key={request._id} className="border-b hover:bg-white/10">
                   <td className="py-4 px-2">{request.bride.name}</td>
                   <td className="py-4 px-2">{request.groom.name}</td>
                   <td className="py-4 px-2">
@@ -1396,11 +1396,11 @@ const BookingManagement = () => {
                   </td>
                   <td className="py-4 px-2">
                     <span className={`px-2 py-1 rounded-full text-sm ${
-                      request.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                      request.status === 'approved' ? 'bg-blue-100 text-blue-800' :
-                      request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      request.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-800'
+                      request.status === 'confirmed' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
+                      request.status === 'approved' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+                      request.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
+                      request.status === 'rejected' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
+                      'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
                     }`}>
                       {request.status}
                     </span>
@@ -1411,7 +1411,7 @@ const BookingManagement = () => {
                         <>
                           <button 
                             onClick={() => handleApproveSamuhLagan(request._id)} 
-                            className="p-2 text-green-600 hover:bg-green-50 rounded"
+                            className="p-2 text-green-400 hover:bg-green-500/200/20 rounded"
                             title="Approve Request"
                             disabled={loadingActions.approve[request._id]}
                           >
@@ -1426,7 +1426,7 @@ const BookingManagement = () => {
                           </button>
                           <button 
                             onClick={() => handleRejectSamuhLagan(request._id)} 
-                            className="p-2 text-red-600 hover:bg-red-50 rounded"
+                            className="p-2 text-red-400 hover:bg-red-500/200/20 rounded"
                             title="Reject Request"
                             disabled={loadingActions.reject[request._id]}
                           >
@@ -1444,7 +1444,7 @@ const BookingManagement = () => {
                       {request.status === 'approved' && (
                         <button 
                           onClick={() => handleConfirmSamuhLagan(request._id)}
-                          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                          className="px-4 py-2 bg-gradient-electric text-white rounded-md hover:from-electric-600 hover:to-electric-700 disabled:opacity-50"
                           disabled={loadingActions.confirm[request._id]}
                         >
                           {loadingActions.confirm[request._id] ? (
@@ -1462,14 +1462,14 @@ const BookingManagement = () => {
                       )}
                       <button 
                         onClick={() => handleViewBooking(request)} 
-                        className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                        className="p-2 text-blue-400 hover:bg-blue-500/200/20 rounded"
                         title="View Details"
                       >
                         <EyeIcon className="h-5 w-5" />
                       </button>
                       <button
                         onClick={() => handleDelete(request._id, 'samuhLagan')}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded"
+                        className="p-2 text-red-400 hover:bg-red-500/200/20 rounded"
                         title="Delete Registration"
                         disabled={loadingActions.delete[request._id]}
                       >
@@ -1490,8 +1490,8 @@ const BookingManagement = () => {
           </table>
         </div>
       ) : activeCategory === 'team-registration' ? (
-        <div className="mt-6">
-          <div className="overflow-x-auto">
+        <div className="mt-6 flex-grow flex flex-col">
+          <div className="overflow-x-auto flex-grow">
             <table className="w-full min-w-full">
               <thead>
                 <tr className="text-left border-b">
@@ -1506,22 +1506,22 @@ const BookingManagement = () => {
               <tbody>
                 {Array.isArray(teamRegistrationRequests) && teamRegistrationRequests.length > 0 ? (
                   teamRegistrationRequests.map((request) => (
-                    <tr key={request._id} className="border-b hover:bg-gray-50">
+                    <tr key={request._id} className="border-b hover:bg-white/10">
                       <td className="py-4 px-2">{request.gameName}</td>
                       <td className="py-4 px-2">{request.teamName}</td>
                       <td className="py-4 px-2">{request.captainName}</td>
                       <td className="py-4 px-2">
                         <div className="text-sm">
                           <p>{request.mobileNumber}</p>
-                          <p className="text-gray-500">{request.email}</p>
+                          <p className="text-neutral-400">{request.email}</p>
                         </div>
                       </td>
                       <td className="py-4 px-2">
                         <span className={`px-2 py-1 rounded-full text-sm ${
-                          request.status === 'approved' ? 'bg-green-100 text-green-800' :
-                          request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          request.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'
+                          request.status === 'approved' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
+                          request.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
+                          request.status === 'rejected' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
+                          'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
                         }`}>
                           {request.status}
                         </span>
@@ -1532,7 +1532,7 @@ const BookingManagement = () => {
                             <>
                               <button
                                 onClick={() => handleApproveTeamRegistration(request._id)}
-                                className="p-2 text-green-600 hover:bg-green-50 rounded"
+                                className="p-2 text-green-400 hover:bg-green-500/200/20 rounded"
                                 title="Approve Registration"
                                 disabled={loadingActions.approve[request._id]}
                               >
@@ -1547,7 +1547,7 @@ const BookingManagement = () => {
                               </button>
                               <button
                                 onClick={() => handleRejectTeamRegistration(request._id)}
-                                className="p-2 text-red-600 hover:bg-red-50 rounded"
+                                className="p-2 text-red-400 hover:bg-red-500/200/20 rounded"
                                 title="Reject Registration"
                                 disabled={loadingActions.reject[request._id]}
                               >
@@ -1564,7 +1564,7 @@ const BookingManagement = () => {
                           )}
                           <button
                             onClick={() => handleViewBooking(request)}
-                            className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                            className="p-2 text-blue-400 hover:bg-blue-500/200/20 rounded"
                             title="View Details"
                             disabled={loadingActions.view[request._id]}
                           >
@@ -1579,7 +1579,7 @@ const BookingManagement = () => {
                           </button>
                           <button
                             onClick={() => handleDelete(request._id, 'teamRegistration')}
-                            className="p-2 text-red-600 hover:bg-red-50 rounded"
+                            className="p-2 text-red-600 hover:bg-red-500/20 rounded"
                             title="Delete Registration"
                             disabled={loadingActions.delete[request._id]}
                           >
@@ -1598,7 +1598,7 @@ const BookingManagement = () => {
                   ))
                 ) : (
                   <tr>
-                    <td colSpan="6" className="py-4 px-2 text-center text-gray-500">
+                    <td colSpan="6" className="py-4 px-2 text-center text-neutral-400">
                       No team registration requests found
                     </td>
                   </tr>
@@ -1609,11 +1609,11 @@ const BookingManagement = () => {
         </div>
       ) : (
         filteredBookings.length === 0 ? (
-          <div className="text-center py-8 text-gray-500">
+          <div className="text-center py-8 text-neutral-400 flex-grow flex items-center justify-center">
             No bookings found
           </div>
         ) : (
-          <div className="overflow-x-auto">
+          <div className="overflow-x-auto flex-grow">
             <table className="w-full min-w-full">
               <thead>
                 <tr className="text-left border-b">
@@ -1626,7 +1626,7 @@ const BookingManagement = () => {
               </thead>
               <tbody>
                 {filteredBookings.map((booking) => (
-                  <tr key={booking._id} className="border-b hover:bg-gray-50">
+                  <tr key={booking._id} className="border-b hover:bg-white/10">
                     <td className="py-4 px-2">{booking.firstName && booking.surname ? `${booking.firstName} ${booking.surname}` : 'N/A'}</td>
                     <td className="py-4 px-2">{booking.eventType}</td>
                     <td className="py-4 px-2">
@@ -1634,11 +1634,11 @@ const BookingManagement = () => {
                     </td>
                     <td className="py-4 px-2">
                       <span className={`px-2 py-1 rounded-full text-sm ${
-                        booking.status === 'Booked' ? 'bg-green-100 text-green-800' :
-                        booking.status === 'Approved' ? 'bg-blue-100 text-blue-800' :
-                        booking.status === 'Pending' ? 'bg-yellow-100 text-yellow-800' :
-                        booking.status === 'Rejected' ? 'bg-red-100 text-red-800' :
-                        'bg-gray-100 text-gray-800'
+                        booking.status === 'Booked' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
+                        booking.status === 'Approved' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+                        booking.status === 'Pending' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
+                        booking.status === 'Rejected' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
+                        'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
                       }`}>
                         {booking.status}
                       </span>
@@ -1649,7 +1649,7 @@ const BookingManagement = () => {
                           <>
                             <button 
                               onClick={() => handleApprove(booking._id)} 
-                              className="p-2 text-green-600 hover:bg-green-50 rounded"
+                              className="p-2 text-green-400 hover:bg-green-500/200/20 rounded"
                               title="Approve Booking"
                               disabled={loadingActions.approve[booking._id]}
                             >
@@ -1664,7 +1664,7 @@ const BookingManagement = () => {
                             </button>
                             <button 
                               onClick={() => handleReject(booking._id)} 
-                              className="p-2 text-red-600 hover:bg-red-50 rounded"
+                              className="p-2 text-red-400 hover:bg-red-500/200/20 rounded"
                               title="Reject Booking"
                               disabled={loadingActions.reject[booking._id]}
                             >
@@ -1682,7 +1682,7 @@ const BookingManagement = () => {
                         {booking.status === 'Approved' && (
                           <button 
                             onClick={() => handleConfirmBooking(booking._id)}
-                            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50"
+                            className="px-4 py-2 bg-gradient-electric text-white rounded-md hover:from-electric-600 hover:to-electric-700 disabled:opacity-50"
                             disabled={loadingActions.confirm[booking._id]}
                           >
                             {loadingActions.confirm[booking._id] ? (
@@ -1700,7 +1700,7 @@ const BookingManagement = () => {
                         )}
                         <button 
                           onClick={() => handleViewBooking(booking)} 
-                          className="p-2 text-blue-600 hover:bg-blue-50 rounded"
+                          className="p-2 text-blue-400 hover:bg-blue-500/200/20 rounded"
                           title="View Details"
                           disabled={loadingActions.view[booking._id]}
                         >
@@ -1715,7 +1715,7 @@ const BookingManagement = () => {
                         </button>
                         <button
                           onClick={() => handleDelete(booking._id, 'booking')}
-                          className="p-2 text-red-600 hover:bg-red-50 rounded"
+                          className="p-2 text-red-400 hover:bg-red-500/200/20 rounded"
                           title="Delete Booking"
                           disabled={loadingActions.delete[booking._id]}
                         >
@@ -1739,10 +1739,10 @@ const BookingManagement = () => {
       )}
 
       {selectedBooking && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 max-w-3xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold">
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 backdrop-blur-sm p-4 animate-fade-in">
+          <div className="card-glass rounded-xl p-6 max-w-4xl w-full md:w-11/12 lg:w-3/4 h-[85vh] overflow-y-auto border border-white/10 shadow-2xl relative animate-scale-in flex flex-col" style={{boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'}}>
+            <div className="flex justify-between items-center mb-6 pr-10 pb-4 border-b border-white/10">
+              <h2 className="text-2xl font-semibold text-white">
                 {selectedBooking.eventType === 'Team Registration' ? 'Team Registration Details' : 
                  isEditing ? 'Edit Booking' : 'Booking Details'}
               </h2>
@@ -1752,25 +1752,26 @@ const BookingManagement = () => {
                   setIsEditing(false);
                   setEditedData(null);
                 }}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-neutral-400 hover:text-white bg-neutral-800/50 hover:bg-red-500/20 rounded-full p-2 transition-all duration-200 absolute top-4 right-4 ring-1 ring-white/10 hover:ring-white/20"
+                aria-label="Close"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-6 mt-4 flex-grow">
               {selectedBooking.eventType === 'Team Registration' ? (
                 <div className="space-y-6">
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-4">Team Information</h3>
+                  <div className="border-b border-white/10 pb-4">
+                    <h3 className="text-lg font-medium mb-4 text-white">Team Information</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Game Name</label>
-                        <p className="mt-1">{selectedBooking.gameName}</p>
+                        <label className="block text-sm font-medium text-white">Game Name</label>
+                        <p className="mt-1 text-neutral-300">{selectedBooking.gameName}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Team Name</label>
-                        <p className="mt-1">{selectedBooking.teamName}</p>
+                        <label className="block text-sm font-medium text-white">Team Name</label>
+                        <p className="mt-1 text-neutral-300">{selectedBooking.teamName}</p>
                       </div>
                     </div>
                   </div>
@@ -1779,16 +1780,16 @@ const BookingManagement = () => {
                     <h3 className="text-lg font-medium mb-4">Captain Details</h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Captain Name</label>
-                        <p className="mt-1">{selectedBooking.captainName}</p>
+                        <label className="block text-sm font-medium text-white">Captain Name</label>
+                        <p className="mt-1 text-neutral-300">{selectedBooking.captainName}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
-                        <p className="mt-1">{selectedBooking.mobileNumber}</p>
+                        <label className="block text-sm font-medium text-white">Mobile Number</label>
+                        <p className="mt-1 text-neutral-300">{selectedBooking.mobileNumber}</p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Email</label>
-                        <p className="mt-1">{selectedBooking.email}</p>
+                        <label className="block text-sm font-medium text-white">Email</label>
+                        <p className="mt-1 text-neutral-300">{selectedBooking.email}</p>
                       </div>
                     </div>
                   </div>
@@ -1798,27 +1799,27 @@ const BookingManagement = () => {
                     <div className="space-y-2">
                       {selectedBooking.teamMembers && selectedBooking.teamMembers.map((member, index) => (
                         <div key={index} className="flex items-center">
-                          <span className="text-gray-500 mr-2">{index + 1}.</span>
-                          <p>{member}</p>
+                          <span className="text-neutral-400 mr-2">{index + 1}.</span>
+                          <p className="text-neutral-300">{member}</p>
                         </div>
                       ))}
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Status</label>
+                    <label className="block text-sm font-medium text-white">Status</label>
                     <span className={`px-2 py-1 rounded-full text-sm ${
-                      selectedBooking.status === 'approved' ? 'bg-green-100 text-green-800' :
-                      selectedBooking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      selectedBooking.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                      'bg-gray-100 text-gray-800'
+                      selectedBooking.status === 'approved' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
+                      selectedBooking.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
+                      selectedBooking.status === 'rejected' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
+                      'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
                     }`}>
                       {selectedBooking.status}
                     </span>
                     {selectedBooking.rejectionReason && (
                       <div className="mt-2">
-                        <label className="block text-sm font-medium text-gray-700">Rejection Reason</label>
-                        <p className="mt-1 text-red-600">{selectedBooking.rejectionReason}</p>
+                        <label className="block text-sm font-medium text-white">Rejection Reason</label>
+                        <p className="mt-1 text-red-400">{selectedBooking.rejectionReason}</p>
                       </div>
                     )}
                   </div>
@@ -1827,73 +1828,73 @@ const BookingManagement = () => {
                 <>
                   {selectedBooking.eventType !== 'Samuh Lagan' && selectedBooking.eventType !== 'Student Award Registration' && (
                     <>
-                      <div className="border-b pb-4">
-                        <h3 className="text-lg font-medium mb-4">Customer Information</h3>
+                      <div className="border-b border-white/10 pb-4 flex-grow">
+                        <h3 className="text-lg font-medium mb-4 text-white">Customer Information</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">First Name</label>
+                            <label className="block text-sm font-medium text-white">First Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
                                 value={editedData.firstName}
                                 onChange={(e) => setEditedData({ ...editedData, firstName: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1">{selectedBooking.firstName}</p>
+                              <p className="mt-1 text-neutral-300">{selectedBooking.firstName}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Surname</label>
+                            <label className="block text-sm font-medium text-white">Surname</label>
                             {isEditing ? (
                               <input
                                 type="text"
                                 value={editedData.surname}
                                 onChange={(e) => setEditedData({ ...editedData, surname: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1">{selectedBooking.surname}</p>
+                              <p className="mt-1 text-neutral-300">{selectedBooking.surname}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Email</label>
+                            <label className="block text-sm font-medium text-white">Email</label>
                             {isEditing ? (
                               <input
                                 type="email"
                                 value={editedData.email}
                                 onChange={(e) => setEditedData({ ...editedData, email: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1">{selectedBooking.email}</p>
+                              <p className="mt-1 text-neutral-300">{selectedBooking.email}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Phone</label>
+                            <label className="block text-sm font-medium text-white">Phone</label>
                             {isEditing ? (
                               <input
                                 type="tel"
                                 value={editedData.phone}
                                 onChange={(e) => setEditedData({ ...editedData, phone: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1">{selectedBooking.phone}</p>
+                              <p className="mt-1 text-neutral-300">{selectedBooking.phone}</p>
                             )}
                           </div>
                         </div>
                       </div>
-                      <div className="border-b pb-4">
-                        <h3 className="text-lg font-medium mb-4">Event Details</h3>
+                      <div className="border-b border-white/10 pb-4">
+                        <h3 className="text-lg font-medium mb-4 text-white">Event Details</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Event Type</label>
+                            <label className="block text-sm font-medium text-white">Event Type</label>
                             {isEditing ? (
                               <select
                                 value={editedData.eventType}
                                 onChange={(e) => setEditedData({ ...editedData, eventType: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               >
                                 <option value="wedding">Wedding</option>
                                 <option value="corporate">Corporate Event</option>
@@ -1901,37 +1902,37 @@ const BookingManagement = () => {
                                 <option value="social">Social Gathering</option>
                               </select>
                             ) : (
-                              <p className="mt-1">{selectedBooking.eventType}</p>
+                              <p className="mt-1 text-neutral-300">{selectedBooking.eventType}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Guest Count</label>
+                            <label className="block text-sm font-medium text-white">Guest Count</label>
                             {isEditing ? (
                               <input
                                 type="number"
                                 value={editedData.guestCount}
                                 onChange={(e) => setEditedData({ ...editedData, guestCount: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1">{selectedBooking.guestCount}</p>
+                              <p className="mt-1 text-neutral-300">{selectedBooking.guestCount}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Date</label>
+                            <label className="block text-sm font-medium text-white">Date</label>
                             {isEditing ? (
                               <input
                                 type="date"
                                 value={editedData.date.split('T')[0]}
                                 onChange={(e) => setEditedData({ ...editedData, date: e.target.value })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1">{new Date(selectedBooking.date).toLocaleDateString()}</p>
+                              <p className="mt-1 text-neutral-300">{new Date(selectedBooking.date).toLocaleDateString()}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Time</label>
+                            <label className="block text-sm font-medium text-white">Time</label>
                             <div className="grid grid-cols-2 gap-2">
                               {isEditing ? (
                                 <>
@@ -1939,24 +1940,24 @@ const BookingManagement = () => {
                                     type="time"
                                     value={editedData.startTime}
                                     onChange={(e) => setEditedData({ ...editedData, startTime: e.target.value })}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                    className="mt-1 block w-full rounded-md input-field"
                                   />
                                   <input
                                     type="time"
                                     value={editedData.endTime}
                                     onChange={(e) => setEditedData({ ...editedData, endTime: e.target.value })}
-                                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                    className="mt-1 block w-full rounded-md input-field"
                                   />
                                 </>
                               ) : (
-                                <p className="mt-1">{`${selectedBooking.startTime} - ${selectedBooking.endTime}`}</p>
+                                <p className="mt-1 text-neutral-300">{`${selectedBooking.startTime} - ${selectedBooking.endTime}`}</p>
                               )}
                             </div>
                           </div>
                         </div>
                       </div>
-                      <div className="border-b pb-4">
-                        <h3 className="text-lg font-medium mb-4">Event Document</h3>
+                      <div className="border-b border-white/10 pb-4">
+                        <h3 className="text-lg font-medium mb-4 text-white">Event Document</h3>
                         {selectedBooking.eventDocument ? (
                           <div className="space-y-2">
                             <div className="flex items-center space-x-2">
@@ -1976,7 +1977,7 @@ const BookingManagement = () => {
                                   link.click();
                                   document.body.removeChild(link);
                                 }}
-                                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-electric hover:from-electric-600 hover:to-electric-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electric-500"
                               >
                                 <DocumentIcon className="h-5 w-5 mr-2" />
                                 View Document
@@ -2006,30 +2007,30 @@ const BookingManagement = () => {
                                       });
                                     }
                                   }}
-                                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                  className="block w-full text-sm text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500/20 file:text-blue-300 hover:file:bg-blue-500/30"
                                 />
                               )}
                             </div>
-                            <div className="text-sm text-gray-500">
+                            <div className="text-sm text-neutral-400">
                               <p>Document Name: {selectedBooking.eventDocument.split('/').pop()}</p>
                               <p>Document Type: {selectedBooking.eventDocument.split('.').pop().toUpperCase()}</p>
                             </div>
                           </div>
                         ) : (
-                          <p className="text-gray-500">No document uploaded</p>
+                          <p className="text-neutral-400">No document uploaded</p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Additional Notes</label>
+                        <label className="block text-sm font-medium text-white">Additional Notes</label>
                         {isEditing ? (
                           <textarea
                             value={editedData.additionalNotes}
                             onChange={(e) => setEditedData({ ...editedData, additionalNotes: e.target.value })}
                             rows="4"
-                            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                            className="mt-1 block w-full rounded-md input-field"
                           />
                         ) : (
-                          <p className="mt-1">{selectedBooking.additionalNotes}</p>
+                          <p className="mt-1 text-neutral-300">{selectedBooking.additionalNotes}</p>
                         )}
                       </div>
                     </>
@@ -2040,7 +2041,7 @@ const BookingManagement = () => {
                       <CollapsibleSection title="Bride Information" defaultOpen={true}>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Name</label>
+                            <label className="block text-sm font-medium text-white">Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -2049,22 +2050,22 @@ const BookingManagement = () => {
                                   ...editedData,
                                   bride: { ...editedData.bride, name: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.bride?.name}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Photo</label>
+                            <label className="block text-sm font-medium text-white">Photo</label>
                             {selectedBooking.bride?.photo ? (
                               <img src={selectedBooking.bride.photo} alt="Bride" className="h-24 w-24 rounded-lg mt-1" />
                             ) : (
-                              <p className="mt-1 text-gray-500">No photo uploaded</p>
+                              <p className="mt-1 text-neutral-400">No photo uploaded</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Father's Name</label>
+                            <label className="block text-sm font-medium text-white">Father's Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -2073,14 +2074,14 @@ const BookingManagement = () => {
                                   ...editedData,
                                   bride: { ...editedData.bride, fatherName: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.bride?.fatherName}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Mother's Name</label>
+                            <label className="block text-sm font-medium text-white">Mother's Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -2089,14 +2090,14 @@ const BookingManagement = () => {
                                   ...editedData,
                                   bride: { ...editedData.bride, motherName: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.bride?.motherName}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Age</label>
+                            <label className="block text-sm font-medium text-white">Age</label>
                             {isEditing ? (
                               <input
                                 type="number"
@@ -2105,14 +2106,14 @@ const BookingManagement = () => {
                                   ...editedData,
                                   bride: { ...editedData.bride, age: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.bride?.age}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Contact Number</label>
+                            <label className="block text-sm font-medium text-white">Contact Number</label>
                             {isEditing ? (
                               <input
                                 type="tel"
@@ -2121,14 +2122,14 @@ const BookingManagement = () => {
                                   ...editedData,
                                   bride: { ...editedData.bride, contactNumber: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.bride?.contactNumber}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Email</label>
+                            <label className="block text-sm font-medium text-white">Email</label>
                             {isEditing ? (
                               <input
                                 type="email"
@@ -2137,14 +2138,14 @@ const BookingManagement = () => {
                                   ...editedData,
                                   bride: { ...editedData.bride, email: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.bride?.email}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Address</label>
+                            <label className="block text-sm font-medium text-white">Address</label>
                             {isEditing ? (
                               <textarea
                                 value={editedData.bride?.address || ''}
@@ -2152,7 +2153,7 @@ const BookingManagement = () => {
                                   ...editedData,
                                   bride: { ...editedData.bride, address: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                                 rows="3"
                               />
                             ) : (
@@ -2160,12 +2161,12 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div className="col-span-2">
-                            <label className="block text-sm font-medium text-gray-700">Documents</label>
+                            <label className="block text-sm font-medium text-white">Documents</label>
                             {selectedBooking.bride?.documents && selectedBooking.bride.documents.length > 0 ? (
                               <div className="mt-2 space-y-2">
                                 {selectedBooking.bride.documents.map((doc, index) => (
                                   <div key={index} className="flex items-center space-x-2">
-                                    <DocumentIcon className="h-5 w-5 text-gray-400" />
+                                    <DocumentIcon className="h-5 w-5 text-neutral-400" />
                                     <a 
                                       href={doc} 
                                       target="_blank" 
@@ -2178,7 +2179,7 @@ const BookingManagement = () => {
                                 ))}
                               </div>
                             ) : (
-                              <p className="mt-1 text-gray-500">No documents uploaded</p>
+                              <p className="mt-1 text-neutral-400">No documents uploaded</p>
                             )}
                           </div>
                         </div>
@@ -2186,7 +2187,7 @@ const BookingManagement = () => {
                       <CollapsibleSection title="Groom Information">
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Name</label>
+                            <label className="block text-sm font-medium text-white">Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -2195,22 +2196,22 @@ const BookingManagement = () => {
                                   ...editedData,
                                   groom: { ...editedData.groom, name: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.groom?.name}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Photo</label>
+                            <label className="block text-sm font-medium text-white">Photo</label>
                             {selectedBooking.groom?.photo ? (
                               <img src={selectedBooking.groom.photo} alt="Groom" className="h-24 w-24 rounded-lg mt-1" />
                             ) : (
-                              <p className="mt-1 text-gray-500">No photo uploaded</p>
+                              <p className="mt-1 text-neutral-400">No photo uploaded</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Father's Name</label>
+                            <label className="block text-sm font-medium text-white">Father's Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -2219,14 +2220,14 @@ const BookingManagement = () => {
                                   ...editedData,
                                   groom: { ...editedData.groom, fatherName: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.groom?.fatherName}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Mother's Name</label>
+                            <label className="block text-sm font-medium text-white">Mother's Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -2235,14 +2236,14 @@ const BookingManagement = () => {
                                   ...editedData,
                                   groom: { ...editedData.groom, motherName: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.groom?.motherName}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Age</label>
+                            <label className="block text-sm font-medium text-white">Age</label>
                             {isEditing ? (
                               <input
                                 type="number"
@@ -2251,14 +2252,14 @@ const BookingManagement = () => {
                                   ...editedData,
                                   groom: { ...editedData.groom, age: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.groom?.age}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Contact Number</label>
+                            <label className="block text-sm font-medium text-white">Contact Number</label>
                             {isEditing ? (
                               <input
                                 type="tel"
@@ -2267,14 +2268,14 @@ const BookingManagement = () => {
                                   ...editedData,
                                   groom: { ...editedData.groom, contactNumber: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.groom?.contactNumber}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Email</label>
+                            <label className="block text-sm font-medium text-white">Email</label>
                             {isEditing ? (
                               <input
                                 type="email"
@@ -2283,14 +2284,14 @@ const BookingManagement = () => {
                                   ...editedData,
                                   groom: { ...editedData.groom, email: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{selectedBooking.groom?.email}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Address</label>
+                            <label className="block text-sm font-medium text-white">Address</label>
                             {isEditing ? (
                               <textarea
                                 value={editedData.groom?.address || ''}
@@ -2298,7 +2299,7 @@ const BookingManagement = () => {
                                   ...editedData,
                                   groom: { ...editedData.groom, address: e.target.value }
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                                 rows="3"
                               />
                             ) : (
@@ -2306,12 +2307,12 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div className="col-span-2">
-                            <label className="block text-sm font-medium text-gray-700">Documents</label>
+                            <label className="block text-sm font-medium text-white">Documents</label>
                             {selectedBooking.groom?.documents && selectedBooking.groom.documents.length > 0 ? (
                               <div className="mt-2 space-y-2">
                                 {selectedBooking.groom.documents.map((doc, index) => (
                                   <div key={index} className="flex items-center space-x-2">
-                                    <DocumentIcon className="h-5 w-5 text-gray-400" />
+                                    <DocumentIcon className="h-5 w-5 text-neutral-400" />
                                     <a 
                                       href={doc} 
                                       target="_blank" 
@@ -2324,7 +2325,7 @@ const BookingManagement = () => {
                                 ))}
                               </div>
                             ) : (
-                              <p className="mt-1 text-gray-500">No documents uploaded</p>
+                              <p className="mt-1 text-neutral-400">No documents uploaded</p>
                             )}
                           </div>
                         </div>
@@ -2332,7 +2333,7 @@ const BookingManagement = () => {
                       <CollapsibleSection title="Ceremony Details">
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Ceremony Date</label>
+                            <label className="block text-sm font-medium text-white">Ceremony Date</label>
                             {isEditing ? (
                               <input
                                 type="date"
@@ -2341,26 +2342,26 @@ const BookingManagement = () => {
                                   ...editedData,
                                   ceremonyDate: e.target.value
                                 })}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500"
+                                className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
                               <p className="mt-1">{new Date(selectedBooking.ceremonyDate).toLocaleDateString()}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Status</label>
+                            <label className="block text-sm font-medium text-white">Status</label>
                             <span className={`px-2 py-1 rounded-full text-sm ${
                               selectedBooking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
                               selectedBooking.status === 'approved' ? 'bg-blue-100 text-blue-800' :
                               selectedBooking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                               selectedBooking.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                              'bg-gray-100 text-gray-800'
+                              'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
                             }`}>
                               {selectedBooking.status}
                             </span>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Payment Status</label>
+                            <label className="block text-sm font-medium text-white">Payment Status</label>
                             <span className={`px-2 py-1 rounded-full text-sm ${
                               selectedBooking.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
                               'bg-yellow-100 text-yellow-800'
@@ -2370,7 +2371,7 @@ const BookingManagement = () => {
                           </div>
                           {selectedBooking.rejectionReason && (
                             <div className="col-span-2">
-                              <label className="block text-sm font-medium text-gray-700">Rejection Reason</label>
+                              <label className="block text-sm font-medium text-white">Rejection Reason</label>
                               <p className="mt-1 text-red-600">{selectedBooking.rejectionReason}</p>
                             </div>
                           )}
@@ -2385,51 +2386,51 @@ const BookingManagement = () => {
                         <h3 className="text-lg font-medium mb-4">Student Award Details</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Name</label>
+                            <label className="block text-sm font-medium text-white">Name</label>
                             <p className="mt-1">{selectedBooking.name}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">School Name</label>
+                            <label className="block text-sm font-medium text-white">School Name</label>
                             <p className="mt-1">{selectedBooking.schoolName}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Standard</label>
+                            <label className="block text-sm font-medium text-white">Standard</label>
                             <p className="mt-1">{selectedBooking.standard}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Board Name</label>
+                            <label className="block text-sm font-medium text-white">Board Name</label>
                             <p className="mt-1">{selectedBooking.boardName}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Exam Year</label>
+                            <label className="block text-sm font-medium text-white">Exam Year</label>
                             <p className="mt-1">{selectedBooking.examYear}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Total Percentage</label>
+                            <label className="block text-sm font-medium text-white">Total Percentage</label>
                             <p className="mt-1">{selectedBooking.totalPercentage}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Rank</label>
+                            <label className="block text-sm font-medium text-white">Rank</label>
                             <p className="mt-1">{selectedBooking.rank}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Marksheet</label>
+                            <label className="block text-sm font-medium text-white">Marksheet</label>
                             <a href={selectedBooking.marksheet} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">View Marksheet</a>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Status</label>
+                            <label className="block text-sm font-medium text-white">Status</label>
                             <span className={`px-2 py-1 rounded-full text-sm ${
                               selectedBooking.status === 'approved' ? 'bg-green-100 text-green-800' :
                               selectedBooking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                               selectedBooking.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                              'bg-gray-100 text-gray-800'
+                              'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
                             }`}>
                               {selectedBooking.status}
                             </span>
                           </div>
                           {selectedBooking.rejectionReason && (
                             <div className="col-span-2">
-                              <label className="block text-sm font-medium text-gray-700">Rejection Reason</label>
+                              <label className="block text-sm font-medium text-white">Rejection Reason</label>
                               <p className="mt-1 text-red-600">{selectedBooking.rejectionReason}</p>
                             </div>
                           )}
@@ -2441,43 +2442,43 @@ const BookingManagement = () => {
                   {selectedBooking.eventType === 'Team Registration' && (
                     <div className="space-y-6">
                       <div className="border-b pb-4">
-                        <h3 className="text-lg font-medium mb-4">Team Information</h3>
+                        <h3 className="text-lg font-medium mb-4 text-white">Team Information</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Game Name</label>
+                            <label className="block text-sm font-medium text-white">Game Name</label>
                             <p className="mt-1">{selectedBooking.gameName}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Team Name</label>
+                            <label className="block text-sm font-medium text-white">Team Name</label>
                             <p className="mt-1">{selectedBooking.teamName}</p>
                           </div>
                         </div>
                       </div>
 
                       <div className="border-b pb-4">
-                        <h3 className="text-lg font-medium mb-4">Captain Details</h3>
+                        <h3 className="text-lg font-medium mb-4 text-white">Captain Details</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Captain Name</label>
+                            <label className="block text-sm font-medium text-white">Captain Name</label>
                             <p className="mt-1">{selectedBooking.captainName}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                            <label className="block text-sm font-medium text-white">Mobile Number</label>
                             <p className="mt-1">{selectedBooking.mobileNumber}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Email</label>
+                            <label className="block text-sm font-medium text-white">Email</label>
                             <p className="mt-1">{selectedBooking.email}</p>
                           </div>
                         </div>
                       </div>
 
                       <div className="border-b pb-4">
-                        <h3 className="text-lg font-medium mb-4">Team Members</h3>
+                        <h3 className="text-lg font-medium mb-4 text-white">Team Members</h3>
                         <div className="space-y-2">
                           {selectedBooking.teamMembers && selectedBooking.teamMembers.map((member, index) => (
                             <div key={index} className="flex items-center">
-                              <span className="text-gray-500 mr-2">{index + 1}.</span>
+                              <span className="text-neutral-400 mr-2">{index + 1}.</span>
                               <p>{member}</p>
                             </div>
                           ))}
@@ -2485,18 +2486,18 @@ const BookingManagement = () => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700">Status</label>
+                        <label className="block text-sm font-medium text-white">Status</label>
                         <span className={`px-2 py-1 rounded-full text-sm ${
                           selectedBooking.status === 'approved' ? 'bg-green-100 text-green-800' :
                           selectedBooking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                           selectedBooking.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                          'bg-gray-100 text-gray-800'
+                          'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
                         }`}>
                           {selectedBooking.status}
                         </span>
                         {selectedBooking.rejectionReason && (
                           <div className="mt-2">
-                            <label className="block text-sm font-medium text-gray-700">Rejection Reason</label>
+                            <label className="block text-sm font-medium text-white">Rejection Reason</label>
                             <p className="mt-1 text-red-600">{selectedBooking.rejectionReason}</p>
                           </div>
                         )}
@@ -2508,7 +2509,7 @@ const BookingManagement = () => {
                     {!isEditing && (
                       <button
                         onClick={handleStartEditing}
-                        className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                        className="px-4 py-2 bg-gradient-electric text-white rounded-md hover:from-electric-600 hover:to-electric-700"
                       >
                         Edit Booking
                       </button>
@@ -2520,13 +2521,13 @@ const BookingManagement = () => {
                             setIsEditing(false);
                             setEditedData(null);
                           }}
-                          className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50"
+                          className="px-4 py-2 border border-white/20 rounded-md hover:bg-white/10 text-white"
                         >
                           Cancel
                         </button>
                         <button
                           onClick={handleSave}
-                          className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                          className="px-4 py-2 bg-gradient-secondary text-white rounded-md hover:from-secondary-600 hover:to-secondary-700"
                         >
                           Save Changes
                         </button>

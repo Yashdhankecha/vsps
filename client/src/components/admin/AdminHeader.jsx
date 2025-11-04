@@ -76,7 +76,7 @@ const AdminHeader = () => {
       '/admin/booked-dates': 'Calendar View',
       '/admin/contact-management': 'Contact Management',
       '/admin/live-streams': 'Live Streams',
-      '/admin/reports': 'Reports & Analytics'
+      '/admin/settings': 'Settings'
     };
     return pathMap[location.pathname] || 'Admin Panel';
   };
@@ -188,10 +188,10 @@ const AdminHeader = () => {
                     <UserCircleIcon className="h-4 w-4 mr-3" />
                     Profile Settings
                   </button>
-                  <button className="flex items-center w-full px-4 py-2 text-sm text-neutral-300 hover:bg-white/5 hover:text-white transition-colors duration-200">
+                  <Link to="/admin/settings" className="flex items-center w-full px-4 py-2 text-sm text-neutral-300 hover:bg-white/5 hover:text-white transition-colors duration-200">
                     <CogIcon className="h-4 w-4 mr-3" />
                     Preferences
-                  </button>
+                  </Link>
                   <button className="flex items-center w-full px-4 py-2 text-sm text-neutral-300 hover:bg-white/5 hover:text-white transition-colors duration-200">
                     <QuestionMarkCircleIcon className="h-4 w-4 mr-3" />
                     Help & Support

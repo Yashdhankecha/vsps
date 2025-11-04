@@ -21,6 +21,19 @@
     overflow-x: hidden;
   }
   
+  /* Ensure all elements properly handle overflow */
+  .overflow-x-hidden {
+    overflow-x: hidden;
+  }
+  
+  .overflow-y-hidden {
+    overflow-y: hidden;
+  }
+  
+  .overflow-hidden {
+    overflow: hidden;
+  }
+  
   /* Custom scrollbar for all elements */
   * {
     scrollbar-width: thin;

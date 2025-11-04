@@ -613,7 +613,7 @@ const ContentManagement = () => {
     return (
       <div className="space-y-8">
         {/* Hero Slider Section */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="card-hover p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold">Hero Slider</h3>
             <button
@@ -633,7 +633,7 @@ const ContentManagement = () => {
           <div className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {homeContent?.heroSlider?.map((slide, index) => (
-                <div key={index} className="bg-gray-50 rounded-lg overflow-hidden">
+                <div key={index} className="glass-effect rounded-lg overflow-hidden">
                   <div className="aspect-w-16 aspect-h-9">
                     <img
                       src={getImageUrl(slide.image)}
@@ -643,8 +643,8 @@ const ContentManagement = () => {
                     />
                   </div>
                   <div className="p-4">
-                    <h4 className="font-medium text-gray-900">{slide.title}</h4>
-                    <p className="text-sm text-gray-600 mt-1">{slide.description}</p>
+                    <h4 className="font-medium text-white">{slide.title}</h4>
+                    <p className="text-sm text-neutral-300 mt-1">{slide.description}</p>
                   </div>
                 </div>
               ))}
@@ -653,7 +653,7 @@ const ContentManagement = () => {
         </div>
 
         {/* Introduction Section */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="card-hover p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold">Introduction Section</h3>
             <button
@@ -679,34 +679,34 @@ const ContentManagement = () => {
           </div>
           <div className="space-y-4">
             <div>
-              <h4 className="font-medium text-gray-700">Heading</h4>
-              <p className="text-gray-600">{homeContent?.introduction?.heading}</p>
+              <h4 className="font-medium text-white">Heading</h4>
+              <p className="text-neutral-300">{homeContent?.introduction?.heading}</p>
             </div>
             <div>
-              <h4 className="font-medium text-gray-700">Description</h4>
-              <p className="text-gray-600">{homeContent?.introduction?.description}</p>
+              <h4 className="font-medium text-white">Description</h4>
+              <p className="text-neutral-300">{homeContent?.introduction?.description}</p>
             </div>
             <div>
-              <h4 className="font-medium text-gray-700">Highlights</h4>
+              <h4 className="font-medium text-white">Highlights</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
                 {homeContent?.introduction?.highlights?.map((highlight, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                  <div key={index} className="glass-effect p-4 rounded-lg">
                     <div className="flex items-center space-x-2 mb-2">
                       {getIconComponent(highlight.icon)}
                       <h5 className="font-medium">{highlight.title}</h5>
                     </div>
-                    <p className="text-sm text-gray-600">{highlight.subtitle}</p>
+                    <p className="text-sm text-neutral-300">{highlight.subtitle}</p>
                   </div>
                 ))}
               </div>
             </div>
             <div>
-              <h4 className="font-medium text-gray-700">Download Section</h4>
+              <h4 className="font-medium text-white">Download Section</h4>
               <div className="mt-2">
-                <p className="text-gray-600">
+                <p className="text-neutral-300">
                   Label: {homeContent?.introduction?.download?.label}
                 </p>
-                <p className="text-gray-600">
+                <p className="text-neutral-300">
                   File: {homeContent?.introduction?.download?.fileName}
                 </p>
               </div>
@@ -715,7 +715,7 @@ const ContentManagement = () => {
         </div>
 
         {/* About Section */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="card-hover p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold">About Section</h3>
             <button
@@ -746,20 +746,20 @@ const ContentManagement = () => {
             </div>
             <div className="space-y-4">
               <div>
-                <h4 className="font-medium text-gray-700">Heading</h4>
-                <p className="text-gray-600">{homeContent?.about?.heading}</p>
+                <h4 className="font-medium text-white">Heading</h4>
+                <p className="text-neutral-300">{homeContent?.about?.heading}</p>
               </div>
               <div>
-                <h4 className="font-medium text-gray-700">Description</h4>
-                <p className="text-gray-600">{homeContent?.about?.description}</p>
+                <h4 className="font-medium text-white">Description</h4>
+                <p className="text-neutral-300">{homeContent?.about?.description}</p>
               </div>
               <div>
-                <h4 className="font-medium text-gray-700">Features</h4>
+                <h4 className="font-medium text-white">Features</h4>
                 <div className="space-y-2 mt-2">
                   {homeContent?.about?.features?.map((feature, index) => (
-                    <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                      <h5 className="font-medium">{feature.title}</h5>
-                      <p className="text-sm text-gray-600">{feature.description}</p>
+                    <div key={index} className="glass-effect p-3 rounded-lg">
+                      <h5 className="font-medium text-white">{feature.title}</h5>
+                      <p className="text-sm text-neutral-300">{feature.description}</p>
                     </div>
                   ))}
                 </div>
@@ -769,7 +769,7 @@ const ContentManagement = () => {
         </div>
 
         {/* Leadership Section */}
-        <div className="bg-white rounded-lg shadow p-6">
+        <div className="card-hover p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-semibold">Leadership Section</h3>
             <button
@@ -791,34 +791,34 @@ const ContentManagement = () => {
           </div>
           <div className="space-y-4">
             <div>
-              <h4 className="font-medium text-gray-700">Heading</h4>
-              <p className="text-gray-600">{homeContent?.leadership?.heading}</p>
+              <h4 className="font-medium text-white">Heading</h4>
+              <p className="text-neutral-300">{homeContent?.leadership?.heading}</p>
             </div>
             <div>
-              <h4 className="font-medium text-gray-700">Description</h4>
-              <p className="text-gray-600">{homeContent?.leadership?.description}</p>
+              <h4 className="font-medium text-white">Description</h4>
+              <p className="text-neutral-300">{homeContent?.leadership?.description}</p>
             </div>
             <div>
-              <h4 className="font-medium text-gray-700">Team Members</h4>
+              <h4 className="font-medium text-white">Team Members</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
                 {homeContent?.leadership?.members?.map((member, index) => (
-                  <div key={index} className="bg-gray-50 p-4 rounded-lg">
+                  <div key={index} className="glass-effect p-4 rounded-lg">
                     <img
                       src={getImageUrl(member.image)}
                       alt={member.name}
                       className="w-full h-48 object-cover rounded-lg mb-3"
                       onError={handleImageError}
                     />
-                    <h5 className="font-medium">{member.name}</h5>
-                    <p className="text-sm text-gray-600">{member.position}</p>
-                    <p className="text-sm text-gray-600 mt-2">{member.description}</p>
+                    <h5 className="font-medium text-white">{member.name}</h5>
+                    <p className="text-sm text-neutral-300">{member.position}</p>
+                    <p className="text-sm text-neutral-300 mt-2">{member.description}</p>
                   </div>
                 ))}
               </div>
             </div>
             <div>
-              <h4 className="font-medium text-gray-700">Note</h4>
-              <p className="text-gray-600">{homeContent?.leadership?.note}</p>
+              <h4 className="font-medium text-white">Note</h4>
+              <p className="text-neutral-300">{homeContent?.leadership?.note}</p>
             </div>
           </div>
         </div>
@@ -828,7 +828,7 @@ const ContentManagement = () => {
 
   const renderEventCategories = () => (
     <div className="space-y-6">
-      <div className="bg-white rounded-lg shadow p-6">
+      <div className="card-hover p-6">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold">Event Categories</h3>
           <button 
@@ -861,7 +861,7 @@ const ContentManagement = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {eventCategories.map((category) => (
-            <div key={category._id} className="bg-gray-50 rounded-lg p-4 relative">
+            <div key={category._id} className="glass-effect rounded-lg p-4 relative">
               <div className="absolute top-2 right-2 flex space-x-2">
                 <button
                   onClick={() => {
@@ -872,15 +872,15 @@ const ContentManagement = () => {
                     });
                     setIsEditing(true);
                   }}
-                  className="p-1.5 bg-white rounded-full shadow"
+                  className="p-1.5 bg-neutral-700 rounded-full shadow"
                 >
-                  <PencilIcon className="h-4 w-4 text-blue-600" />
+                  <PencilIcon className="h-4 w-4 text-blue-400" />
                 </button>
                 <button
                   onClick={() => handleDelete('event-category', category._id)}
-                  className="p-1.5 bg-white rounded-full shadow"
+                  className="p-1.5 bg-neutral-700 rounded-full shadow"
                 >
-                  <TrashIcon className="h-4 w-4 text-red-600" />
+                  <TrashIcon className="h-4 w-4 text-red-400" />
                 </button>
               </div>
               <img
@@ -890,35 +890,35 @@ const ContentManagement = () => {
                 onError={handleImageError}
               />
               <h4 className="font-semibold mb-2">{category.title}</h4>
-              <p className="text-sm text-gray-600 mb-2">{category.description}</p>
+              <p className="text-sm text-neutral-300 mb-2">{category.description}</p>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <span className="text-gray-500">Capacity:</span>
-                  <span className="ml-1">{category.capacity}</span>
+                  <span className="text-neutral-400">Capacity:</span>
+                  <span className="ml-1 text-white">{category.capacity}</span>
                 </div>
                 <div>
-                  <span className="text-gray-500">Order:</span>
-                  <span className="ml-1">{category.order}</span>
+                  <span className="text-neutral-400">Order:</span>
+                  <span className="ml-1 text-white">{category.order}</span>
                 </div>
               </div>
               <div className="mt-2">
                 <span className={`text-xs px-2 py-1 rounded-full ${
-                  category.isActive ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+                  category.isActive ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
                 }`}>
                   {category.isActive ? 'Active' : 'Inactive'}
                 </span>
               </div>
               <div className="mt-3">
-                <h5 className="text-sm font-medium text-gray-700 mb-2">Pricing:</h5>
-                <div className="text-sm">
+                <h5 className="text-sm font-medium text-white mb-2">Pricing:</h5>
+                <div className="text-sm text-neutral-300">
                   <p>Samaj Member: {category.membershipPricing?.samajMember || 'Not set'}</p>
                   <p>Non-Samaj Member: {category.membershipPricing?.nonSamajMember || 'Not set'}</p>
                 </div>
               </div>
               {category.features && category.features.length > 0 && (
                 <div className="mt-3">
-                  <h5 className="text-sm font-medium text-gray-700 mb-2">Features:</h5>
-                  <ul className="text-sm text-gray-600 list-disc list-inside">
+                  <h5 className="text-sm font-medium text-white mb-2">Features:</h5>
+                  <ul className="text-sm text-neutral-300 list-disc list-inside">
                     {category.features.map((feature, index) => (
                       <li key={`${category._id}-feature-${index}`}>{feature}</li>
                     ))}
@@ -936,13 +936,13 @@ const ContentManagement = () => {
     <div className="space-y-6">
       <div className="flex space-x-4 mb-4">
         <button 
-          className={`px-4 py-2 rounded-lg ${galleryTab === 'photos' ? 'bg-purple-600 text-white' : 'bg-gray-100'}`}
+          className={`px-4 py-2 rounded-lg ${galleryTab === 'photos' ? 'bg-gradient-electric text-white' : 'glass-effect'}`}
           onClick={() => setGalleryTab('photos')}
         >
           Photos
         </button>
         <button 
-          className={`px-4 py-2 rounded-lg ${galleryTab === 'videos' ? 'bg-purple-600 text-white' : 'bg-gray-100'}`}
+          className={`px-4 py-2 rounded-lg ${galleryTab === 'videos' ? 'bg-gradient-electric text-white' : 'glass-effect'}`}
           onClick={() => setGalleryTab('videos')}
         >
           Videos
@@ -951,7 +951,7 @@ const ContentManagement = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {galleryItems.map((item) => (
-          <div key={item._id} className="bg-white rounded-lg shadow overflow-hidden">
+          <div key={item._id} className="card-hover rounded-lg overflow-hidden">
             <div className="relative h-48">
               <img 
                 src={getImageUrl(item.type === 'photo' ? item.url : item.thumbnail)}
@@ -971,24 +971,24 @@ const ContentManagement = () => {
                     });
                     setIsEditing(true);
                   }}
-                  className="p-1.5 bg-white rounded-full shadow"
+                  className="p-1.5 bg-neutral-700 rounded-full shadow"
                 >
-                  <PencilIcon className="h-4 w-4 text-blue-600" />
+                  <PencilIcon className="h-4 w-4 text-blue-400" />
                 </button>
                 <button 
                   onClick={() => handleDelete('gallery', item._id)}
-                  className="p-1.5 bg-white rounded-full shadow"
+                  className="p-1.5 bg-neutral-700 rounded-full shadow"
                 >
-                  <TrashIcon className="h-4 w-4 text-red-600" />
+                  <TrashIcon className="h-4 w-4 text-red-400" />
                 </button>
               </div>
             </div>
             <div className="p-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium bg-purple-100 text-purple-800 px-3 py-1 rounded-full capitalize">
+                <span className="text-sm font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30 px-3 py-1 rounded-full capitalize">
                   {item.category}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-neutral-400">
                   {item.type === 'photo' ? 'Photo' : 'Video'}
                 </span>
               </div>
@@ -1316,7 +1316,7 @@ const ContentManagement = () => {
                   <input type="hidden" name="highlightCount" value={editingItem.highlights?.length || 0} />
                   <div className="space-y-4 mt-2">
                     {editingItem.highlights?.map((highlight, index) => (
-                      <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg">
+                      <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 glass-effect rounded-lg">
                         <div>
                           <label className="block text-sm font-medium text-white">Icon</label>
                           <input
@@ -1372,7 +1372,7 @@ const ContentManagement = () => {
                         className="mt-1 block w-full"
                       />
                       {editingItem.download?.fileName && (
-                        <p className="mt-2 text-sm text-gray-600">
+                        <p className="mt-2 text-sm text-neutral-300">
                           Current file: {editingItem.download.fileName}
                         </p>
                       )}
@@ -1426,7 +1426,7 @@ const ContentManagement = () => {
                   <input type="hidden" name="featureCount" value={editingItem.features?.length || 0} />
                   <div className="space-y-4 mt-2">
                     {editingItem.features?.map((feature, index) => (
-                      <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                      <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 glass-effect rounded-lg">
                         <div>
                           <label className="block text-sm font-medium text-white">Title</label>
                           <input
@@ -1502,7 +1502,7 @@ const ContentManagement = () => {
                   <input type="hidden" name="memberCount" value={editingItem.members?.length || 0} />
                   <div className="space-y-4 mt-2">
                     {editingItem.members?.map((member, index) => (
-                      <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-gray-50 rounded-lg">
+                      <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 glass-effect rounded-lg">
                         <div>
                           <label className="block text-sm font-medium text-white">Name</label>
                           <input
@@ -1723,10 +1723,10 @@ const ContentManagement = () => {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Membership Pricing</label>
+                  <label className="block text-sm font-medium text-white">Membership Pricing</label>
                   <div className="grid grid-cols-2 gap-4 mt-2">
                     <div>
-                      <label className="block text-sm text-gray-600">Samaj Member</label>
+                      <label className="block text-sm text-neutral-300">Samaj Member</label>
                       <input
                         type="text"
                         name="samajMember"
@@ -1736,7 +1736,7 @@ const ContentManagement = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-gray-600">Non-Samaj Member</label>
+                      <label className="block text-sm text-neutral-300">Non-Samaj Member</label>
                       <input
                         type="text"
                         name="nonSamajMember"
@@ -1748,7 +1748,7 @@ const ContentManagement = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Features</label>
+                  <label className="block text-sm font-medium text-white">Features</label>
                   <input type="hidden" name="featureCount" value={editingItem.features?.length || 0} />
                   <div className="space-y-4 mt-2">
                     {editingItem.features?.map((feature, index) => (
@@ -1793,10 +1793,10 @@ const ContentManagement = () => {
                     defaultChecked={editingItem.isActive !== false}
                     className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                   />
-                  <label className="ml-2 block text-sm text-gray-700">Active</label>
+                  <label className="ml-2 block text-sm text-white">Active</label>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Order</label>
+                  <label className="block text-sm font-medium text-white">Order</label>
                   <input
                     type="number"
                     name="order"
@@ -1812,7 +1812,7 @@ const ContentManagement = () => {
             {contentType === 'gallery' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">File</label>
+                  <label className="block text-sm font-medium text-white">File</label>
                   <input
                     type="file"
                     name="file"
@@ -1822,7 +1822,7 @@ const ContentManagement = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Category</label>
+                  <label className="block text-sm font-medium text-white">Category</label>
                   <select
                     name="category"
                     defaultValue={editingItem?.category || 'weddings'}
@@ -1838,7 +1838,7 @@ const ContentManagement = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700">Type</label>
+                  <label className="block text-sm font-medium text-white">Type</label>
                   <select
                     name="type"
                     defaultValue={editingItem?.type || 'photo'}
@@ -1860,7 +1860,7 @@ const ContentManagement = () => {
                     setIsAdding(false);
                     setEditingItem(null);
                   }}
-                className="px-4 py-2 border rounded-lg hover:bg-gray-100"
+                className="px-4 py-2 glass-effect rounded-lg hover:bg-neutral-700"
                 >
                   Cancel
                 </button>

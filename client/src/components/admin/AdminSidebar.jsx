@@ -107,15 +107,7 @@ const Sidebar = () => {
       bgColor: 'bg-sunset-500/20',
       borderColor: 'border-sunset-500/30'
     },
-    { 
-      name: 'Reports', 
-      icon: ChartBarIcon, 
-      iconSolid: ChartBarIconSolid,
-      path: '/admin/reports',
-      color: 'text-neon-400',
-      bgColor: 'bg-neon-500/20',
-      borderColor: 'border-neon-500/30'
-    },
+
   ];
 
   const isActive = (path) => location.pathname === path;
@@ -194,19 +186,22 @@ const Sidebar = () => {
 
       {/* Footer */}
       <div className="p-4 border-t border-white/10">
-        <div className={`flex items-center space-x-3 p-3 rounded-xl bg-neutral-800/30 border border-white/10 ${
-          sidebarExpanded ? '' : 'justify-center'
-        }`}>
+        <Link
+          to="/admin/settings"
+          className={`flex items-center space-x-3 p-3 rounded-xl bg-neutral-800/30 border border-white/10 ${
+            sidebarExpanded ? '' : 'justify-center'
+          } hover:bg-white/10 transition-colors duration-200`}
+        >
           <div className="w-8 h-8 bg-gradient-secondary rounded-lg flex items-center justify-center">
             <CogIcon className="w-4 h-4 text-white" />
           </div>
           {sidebarExpanded && (
             <div className="animate-fade-in-right">
-              <p className="text-sm font-medium text-white">Settings</p>
-              <p className="text-xs text-neutral-400">Manage preferences</p>
+              <p className="text-sm font-medium text-white">Logout</p>
+              <p className="text-xs text-neutral-400">Sign out of account</p>
             </div>
           )}
-        </div>
+        </Link>
       </div>
     </div>
   );

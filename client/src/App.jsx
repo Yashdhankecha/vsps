@@ -20,7 +20,6 @@ import Dashboard from "./pages/adminpanel/Dashboard";
 import BookingManagement from "./pages/adminpanel/BookingManagement";
 import ContentManagement from "./pages/adminpanel/ContentManagement";
 import LiveStreams from "./pages/adminpanel/LiveStreams";
-import Reports from "./pages/adminpanel/Reports";
 import AdminSidebar from "./components/admin/AdminSidebar";
 import AdminPageContainer from "./components/admin/AdminPageContainer"; 
 import Header from "./components/user/Header";
@@ -202,12 +201,12 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-gray-50 overflow-x-hidden">
       
       {isAdminRoute ? (
         user?.role === "admin" ? (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gradient-mesh">
+            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -216,7 +215,7 @@ function AppContent() {
                   <Route path="/admin/booking-management" element={<BookingManagement />} />
                   <Route path="/admin/contact-management" element={<ContactManagement />} />
                   <Route path="/admin/live-streams" element={<LiveStreams />} />
-                  <Route path="/admin/reports" element={<Reports />} />
+
                   <Route path="/admin/users" element={<Users />} />
                   <Route path="/admin/form-management" element={<FormManagement />} />
                   <Route path="/admin/booked-dates" element={<BookedDatesCalendar />} />
@@ -234,7 +233,7 @@ function AppContent() {
           {user?.role !== "admin" ? (
             <>
               <Header />
-              <main className="flex-grow">
+              <main className="flex-grow overflow-x-hidden">
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/auth" element={<Auth />} />
