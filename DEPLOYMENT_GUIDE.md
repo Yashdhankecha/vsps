@@ -1,4 +1,4 @@
-# 🚀 Samaj Portal Committee System - Deployment Guide
+# 🚀 Samaj Portal Deployment Guide
 
 ## Pre-Deployment Checklist
 
@@ -49,10 +49,10 @@ db.users.updateMany(
 ```
 
 ### Schema Validation
-Verify the User model includes the committee role:
+Verify the User model includes the correct roles:
 ```javascript
 // Check this in your User.js model
-role: { type: String, enum: ['user', 'committee', 'admin'], default: 'user' }
+role: { type: String, enum: ['user', 'admin'], default: 'user' }
 ```
 
 ## 🚦 Testing Deployment
@@ -72,7 +72,6 @@ npm run dev
 ### 3. Access Points
 - **User Interface**: http://localhost:5173/
 - **Admin Panel**: http://localhost:5173/admin/dashboard
-- **Committee Panel**: http://localhost:5173/committee/dashboard
 - **API Endpoint**: http://localhost:3000/api
 
 ## 🧪 Post-Deployment Testing
@@ -80,7 +79,6 @@ npm run dev
 ### User Role Testing
 1. **Create Test Accounts**:
    - Regular user: test-user@example.com
-   - Committee member: committee@example.com
    - Admin: admin@example.com
 
 2. **Test Authentication**:
@@ -91,20 +89,11 @@ npm run dev
 
 3. **Test Role Access**:
    - Login as user → Should access only user routes
-   - Login as committee → Should access committee + user routes
    - Login as admin → Should access all routes
 
-### Committee Functionality Testing
-1. **Dashboard Access**: Visit `/committee/dashboard`
-2. **Booking Approvals**: Test approve/reject functionality
-3. **Award Management**: Test award review process
-4. **Data Management**: Test Samuh data CRUD operations
-5. **Reports**: Test filtering and export features
-
 ### Admin Functionality Testing
-1. **User Management**: Test promote/demote features
-2. **Committee Assignment**: Verify role changes work
-3. **Access Controls**: Ensure proper authorization
+1. **User Management**: Test role changes work
+2. **Access Controls**: Ensure proper authorization
 
 ## 🔒 Security Verification
 
@@ -115,7 +104,6 @@ npm run dev
 - [ ] Session management functions correctly
 
 ### Authorization Tests
-- [ ] Committee routes blocked for regular users
 - [ ] Admin routes blocked for non-admins
 - [ ] API endpoints respect role permissions
 
@@ -151,14 +139,7 @@ netstat -an | grep 3000
 - Verify JWT token contains role
 - Ensure middleware is applied correctly
 
-#### 2. Committee Routes Not Loading
-**Symptoms**: 404 errors on committee routes
-**Solution**:
-- Check App.jsx routing configuration
-- Verify committee components are imported
-- Ensure AuthContext includes role helpers
-
-#### 3. Database Connection Issues
+#### 2. Database Connection Issues
 **Symptoms**: \"User not found\" errors
 **Solution**:
 - Verify MongoDB connection string
@@ -238,13 +219,12 @@ server {
 ## 🎯 Success Indicators
 
 ### Deployment Success
-- [ ] All three role types can login successfully
-- [ ] Committee dashboard loads without errors
-- [ ] Booking approval system works
+- [ ] All role types can login successfully
+- [ ] Admin dashboard loads without errors
+- [ ] Booking management system works
 - [ ] Award management functions correctly
-- [ ] Admin can promote/demote users
+- [ ] Admin can manage users
 - [ ] All routes respect authorization rules
-- [ ] Reports generate and export properly
 
 ### Performance Success
 - [ ] Page load times < 2 seconds
@@ -262,4 +242,4 @@ server {
 
 **Deployment Status**: 🟢 Ready for Production
 **Last Updated**: [Current Date]
-**Version**: 2.0.0 - Committee System Release
+**Version**: 2.1.0 - Simplified Role System Release

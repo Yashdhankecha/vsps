@@ -17,13 +17,8 @@ const forms = [
     title: 'Student Award Registration',
     route: '/student-awards',
     formType: 'studentAward'
-  },
-  {
-    name: 'teamRegistrationForm',
-    title: 'Team Registration',
-    route: '/team-registration',
-    formType: 'teamRegistration'
   }
+  // Removed teamRegistration form
 ];
 
 const useFormNotice = () => {

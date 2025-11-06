@@ -73,12 +73,12 @@ const Dashboard = () => {
       console.log('Fetching dashboard data...');
       
       // Fetch all dashboard data in parallel
-      const [dashboardStatsRes, bookingsRes, samuhLaganRes, studentAwardRes, teamRegRes] = await Promise.all([
+      const [dashboardStatsRes, bookingsRes, samuhLaganRes, studentAwardRes] = await Promise.all([
         axiosInstance.get('/api/users/dashboard-stats'),
         axiosInstance.get('/api/bookings'),
         axiosInstance.get('/api/bookings/samuh-lagan'),
-        axiosInstance.get('/api/bookings/student-awards'),
-        axiosInstance.get('/api/admin/forms/team-registrations')
+        axiosInstance.get('/api/bookings/student-awards')
+        // Removed team-registrations since the model was deleted
       ]);
 
       console.log('All data fetched successfully');
@@ -98,16 +98,11 @@ const Dashboard = () => {
       const studentAwards = Array.isArray(studentAwardRes.data) ? studentAwardRes.data :
                             Array.isArray(studentAwardRes.data?.awards) ? studentAwardRes.data.awards :
                             Array.isArray(studentAwardRes.data?.data) ? studentAwardRes.data.data : [];
-      
-      const teamRegistrations = Array.isArray(teamRegRes.data) ? teamRegRes.data :
-                                Array.isArray(teamRegRes.data?.registrations) ? teamRegRes.data.registrations :
-                                Array.isArray(teamRegRes.data?.data) ? teamRegRes.data.data : [];
 
       console.log('Data processed:', {
         bookingsLength: bookings.length,
         samuhLaganLength: samuhLagan.length,
-        studentAwardsLength: studentAwards.length,
-        teamRegistrationsLength: teamRegistrations.length
+        studentAwardsLength: studentAwards.length
       });
 
       // Calculate statistics
@@ -146,7 +141,7 @@ const Dashboard = () => {
         pendingBookings: pendingBookings.length,
         totalSamuhLagan: samuhLagan.length,
         totalStudentAwards: studentAwards.length,
-        totalTeamRegistrations: teamRegistrations.length,
+        totalTeamRegistrations: 0, // Set to 0 since we removed team registrations
         recentBookings,
         upcomingEvents,
         pendingPayments,
@@ -645,21 +640,6 @@ const Dashboard = () => {
               </div>
             )}
           </div>
-        </div>
-
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in-up">
-          {[1, 2, 3, 4].map((item) => (
-            <div key={item} className="glass-effect rounded-xl shadow-lg p-6 animate-pulse">
-              <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-neutral-700 rounded-lg"></div>
-                <div>
-                  <div className="h-5 bg-neutral-700 rounded w-32 mb-2"></div>
-                  <div className="h-4 bg-neutral-700 rounded w-24"></div>
-                </div>
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </div>

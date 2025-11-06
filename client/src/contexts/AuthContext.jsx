@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
           };
           
           // Validate role
-          if (!['user', 'committee', 'admin'].includes(normalizedUser.role)) {
+          if (!['user', 'admin'].includes(normalizedUser.role)) {
             console.error('Invalid user role:', normalizedUser.role);
             localStorage.removeItem('token');
             setUser(null);
@@ -46,21 +46,17 @@ export function AuthProvider({ children }) {
 
   // Helper functions for role checking
   const isAdmin = () => user?.role === 'admin';
-  const isCommittee = () => user?.role === 'committee';
   const isUser = () => user?.role === 'user';
   const hasAdminAccess = () => user?.role === 'admin';
-  const hasCommitteeAccess = () => ['committee', 'admin'].includes(user?.role);
-  const hasUserAccess = () => ['user', 'committee', 'admin'].includes(user?.role);
+  const hasUserAccess = () => ['user', 'admin'].includes(user?.role);
 
   const value = {
     user,
     loading,
     setUser,
     isAdmin,
-    isCommittee,
     isUser,
     hasAdminAccess,
-    hasCommitteeAccess,
     hasUserAccess
   };
 
@@ -77,4 +73,4 @@ export function useAuth() {
     throw new Error('useAuth must be used within an AuthProvider');
   }
   return context;
-} 
+}

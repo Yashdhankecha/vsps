@@ -190,7 +190,6 @@ const BookingManagement = () => {
   const [activeCategory, setActiveCategory] = useState('all');
   const [samuhLaganRequests, setSamuhLaganRequests] = useState([]);
   const [studentAwardRequests, setStudentAwardRequests] = useState([]);
-  const [teamRegistrationRequests, setTeamRegistrationRequests] = useState([]);
   const [showDeleteConfirmation, setShowDeleteConfirmation] = useState(false);
   const [deleteBookingId, setDeleteBookingId] = useState(null);
   const [deleteBookingType, setDeleteBookingType] = useState(null);
@@ -207,7 +206,6 @@ const BookingManagement = () => {
     fetchBookings();
     fetchSamuhLaganRequests();
     fetchStudentAwardRequests();
-    fetchTeamRegistrationRequests();
   }, []);
 
   const showNotification = (message, type = 'success') => {
@@ -281,24 +279,6 @@ const BookingManagement = () => {
     }
   };
 
-  const fetchTeamRegistrationRequests = async () => {
-    try {
-      const response = await axiosInstance.get('/api/admin/forms/team-registrations');
-      
-      // Ensure we're setting an array, even if the response is empty
-      setTeamRegistrationRequests(Array.isArray(response.data) ? response.data : []);
-    } catch (error) {
-      console.error('Error fetching Team Registration requests:', error);
-      if (error.response?.status === 401) {
-        showNotification('Session expired. Please login again', 'error');
-      } else {
-        showNotification('Failed to fetch Team Registration requests', 'error');
-      }
-      // Set empty array on error to prevent map errors
-      setTeamRegistrationRequests([]);
-    }
-  };
-
   const handleApprove = async (id) => {
     try {
       setLoadingActions(prev => ({ ...prev, approve: { ...prev.approve, [id]: true } }));
@@ -352,22 +332,12 @@ const BookingManagement = () => {
           
         case 'studentAward':
           response = await axiosInstance.put(`/api/bookings/student-awards/reject/${rejectionBookingId}`, { 
-            rejectionReason: reason 
+            rejectionReason: reason
           });
           
           if (response.data) {
             showNotification('Student Award request rejected successfully');
             fetchStudentAwardRequests();
-          }
-          break;
-          
-        case 'teamRegistration':
-          response = await axiosInstance.put(`/api/team-registrations/reject/${rejectionBookingId}`, { 
-            rejectionReason: reason 
-          });
-          if (response.data) {
-            showNotification('Team Registration request rejected successfully');
-            fetchTeamRegistrationRequests();
           }
           break;
           
@@ -602,14 +572,6 @@ const BookingManagement = () => {
           }
           break;
 
-        case 'teamRegistration':
-          response = await axiosInstance.delete(`/api/bookings/team-registrations/${deleteBookingId}`);
-          if (response.data) {
-            showNotification('Team Registration deleted successfully');
-            fetchTeamRegistrationRequests();
-          }
-          break;
-
         default:
           throw new Error('Unknown booking type');
       }
@@ -626,27 +588,6 @@ const BookingManagement = () => {
       setDeleteBookingId(null);
       setDeleteBookingType(null);
     }
-  };
-
-  const handleApproveTeamRegistration = async (id) => {
-    try {
-      await axiosInstance.put(`/api/admin/forms/team-registrations/${id}/approve`, {});
-      showNotification('Team Registration request approved successfully');
-      fetchTeamRegistrationRequests();
-    } catch (error) {
-      console.error('Error approving Team Registration request:', error);
-      if (error.response?.status === 401) {
-        showNotification('Session expired. Please login again', 'error');
-      } else {
-        showNotification('Failed to approve Team Registration request', 'error');
-      }
-    }
-  };
-
-  const handleRejectTeamRegistration = async (id) => {
-    setRejectionBookingId(id);
-    setRejectionType('teamRegistration');
-    setShowRejectionModal(true);
   };
 
   const generatePDF = () => {
@@ -667,7 +608,6 @@ const BookingManagement = () => {
     doc.text(`Total Event Bookings: ${(bookings || []).length}`, 20, 42);
     doc.text(`Total Samuh Lagan Requests: ${(samuhLaganRequests || []).length}`, 20, 49);
     doc.text(`Total Student Award Requests: ${(studentAwardRequests || []).length}`, 20, 56);
-    doc.text(`Total Team Registration Requests: ${(teamRegistrationRequests || []).length}`, 20, 63);
     
     let yPosition = 75;
 
@@ -757,40 +697,6 @@ const BookingManagement = () => {
       autoTable(doc, {
         head: [studentAwardColumns],
         body: studentAwardRows,
-        startY: yPosition,
-        theme: 'grid',
-        styles: {
-          fontSize: 8,
-          cellPadding: 2,
-        },
-        headStyles: {
-          fillColor: [147, 51, 234],
-          textColor: 255,
-          fontStyle: 'bold',
-        },
-      });
-
-      yPosition = doc.lastAutoTable.finalY + 15;
-    }
-
-    // Team Registration Section
-    if ((teamRegistrationRequests || []).length > 0) {
-      doc.setFontSize(14);
-      doc.text('Team Registration Requests', 14, yPosition);
-      yPosition += 10;
-
-      const teamRegistrationColumns = ['Game Name', 'Team Name', 'Captain', 'Contact', 'Status'];
-      const teamRegistrationRows = (teamRegistrationRequests || []).map(request => [
-        request.gameName || 'N/A',
-        request.teamName || 'N/A',
-        request.captainName || 'N/A',
-        request.mobileNumber || 'N/A',
-        request.status || 'N/A'
-      ]);
-
-      autoTable(doc, {
-        head: [teamRegistrationColumns],
-        body: teamRegistrationRows,
         startY: yPosition,
         theme: 'grid',
         styles: {
@@ -909,35 +815,6 @@ const BookingManagement = () => {
           });
         }
         break;
-
-      case 'Team Registration':
-        if ((teamRegistrationRequests || []).length > 0) {
-          const columns = ['Game Name', 'Team Name', 'Captain', 'Contact', 'Status'];
-          const rows = (teamRegistrationRequests || []).map(request => [
-            request.gameName || 'N/A',
-            request.teamName || 'N/A',
-            request.captainName || 'N/A',
-            request.mobileNumber || 'N/A',
-            request.status || 'N/A'
-          ]);
-
-          autoTable(doc, {
-            head: [columns],
-            body: rows,
-            startY: yPosition,
-            theme: 'grid',
-            styles: {
-              fontSize: 8,
-              cellPadding: 2,
-            },
-            headStyles: {
-              fillColor: [147, 51, 234],
-              textColor: 255,
-              fontStyle: 'bold',
-            },
-          });
-        }
-        break;
     }
     
     // Save the PDF
@@ -995,7 +872,6 @@ const BookingManagement = () => {
                 fetchBookings();
                 fetchSamuhLaganRequests();
                 fetchStudentAwardRequests();
-                fetchTeamRegistrationRequests();
               }}
               className="btn-primary w-full"
             >
@@ -1076,14 +952,12 @@ const BookingManagement = () => {
                   <div className="text-sm font-medium text-neutral-300">
                     {activeCategory === 'all' ? 'Event Bookings' :
                      activeCategory === 'samuh-lagan' ? 'Samuh Lagan' :
-                     activeCategory === 'student-award' ? 'Student Award' :
-                     'Team Registration'}
+                     'Student Award'}
                   </div>
                   <div className="text-lg font-bold text-electric-400">
                     {activeCategory === 'all' ? safeBookings.length :
                      activeCategory === 'samuh-lagan' ? (Array.isArray(samuhLaganRequests) ? samuhLaganRequests.length : 0) :
-                     activeCategory === 'student-award' ? (Array.isArray(studentAwardRequests) ? studentAwardRequests.length : 0) :
-                     (Array.isArray(teamRegistrationRequests) ? teamRegistrationRequests.length : 0)}
+                     (Array.isArray(studentAwardRequests) ? studentAwardRequests.length : 0)}
                   </div>
                 </div>
               </div>
@@ -1117,15 +991,6 @@ const BookingManagement = () => {
                 <ArrowDownTrayIcon className="h-4 w-4" />
                 <span className="hidden sm:inline">Award</span>
                 <span className="sm:hidden">A</span>
-              </button>
-              <button
-                onClick={() => generateSectionPDF('Team Registration')}
-                className="btn-secondary flex items-center space-x-2 text-xs sm:text-sm"
-                title="Download Team Registration"
-              >
-                <ArrowDownTrayIcon className="h-4 w-4" />
-                <span className="hidden sm:inline">Team</span>
-                <span className="sm:hidden">T</span>
               </button>
               <button
                 onClick={generatePDF}
@@ -1174,17 +1039,6 @@ const BookingManagement = () => {
               >
                 <span className="hidden sm:inline">Student Award</span>
                 <span className="sm:hidden">Awards</span>
-              </button>
-              <button
-                onClick={() => setActiveCategory('team-registration')}
-                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
-                  activeCategory === 'team-registration' 
-                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
-                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
-                }`}
-              >
-                <span className="hidden sm:inline">Team Registration</span>
-                <span className="sm:hidden">Teams</span>
               </button>
             </div>
           </div>
@@ -1489,124 +1343,6 @@ const BookingManagement = () => {
             </tbody>
           </table>
         </div>
-      ) : activeCategory === 'team-registration' ? (
-        <div className="mt-6 flex-grow flex flex-col">
-          <div className="overflow-x-auto flex-grow">
-            <table className="w-full min-w-full">
-              <thead>
-                <tr className="text-left border-b">
-                  <th className="py-4 px-2">Game Name</th>
-                  <th className="py-4 px-2">Team Name</th>
-                  <th className="py-4 px-2">Captain Name</th>
-                  <th className="py-4 px-2">Contact</th>
-                  <th className="py-4 px-2">Status</th>
-                  <th className="py-4 px-2">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Array.isArray(teamRegistrationRequests) && teamRegistrationRequests.length > 0 ? (
-                  teamRegistrationRequests.map((request) => (
-                    <tr key={request._id} className="border-b hover:bg-white/10">
-                      <td className="py-4 px-2">{request.gameName}</td>
-                      <td className="py-4 px-2">{request.teamName}</td>
-                      <td className="py-4 px-2">{request.captainName}</td>
-                      <td className="py-4 px-2">
-                        <div className="text-sm">
-                          <p>{request.mobileNumber}</p>
-                          <p className="text-neutral-400">{request.email}</p>
-                        </div>
-                      </td>
-                      <td className="py-4 px-2">
-                        <span className={`px-2 py-1 rounded-full text-sm ${
-                          request.status === 'approved' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
-                          request.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
-                          request.status === 'rejected' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
-                          'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
-                        }`}>
-                          {request.status}
-                        </span>
-                      </td>
-                      <td className="py-4 px-2">
-                        <div className="flex space-x-2">
-                          {request.status === 'pending' && (
-                            <>
-                              <button
-                                onClick={() => handleApproveTeamRegistration(request._id)}
-                                className="p-2 text-green-400 hover:bg-green-500/200/20 rounded"
-                                title="Approve Registration"
-                                disabled={loadingActions.approve[request._id]}
-                              >
-                                {loadingActions.approve[request._id] ? (
-                                  <svg className="animate-spin h-5 w-5 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                  </svg>
-                                ) : (
-                                  <CheckIcon className="h-5 w-5" />
-                                )}
-                              </button>
-                              <button
-                                onClick={() => handleRejectTeamRegistration(request._id)}
-                                className="p-2 text-red-400 hover:bg-red-500/200/20 rounded"
-                                title="Reject Registration"
-                                disabled={loadingActions.reject[request._id]}
-                              >
-                                {loadingActions.reject[request._id] ? (
-                                  <svg className="animate-spin h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                  </svg>
-                                ) : (
-                                  <XMarkIcon className="h-5 w-5" />
-                                )}
-                              </button>
-                            </>
-                          )}
-                          <button
-                            onClick={() => handleViewBooking(request)}
-                            className="p-2 text-blue-400 hover:bg-blue-500/200/20 rounded"
-                            title="View Details"
-                            disabled={loadingActions.view[request._id]}
-                          >
-                            {loadingActions.view[request._id] ? (
-                              <svg className="animate-spin h-5 w-5 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                            ) : (
-                              <EyeIcon className="h-5 w-5" />
-                            )}
-                          </button>
-                          <button
-                            onClick={() => handleDelete(request._id, 'teamRegistration')}
-                            className="p-2 text-red-600 hover:bg-red-500/20 rounded"
-                            title="Delete Registration"
-                            disabled={loadingActions.delete[request._id]}
-                          >
-                            {loadingActions.delete[request._id] ? (
-                              <svg className="animate-spin h-5 w-5 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                              </svg>
-                            ) : (
-                              <XMarkIcon className="h-5 w-5" />
-                            )}
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))
-                ) : (
-                  <tr>
-                    <td colSpan="6" className="py-4 px-2 text-center text-neutral-400">
-                      No team registration requests found
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
       ) : (
         filteredBookings.length === 0 ? (
           <div className="text-center py-8 text-neutral-400 flex-grow flex items-center justify-center">
@@ -1743,8 +1479,7 @@ const BookingManagement = () => {
           <div className="card-glass rounded-xl p-6 max-w-4xl w-full md:w-11/12 lg:w-3/4 h-[85vh] overflow-y-auto border border-white/10 shadow-2xl relative animate-scale-in flex flex-col" style={{boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'}}>
             <div className="flex justify-between items-center mb-6 pr-10 pb-4 border-b border-white/10">
               <h2 className="text-2xl font-semibold text-white">
-                {selectedBooking.eventType === 'Team Registration' ? 'Team Registration Details' : 
-                 isEditing ? 'Edit Booking' : 'Booking Details'}
+                {isEditing ? 'Edit Booking' : 'Booking Details'}
               </h2>
               <button
                 onClick={() => {
@@ -1760,73 +1495,8 @@ const BookingManagement = () => {
             </div>
 
             <div className="space-y-6 mt-4 flex-grow">
-              {selectedBooking.eventType === 'Team Registration' ? (
-                <div className="space-y-6">
-                  <div className="border-b border-white/10 pb-4">
-                    <h3 className="text-lg font-medium mb-4 text-white">Team Information</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-white">Game Name</label>
-                        <p className="mt-1 text-neutral-300">{selectedBooking.gameName}</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-white">Team Name</label>
-                        <p className="mt-1 text-neutral-300">{selectedBooking.teamName}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-4">Captain Details</h3>
-                    <div className="grid grid-cols-2 gap-4">
-                      <div>
-                        <label className="block text-sm font-medium text-white">Captain Name</label>
-                        <p className="mt-1 text-neutral-300">{selectedBooking.captainName}</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-white">Mobile Number</label>
-                        <p className="mt-1 text-neutral-300">{selectedBooking.mobileNumber}</p>
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-white">Email</label>
-                        <p className="mt-1 text-neutral-300">{selectedBooking.email}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="border-b pb-4">
-                    <h3 className="text-lg font-medium mb-4">Team Members</h3>
-                    <div className="space-y-2">
-                      {selectedBooking.teamMembers && selectedBooking.teamMembers.map((member, index) => (
-                        <div key={index} className="flex items-center">
-                          <span className="text-neutral-400 mr-2">{index + 1}.</span>
-                          <p className="text-neutral-300">{member}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-white">Status</label>
-                    <span className={`px-2 py-1 rounded-full text-sm ${
-                      selectedBooking.status === 'approved' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
-                      selectedBooking.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
-                      selectedBooking.status === 'rejected' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
-                      'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
-                    }`}>
-                      {selectedBooking.status}
-                    </span>
-                    {selectedBooking.rejectionReason && (
-                      <div className="mt-2">
-                        <label className="block text-sm font-medium text-white">Rejection Reason</label>
-                        <p className="mt-1 text-red-400">{selectedBooking.rejectionReason}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <>
-                  {selectedBooking.eventType !== 'Samuh Lagan' && selectedBooking.eventType !== 'Student Award Registration' && (
+              <>
+                {selectedBooking.eventType !== 'Samuh Lagan' && selectedBooking.eventType !== 'Student Award Registration' && (
                     <>
                       <div className="border-b border-white/10 pb-4 flex-grow">
                         <h3 className="text-lg font-medium mb-4 text-white">Customer Information</h3>
@@ -2439,71 +2109,7 @@ const BookingManagement = () => {
                     </div>
                   )}
 
-                  {selectedBooking.eventType === 'Team Registration' && (
-                    <div className="space-y-6">
-                      <div className="border-b pb-4">
-                        <h3 className="text-lg font-medium mb-4 text-white">Team Information</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-white">Game Name</label>
-                            <p className="mt-1">{selectedBooking.gameName}</p>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-white">Team Name</label>
-                            <p className="mt-1">{selectedBooking.teamName}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="border-b pb-4">
-                        <h3 className="text-lg font-medium mb-4 text-white">Captain Details</h3>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-white">Captain Name</label>
-                            <p className="mt-1">{selectedBooking.captainName}</p>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-white">Mobile Number</label>
-                            <p className="mt-1">{selectedBooking.mobileNumber}</p>
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-white">Email</label>
-                            <p className="mt-1">{selectedBooking.email}</p>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="border-b pb-4">
-                        <h3 className="text-lg font-medium mb-4 text-white">Team Members</h3>
-                        <div className="space-y-2">
-                          {selectedBooking.teamMembers && selectedBooking.teamMembers.map((member, index) => (
-                            <div key={index} className="flex items-center">
-                              <span className="text-neutral-400 mr-2">{index + 1}.</span>
-                              <p>{member}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
-                      <div>
-                        <label className="block text-sm font-medium text-white">Status</label>
-                        <span className={`px-2 py-1 rounded-full text-sm ${
-                          selectedBooking.status === 'approved' ? 'bg-green-100 text-green-800' :
-                          selectedBooking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                          selectedBooking.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                          'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
-                        }`}>
-                          {selectedBooking.status}
-                        </span>
-                        {selectedBooking.rejectionReason && (
-                          <div className="mt-2">
-                            <label className="block text-sm font-medium text-white">Rejection Reason</label>
-                            <p className="mt-1 text-red-600">{selectedBooking.rejectionReason}</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
+                  
 
                   <div className="flex justify-end space-x-3 mt-6">
                     {!isEditing && (
@@ -2535,7 +2141,7 @@ const BookingManagement = () => {
                     )}
                   </div>
                 </>
-              )}
+              )
             </div>
           </div>
         </div>

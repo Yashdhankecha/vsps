@@ -9,8 +9,7 @@ function Services() {
   const { user } = useAuth();
   const [formStatus, setFormStatus] = useState({
     samuhLagan: { active: false, isCurrentlyActive: false },
-    studentAwards: { active: false, isCurrentlyActive: false },
-    teamRegistration: { active: false, isCurrentlyActive: false }
+    studentAwards: { active: false, isCurrentlyActive: false }
   });
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +20,7 @@ function Services() {
         setFormStatus(response.data || {
           samuhLagan: { active: false, isCurrentlyActive: false },
           studentAwards: { active: false, isCurrentlyActive: false },
-          teamRegistration: { active: false, isCurrentlyActive: false }
+
         });
       } catch (error) {
         console.error('Error fetching form status:', error);
@@ -61,19 +60,7 @@ function Services() {
       route: '/student-awards',
       isActive: formStatus.studentAwards?.isCurrentlyActive || false
     },
-    {
-      title: 'Team Registration',
-      icon: <FaUsers className="text-4xl text-white" />,
-      description: 'Register your team for exciting sports tournaments and competitive events throughout the year.',
-      features: [
-        'Multiple sports categories',
-        'Professional refereeing',
-        'Tournament prizes and recognition',
-        'Team building and networking opportunities'
-      ],
-      route: '/team-registration',
-      isActive: formStatus.teamRegistration?.isCurrentlyActive || false
-    }
+
   ];
 
   if (loading) {

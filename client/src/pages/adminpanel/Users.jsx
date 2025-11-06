@@ -66,7 +66,6 @@ const Users = () => {
     verified: (users || []).filter(u => u.isVerified).length,
     pending: (users || []).filter(u => !u.isVerified).length,
     admins: (users || []).filter(u => u.role === 'admin').length,
-    committee: (users || []).filter(u => u.role === 'committee').length,
     regularUsers: (users || []).filter(u => u.role === 'user').length
   };
 
@@ -201,6 +200,7 @@ const Users = () => {
       const token = localStorage.getItem('token');
       if (!token) {
         showNotification('Authentication token not found', 'error');
+        setEditingUser(null);
         return;
       }
 
@@ -215,7 +215,7 @@ const Users = () => {
       ));
       setEditingUser(null);
       showNotification(
-        `User ${editForm.role === 'committee' ? 'promoted to Committee Member' : 'updated'} successfully`, 
+        `User updated successfully`, 
         'success', 
         () => fetchUsers(), 
         'Refresh Users'
@@ -227,74 +227,6 @@ const Users = () => {
         'error',
         () => setEditingUser(null),
         'Close Form'
-      );
-    }
-  };
-
-  const promoteToCommittee = async (userId) => {
-    if (!window.confirm('Are you sure you want to promote this user to Committee Member?')) {
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showNotification('Authentication token not found', 'error');
-        return;
-      }
-
-      await axiosInstance.put(`/api/users/${userId}`, { role: 'committee' });
-
-      setUsers(prevUsers => (prevUsers || []).map(user => 
-        user._id === userId ? { ...user, role: 'committee' } : user
-      ));
-      showNotification(
-        'User promoted to Committee Member successfully', 
-        'success', 
-        () => fetchUsers(), 
-        'Refresh List'
-      );
-    } catch (error) {
-      console.error('Error promoting user:', error);
-      showNotification(
-        error.response?.data?.message || error.message || 'Failed to promote user', 
-        'error',
-        () => fetchUsers(),
-        'Try Again'
-      );
-    }
-  };
-
-  const demoteFromCommittee = async (userId) => {
-    if (!window.confirm('Are you sure you want to demote this Committee Member to regular user?')) {
-      return;
-    }
-
-    try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        showNotification('Authentication token not found', 'error');
-        return;
-      }
-
-      await axiosInstance.put(`/api/users/${userId}`, { role: 'user' });
-
-      setUsers(prevUsers => (prevUsers || []).map(user => 
-        user._id === userId ? { ...user, role: 'user' } : user
-      ));
-      showNotification(
-        'Committee Member demoted to regular user successfully', 
-        'success', 
-        () => fetchUsers(), 
-        'Refresh List'
-      );
-    } catch (error) {
-      console.error('Error demoting user:', error);
-      showNotification(
-        error.response?.data?.message || error.message || 'Failed to demote user', 
-        'error',
-        () => fetchUsers(),
-        'Try Again'
       );
     }
   };
@@ -439,50 +371,18 @@ const Users = () => {
             {/* Action Buttons - Responsive */}
             <div className="flex flex-wrap gap-2 justify-center lg:justify-end">
               <button
-                onClick={fetchUsers}
-                className="btn-secondary flex items-center space-x-2 text-xs sm:text-sm"
-                title="Refresh Users"
-              >
-                <ArrowPathIcon className="h-4 w-4" />
-                <span className="hidden sm:inline">Refresh</span>
-                <span className="sm:hidden">R</span>
-              </button>
-              <button
                 onClick={exportUsers}
-                className="btn-secondary flex items-center space-x-2 text-xs sm:text-sm"
-                title="Export Users"
+                className="btn-secondary flex items-center"
               >
-                <DocumentArrowDownIcon className="h-4 w-4" />
-                <span className="hidden sm:inline">Export</span>
-                <span className="sm:hidden">E</span>
-              </button>
-              <button
-                onClick={() => {
-                  setEditingUser({ 
-                    username: '',
-                    email: '',
-                    role: 'user',
-                    isVerified: false
-                  });
-                  setEditForm({
-                    username: '',
-                    email: '',
-                    role: 'user',
-                    isVerified: false
-                  });
-                }}
-                className="btn-primary flex items-center space-x-2 text-xs sm:text-sm"
-              >
-                <PlusIcon className="h-4 w-4" />
-                <span className="hidden sm:inline">Add User</span>
-                <span className="sm:hidden">Add</span>
+                <DocumentArrowDownIcon className="w-4 h-4 mr-2" />
+                Export
               </button>
             </div>
           </div>
-          
-          {/* Category Tabs - Responsive */}
-          <div className="mt-6">
-            <div className="flex flex-wrap gap-2 sm:gap-4">
+
+          {/* Filter Buttons - Responsive */}
+          <div className="mt-4">
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={() => setFilterRole('all')}
                 className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
@@ -504,17 +404,6 @@ const Users = () => {
               >
                 <span className="hidden sm:inline">Admins</span>
                 <span className="sm:hidden">Admin</span>
-              </button>
-              <button
-                onClick={() => setFilterRole('committee')}
-                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
-                  filterRole === 'committee' 
-                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
-                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
-                }`}
-              >
-                <span className="hidden sm:inline">Committee</span>
-                <span className="sm:hidden">Comm</span>
               </button>
               <button
                 onClick={() => setFilterRole('user')}
@@ -599,10 +488,9 @@ const Users = () => {
                       <td className="px-6 py-4 border-b border-white/10">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                           user.role === 'admin' ? 'bg-electric-500/20 text-electric-300 border border-electric-500/30' :
-                          user.role === 'committee' ? 'bg-secondary-500/20 text-secondary-300 border border-secondary-500/30' :
                           'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
                         }`}>
-                          {user.role === 'admin' ? 'Admin' : user.role === 'committee' ? 'Committee' : 'User'}
+                          {user.role === 'admin' ? 'Admin' : 'User'}
                         </span>
                       </td>
                       <td className="px-6 py-4 border-b border-white/10">
@@ -626,22 +514,6 @@ const Users = () => {
                           >
                             <TrashIcon className="w-4 h-4" />
                           </button>
-                          {user.role === 'user' && (
-                            <button
-                              onClick={() => promoteToCommittee(user._id)}
-                              className="text-secondary-400 hover:text-secondary-300 font-medium transition-colors duration-200 text-xs"
-                            >
-                              <ShieldCheckIcon className="w-4 h-4" />
-                            </button>
-                          )}
-                          {user.role === 'committee' && (
-                            <button
-                              onClick={() => demoteFromCommittee(user._id)}
-                              className="text-amber-400 hover:text-amber-300 font-medium transition-colors duration-200 text-xs"
-                            >
-                              <UserIcon className="w-4 h-4" />
-                            </button>
-                          )}
                         </div>
                       </td>
                     </tr>
@@ -699,7 +571,6 @@ const Users = () => {
                     className="input-field"
                   >
                     <option value="user">User</option>
-                    <option value="committee">Committee Member</option>
                     <option value="admin">Admin</option>
                   </select>
                 </div>

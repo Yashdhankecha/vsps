@@ -314,78 +314,6 @@ const emailTemplates = {
         <p>Please contact us for more information.</p>
       </div>
     `
-  }),
-
-  teamRegistrationRequest: (data) => ({
-    subject: 'Team Registration Request Received',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #9333EA; text-align: center;">Thank you for your Team Registration!</h2>
-        <p>Dear ${data.captainName},</p>
-        <p>We have received your team registration for ${data.gameName}. Our team will review your application and notify you soon.</p>
-        
-        <div style="background-color: #F3E8FF; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #7E22CE; margin-top: 0;">Registration Details</h3>
-          <ul style="list-style-type: none; padding-left: 0;">
-            <li>🎮 Game: ${data.gameName}</li>
-            <li>🏆 Team Name: ${data.teamName}</li>
-            <li>👤 Captain: ${data.captainName}</li>
-            <li>📱 Contact: ${data.mobileNumber}</li>
-            <li>📧 Email: ${data.email}</li>
-          </ul>
-        </div>
-
-        <p>Please note that this registration is subject to approval by our team.</p>
-        <p>If you have any questions, please contact us:</p>
-        <p>📞 Phone: [Your Phone Number]<br>
-           📧 Email: [Your Email]</p>
-      </div>
-    `
-  }),
-
-  teamRegistrationApproved: (data) => ({
-    subject: 'Team Registration Approved',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #9333EA; text-align: center;">Team Registration Approved!</h2>
-        <p>Dear ${data.captainName},</p>
-        <p>We are pleased to inform you that your team registration for ${data.gameName} has been approved.</p>
-        
-        <div style="background-color: #F3E8FF; padding: 20px; border-radius: 8px; margin: 20px 0;">
-          <h3 style="color: #7E22CE; margin-top: 0;">Team Details</h3>
-          <ul style="list-style-type: none; padding-left: 0;">
-            <li>🎮 Game: ${data.gameName}</li>
-            <li>🏆 Team Name: ${data.teamName}</li>
-            <li>👤 Captain: ${data.captainName}</li>
-            <li>📱 Contact: ${data.mobileNumber}</li>
-          </ul>
-        </div>
-
-        <p><strong>Important Information:</strong></p>
-        <ul>
-          <li>Please ensure all team members are present on the day of the event</li>
-          <li>Bring valid ID proofs for all team members</li>
-          <li>Follow the tournament schedule and rules</li>
-        </ul>
-
-        <p>If you need any clarification or have questions, please contact us:</p>
-        <p>📞 Phone: [Your Phone Number]<br>
-           📧 Email: [Your Email]</p>
-      </div>
-    `
-  }),
-
-  teamRegistrationRejected: (data) => ({
-    subject: 'Team Registration Rejected',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #9333EA; text-align: center;">Team Registration Status Update</h2>
-        <p>Dear ${data.captainName},</p>
-        <p>Unfortunately, your team registration for ${data.gameName} has been rejected.</p>
-        <p>Reason: ${data.reason || 'Not provided'}</p>
-        <p>Please contact us for more information or to submit a new registration.</p>
-      </div>
-    `
   })
 };
 
@@ -429,4 +357,4 @@ const sendEmail = async (to, template, data) => {
   }
 };
 
-module.exports = { sendEmail }; 
+module.exports = { sendEmail };

@@ -14,7 +14,7 @@ const formSchema = new mongoose.Schema({
   formType: {
     type: String,
     required: true,
-    enum: ['samuhLagan', 'studentAwards', 'teamRegistration'],
+    enum: ['samuhLagan', 'studentAwards'], // Removed 'teamRegistration'
     unique: true
   },
   active: {
@@ -57,4 +57,4 @@ formSchema.methods.isCurrentlyActive = function() {
   return isAfterStart && isBeforeEnd;
 };
 
-module.exports = mongoose.model('Form', formSchema); 
+module.exports = mongoose.model('Form', formSchema);

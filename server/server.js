@@ -17,7 +17,7 @@ const homeContentRoutes = require('./routes/homeContentRoutes');
 const samuhLaganRoutes = require('./routes/samuhLagan');
 const youtubeRoutes = require('./routes/youtube');
 const eventCategoryRoutes = require('./routes/eventCategoryRoutes');
-const teamRegistrationRoutes = require('./routes/teamRegistrationRoutes');
+
 const reviewRoutes = require('./routes/reviewRoutes');
 
 dotenv.config();
@@ -227,7 +227,7 @@ app.use('/api/content', eventCategoryRoutes);
 app.use('/api/admin/forms', formRoutes);
 app.use('/api/student-awards', studentAwardRoutes);
 app.use('/api/youtube', youtubeRoutes);
-app.use('/api/team-registrations', teamRegistrationRoutes);
+
 app.use('/api/reviews', reviewRoutes);
 
 // Error handling middleware

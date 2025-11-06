@@ -24,8 +24,8 @@ const FormManagement = () => {
   const [success, setSuccess] = useState('');
   const [forms, setForms] = useState({
     samuhLagan: { active: false, startTime: null, endTime: null, lastUpdated: null },
-    studentAwards: { active: false, startTime: null, endTime: null, lastUpdated: null },
-    teamRegistration: { active: false, startTime: null, endTime: null, lastUpdated: null }
+    studentAwards: { active: false, startTime: null, endTime: null, lastUpdated: null }
+
   });
   const [formData, setFormData] = useState({
     formName: 'samuhLagan',
@@ -58,7 +58,6 @@ const FormManagement = () => {
         const updatedForms = {
           samuhLagan: { active: false, startTime: null, endTime: null, lastUpdated: null },
           studentAwards: { active: false, startTime: null, endTime: null, lastUpdated: null },
-          teamRegistration: { active: false, startTime: null, endTime: null, lastUpdated: null },
           ...response.data
         };
         setForms(updatedForms);
@@ -384,43 +383,7 @@ const FormManagement = () => {
           </div>
         </div>
 
-        {/* Team Registration Form */}
-        <div className="card-hover p-4 sm:p-6 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-electric opacity-20 rounded-bl-3xl"></div>
-          <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">Team Registration</h2>
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center">
-              <span className="font-medium text-neutral-300 text-sm sm:text-base mb-1 sm:mb-0 sm:mr-2">Status:</span>
-              <span className={`font-semibold text-sm sm:text-base ${
-                getFormStatus(forms.teamRegistration).color === 'text-red-500' ? 'text-red-400' :
-                getFormStatus(forms.teamRegistration).color === 'text-green-500' ? 'text-neon-400' :
-                getFormStatus(forms.teamRegistration).color === 'text-orange-500' ? 'text-sunset-400' :
-                'text-electric-400'
-              }`}>
-                {getFormStatus(forms.teamRegistration).text}
-              </span>
-            </div>
-            <div className="flex flex-col space-y-2">
-              <div className="flex items-center text-neutral-300 text-sm">
-                <CalendarIcon className="w-4 h-4 mr-2 text-electric-400 flex-shrink-0" />
-                <span className="truncate">Event: {formatDate(forms.teamRegistration?.eventDate)}</span>
-              </div>
-              <div className="flex items-center text-neutral-300 text-sm">
-                <ClockIcon className="w-4 h-4 mr-2 text-electric-400 flex-shrink-0" />
-                <span className="truncate">Start: {formatDateTime(forms.teamRegistration?.startTime)}</span>
-              </div>
-              <div className="flex items-center text-neutral-300 text-sm">
-                <ClockIcon className="w-4 h-4 mr-2 text-secondary-400 flex-shrink-0" />
-                <span className="truncate">End: {formatDateTime(forms.teamRegistration?.endTime)}</span>
-              </div>
-            </div>
-            {forms.teamRegistration?.lastUpdated && (
-              <div className="text-xs sm:text-sm text-neutral-400 border-t border-white/10 pt-2 sm:pt-3 mt-2 sm:mt-3">
-                Updated: {formatDateTime(forms.teamRegistration.lastUpdated)}
-              </div>
-            )}
-          </div>
-        </div>
+
       </div>
 
       {/* Form Timer Settings */}
@@ -450,7 +413,7 @@ const FormManagement = () => {
               >
                 <option value="samuhLagan">Samuh Lagan Registration</option>
                 <option value="studentAwards">Student Awards Registration</option>
-                <option value="teamRegistration">Team Registration</option>
+  
               </select>
             </div>
 

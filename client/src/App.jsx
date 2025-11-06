@@ -34,7 +34,7 @@ import AdminRoute from './components/AdminRoute';
 import BookedDatesCalendar from './pages/adminpanel/BookedDatesCalendar';
 import axios from './utils/axiosConfig';
 import React from 'react';
-import TeamRegistration from './pages/TeamRegistration';
+
 import ContactManagement from './pages/adminpanel/ContactManagement';
 import Reviews from './pages/adminpanel/Reviews';
 
@@ -46,8 +46,7 @@ function AppContent() {
   const isAdminRoute = location.pathname.startsWith("/admin");
   const [formStatus, setFormStatus] = useState({
     samuhLagan: { active: false, isCurrentlyActive: false },
-    studentAwards: { active: false, isCurrentlyActive: false },
-    teamRegistration: { active: false, isCurrentlyActive: false }
+    studentAwards: { active: false, isCurrentlyActive: false }
   });
   const navigate = useNavigate();
 
@@ -61,7 +60,7 @@ function AppContent() {
         setFormStatus({
           samuhLagan: { active: false, isCurrentlyActive: false },
           studentAwards: { active: false, isCurrentlyActive: false },
-          teamRegistration: { active: false, isCurrentlyActive: false }
+
         });
       }
     };
@@ -98,7 +97,7 @@ function AppContent() {
           const formNameMap = {
             'samuhLagan': 'registrationForm',
             'studentAwards': 'studentAwardForm',
-            'teamRegistration': 'teamRegistrationForm'
+
           };
           
           const formName = formNameMap[formType];
@@ -263,14 +262,7 @@ function AppContent() {
                       </FormStatusCheck>
                     } 
                   />
-                  <Route 
-                    path="/team-registration" 
-                    element={
-                      <FormStatusCheck formType="teamRegistration">
-                        <TeamRegistration />
-                      </FormStatusCheck>
-                    } 
-                  />
+
                   
                   
                   <Route path="/booking" element={<Booking />} />

@@ -234,7 +234,7 @@ const userController = {
         return res.status(400).json({ message: 'Username and email are required' });
       }
 
-      if (role && !['user', 'committee', 'admin'].includes(role)) {
+      if (role && !['user', 'admin'].includes(role)) {
         return res.status(400).json({ message: 'Invalid role specified' });
       }
 

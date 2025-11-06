@@ -46,13 +46,10 @@ const authorizeRoles = (...roles) => {
   };
 };
 
-// Committee member authorization (committee + admin)
-const committeeAuth = authorizeRoles('committee', 'admin');
-
 // Admin only authorization
 const adminAuth = authorizeRoles('admin');
 
 // User authorization (all authenticated users)
-const userAuth = authorizeRoles('user', 'committee', 'admin');
+const userAuth = authorizeRoles('user', 'admin');
 
-module.exports = { adminAuth, userAuth, committeeAuth, authorizeRoles }; 
+module.exports = { adminAuth, userAuth, authorizeRoles };
