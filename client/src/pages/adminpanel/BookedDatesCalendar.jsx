@@ -276,21 +276,21 @@ const BookedDatesCalendar = () => {
 
       {/* Calendar Card */}
       <div className="card-glass animate-fade-in-up" style={{animationDelay: '0.1s'}}>
-        {/* Status Legend */}
+        {/* Status Legend - Improved Placement and Visibility */}
         <div className="border-b border-white/10 pb-4 sm:pb-6 mb-6">
           <h3 className="text-lg sm:text-xl font-bold text-white mb-4">Booking Status Legend</h3>
-          <div className="flex flex-wrap gap-3 sm:gap-4 text-sm">
-            <div className="flex items-center bg-red-500/20 px-3 py-2 rounded-lg border border-red-500/30">
-              <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
-              <span className="font-medium text-red-300">Booked</span>
+          <div className="flex flex-wrap gap-4 text-sm justify-center">
+            <div className="flex items-center bg-red-500/20 px-4 py-2 rounded-lg border border-red-500/30 shadow-md">
+              <div className="w-4 h-4 rounded-full bg-red-500 mr-3"></div>
+              <span className="font-medium text-red-100">Booked</span>
             </div>
-            <div className="flex items-center bg-electric-500/20 px-3 py-2 rounded-lg border border-electric-500/30">
-              <div className="w-3 h-3 rounded-full bg-electric-500 mr-2"></div>
-              <span className="font-medium text-electric-300">Approved</span>
+            <div className="flex items-center bg-electric-500/20 px-4 py-2 rounded-lg border border-electric-500/30 shadow-md">
+              <div className="w-4 h-4 rounded-full bg-electric-500 mr-3"></div>
+              <span className="font-medium text-electric-100">Approved</span>
             </div>
-            <div className="flex items-center bg-amber-500/20 px-3 py-2 rounded-lg border border-amber-500/30">
-              <div className="w-3 h-3 rounded-full bg-amber-500 mr-2"></div>
-              <span className="font-medium text-amber-300">Pending</span>
+            <div className="flex items-center bg-amber-500/20 px-4 py-2 rounded-lg border border-amber-500/30 shadow-md">
+              <div className="w-4 h-4 rounded-full bg-amber-500 mr-3"></div>
+              <span className="font-medium text-amber-100">Pending</span>
             </div>
           </div>
         </div>
@@ -314,10 +314,11 @@ const BookedDatesCalendar = () => {
               font-weight: 600 !important;
             }
             .modern-dark-calendar .rbc-month-view {
-              background: transparent !important;
+              background: rgba(31, 41, 55, 0.3) !important;
               border: 1px solid rgba(255, 255, 255, 0.1) !important;
               border-radius: 12px !important;
               overflow: hidden !important;
+              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
             }
             .modern-dark-calendar .rbc-day-bg {
               background: rgba(31, 41, 55, 0.2) !important;
@@ -325,10 +326,10 @@ const BookedDatesCalendar = () => {
               border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
             }
             .modern-dark-calendar .rbc-day-bg:hover {
-              background: rgba(55, 65, 81, 0.3) !important;
+              background: rgba(55, 65, 81, 0.4) !important;
             }
             .modern-dark-calendar .rbc-today {
-              background: rgba(14, 165, 233, 0.1) !important;
+              background: rgba(14, 165, 233, 0.15) !important;
             }
             .modern-dark-calendar .rbc-off-range-bg {
               background: rgba(17, 24, 39, 0.1) !important;
@@ -359,6 +360,24 @@ const BookedDatesCalendar = () => {
             }
             .modern-dark-calendar .rbc-day-slot {
               min-height: 100px !important;
+            }
+            /* Improve event visibility */
+            .modern-dark-calendar .rbc-event {
+              border: none !important;
+              box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
+              transition: all 0.2s ease !important;
+            }
+            .modern-dark-calendar .rbc-event:hover {
+              transform: translateY(-1px) !important;
+              box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+              z-index: 10 !important;
+            }
+            /* Improve day cell contrast */
+            .modern-dark-calendar .rbc-month-row {
+              min-height: 120px !important;
+            }
+            .modern-dark-calendar .rbc-row-bg .rbc-day-bg {
+              min-height: 120px !important;
             }
           `}</style>
           
@@ -392,7 +411,7 @@ const BookedDatesCalendar = () => {
             transform: 'translateY(-100%)'
           }}
         >
-          <div className="card-glass max-w-xs sm:max-w-md p-4 shadow-xl border border-white/20">
+          <div className="card-glass max-w-xs sm:max-w-md p-4 shadow-xl border border-white/20 backdrop-blur-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-2">
                 <div className={`w-3 h-3 rounded-full ${
@@ -464,7 +483,6 @@ const BookedDatesCalendar = () => {
     </div>
   </div>
   );
-
 };
 
 export default BookedDatesCalendar;

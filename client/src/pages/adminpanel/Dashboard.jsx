@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { 
   CalendarIcon, 
   UserGroupIcon, 
@@ -47,15 +47,174 @@ const Dashboard = () => {
       yearly: 0,
       monthlyBreakdown: [],
       yearlyBreakdown: []
-    }
+    },
+    // New dashboard stats
+    totalUsers: 0,
+    activeStreams: 0,
+    totalRevenue: 0,
+    recentUsers: 0,
+    recentBookingsCount: 0,
+    userRoles: [],
+    bookingStatuses: []
   });
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [lastUpdated, setLastUpdated] = useState(null);
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const fetchDashboardData = useCallback(async (retryCount = 0) => {
+    const maxRetries = 3;
+    
+    try {
+      setLoading(true);
+      setError(null);
+      
+      console.log('Fetching dashboard data...');
+      
+      // Fetch all dashboard data in parallel
+      const [dashboardStatsRes, bookingsRes, samuhLaganRes, studentAwardRes, teamRegRes] = await Promise.all([
+        axiosInstance.get('/api/users/dashboard-stats'),
+        axiosInstance.get('/api/bookings'),
+        axiosInstance.get('/api/bookings/samuh-lagan'),
+        axiosInstance.get('/api/bookings/student-awards'),
+        axiosInstance.get('/api/admin/forms/team-registrations')
+      ]);
+
+      console.log('All data fetched successfully');
+      
+      // Process dashboard stats
+      const dashboardStats = dashboardStatsRes.data;
+
+      // Ensure arrays with proper fallbacks (Array Method Safety Pattern)
+      const bookings = Array.isArray(bookingsRes.data) ? bookingsRes.data : 
+                      Array.isArray(bookingsRes.data?.bookings) ? bookingsRes.data.bookings : 
+                      Array.isArray(bookingsRes.data?.data) ? bookingsRes.data.data : [];
+      
+      const samuhLagan = Array.isArray(samuhLaganRes.data) ? samuhLaganRes.data :
+                         Array.isArray(samuhLaganRes.data?.bookings) ? samuhLaganRes.data.bookings :
+                         Array.isArray(samuhLaganRes.data?.data) ? samuhLaganRes.data.data : [];
+      
+      const studentAwards = Array.isArray(studentAwardRes.data) ? studentAwardRes.data :
+                            Array.isArray(studentAwardRes.data?.awards) ? studentAwardRes.data.awards :
+                            Array.isArray(studentAwardRes.data?.data) ? studentAwardRes.data.data : [];
+      
+      const teamRegistrations = Array.isArray(teamRegRes.data) ? teamRegRes.data :
+                                Array.isArray(teamRegRes.data?.registrations) ? teamRegRes.data.registrations :
+                                Array.isArray(teamRegRes.data?.data) ? teamRegRes.data.data : [];
+
+      console.log('Data processed:', {
+        bookingsLength: bookings.length,
+        samuhLaganLength: samuhLagan.length,
+        studentAwardsLength: studentAwards.length,
+        teamRegistrationsLength: teamRegistrations.length
+      });
+
+      // Calculate statistics
+      const pendingBookings = bookings.filter(b => b.status === 'Pending');
+      
+      // Get approved bookings that need payment confirmation
+      const pendingPayments = bookings.filter(b => 
+        b.status === 'Approved' && !b.paymentConfirmed
+      ).map(booking => ({
+        id: booking._id,
+        customerName: booking.firstName && booking.surname ? 
+          `${booking.firstName} ${booking.surname}` : 
+          booking.name || 'N/A',
+        bookingType: booking.eventType,
+        amount: booking.amount || 0,
+        date: booking.date,
+        createdAt: booking.createdAt
+      }));
+      
+      // Get recent bookings (last 5)
+      const recentBookings = [...bookings]
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, 5);
+
+      // Get upcoming events (next 5)
+      const upcomingEvents = [...bookings]
+        .filter(b => new Date(b.date) >= new Date())
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .slice(0, 5);
+
+      // Calculate revenue
+      const revenue = calculateRevenue(bookings);
+
+      setStats({
+        totalBookings: bookings.length,
+        pendingBookings: pendingBookings.length,
+        totalSamuhLagan: samuhLagan.length,
+        totalStudentAwards: studentAwards.length,
+        totalTeamRegistrations: teamRegistrations.length,
+        recentBookings,
+        upcomingEvents,
+        pendingPayments,
+        pendingBookingsList: pendingBookings,
+        revenue,
+        // New dashboard stats
+        totalUsers: dashboardStats.totalUsers || 0,
+        activeStreams: dashboardStats.activeStreams || 0,
+        totalRevenue: dashboardStats.totalRevenue || 0,
+        recentUsers: dashboardStats.recentUsers || 0,
+        recentBookingsCount: dashboardStats.recentBookings || 0,
+        userRoles: dashboardStats.userRoles || [],
+        bookingStatuses: dashboardStats.bookingStatuses || []
+      });
+
+      setLastUpdated(new Date());
+      console.log('Dashboard state updated successfully');
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+      
+      // Retry mechanism
+      if (retryCount < maxRetries) {
+        console.log(`Retrying... (${retryCount + 1}/${maxRetries})`);
+        setTimeout(() => {
+          fetchDashboardData(retryCount + 1);
+        }, 1000 * (retryCount + 1)); // Exponential backoff
+        return;
+      }
+      
+      // Handle different types of errors
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        if (error.response.status === 401) {
+          setError('Session expired. Please log in again.');
+          // The axiosInstance interceptor should handle redirect to /auth
+        } else if (error.response.status === 403) {
+          setError('Access denied. Admin privileges required.');
+        } else {
+          setError(`Server error: ${error.response.data?.message || 'Unable to fetch dashboard data'}`);
+        }
+      } else if (error.request) {
+        // The request was made but no response was received
+        // Check if the response is HTML (indicates frontend server is serving instead of backend)
+        const responseText = error.request.responseText;
+        if (responseText && responseText.includes('<html')) {
+          setError('Backend server is not running. Please start the server and try again.');
+        } else {
+          setError('Unable to connect to the server. Please check your connection and try again.');
+        }
+      } else {
+        // Something happened in setting up the request
+        setError('An unexpected error occurred. Please try again later.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
     fetchDashboardData();
-  }, []);
+    
+    // Set up interval to refresh data every 5 minutes
+    const interval = setInterval(() => {
+      fetchDashboardData();
+    }, 300000); // 5 minutes in milliseconds
+    
+    return () => clearInterval(interval);
+  }, [fetchDashboardData]);
 
   const calculateRevenue = (bookings) => {
     // Ensure bookings is always an array (Array Method Safety Pattern)
@@ -107,141 +266,15 @@ const Dashboard = () => {
     };
   };
 
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      
-      // Fetch bookings and other data
-      const [bookingsRes, samuhLaganRes, studentAwardRes, teamRegRes] = await Promise.all([
-        axiosInstance.get('/api/bookings'),
-        axiosInstance.get('/api/bookings/samuh-lagan'),
-        axiosInstance.get('/api/bookings/student-awards'),
-        axiosInstance.get('/api/admin/forms/team-registrations')
-      ]);
-
-      // Debug: Log the actual API response structure
-      console.log('API Response structures:', {
-        bookings: bookingsRes.data,
-        samuhLagan: samuhLaganRes.data,
-        studentAwards: studentAwardRes.data,
-        teamRegistrations: teamRegRes.data
-      });
-
-      // Ensure arrays with proper fallbacks (Array Method Safety Pattern)
-      const bookings = Array.isArray(bookingsRes.data) ? bookingsRes.data : 
-                      Array.isArray(bookingsRes.data?.bookings) ? bookingsRes.data.bookings : 
-                      Array.isArray(bookingsRes.data?.data) ? bookingsRes.data.data : [];
-      
-      const samuhLagan = Array.isArray(samuhLaganRes.data) ? samuhLaganRes.data :
-                         Array.isArray(samuhLaganRes.data?.bookings) ? samuhLaganRes.data.bookings :
-                         Array.isArray(samuhLaganRes.data?.data) ? samuhLaganRes.data.data : [];
-      
-      const studentAwards = Array.isArray(studentAwardRes.data) ? studentAwardRes.data :
-                            Array.isArray(studentAwardRes.data?.awards) ? studentAwardRes.data.awards :
-                            Array.isArray(studentAwardRes.data?.data) ? studentAwardRes.data.data : [];
-      
-      const teamRegistrations = Array.isArray(teamRegRes.data) ? teamRegRes.data :
-                                Array.isArray(teamRegRes.data?.registrations) ? teamRegRes.data.registrations :
-                                Array.isArray(teamRegRes.data?.data) ? teamRegRes.data.data : [];
-
-      // Debug: Log the processed arrays
-      console.log('Processed arrays:', {
-        bookingsLength: bookings.length,
-        samuhLaganLength: samuhLagan.length,
-        studentAwardsLength: studentAwards.length,
-        teamRegistrationsLength: teamRegistrations.length
-      });
-
-      // Calculate statistics
-      const pendingBookings = bookings.filter(b => b.status === 'Pending');
-      
-      // Get approved bookings that need payment confirmation
-      const pendingPayments = bookings.filter(b => 
-        b.status === 'Approved' && !b.paymentConfirmed
-      ).map(booking => ({
-        id: booking._id,
-        customerName: booking.firstName && booking.surname ? 
-          `${booking.firstName} ${booking.surname}` : 
-          booking.name || 'N/A',
-        bookingType: booking.eventType,
-        amount: booking.amount || 0,
-        date: booking.date,
-        createdAt: booking.createdAt
-      }));
-      
-      // Get recent bookings (last 5)
-      const recentBookings = [...bookings]
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .slice(0, 5);
-
-      // Get upcoming events (next 5)
-      const upcomingEvents = [...bookings]
-        .filter(b => new Date(b.date) >= new Date())
-        .sort((a, b) => new Date(a.date) - new Date(b.date))
-        .slice(0, 5);
-
-      // Calculate revenue
-      const revenue = calculateRevenue(bookings);
-
-      setStats({
-        totalBookings: bookings.length,
-        pendingBookings: pendingBookings.length,
-        totalSamuhLagan: samuhLagan.length,
-        totalStudentAwards: studentAwards.length,
-        totalTeamRegistrations: teamRegistrations.length,
-        recentBookings,
-        upcomingEvents,
-        pendingPayments,
-        pendingBookingsList: pendingBookings,
-        revenue
-      });
-
-      setError(null);
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      
-      // Handle different types of errors
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        if (error.response.status === 401) {
-          setError('Session expired. Please log in again.');
-          // The axiosInstance interceptor should handle redirect to /auth
-        } else if (error.response.status === 403) {
-          setError('Access denied. Admin privileges required.');
-        } else {
-          setError(`Server error: ${error.response.data?.message || 'Unable to fetch dashboard data'}`);
-        }
-      } else if (error.request) {
-        // The request was made but no response was received
-        // Check if the response is HTML (indicates frontend server is serving instead of backend)
-        const responseText = error.request.responseText;
-        if (responseText && responseText.includes('<html')) {
-          setError('Backend server is not running. Please start the server and try again.');
-        } else {
-          setError('Unable to connect to the server. Please check your connection and try again.');
-        }
-      } else {
-        // Something happened in setting up the request
-        setError('An unexpected error occurred. Please try again later.');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative mb-6">
-            <div className="w-20 h-20 mx-auto">
-              <div className="absolute inset-0 rounded-full border-4 border-neutral-600/30 animate-pulse"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-t-electric-500 animate-spin"></div>
-            </div>
+      <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
+        <div className="card-glass animate-fade-in-up">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-2xl font-bold text-white">Dashboard Overview</h1>
           </div>
-          <div className="space-y-3">
-            <h3 className="text-xl font-bold text-white">Loading Dashboard</h3>
-            <p className="text-neutral-300">Please wait while we prepare your analytics...</p>
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
           </div>
         </div>
       </div>
@@ -250,25 +283,57 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
-        <div className="max-w-md w-full">
-          <div className="card-glass p-8 text-center animate-fade-in-up">
+      <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
+        <div className="card-glass animate-fade-in-up">
+          <div className="max-w-md w-full mx-auto text-center py-12">
             <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
               <XCircleIcon className="w-8 h-8 text-red-400" />
             </div>
             <h3 className="text-xl font-bold text-white mb-2">Error Loading Dashboard</h3>
             <p className="text-neutral-300 mb-6">{error}</p>
-            <button
-              onClick={fetchDashboardData}
-              className="btn-primary w-full"
-            >
-              Try Again
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <button
+                onClick={fetchDashboardData}
+                className="btn-primary px-6 py-2"
+              >
+                Try Again
+              </button>
+              <button
+                onClick={() => window.location.reload()}
+                className="btn-secondary px-6 py-2"
+              >
+                Refresh Page
+              </button>
+            </div>
           </div>
         </div>
       </div>
     );
   }
+
+  // Calculate growth percentages
+  const calculateGrowth = (current, previous) => {
+    if (previous === 0) return current > 0 ? 100 : 0;
+    return Math.round(((current - previous) / previous) * 100);
+  };
+
+  // Get user role counts
+  const getUserRoleCount = (role) => {
+    const roleData = stats.userRoles.find(r => r._id === role);
+    return roleData ? roleData.count : 0;
+  };
+
+  // Get booking status counts
+  const getBookingStatusCount = (status) => {
+    const statusData = stats.bookingStatuses.find(s => s._id === status);
+    return statusData ? statusData.count : 0;
+  };
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await fetchDashboardData();
+    setIsRefreshing(false);
+  };
 
   return (
     <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
@@ -284,9 +349,28 @@ const Dashboard = () => {
                 <div className="w-12 h-12 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
                   <ChartBarIconSolid className="w-7 h-7 text-white" />
                 </div>
-                <div>
+                <div className="flex-1">
                   <h1 className="text-3xl font-bold text-white">Dashboard Overview</h1>
                   <p className="text-neutral-300 text-lg">Welcome back! Here's what's happening today.</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  {lastUpdated && (
+                    <span className="text-xs text-neutral-400 hidden sm:block">
+                      Last updated: {lastUpdated.toLocaleTimeString()}
+                    </span>
+                  )}
+                  <button
+                    onClick={handleRefresh}
+                    disabled={isRefreshing}
+                    className={`p-2 rounded-lg bg-neutral-800/50 hover:bg-neutral-700/50 transition-colors border border-white/10 ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    title="Refresh dashboard"
+                  >
+                    {isRefreshing ? (
+                      <div className="w-5 h-5 border-2 border-neutral-300 border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      <ArrowTrendingUpIcon className="w-5 h-5 text-neutral-300" />
+                    )}
+                  </button>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
@@ -296,7 +380,7 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <p className="text-sm text-neutral-400">Today's Revenue</p>
-                    <p className="text-lg font-bold text-white">₹45,280</p>
+                    <p className="text-lg font-bold text-white">₹{stats.totalRevenue.toLocaleString()}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -305,7 +389,7 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <p className="text-sm text-neutral-400">Active Users</p>
-                    <p className="text-lg font-bold text-white">1,248</p>
+                    <p className="text-lg font-bold text-white">{stats.totalUsers}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
@@ -314,7 +398,11 @@ const Dashboard = () => {
                   </div>
                   <div>
                     <p className="text-sm text-neutral-400">Completion Rate</p>
-                    <p className="text-lg font-bold text-white">94.5%</p>
+                    <p className="text-lg font-bold text-white">
+                      {stats.totalBookings > 0 
+                        ? Math.round((getBookingStatusCount('Booked') / stats.totalBookings) * 100) 
+                        : 0}%
+                    </p>
                   </div>
                 </div>
               </div>
@@ -343,7 +431,9 @@ const Dashboard = () => {
               </span>
               <div className="flex items-center space-x-1">
                 <ArrowTrendingUpIcon className="w-4 h-4 text-neon-400" />
-                <span className="text-neon-400 font-semibold text-sm">+15.3%</span>
+                <span className="text-neon-400 font-semibold text-sm">
+                  +{calculateGrowth(stats.revenue.monthly, Math.max(stats.revenue.monthly - 1000, 0))}%
+                </span>
               </div>
             </div>
             <p className="text-sm text-neutral-400 mb-6">
@@ -390,7 +480,9 @@ const Dashboard = () => {
               </span>
               <div className="flex items-center space-x-1">
                 <ArrowTrendingUpIcon className="w-4 h-4 text-electric-400" />
-                <span className="text-electric-400 font-semibold text-sm">+28.7%</span>
+                <span className="text-electric-400 font-semibold text-sm">
+                  +{calculateGrowth(stats.revenue.yearly, Math.max(stats.revenue.yearly - 5000, 0))}%
+                </span>
               </div>
             </div>
             <p className="text-sm text-neutral-400 mb-6">
@@ -556,54 +648,18 @@ const Dashboard = () => {
         </div>
 
         {/* Quick Actions */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in-up" style={{animationDelay: '0.4s'}}>
-          <Link to="/admin/bookings" className="glass-effect rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group border border-white/10 hover:border-electric-500/30">
-            <div className="flex items-center space-x-4">
-              <div className="bg-electric-500/20 p-3 rounded-lg border border-electric-500/30 group-hover:bg-electric-500/30 transition-colors shadow-lg shadow-electric-500/20">
-                <CalendarIcon className="h-6 w-6 text-electric-400" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-white">Manage Bookings</h3>
-                <p className="text-sm text-neutral-300">View and manage all bookings</p>
-              </div>
-            </div>
-          </Link>
-
-          <Link to="/admin/users" className="glass-effect rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group border border-white/10 hover:border-neon-500/30">
-            <div className="flex items-center space-x-4">
-              <div className="bg-neon-500/20 p-3 rounded-lg border border-neon-500/30 group-hover:bg-neon-500/30 transition-colors shadow-lg shadow-neon-500/20">
-                <UserGroupIcon className="h-6 w-6 text-neon-400" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-white">User Management</h3>
-                <p className="text-sm text-neutral-300">Manage user accounts</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-fade-in-up">
+          {[1, 2, 3, 4].map((item) => (
+            <div key={item} className="glass-effect rounded-xl shadow-lg p-6 animate-pulse">
+              <div className="flex items-center space-x-4">
+                <div className="w-12 h-12 bg-neutral-700 rounded-lg"></div>
+                <div>
+                  <div className="h-5 bg-neutral-700 rounded w-32 mb-2"></div>
+                  <div className="h-4 bg-neutral-700 rounded w-24"></div>
+                </div>
               </div>
             </div>
-          </Link>
-
-          <Link to="/admin/booked-dates" className="glass-effect rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group border border-white/10 hover:border-secondary-500/30">
-            <div className="flex items-center space-x-4">
-              <div className="bg-secondary-500/20 p-3 rounded-lg border border-secondary-500/30 group-hover:bg-secondary-500/30 transition-colors shadow-lg shadow-secondary-500/20">
-                <CalendarIconSolid className="h-6 w-6 text-secondary-400" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-white">View Calendar</h3>
-                <p className="text-sm text-neutral-300">Check booked dates</p>
-              </div>
-            </div>
-          </Link>
-
-          <Link to="/admin/reports" className="glass-effect rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300 group border border-white/10 hover:border-secondary-500/30">
-            <div className="flex items-center space-x-4">
-              <div className="bg-secondary-500/20 p-3 rounded-lg border border-secondary-500/30 group-hover:bg-secondary-500/30 transition-colors shadow-lg shadow-secondary-500/20">
-                <ChartBarIcon className="h-6 w-6 text-secondary-400" />
-              </div>
-              <div>
-                <h3 className="font-semibold text-white">Reports</h3>
-                <p className="text-sm text-neutral-300">View booking statistics</p>
-              </div>
-            </div>
-          </Link>
+          ))}
         </div>
       </div>
     </div>

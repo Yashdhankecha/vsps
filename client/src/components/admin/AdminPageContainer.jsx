@@ -10,11 +10,11 @@ const AdminPageContainer = ({ children }) => {
         transition-all duration-300 ease-in-out 
         ${sidebarExpanded ? 'ml-72' : 'ml-20'} 
         min-h-screen
-        w-[calc(100%-18rem)]
-        max-w-[calc(100%-4.5rem)]
+        w-[calc(100%)]
+        max-w-[calc(100%-4.5rem)] 
       `}
     >
-      <div className="w-full overflow-x-hidden">
+      <div className="w-full overflow-x-hidden p-2">
         {children}
       </div>
     </main>

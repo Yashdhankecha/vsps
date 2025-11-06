@@ -263,51 +263,109 @@ const userController = {
  
   getDashboardStats: async (req, res) => {
     try {
+      console.log('Fetching dashboard stats for user:', req.user.id);
+      
       if (req.user.role !== 'admin') {
+        console.log('Access denied for user:', req.user.id, 'Role:', req.user.role);
         return res.status(403).json({ message: 'Access denied. Admins only.' });
       }
 
-      
+      // Get total users count
       const totalUsers = await User.countDocuments();
+      console.log('Total users:', totalUsers);
 
-      
+      // Get total bookings count
       const totalBookings = await Booking.countDocuments();
+      console.log('Total bookings:', totalBookings);
 
-      
+      // Get active streams (set to 0 for now as this feature isn't implemented)
       const activeStreams = 0;
 
-      
-      const bookings = await Booking.find({ 
-        status: { $in: ['Approved', 'Booked'] }
+      // Get bookings with 'Booked' status for revenue calculation
+      const bookedBookings = await Booking.find({ 
+        status: 'Booked'
       });
+      console.log('Booked bookings count:', bookedBookings.length);
 
-      const totalRevenue = bookings.reduce((sum, booking) => {
-       
-        let amount = 1000; 
-
+      // Calculate total revenue from booked bookings
+      const totalRevenue = bookedBookings.reduce((sum, booking) => {
+        // Use actual amount from booking if available, otherwise calculate
+        if (booking.amount && typeof booking.amount === 'number') {
+          return sum + booking.amount;
+        }
         
-        const isSamajMember = booking.email.endsWith('@samaj.com'); 
-        if (isSamajMember) {
-          amount = 800; 
+        // Fallback calculation based on event type and guest count
+        let amount = 1000; // Base amount
+
+        // Apply discount for samaj members
+        if (booking.isSamajMember) {
+          amount = 800;
         }
 
-      
+        // Additional charges for weddings
         if (booking.eventType === 'wedding') {
-          amount += 500; 
+          amount += 500;
         }
+        
+        // Additional charges for large events
         if (booking.guestCount > 100) {
-          amount += 200; 
+          amount += 200;
         }
 
         return sum + amount;
       }, 0);
+      console.log('Total revenue calculated:', totalRevenue);
 
-      res.json({
+      // Get user role distribution
+      const userRoles = await User.aggregate([
+        {
+          $group: {
+            _id: '$role',
+            count: { $sum: 1 }
+          }
+        }
+      ]);
+      console.log('User roles distribution:', userRoles);
+
+      // Get booking status distribution
+      const bookingStatuses = await Booking.aggregate([
+        {
+          $group: {
+            _id: '$status',
+            count: { $sum: 1 }
+          }
+        }
+      ]);
+      console.log('Booking statuses distribution:', bookingStatuses);
+
+      // Get recent user registrations (last 7 days)
+      const oneWeekAgo = new Date();
+      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      
+      const recentUsers = await User.countDocuments({
+        createdAt: { $gte: oneWeekAgo }
+      });
+      console.log('Recent users (last 7 days):', recentUsers);
+
+      // Get recent bookings (last 7 days)
+      const recentBookings = await Booking.countDocuments({
+        createdAt: { $gte: oneWeekAgo }
+      });
+      console.log('Recent bookings (last 7 days):', recentBookings);
+
+      const stats = {
         totalUsers,
         totalBookings,
         activeStreams,
-        totalRevenue
-      });
+        totalRevenue,
+        userRoles,
+        bookingStatuses,
+        recentUsers,
+        recentBookings
+      };
+
+      console.log('Dashboard stats response:', stats);
+      res.json(stats);
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
       res.status(500).json({ message: 'Server error' });
