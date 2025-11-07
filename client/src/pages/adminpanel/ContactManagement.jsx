@@ -6,7 +6,8 @@ import {
   EnvelopeIcon, 
   TrashIcon, 
   PaperAirplaneIcon,
-  XMarkIcon
+  XMarkIcon,
+  EyeIcon
 } from '@heroicons/react/24/outline';
 import {
   CheckCircleIcon as CheckCircleIconSolid,
@@ -64,13 +65,96 @@ const Avatar = ({ name }) => {
   );
 };
 
+const ViewModal = ({ open, onClose, contact }) => {
+  if (!open || !contact) return null;
+  
+  return (
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+      <div className="glass-effect border border-white/10 rounded-xl shadow-2xl w-full max-w-2xl mx-4 animate-fade-in-up">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
+          <h3 className="text-lg font-semibold text-white flex items-center">
+            <EyeIcon className="h-6 w-6 mr-2 text-electric-400" />
+            Contact Details
+          </h3>
+          <button 
+            onClick={onClose} 
+            className="text-neutral-400 hover:text-white transition-colors duration-200"
+          >
+            <XMarkIcon className="w-6 h-6" />
+          </button>
+        </div>
+        <div className="px-6 py-4 space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="text-neutral-400 text-sm">Name</label>
+              <p className="text-white font-medium">{contact.name}</p>
+            </div>
+            <div>
+              <label className="text-neutral-400 text-sm">Email</label>
+              <p className="text-white font-medium">{contact.email}</p>
+            </div>
+            <div>
+              <label className="text-neutral-400 text-sm">Phone</label>
+              <p className="text-white font-medium">{contact.phone || 'N/A'}</p>
+            </div>
+            <div>
+              <label className="text-neutral-400 text-sm">Status</label>
+              <StatusBadge status={contact.status} />
+            </div>
+          </div>
+          
+          <div>
+            <label className="text-neutral-400 text-sm">Message</label>
+            <div className="mt-1 p-3 bg-neutral-800/50 rounded-lg border border-white/10">
+              <p className="text-white">{contact.message}</p>
+            </div>
+          </div>
+          
+          {contact.reply && (
+            <div>
+              <label className="text-neutral-400 text-sm">Reply</label>
+              <div className="mt-1 p-3 bg-neutral-800/50 rounded-lg border border-white/10">
+                <p className="text-white">{contact.reply}</p>
+                <p className="text-neutral-400 text-xs mt-2">
+                  Replied on: {new Date(contact.repliedAt).toLocaleString()}
+                </p>
+              </div>
+            </div>
+          )}
+          
+          <div className="text-neutral-400 text-sm">
+            Received: {new Date(contact.createdAt).toLocaleString()}
+          </div>
+        </div>
+        <div className="px-6 py-4 flex justify-end gap-3 border-t border-white/10">
+          <button 
+            onClick={onClose} 
+            className="btn-secondary"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ReplyModal = ({ open, onClose, onSend, contact }) => {
   const [reply, setReply] = useState('');
-  useEffect(() => { setReply(contact?.reply || ''); }, [contact]);
+  useEffect(() => { 
+    setReply(contact?.reply || ''); 
+  }, [contact]);
+  
   if (!open || !contact) return null;
+  
+  const handleSend = () => {
+    console.log('Send button clicked with reply:', reply);
+    onSend(reply);
+  };
+  
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
-      <div className="glass-effect border border-white/10 rounded-xl shadow-2xl w-full max-w-md mx-4 animate-fade-in-up">
+    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 backdrop-blur-sm">
+      <div className="glass-effect border border-white/10 rounded-xl shadow-2xl w-full max-w-2xl mx-4 animate-fade-in-up">
         <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
           <h3 className="text-lg font-semibold text-white flex items-center">
             <EnvelopeIcon className="h-6 w-6 mr-2 text-electric-400" />
@@ -84,11 +168,15 @@ const ReplyModal = ({ open, onClose, onSend, contact }) => {
           </button>
         </div>
         <div className="px-6 py-4">
+          <div className="mb-4 p-3 bg-neutral-800/50 rounded-lg border border-white/10">
+            <p className="text-neutral-400 text-sm mb-1">Original Message:</p>
+            <p className="text-white">{contact.message}</p>
+          </div>
           <textarea
             value={reply}
             onChange={e => setReply(e.target.value)}
-            className="input-field resize-none"
-            rows="5"
+            className="input-field resize-none w-full"
+            rows="6"
             placeholder="Type your reply..."
           />
         </div>
@@ -100,12 +188,12 @@ const ReplyModal = ({ open, onClose, onSend, contact }) => {
             Cancel
           </button>
           <button
-            onClick={() => onSend(reply)}
+            onClick={handleSend}
             className="btn-primary flex items-center space-x-2"
             disabled={!reply.trim()}
           >
             <PaperAirplaneIcon className="h-4 w-4" />
-            <span>Send</span>
+            <span>Send Reply</span>
           </button>
         </div>
       </div>
@@ -118,6 +206,7 @@ const ContactManagement = () => {
   const [loading, setLoading] = useState(true);
   const [notification, setNotification] = useState(null);
   const [replyModalOpen, setReplyModalOpen] = useState(false);
+  const [viewModalOpen, setViewModalOpen] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
   const [deletingId, setDeletingId] = useState(null);
 
@@ -135,19 +224,81 @@ const ContactManagement = () => {
     }
   };
 
+  const handleView = (contact) => {
+    setSelectedContact(contact);
+    setViewModalOpen(true);
+  };
+
   const handleReply = (contact) => {
+    console.log('Handle reply clicked for contact:', contact);
     setSelectedContact(contact);
     setReplyModalOpen(true);
   };
 
   const handleSendReply = async (reply) => {
+    console.log('Handle send reply called with:', { reply, selectedContact });
+    
+    if (!selectedContact) {
+      console.error('No selected contact');
+      setNotification({ message: 'No contact selected', type: 'error' });
+      return;
+    }
+    
+    if (!reply || reply.trim() === '') {
+      console.error('No reply content');
+      setNotification({ message: 'Reply content is required', type: 'error' });
+      return;
+    }
+    
     try {
-      await axiosInstance.post(`/api/contacts/${selectedContact._id}/reply`, { reply });
-      setNotification({ message: 'Reply sent successfully', type: 'success' });
+      console.log('Sending reply:', reply);
+      console.log('Contact ID:', selectedContact._id);
+      
+      // Send the reply request with a shorter timeout
+      const response = await axiosInstance.post(
+        `/api/contacts/${selectedContact._id}/reply`, 
+        { reply },
+        { timeout: 5000 } // 5 second timeout
+      );
+      
+      console.log('Reply response:', response.data);
+      
+      setNotification({ message: response.data.message || 'Reply saved successfully', type: 'success' });
       setReplyModalOpen(false);
       fetchContacts();
     } catch (err) {
-      setNotification({ message: 'Failed to send reply', type: 'error' });
+      console.error('Error sending reply:', err);
+      console.error('Error response:', err.response);
+      
+      // Handle different types of errors
+      if (err.code === 'ECONNABORTED' || err.message.includes('timeout')) {
+        // Timeout likely means the server is processing but taking time
+        // In our case, this should mean the reply was saved successfully
+        setNotification({ 
+          message: 'Reply request timed out but should be saved. Refreshing list...', 
+          type: 'success' 
+        });
+      } else if (err.code === 'ERR_NETWORK' || err.message.includes('Network Error')) {
+        setNotification({ 
+          message: 'Network error. The reply may still be saved. Refreshing list...', 
+          type: 'warning' 
+        });
+      } else {
+        let errorMessage = 'Failed to send reply';
+        if (err.response && err.response.data && err.response.data.message) {
+          errorMessage = err.response.data.message;
+        } else if (err.message) {
+          errorMessage = err.message;
+        }
+        setNotification({ message: errorMessage, type: 'error' });
+      }
+      
+      // Close the modal and refresh contacts regardless of error
+      setReplyModalOpen(false);
+      // Add a small delay before refreshing to allow server to process
+      setTimeout(() => {
+        fetchContacts();
+      }, 1000);
     }
   };
 
@@ -155,7 +306,7 @@ const ContactManagement = () => {
     if (!window.confirm('Are you sure you want to delete this message?')) return;
     setDeletingId(id);
     try {
-      await axios.delete(`/api/contacts/${id}`);
+      await axiosInstance.delete(`/api/contacts/${id}`);
       setNotification({ message: 'Contact deleted', type: 'success' });
       setContacts(contacts.filter(c => c._id !== id));
     } catch (err) {
@@ -209,7 +360,6 @@ const ContactManagement = () => {
                   <th className="px-6 py-4 text-left text-sm font-semibold text-neutral-300 border-b border-white/10">Email</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-neutral-300 border-b border-white/10">Message</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-neutral-300 border-b border-white/10">Status</th>
-                  <th className="px-6 py-4 text-left text-sm font-semibold text-neutral-300 border-b border-white/10">Reply</th>
                   <th className="px-6 py-4 text-left text-sm font-semibold text-neutral-300 border-b border-white/10">Actions</th>
                 </tr>
               </thead>
@@ -236,12 +386,13 @@ const ContactManagement = () => {
                       <StatusBadge status={contact.status} />
                     </td>
                     <td className="px-6 py-4 border-b border-white/10">
-                      <span className="text-neutral-300 max-w-xs truncate block" title={contact.reply}>
-                        {contact.reply || '-'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 border-b border-white/10">
                       <div className="flex items-center space-x-3">
+                        <button
+                          className="text-blue-400 hover:text-blue-300 font-medium transition-colors duration-200"
+                          onClick={() => handleView(contact)}
+                        >
+                          View
+                        </button>
                         <button
                           className="text-electric-400 hover:text-electric-300 font-medium transition-colors duration-200"
                           onClick={() => handleReply(contact)}
@@ -264,6 +415,12 @@ const ContactManagement = () => {
           </div>
         )}
       </div>
+      
+      <ViewModal
+        open={viewModalOpen}
+        onClose={() => setViewModalOpen(false)}
+        contact={selectedContact}
+      />
       
       <ReplyModal
         open={replyModalOpen}

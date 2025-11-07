@@ -77,7 +77,12 @@ const contactController = {
       await sendEmail({
         to: email,
         subject: 'Thank you for contacting us',
-        text: `Dear ${name},\n\nThank you for contacting us. We have received your message and will get back to you soon.\n\nBest regards,\nYour Team`
+        text: `Dear ${name},
+
+Thank you for contacting us. We have received your message and will get back to you soon.
+
+Best regards,
+Your Team`
       });
 
       // Send notification email to admin
@@ -99,11 +104,15 @@ const contactController = {
     try {
       const { reply } = req.body;
       
+      console.log('Received reply request:', { id: req.params.id, reply });
+      
       if (!reply) {
         return res.status(400).json({ message: 'Reply message is required' });
       }
 
       const contact = await Contact.findById(req.params.id);
+      
+      console.log('Found contact:', contact);
 
       if (!contact) {
         return res.status(404).json({ message: 'Contact not found' });
@@ -112,32 +121,56 @@ const contactController = {
       contact.reply = reply;
       contact.repliedAt = new Date();
       contact.status = 'replied';
-      await contact.save();
+      
+      const savedContact = await contact.save();
+      console.log('Contact saved:', savedContact);
 
-      try {
-        // Send reply email to user
-        await sendEmail({
-          to: contact.email,
-          subject: 'Reply to your message',
-          text: `Dear ${contact.name},\n\n${reply}\n\nBest regards,\nYour Team`
-        });
-      } catch (emailError) {
-        console.error('Error sending email:', emailError);
-        return res.status(500).json({
-          message: 'Reply saved but email could not be sent. Please check email configuration.',
-          error: emailError.message
-        });
-      }
+      // Respond immediately without waiting for email
+      res.status(200).json({
+        message: 'Reply saved successfully',
+        contact: savedContact
+      });
 
-      res.json(contact);
+      // Send email asynchronously after response is sent
+      setTimeout(async () => {
+        try {
+          await sendEmail({
+            to: contact.email,
+            subject: `Re: Your Contact Form Submission`,
+            html: `
+              <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto;">
+                <h2 style="color: #6B46C1;">Thank you for your message</h2>
+                <p>Dear ${contact.name},</p>
+                <p>We have received your message and here is our response:</p>
+                <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                  <p style="margin: 0;">${reply}</p>
+                </div>
+                <hr>
+                <h3>Your original message:</h3>
+                <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin: 20px 0;">
+                  <p style="margin: 0;">${contact.message}</p>
+                </div>
+                <p>Best regards,<br>Community Web Team</p>
+              </div>
+            `
+          });
+          console.log('Reply email sent successfully');
+        } catch (emailError) {
+          console.error('Error sending email (non-blocking):', emailError.message);
+          // Log the error but don't affect the main flow
+        }
+      }, 100); // Small delay to ensure response is sent
     } catch (error) {
       console.error('Error replying to contact:', error);
-      res.status(500).json({ 
-        message: 'Error sending reply',
-        error: process.env.NODE_ENV === 'development' ? error.message : undefined
-      });
+      // Ensure we always send a response
+      if (!res.headersSent) {
+        res.status(500).json({ 
+          message: 'Error processing reply',
+          error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+      }
     }
   }
 };
 
-module.exports = contactController; 
+module.exports = contactController;

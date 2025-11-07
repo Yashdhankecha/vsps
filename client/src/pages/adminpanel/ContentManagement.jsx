@@ -184,7 +184,7 @@ const ContentManagement = () => {
     }
   };
 
-  // Update the prepareFormData function for home content
+  // Update the prepareFormData function - make a targeted fix for event-category
   const prepareFormData = async () => {
     const form = document.querySelector('form');
     const formEntries = new FormData(form);
@@ -295,21 +295,9 @@ const ContentManagement = () => {
           break;
 
         case 'event-category':
-          data.append('title', formEntries.get('title') || '');
-          data.append('description', formEntries.get('description') || '');
-          data.append('icon', formEntries.get('icon') || '');
-          data.append('capacity', formEntries.get('capacity') || '');
-          if (formEntries.get('image') instanceof File) {
-            data.append('image', formEntries.get('image'));
-          } else if (formEntries.get('image')) {
-            data.append('image', formEntries.get('image'));
-          }
-          data.append('membershipPricing', JSON.stringify({
-            samajMember: formEntries.get('samajMember') || '',
-            nonSamajMember: formEntries.get('nonSamajMember') || ''
-          }));
-          data.append('isActive', formEntries.get('isActive') === 'on' ? 'true' : 'false');
-          break;
+          // For event-category, we need to handle the form data properly
+          // Return the form entries directly so we can process them correctly in handleSubmit
+          return formEntries;
 
         case 'gallery':
           if (formEntries.get('file') instanceof File) {
@@ -338,7 +326,7 @@ const ContentManagement = () => {
     }
   };
 
-  // Update the handleSubmit function for home content
+  // Update the handleSubmit function - fix the event-category case
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -452,9 +440,8 @@ const ContentManagement = () => {
           try {
             console.log('Starting event category submission with editingItem:', editingItem);
             
-            const formData = new FormData();
-            const form = document.querySelector('form');
-            const formEntries = new FormData(form);
+            // For event-category, formData is the formEntries object
+            const formEntries = formData;
             
             // Validate required fields
             const requiredFields = ['title', 'description', 'icon', 'capacity'];
@@ -464,26 +451,29 @@ const ContentManagement = () => {
               throw new Error(`Missing required fields: ${missingFields.join(', ')}`);
             }
             
+            // Create a new FormData object for the API call
+            const apiFormData = new FormData();
+            
             // Add basic fields from form
-            formData.append('title', formEntries.get('title'));
-            formData.append('description', formEntries.get('description'));
-            formData.append('icon', formEntries.get('icon'));
-            formData.append('capacity', formEntries.get('capacity'));
-            formData.append('isActive', formEntries.get('isActive') === 'on' ? 'true' : 'false');
-            formData.append('order', formEntries.get('order') || '0');
+            apiFormData.append('title', formEntries.get('title'));
+            apiFormData.append('description', formEntries.get('description'));
+            apiFormData.append('icon', formEntries.get('icon'));
+            apiFormData.append('capacity', formEntries.get('capacity'));
+            apiFormData.append('isActive', formEntries.get('isActive') === 'on' ? 'true' : 'false');
+            apiFormData.append('order', formEntries.get('order') || '0');
 
             // Generate an id from the title if not editing
             if (!editingItem._id) {
               const id = formEntries.get('title').toLowerCase().replace(/\s+/g, '-');
-              formData.append('id', id);
+              apiFormData.append('id', id);
             }
             
             // Handle image
             const imageFile = formEntries.get('image');
             if (imageFile instanceof File) {
-              formData.append('image', imageFile);
+              apiFormData.append('image', imageFile);
             } else if (editingItem.image) {
-              formData.append('image', editingItem.image);
+              apiFormData.append('image', editingItem.image);
             }
             
             // Handle membership pricing
@@ -496,76 +486,77 @@ const ContentManagement = () => {
               throw new Error('Both Samaj Member and Non-Samaj Member pricing are required');
             }
             
-            formData.append('membershipPricing', JSON.stringify(membershipPricing));
+            apiFormData.append('membershipPricing', JSON.stringify(membershipPricing));
             
             // Handle features
             const features = [];
-            const featureInputs = form.querySelectorAll('[name^="features["]');
+            // Get all feature inputs correctly
+            const featureInputs = document.querySelectorAll('input[name^="features["]');
             featureInputs.forEach(input => {
               if (input.value) features.push(input.value);
             });
-            formData.append('features', JSON.stringify(features));
+            apiFormData.append('features', JSON.stringify(features));
 
             // Log the complete form data before submission
-            console.log('Form data to be submitted:', Object.fromEntries(formData.entries()));
-            
-            let response;
-            if (editingItem._id) {
-              // Update existing category
-              console.log('Updating existing category:', editingItem._id);
-              response = await axiosInstance.put(
-                `${API_BASE_URL}/api/content/events/categories/${editingItem._id}`,
-                formData,
-                {
-                  headers: {
-                    'Content-Type': 'multipart/form-data'
-                  }
+            console.log('Form data to be submitted:', Object.fromEntries(apiFormData.entries()));
+          
+          let response;
+          if (editingItem._id) {
+            // Update existing category
+            console.log('Updating existing category:', editingItem._id);
+            response = await axiosInstance.put(
+              `/api/content/events/categories/${editingItem._id}`,
+              apiFormData,
+              {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
                 }
-              );
-            } else {
-              // Create new category
-              console.log('Creating new category');
-              response = await axiosInstance.post(
-                `${API_BASE_URL}/api/content/events/categories`,
-                formData,
-                {
-                  headers: {
-                    'Content-Type': 'multipart/form-data'
-                  }
+              }
+            );
+          } else {
+            // Create new category
+            console.log('Creating new category');
+            response = await axiosInstance.post(
+              `/api/content/events/categories`,
+              apiFormData,
+              {
+                headers: {
+                  'Content-Type': 'multipart/form-data'
                 }
-              );
-            }
-
-            if (!response.data) {
-              throw new Error('No response data received from server');
-            }
-
-            // Check if the response indicates success
-            if (response.data.success) {
-              toast.success(response.data.message || `Event category ${editingItem._id ? 'updated' : 'created'} successfully`);
-              setEditingItem(null);
-              setIsEditing(false);
-              setIsAdding(false);
-              await fetchAllContent();
-              return; // Exit the function after successful save
-            }
-
-            // If we get here without a success response, throw an error
-            throw new Error(response.data.message || 'Failed to save event category');
-            
-          } catch (error) {
-            console.error('Error saving event category:', {
-              message: error.message,
-              response: error.response?.data,
-              status: error.response?.status,
-              stack: error.stack
-            });
-            const errorMessage = error.response?.data?.message || error.message || 'Failed to save event category';
-            toast.error(errorMessage);
-            setError(errorMessage);
-            throw error; // Re-throw the error to be caught by the outer try-catch
+              }
+            );
           }
-          break;
+
+          if (!response.data) {
+            throw new Error('No response data received from server');
+          }
+
+          // Check if the response indicates success
+          if (response.data.success) {
+            toast.success(response.data.message || `Event category ${editingItem._id ? 'updated' : 'created'} successfully`);
+            setEditingItem(null);
+            setIsEditing(false);
+            setIsAdding(false);
+            await fetchAllContent();
+            return; // Exit the function after successful save
+          }
+
+          // If we get here without a success response, throw an error
+          throw new Error(response.data.message || 'Failed to save event category');
+          
+        } catch (error) {
+          console.error('Error saving event category:', {
+            message: error.message,
+            response: error.response?.data,
+            status: error.response?.status,
+            stack: error.stack
+          });
+          const errorMessage = error.response?.data?.message || error.message || 'Failed to save event category';
+          toast.error(errorMessage);
+          setError(errorMessage);
+          throw error; // Re-throw the error to be caught by the outer try-catch
+        }
+        break;
           
         default:
           console.error('Invalid content type:', contentType);
@@ -1749,7 +1740,6 @@ const ContentManagement = () => {
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-white">Features</label>
-                  <input type="hidden" name="featureCount" value={editingItem.features?.length || 0} />
                   <div className="space-y-4 mt-2">
                     {editingItem.features?.map((feature, index) => (
                       <div key={index} className="flex items-center gap-2">

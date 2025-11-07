@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const ContactMessage = require('../models/Contact');
 const { authMiddleware } = require('../middleware/authMiddleware'); 
-const { sendContactConfirmationEmail } = require('../utils/email');
+const { sendContactConfirmationEmail, sendEmail } = require('../utils/email');
 
 router.post('/', authMiddleware, async (req, res) => {
   const { name, email, subject, message } = req.body;
@@ -48,8 +48,21 @@ router.post('/:id/reply', authMiddleware, async (req, res) => {
     contact.repliedAt = new Date();
     await contact.save();
 
-    // Send reply email to the user
-    await sendContactConfirmationEmail(contact.email, process.env.ADMIN_EMAIL, contact.name, reply);
+    // Send reply email to the user with their original query
+    await sendEmail({
+      to: contact.email,
+      subject: `Re: ${contact.subject || 'Your Contact Form Submission'}`,
+      html: `
+        <h2>Thank you for your message</h2>
+        <p>Dear ${contact.name},</p>
+        <p>We have received your message and here is our response:</p>
+        <blockquote>${reply}</blockquote>
+        <hr>
+        <h3>Your original message:</h3>
+        <blockquote>${contact.message}</blockquote>
+        <p>Best regards,<br>Community Web Team</p>
+      `
+    });
 
     res.json({ success: true, message: 'Reply sent and saved.' });
   } catch (error) {
