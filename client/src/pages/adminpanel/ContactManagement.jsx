@@ -343,9 +343,10 @@ const ContactManagement = () => {
   const fetchContacts = async () => {
     try {
       const res = await axiosInstance.get('/api/contacts');
-      setContacts(res.data || []);
+      setContacts(Array.isArray(res.data) ? res.data : []);
     } catch (err) {
       console.error('Error fetching contacts:', err);
+      setContacts([]); // Set to empty array on error
       showNotification('Failed to fetch contacts', 'error');
     } finally {
       setLoading(false);
@@ -403,7 +404,7 @@ const ContactManagement = () => {
     }
   };
 
-  const filteredContacts = contacts.filter(contact => {
+  const filteredContacts = Array.isArray(contacts) ? contacts.filter(contact => {
     const matchesSearch = contact.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          contact.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          contact.message.toLowerCase().includes(searchTerm.toLowerCase());
@@ -411,7 +412,7 @@ const ContactManagement = () => {
     const matchesStatus = statusFilter === 'all' || contact.status === statusFilter;
     
     return matchesSearch && matchesStatus;
-  });
+  }) : [];
 
   if (loading) {
     return (
@@ -499,7 +500,7 @@ const ContactManagement = () => {
               </div>
               <div className="ml-3">
                 <p className="text-sm text-neutral-400">Total Messages</p>
-                <p className="text-xl font-bold text-white">{contacts.length}</p>
+                <p className="text-xl font-bold text-white">{Array.isArray(contacts) ? contacts.length : 0}</p>
               </div>
             </div>
           </div>
@@ -512,7 +513,7 @@ const ContactManagement = () => {
               <div className="ml-3">
                 <p className="text-sm text-neutral-400">Pending</p>
                 <p className="text-xl font-bold text-white">
-                  {contacts.filter(c => c.status === 'pending').length}
+                  {Array.isArray(contacts) ? contacts.filter(c => c.status === 'pending').length : 0}
                 </p>
               </div>
             </div>
@@ -526,7 +527,7 @@ const ContactManagement = () => {
               <div className="ml-3">
                 <p className="text-sm text-neutral-400">Replied</p>
                 <p className="text-xl font-bold text-white">
-                  {contacts.filter(c => c.status === 'replied').length}
+                  {Array.isArray(contacts) ? contacts.filter(c => c.status === 'replied').length : 0}
                 </p>
               </div>
             </div>

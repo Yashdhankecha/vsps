@@ -44,6 +44,7 @@ function AppContent() {
   const { user, loading } = useAuth();
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
+  const isAuthPage = location.pathname === "/auth" || location.pathname === "/ForgotPassword" || location.pathname.startsWith("/ResetPassword");
   const [formStatus, setFormStatus] = useState({
     samuhLagan: { active: false, isCurrentlyActive: false },
     studentAwards: { active: false, isCurrentlyActive: false }
@@ -231,7 +232,7 @@ function AppContent() {
         <>
           {user?.role !== "admin" ? (
             <>
-              <Header />
+              {!isAuthPage && <Header />}
               <main className="flex-grow overflow-x-hidden">
                 <Routes>
                   <Route path="/" element={<Home />} />
@@ -297,7 +298,7 @@ function AppContent() {
                   <Route path="*" element={<Navigate to="/" />} />
                 </Routes>
               </main>
-              <Footer />
+              {!isAuthPage && <Footer />}
             </>
           ) : (
             <Navigate to="/admin/dashboard" />

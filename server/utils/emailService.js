@@ -314,6 +314,81 @@ const emailTemplates = {
         <p>Please contact us for more information.</p>
       </div>
     `
+  }),
+
+  adminBookingNotification: (data) => ({
+    subject: 'New Booking Request Received',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #9333EA; text-align: center;">New Booking Request</h2>
+        <p>A new booking request has been submitted with the following details:</p>
+        
+        <div style="background-color: #F3E8FF; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #7E22CE; margin-top: 0;">Booking Details</h3>
+          <p><strong>Name:</strong> ${data.firstName} ${data.surname}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>Phone:</strong> ${data.phone}</p>
+          <p><strong>Event Type:</strong> ${data.eventType}</p>
+          <p><strong>Date:</strong> ${data.date}</p>
+          <p><strong>Samaj Member:</strong> ${data.isSamajMember ? 'Yes' : 'No'}</p>
+        </div>
+        
+        <p>Please log in to the admin panel to review and process this request.</p>
+      </div>
+    `
+  }),
+
+  adminSamuhLaganNotification: (data) => ({
+    subject: 'New Samuh Lagan Request Received',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #9333EA; text-align: center;">New Samuh Lagan Request</h2>
+        <p>A new Samuh Lagan request has been submitted with the following details:</p>
+        
+        <div style="background-color: #F3E8FF; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #7E22CE; margin-top: 0;">Bride Details</h3>
+          <p><strong>Name:</strong> ${data.brideName}</p>
+          <p><strong>Email:</strong> ${data.brideEmail}</p>
+          <p><strong>Phone:</strong> ${data.bridePhone}</p>
+        </div>
+        
+        <div style="background-color: #F3E8FF; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #7E22CE; margin-top: 0;">Groom Details</h3>
+          <p><strong>Name:</strong> ${data.groomName}</p>
+          <p><strong>Email:</strong> ${data.groomEmail}</p>
+          <p><strong>Phone:</strong> ${data.groomPhone}</p>
+        </div>
+        
+        <div style="background-color: #F3E8FF; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #7E22CE; margin-top: 0;">Ceremony Details</h3>
+          <p><strong>Date:</strong> ${new Date(data.ceremonyDate).toLocaleDateString()}</p>
+        </div>
+        
+        <p>Please log in to the admin panel to review and process this request.</p>
+      </div>
+    `
+  }),
+
+  adminStudentAwardNotification: (data) => ({
+    subject: 'New Student Award Request Received',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <h2 style="color: #9333EA; text-align: center;">New Student Award Request</h2>
+        <p>A new Student Award request has been submitted with the following details:</p>
+        
+        <div style="background-color: #F3E8FF; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h3 style="color: #7E22CE; margin-top: 0;">Student Details</h3>
+          <p><strong>Name:</strong> ${data.name}</p>
+          <p><strong>Email:</strong> ${data.email}</p>
+          <p><strong>Phone:</strong> ${data.phone}</p>
+          <p><strong>School:</strong> ${data.school}</p>
+          <p><strong>Percentage:</strong> ${data.percentage}%</p>
+          <p><strong>Rank:</strong> ${data.rank}</p>
+        </div>
+        
+        <p>Please log in to the admin panel to review and process this request.</p>
+      </div>
+    `
   })
 };
 

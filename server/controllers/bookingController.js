@@ -17,7 +17,7 @@ exports.submitBookingRequest = async (req, res) => {
     const userSurname = (booking.surname || '').trim().toLowerCase();
     const userVillage = (booking.villageName || '').trim();
     
-   
+    
     const isSamajMember = userSurname === 'patel' && 
       samajVillages.some(village => village.toLowerCase() === userVillage.toLowerCase());
     
@@ -28,7 +28,7 @@ exports.submitBookingRequest = async (req, res) => {
       samajVillages
     });
     
-   
+    
     booking.isSamajMember = isSamajMember;
     await booking.save();
 
@@ -43,6 +43,25 @@ exports.submitBookingRequest = async (req, res) => {
         eventType: req.body.eventType
       }
     );
+
+    // Send notification to admin
+    try {
+      await sendEmail(
+        process.env.ADMIN_EMAIL,
+        'adminBookingNotification',
+        {
+          firstName: req.body.firstName,
+          surname: req.body.surname,
+          email: req.body.email,
+          phone: req.body.phone,
+          date: req.body.date,
+          eventType: req.body.eventType,
+          isSamajMember: isSamajMember
+        }
+      );
+    } catch (adminEmailError) {
+      console.error('Failed to send admin notification email:', adminEmailError);
+    }
 
     res.status(201).json({ 
       message: 'Booking request submitted successfully', 
@@ -531,6 +550,25 @@ exports.submitSamuhLaganRequest = async (req, res) => {
     
     }
 
+    // Send notification to admin
+    try {
+      await sendEmail(
+        process.env.ADMIN_EMAIL,
+        'adminSamuhLaganNotification',
+        {
+          brideName: samuhLaganData.bride.name,
+          groomName: samuhLaganData.groom.name,
+          brideEmail: samuhLaganData.bride.email,
+          groomEmail: samuhLaganData.groom.email,
+          ceremonyDate: samuhLaganData.ceremonyDate,
+          bridePhone: samuhLaganData.bride.contactNumber,
+          groomPhone: samuhLaganData.groom.contactNumber
+        }
+      );
+    } catch (adminEmailError) {
+      console.error('Failed to send admin notification email for Samuh Lagan:', adminEmailError);
+    }
+
     res.status(201).json({ 
       success: true,
       message: 'Samuh Lagan request submitted successfully', 
@@ -837,6 +875,24 @@ exports.submitStudentAwardRequest = async (req, res) => {
     } catch (emailError) {
       console.error('Failed to send thank you email:', emailError);
      
+    }
+
+    // Send notification to admin
+    try {
+      await sendEmail(
+        process.env.ADMIN_EMAIL,
+        'adminStudentAwardNotification',
+        {
+          name: studentAwardData.name,
+          email: studentAwardData.email,
+          phone: studentAwardData.phone,
+          school: studentAwardData.schoolName,
+          percentage: studentAwardData.totalPercentage,
+          rank: studentAwardData.rank
+        }
+      );
+    } catch (adminEmailError) {
+      console.error('Failed to send admin notification email for student award:', adminEmailError);
     }
 
     res.status(201).json({ 
