@@ -4,16 +4,14 @@ const contactController = require('../controllers/contactController');
 const { adminAuth, userAuth } = require('../middleware/auth');
 const { validateObjectId } = require('../utils/validators');
 
-// Get all contacts (admin only)
-router.get('/', adminAuth, contactController.getAllContacts);
-
-// Create a new contact message (authenticated users)
+// Public routes (user authentication required)
 router.post('/', userAuth, contactController.createContact);
 
-// Delete a contact (admin only)
+// Admin routes
+router.get('/', adminAuth, contactController.getAllContacts);
+router.get('/stats', adminAuth, contactController.getContactStats);
+router.get('/:id', adminAuth, validateObjectId, contactController.getContactById);
+router.post('/:id/reply', adminAuth, validateObjectId, contactController.replyToContact);
 router.delete('/:id', adminAuth, validateObjectId, contactController.deleteContact);
 
-// Reply to a contact message (admin only)
-router.post('/:id/reply', adminAuth, validateObjectId, contactController.replyToContact);
-
-module.exports = router; 
+module.exports = router;
