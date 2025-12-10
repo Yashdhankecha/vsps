@@ -16,6 +16,15 @@ const authorizeRoles = (...roles) => {
         return res.status(403).json({ message: 'No role found in token' });
       }
       
+      // Super admin has access to everything
+      if (decoded.role === 'superadmin') {
+        req.user = {
+          ...decoded,
+          _id: decoded._id || decoded.id || decoded.userId
+        };
+        return next();
+      }
+      
       if (!roles.includes(decoded.role)) {
         return res.status(403).json({ 
           message: `Access denied. Required roles: ${roles.join(', ')}, your role: ${decoded.role}` 
@@ -46,10 +55,30 @@ const authorizeRoles = (...roles) => {
   };
 };
 
-// Admin only authorization
-const adminAuth = authorizeRoles('admin');
+// Super admin only authorization
+const superAdminAuth = authorizeRoles('superadmin');
+
+// Admin authorization (includes super admin)
+const adminAuth = authorizeRoles('admin', 'superadmin');
+
+// Specialized role authorizations
+const userManagerAuth = authorizeRoles('usermanager', 'superadmin');
+const contentManagerAuth = authorizeRoles('contentmanager', 'superadmin');
+const formManagerAuth = authorizeRoles('formmanager', 'superadmin');
+const bookingManagerAuth = authorizeRoles('bookingmanager', 'superadmin');
+const contactManagerAuth = authorizeRoles('contactmanager', 'superadmin');
 
 // User authorization (all authenticated users)
-const userAuth = authorizeRoles('user', 'admin');
+const userAuth = authorizeRoles('user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager');
 
-module.exports = { adminAuth, userAuth, authorizeRoles };
+module.exports = { 
+  superAdminAuth, 
+  adminAuth, 
+  userManagerAuth, 
+  contentManagerAuth, 
+  formManagerAuth, 
+  bookingManagerAuth, 
+  contactManagerAuth, 
+  userAuth, 
+  authorizeRoles 
+};

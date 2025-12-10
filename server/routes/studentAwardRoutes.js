@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const StudentAward = require('../models/StudentAward');
-const { adminAuth } = require('../middleware/auth');
+const { formManagerAuth } = require('../middleware/auth');
 
-router.delete('/:id', adminAuth, async (req, res) => {
+router.delete('/:id', formManagerAuth, async (req, res) => {
   try {
     const registration = await StudentAward.findById(req.params.id);
     
@@ -44,4 +44,4 @@ router.get('/status', async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

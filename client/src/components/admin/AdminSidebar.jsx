@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAdminLayout } from '../../contexts/AdminLayoutContext';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   HomeIcon, 
   PhotoIcon,
@@ -16,7 +17,8 @@ import {
   ChevronRightIcon,
   CogIcon,
   ShieldCheckIcon,
-  ChatBubbleLeftRightIcon
+  ChatBubbleLeftRightIcon,
+  ArrowRightOnRectangleIcon
 } from '@heroicons/react/24/outline';
 import {
   HomeIcon as HomeIconSolid,
@@ -28,9 +30,11 @@ import {
 
 const Sidebar = () => {
   const { sidebarExpanded, toggleSidebar } = useAdminLayout();
+  const { user } = useAuth();
   const location = useLocation();
 
-  const menuItems = [
+  // Define all menu items
+  const allMenuItems = [
     { 
       name: 'Dashboard', 
       icon: HomeIcon, 
@@ -38,7 +42,8 @@ const Sidebar = () => {
       path: '/admin/dashboard',
       color: 'text-electric-400',
       bgColor: 'bg-electric-500/20',
-      borderColor: 'border-electric-500/30'
+      borderColor: 'border-electric-500/30',
+      roles: ['superadmin'] // Only super admin can access dashboard
     },
     { 
       name: 'User Management', 
@@ -47,7 +52,8 @@ const Sidebar = () => {
       path: '/admin/users',
       color: 'text-secondary-400',
       bgColor: 'bg-secondary-500/20',
-      borderColor: 'border-secondary-500/30'
+      borderColor: 'border-secondary-500/30',
+      roles: ['admin', 'superadmin', 'usermanager']
     },
     { 
       name: 'Content Management', 
@@ -56,7 +62,8 @@ const Sidebar = () => {
       path: '/admin/content-management',
       color: 'text-neon-400',
       bgColor: 'bg-neon-500/20',
-      borderColor: 'border-neon-500/30'
+      borderColor: 'border-neon-500/30',
+      roles: ['admin', 'superadmin', 'contentmanager']
     },
     { 
       name: 'Form Management', 
@@ -64,7 +71,8 @@ const Sidebar = () => {
       path: '/admin/form-management',
       color: 'text-sunset-400',
       bgColor: 'bg-sunset-500/20',
-      borderColor: 'border-sunset-500/30'
+      borderColor: 'border-sunset-500/30',
+      roles: ['admin', 'superadmin', 'formmanager']
     },
     { 
       name: 'Booking Management', 
@@ -73,7 +81,8 @@ const Sidebar = () => {
       path: '/admin/booking-management',
       color: 'text-electric-400',
       bgColor: 'bg-electric-500/20',
-      borderColor: 'border-electric-500/30'
+      borderColor: 'border-electric-500/30',
+      roles: ['admin', 'superadmin', 'bookingmanager']
     },
     { 
       name: 'Booked Dates', 
@@ -81,7 +90,8 @@ const Sidebar = () => {
       path: '/admin/booked-dates',
       color: 'text-secondary-400',
       bgColor: 'bg-secondary-500/20',
-      borderColor: 'border-secondary-500/30'
+      borderColor: 'border-secondary-500/30',
+      roles: ['admin', 'superadmin', 'bookingmanager'] // Only booking manager and admins can access
     },
     { 
       name: 'Contact Management', 
@@ -89,7 +99,8 @@ const Sidebar = () => {
       path: '/admin/contact-management',
       color: 'text-neon-400',
       bgColor: 'bg-neon-500/20',
-      borderColor: 'border-neon-500/30'
+      borderColor: 'border-neon-500/30',
+      roles: ['admin', 'superadmin', 'contactmanager']
     },
     { 
       name: 'Reviews Management', 
@@ -97,7 +108,8 @@ const Sidebar = () => {
       path: '/admin/reviews',
       color: 'text-purple-400',
       bgColor: 'bg-purple-500/20',
-      borderColor: 'border-purple-500/30'
+      borderColor: 'border-purple-500/30',
+      roles: ['admin', 'superadmin', 'contactmanager']
     },
     { 
       name: 'Live Streams', 
@@ -105,11 +117,25 @@ const Sidebar = () => {
       path: '/admin/live-streams',
       color: 'text-sunset-400',
       bgColor: 'bg-sunset-500/20',
-      borderColor: 'border-sunset-500/30'
+      borderColor: 'border-sunset-500/30',
+      roles: ['admin', 'superadmin']
     },
-
   ];
 
+  // Filter menu items based on user role
+  const getMenuItems = () => {
+    if (!user || !user.role) return [];
+    
+    // Super admin gets all items
+    if (user.role === 'superadmin') {
+      return allMenuItems;
+    }
+    
+    // Filter items based on user role
+    return allMenuItems.filter(item => item.roles && item.roles.includes(user.role));
+  };
+
+  const menuItems = getMenuItems();
   const isActive = (path) => location.pathname === path;
 
   return (
@@ -130,7 +156,14 @@ const Sidebar = () => {
           </div>
           {sidebarExpanded && (
             <div className="animate-fade-in-right">
-              <h2 className="text-xl font-bold text-white">Admin Panel</h2>
+              <h2 className="text-xl font-bold text-white">
+                {user?.role === 'superadmin' ? 'Super Admin' : 
+                 user?.role === 'usermanager' ? 'User Manager' :
+                 user?.role === 'contentmanager' ? 'Content Manager' :
+                 user?.role === 'formmanager' ? 'Form Manager' :
+                 user?.role === 'bookingmanager' ? 'Booking Manager' :
+                 user?.role === 'contactmanager' ? 'Contact Manager' : 'Admin'} Panel
+              </h2>
               <p className="text-xs text-neutral-300 font-medium">Management Dashboard</p>
             </div>
           )}
@@ -184,24 +217,29 @@ const Sidebar = () => {
         })}
       </nav>
 
-      {/* Footer */}
+      {/* Logout Button */}
       <div className="p-4 border-t border-white/10">
-        <Link
-          to="/admin/settings"
-          className={`flex items-center space-x-3 p-3 rounded-xl bg-neutral-800/30 border border-white/10 ${
+        <button
+          onClick={() => {
+            // Clear all auth-related state and storage
+            localStorage.clear();
+            // Redirect to auth page
+            window.location.href = '/auth';
+          }}
+          className={`flex items-center space-x-3 p-3 rounded-xl bg-red-500/20 border border-red-500/30 ${
             sidebarExpanded ? '' : 'justify-center'
-          } hover:bg-white/10 transition-colors duration-200`}
+          } hover:bg-red-500/30 transition-colors duration-200 w-full`}
         >
-          <div className="w-8 h-8 bg-gradient-secondary rounded-lg flex items-center justify-center">
-            <CogIcon className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 bg-red-500/30 rounded-lg flex items-center justify-center">
+            <ArrowRightOnRectangleIcon className="w-4 h-4 text-red-400" />
           </div>
           {sidebarExpanded && (
             <div className="animate-fade-in-right">
-              <p className="text-sm font-medium text-white">Logout</p>
-              <p className="text-xs text-neutral-400">Sign out of account</p>
+              <p className="text-sm font-medium text-red-400">Logout</p>
+              <p className="text-xs text-red-300">Sign out of account</p>
             </div>
           )}
-        </Link>
+        </button>
       </div>
     </div>
   );

@@ -31,6 +31,11 @@ import Notifications from './pages/Notifications';
 import SamuhLaganBooking from './pages/SamuhLaganBooking';
 import StudentAwardRegistration from './pages/StudentAwardRegistration';
 import AdminRoute from './components/AdminRoute';
+import UserManagerRoute from './components/UserManagerRoute';
+import ContentManagerRoute from './components/ContentManagerRoute';
+import FormManagerRoute from './components/FormManagerRoute';
+import BookingManagerRoute from './components/BookingManagerRoute';
+import ContactManagerRoute from './components/ContactManagerRoute';
 import BookedDatesCalendar from './pages/adminpanel/BookedDatesCalendar';
 import axios from './utils/axiosConfig';
 import React from 'react';
@@ -73,6 +78,7 @@ function AppContent() {
       
       
       
+
     }
   }, [loading, user, navigate]);
 
@@ -199,11 +205,118 @@ function AppContent() {
     );
   }
 
-  return (
-    <div className="min-h-screen flex flex-col bg-gray-50 overflow-x-hidden">
+  // Render specialized admin layouts based on user role
+  const renderAdminLayout = () => {
+    if (!user) {
+      return <Navigate to="/auth" />;
+    }
+
+    // Super admin gets full access
+    if (user.role === "superadmin") {
+      return (
+        <AdminLayoutProvider>
+          <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+            <AdminSidebar />
+            <AdminPageContainer>
+              <Routes>
+                <Route path="/admin/dashboard" element={<Dashboard />} />
+                <Route path="/admin/content-management" element={<ContentManagement />} />
+                <Route path="/admin/booking-management" element={<BookingManagement />} />
+                <Route path="/admin/contact-management" element={<ContactManagement />} />
+                <Route path="/admin/live-streams" element={<LiveStreams />} />
+                <Route path="/admin/users" element={<Users />} />
+                <Route path="/admin/form-management" element={<FormManagement />} />
+                <Route path="/admin/reviews" element={<Reviews />} />
+                <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
+              </Routes>
+            </AdminPageContainer>
+          </div>
+        </AdminLayoutProvider>
+      );
+    }
+
+    // Specialized roles get limited access
+    switch (user.role) {
+      case "usermanager":
+        return (
+          <AdminLayoutProvider>
+            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+              <AdminSidebar />
+              <AdminPageContainer>
+                <Routes>
+                  <Route path="/admin/users" element={<Users />} />
+                  <Route path="/admin/*" element={<Navigate to="/admin/users" />} />
+                </Routes>
+              </AdminPageContainer>
+            </div>
+          </AdminLayoutProvider>
+        );
       
-      {isAdminRoute ? (
-        user?.role === "admin" ? (
+      case "contentmanager":
+        return (
+          <AdminLayoutProvider>
+            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+              <AdminSidebar />
+              <AdminPageContainer>
+                <Routes>
+                  <Route path="/admin/content-management" element={<ContentManagement />} />
+                  <Route path="/admin/*" element={<Navigate to="/admin/content-management" />} />
+                </Routes>
+              </AdminPageContainer>
+            </div>
+          </AdminLayoutProvider>
+        );
+      
+      case "formmanager":
+        return (
+          <AdminLayoutProvider>
+            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+              <AdminSidebar />
+              <AdminPageContainer>
+                <Routes>
+                  <Route path="/admin/form-management" element={<FormManagement />} />
+                  <Route path="/admin/*" element={<Navigate to="/admin/form-management" />} />
+                </Routes>
+              </AdminPageContainer>
+            </div>
+          </AdminLayoutProvider>
+        );
+      
+      case "bookingmanager":
+        return (
+          <AdminLayoutProvider>
+            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+              <AdminSidebar />
+              <AdminPageContainer>
+                <Routes>
+                  <Route path="/admin/booking-management" element={<BookingManagement />} />
+                  <Route path="/admin/booked-dates" element={<BookedDatesCalendar />} />
+                  <Route path="/admin/*" element={<Navigate to="/admin/booking-management" />} />
+                </Routes>
+              </AdminPageContainer>
+            </div>
+          </AdminLayoutProvider>
+        );
+      
+      case "contactmanager":
+        return (
+          <AdminLayoutProvider>
+            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+              <AdminSidebar />
+              <AdminPageContainer>
+                <Routes>
+                  <Route path="/admin/contact-management" element={<ContactManagement />} />
+                  <Route path="/admin/reviews" element={<Reviews />} />
+                  <Route path="/admin/*" element={<Navigate to="/admin/contact-management" />} />
+                </Routes>
+              </AdminPageContainer>
+            </div>
+          </AdminLayoutProvider>
+        );
+      
+      case "admin":
+        // Regular admin gets full access like super admin for backward compatibility
+        return (
           <AdminLayoutProvider>
             <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
               <AdminSidebar />
@@ -214,22 +327,32 @@ function AppContent() {
                   <Route path="/admin/booking-management" element={<BookingManagement />} />
                   <Route path="/admin/contact-management" element={<ContactManagement />} />
                   <Route path="/admin/live-streams" element={<LiveStreams />} />
-
                   <Route path="/admin/users" element={<Users />} />
                   <Route path="/admin/form-management" element={<FormManagement />} />
-                  <Route path="/admin/booked-dates" element={<BookedDatesCalendar />} />
                   <Route path="/admin/reviews" element={<Reviews />} />
                   <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
                 </Routes>
               </AdminPageContainer>
             </div>
           </AdminLayoutProvider>
-        ) : (
-          <Navigate to="/auth" />
-        )
+        );
+      
+      default:
+        return <Navigate to="/auth" />;
+    }
+  };
+
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50 overflow-x-hidden">
+      
+      {isAdminRoute ? (
+        renderAdminLayout()
       ) : (
         <>
-          {user?.role !== "admin" ? (
+          {user?.role !== "admin" && user?.role !== "superadmin" && 
+           user?.role !== "usermanager" && user?.role !== "contentmanager" && 
+           user?.role !== "formmanager" && user?.role !== "bookingmanager" && 
+           user?.role !== "contactmanager" ? (
             <>
               <Header />
               <main className="flex-grow overflow-x-hidden">

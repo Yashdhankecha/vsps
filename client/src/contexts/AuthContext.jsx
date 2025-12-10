@@ -25,7 +25,8 @@ export function AuthProvider({ children }) {
           };
           
           // Validate role
-          if (!['user', 'admin'].includes(normalizedUser.role)) {
+          const validRoles = ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'];
+          if (!validRoles.includes(normalizedUser.role)) {
             console.error('Invalid user role:', normalizedUser.role);
             localStorage.removeItem('token');
             setUser(null);
@@ -45,17 +46,31 @@ export function AuthProvider({ children }) {
   }, []);
 
   // Helper functions for role checking
-  const isAdmin = () => user?.role === 'admin';
+  const isSuperAdmin = () => user?.role === 'superadmin';
+  const isAdmin = () => user?.role === 'admin' || user?.role === 'superadmin';
   const isUser = () => user?.role === 'user';
-  const hasAdminAccess = () => user?.role === 'admin';
-  const hasUserAccess = () => ['user', 'admin'].includes(user?.role);
+  const isUserManager = () => user?.role === 'usermanager' || user?.role === 'superadmin';
+  const isContentManager = () => user?.role === 'contentmanager' || user?.role === 'superadmin';
+  const isFormManager = () => user?.role === 'formmanager' || user?.role === 'superadmin';
+  const isBookingManager = () => user?.role === 'bookingmanager' || user?.role === 'superadmin';
+  const isContactManager = () => user?.role === 'contactmanager' || user?.role === 'superadmin';
+  
+  // Combined access checks
+  const hasAdminAccess = () => ['admin', 'superadmin'].includes(user?.role);
+  const hasUserAccess = () => ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'].includes(user?.role);
 
   const value = {
     user,
     loading,
     setUser,
+    isSuperAdmin,
     isAdmin,
     isUser,
+    isUserManager,
+    isContentManager,
+    isFormManager,
+    isBookingManager,
+    isContactManager,
     hasAdminAccess,
     hasUserAccess
   };

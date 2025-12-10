@@ -32,13 +32,15 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [editingUser, setEditingUser] = useState(null);
+  const [isCreating, setIsCreating] = useState(false); // New state for creating users
   const [searchTerm, setSearchTerm] = useState('');
   const [filterRole, setFilterRole] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const [editForm, setEditForm] = useState({
     username: '',
     email: '',
-    role: '',
+    password: '', // Add password field for creating users
+    role: 'user',
     isVerified: false
   });
   const [notifications, setNotifications] = useState([]);
@@ -65,8 +67,13 @@ const Users = () => {
     total: (users || []).length,
     verified: (users || []).filter(u => u.isVerified).length,
     pending: (users || []).filter(u => !u.isVerified).length,
-    admins: (users || []).filter(u => u.role === 'admin').length,
-    regularUsers: (users || []).filter(u => u.role === 'user').length
+    admins: (users || []).filter(u => u.role === 'admin' || u.role === 'superadmin').length,
+    regularUsers: (users || []).filter(u => u.role === 'user').length,
+    userManagers: (users || []).filter(u => u.role === 'usermanager').length,
+    contentManagers: (users || []).filter(u => u.role === 'contentmanager').length,
+    formManagers: (users || []).filter(u => u.role === 'formmanager').length,
+    bookingManagers: (users || []).filter(u => u.role === 'bookingmanager').length,
+    contactManagers: (users || []).filter(u => u.role === 'contactmanager').length
   };
 
   // Function to show notification with modern styling
@@ -150,11 +157,25 @@ const Users = () => {
     }
   };
 
+  const handleCreateUser = () => {
+    setIsCreating(true);
+    setEditingUser({ _id: null }); // Set a temporary ID to indicate creation mode
+    setEditForm({
+      username: '',
+      email: '',
+      password: '',
+      role: 'user',
+      isVerified: false
+    });
+  };
+
   const handleEdit = (user) => {
+    setIsCreating(false);
     setEditingUser(user);
     setEditForm({
       username: user.username,
       email: user.email,
+      password: '', // Don't prefill password for security
       role: user.role,
       isVerified: user.isVerified
     });
@@ -204,28 +225,57 @@ const Users = () => {
         return;
       }
 
-      const response = await axiosInstance.put(`/api/users/${editingUser._id}`, editForm);
+      let response;
+      if (isCreating) {
+        // Creating a new user
+        if (!editForm.password) {
+          showNotification('Password is required for new users', 'error');
+          return;
+        }
+        
+        response = await axiosInstance.post('/api/users/create', editForm);
+      } else {
+        // Updating an existing user
+        response = await axiosInstance.put(`/api/users/${editingUser._id}`, editForm);
+      }
 
       // Axios automatically throws an error for non-2xx responses
       // If we get here, the request was successful
       const data = response.data;
 
-      setUsers(prevUsers => (prevUsers || []).map(user => 
-        user._id === editingUser._id ? data.user : user
-      ));
+      if (isCreating) {
+        setUsers(prevUsers => [...(prevUsers || []), data.user]);
+        showNotification(
+          `User created successfully`, 
+          'success', 
+          () => fetchUsers(), 
+          'Refresh Users'
+        );
+      } else {
+        setUsers(prevUsers => (prevUsers || []).map(user => 
+          user._id === editingUser._id ? data.user : user
+        ));
+        showNotification(
+          `User updated successfully`, 
+          'success', 
+          () => fetchUsers(), 
+          'Refresh Users'
+        );
+      }
+      
       setEditingUser(null);
-      showNotification(
-        `User updated successfully`, 
-        'success', 
-        () => fetchUsers(), 
-        'Refresh Users'
-      );
+      setIsCreating(false);
     } catch (error) {
-      console.error('Error updating user:', error);
+      console.error('Error saving user:', error);
       showNotification(
-        error.response?.data?.message || error.message || 'Failed to update user', 
+        error.response?.data?.message || error.message || `Failed to ${isCreating ? 'create' : 'update'} user`, 
         'error',
-        () => setEditingUser(null),
+        () => {
+          if (isCreating) {
+            setIsCreating(false);
+          }
+          setEditingUser(null);
+        },
         'Close Form'
       );
     }
@@ -371,6 +421,13 @@ const Users = () => {
             {/* Action Buttons - Responsive */}
             <div className="flex flex-wrap gap-2 justify-center lg:justify-end">
               <button
+                onClick={handleCreateUser}
+                className="btn-primary flex items-center"
+              >
+                <PlusIcon className="w-4 h-4 mr-2" />
+                Create User
+              </button>
+              <button
                 onClick={exportUsers}
                 className="btn-secondary flex items-center"
               >
@@ -406,6 +463,17 @@ const Users = () => {
                 <span className="sm:hidden">Admin</span>
               </button>
               <button
+                onClick={() => setFilterRole('superadmin')}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  filterRole === 'superadmin' 
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                <span className="hidden sm:inline">Super Admins</span>
+                <span className="sm:hidden">Super</span>
+              </button>
+              <button
                 onClick={() => setFilterRole('user')}
                 className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
                   filterRole === 'user' 
@@ -415,6 +483,61 @@ const Users = () => {
               >
                 <span className="hidden sm:inline">Regular Users</span>
                 <span className="sm:hidden">Users</span>
+              </button>
+              <button
+                onClick={() => setFilterRole('usermanager')}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  filterRole === 'usermanager' 
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                <span className="hidden sm:inline">User Managers</span>
+                <span className="sm:hidden">UM</span>
+              </button>
+              <button
+                onClick={() => setFilterRole('contentmanager')}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  filterRole === 'contentmanager' 
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                <span className="hidden sm:inline">Content Managers</span>
+                <span className="sm:hidden">CM</span>
+              </button>
+              <button
+                onClick={() => setFilterRole('formmanager')}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  filterRole === 'formmanager' 
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                <span className="hidden sm:inline">Form Managers</span>
+                <span className="sm:hidden">FM</span>
+              </button>
+              <button
+                onClick={() => setFilterRole('bookingmanager')}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  filterRole === 'bookingmanager' 
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                <span className="hidden sm:inline">Booking Managers</span>
+                <span className="sm:hidden">BM</span>
+              </button>
+              <button
+                onClick={() => setFilterRole('contactmanager')}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  filterRole === 'contactmanager' 
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                <span className="hidden sm:inline">Contact Managers</span>
+                <span className="sm:hidden">CM</span>
               </button>
             </div>
           </div>
@@ -488,9 +611,22 @@ const Users = () => {
                       <td className="px-6 py-4 border-b border-white/10">
                         <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                           user.role === 'admin' ? 'bg-electric-500/20 text-electric-300 border border-electric-500/30' :
+                          user.role === 'superadmin' ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30' :
+                          user.role === 'usermanager' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
+                          user.role === 'contentmanager' ? 'bg-green-500/20 text-green-300 border border-green-500/30' :
+                          user.role === 'formmanager' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
+                          user.role === 'bookingmanager' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' :
+                          user.role === 'contactmanager' ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30' :
                           'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
                         }`}>
-                          {user.role === 'admin' ? 'Admin' : 'User'}
+                          {user.role === 'admin' ? 'Admin' :
+                           user.role === 'superadmin' ? 'Super Admin' :
+                           user.role === 'usermanager' ? 'User Manager' :
+                           user.role === 'contentmanager' ? 'Content Manager' :
+                           user.role === 'formmanager' ? 'Form Manager' :
+                           user.role === 'bookingmanager' ? 'Booking Manager' :
+                           user.role === 'contactmanager' ? 'Contact Manager' :
+                           'User'}
                         </span>
                       </td>
                       <td className="px-6 py-4 border-b border-white/10">
@@ -530,7 +666,7 @@ const Users = () => {
             <div className="glass-effect border border-white/10 rounded-xl shadow-2xl w-full max-w-md mx-4 animate-fade-in-up">
               <div className="flex items-center justify-between px-6 py-4 border-b border-white/10">
                 <h3 className="text-lg font-semibold text-white">
-                  {editingUser._id ? 'Edit User' : 'Add User'}
+                  {isCreating ? 'Create User' : 'Edit User'}
                 </h3>
                 <button 
                   onClick={() => setEditingUser(null)} 
@@ -563,6 +699,19 @@ const Users = () => {
                   />
                 </div>
                 
+                {isCreating && (
+                  <div>
+                    <label className="form-label">Password</label>
+                    <input
+                      type="password"
+                      value={editForm.password}
+                      onChange={(e) => setEditForm({...editForm, password: e.target.value})}
+                      className="input-field"
+                      required
+                    />
+                  </div>
+                )}
+                
                 <div>
                   <label className="form-label">Role</label>
                   <select
@@ -572,6 +721,12 @@ const Users = () => {
                   >
                     <option value="user">User</option>
                     <option value="admin">Admin</option>
+                    <option value="superadmin">Super Admin</option>
+                    <option value="usermanager">User Manager</option>
+                    <option value="contentmanager">Content Manager</option>
+                    <option value="formmanager">Form Manager</option>
+                    <option value="bookingmanager">Booking Manager</option>
+                    <option value="contactmanager">Contact Manager</option>
                   </select>
                 </div>
                 
@@ -600,7 +755,7 @@ const Users = () => {
                     type="submit"
                     className="btn-primary"
                   >
-                    {editingUser._id ? 'Update' : 'Create'}
+                    {isCreating ? 'Create' : 'Update'}
                   </button>
                 </div>
               </form>

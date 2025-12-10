@@ -15,7 +15,7 @@ const {
   updateHeroSlider
 } = require('../controllers/homeContentController');
 const { uploadPDF } = require('../middleware/upload');
-
+const { contentManagerAuth } = require('../middleware/auth');
 
 const tempDir = path.join(__dirname, '..', 'temp');
 if (!fs.existsSync(tempDir)) {
@@ -33,18 +33,21 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Public route - no auth needed
 router.get('/home', getHomeContent);
-router.post('/home', upload.single('image'), updateHomeContent);
 
-router.put('/home/hero-slider', updateHeroSlider);
-router.post('/home/hero-slide', upload.single('image'), handleHeroSlide);
-router.delete('/home/hero-slide/:id', deleteHeroSlide);
+// Protected routes - only accessible by content managers and admins
+router.post('/home', contentManagerAuth, upload.single('image'), updateHomeContent);
 
-router.put('/home/about', upload.single('image'), updateAbout);
+router.put('/home/hero-slider', contentManagerAuth, updateHeroSlider);
+router.post('/home/hero-slide', contentManagerAuth, upload.single('image'), handleHeroSlide);
+router.delete('/home/hero-slide/:id', contentManagerAuth, deleteHeroSlide);
 
-router.put('/home/introduction', uploadPDF.single('pdfFile'), updateIntroduction);
+router.put('/home/about', contentManagerAuth, upload.single('image'), updateAbout);
 
-router.put('/home/leadership', upload.any(), updateLeadership);
-router.delete('/home/leadership/members/:id', deleteLeadershipMember);
+router.put('/home/introduction', contentManagerAuth, uploadPDF.single('pdfFile'), updateIntroduction);
 
-module.exports = router; 
+router.put('/home/leadership', contentManagerAuth, upload.any(), updateLeadership);
+router.delete('/home/leadership/members/:id', contentManagerAuth, deleteLeadershipMember);
+
+module.exports = router;

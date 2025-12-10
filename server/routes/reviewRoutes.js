@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { adminAuth, userAuth } = require('../middleware/auth');
+const { contactManagerAuth, userAuth } = require('../middleware/auth');
 const reviewController = require('../controllers/reviewController');
 
 // Setup multer for file uploads
@@ -36,9 +36,9 @@ router.get('/', reviewController.getApprovedReviews);
 router.post('/', upload.array('images', 5), reviewController.submitReview);
 
 // Admin routes
-router.get('/admin', adminAuth, reviewController.getAllReviews);
-router.put('/approve/:id', adminAuth, reviewController.approveReview);
-router.delete('/reject/:id', adminAuth, reviewController.rejectReview);
-router.delete('/:id', adminAuth, reviewController.deleteReview);
+router.get('/admin', contactManagerAuth, reviewController.getAllReviews);
+router.put('/approve/:id', contactManagerAuth, reviewController.approveReview);
+router.delete('/reject/:id', contactManagerAuth, reviewController.rejectReview);
+router.delete('/:id', contactManagerAuth, reviewController.deleteReview);
 
 module.exports = router;

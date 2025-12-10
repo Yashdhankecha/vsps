@@ -1,37 +1,11 @@
 const express = require('express');
 const router = express.Router();
+const { adminAuth, formManagerAuth, userAuth } = require('../middleware/auth');
 const Form = require('../models/Form');
-const { adminAuth, userAuth } = require('../middleware/auth');
 const SamuhLagan = require('../models/SamuhLagan');
-const { sendEmail } = require('../utils/emailService');
 
-
-router.get('/public/status', async (req, res) => {
-  try {
-    console.log('Fetching form statuses...');
-    const forms = await Form.find({});
-    const formStatus = {};
-    
-    forms.forEach(form => {
-      formStatus[form.formType] = {
-        active: form.active,
-        startTime: form.startTime,
-        endTime: form.endTime,
-        eventDate: form.eventDate,
-        isCurrentlyActive: form.isCurrentlyActive()
-      };
-    });
-
-    console.log('Form statuses:', formStatus);
-    res.json(formStatus);
-  } catch (error) {
-    console.error('Error fetching form status:', error);
-    res.status(500).json({ message: 'Error fetching form status' });
-  }
-});
-
-
-router.get('/status/:formType?', adminAuth, async (req, res) => {
+// Public endpoint to get form status
+router.get('/public/status/:formType?', async (req, res) => {
   try {
     const { formType } = req.params;
     const forms = await Form.find({});
@@ -92,7 +66,68 @@ router.get('/status/:formType?', adminAuth, async (req, res) => {
 });
 
 
-router.put('/status/:formType', adminAuth, async (req, res) => {
+router.get('/status/:formType?', formManagerAuth, async (req, res) => {
+  try {
+    const { formType } = req.params;
+    const forms = await Form.find({});
+    
+    
+    if (forms.length === 0) {
+      const defaultForms = [
+        { formType: 'samuhLagan', active: false },
+        { formType: 'studentAwards', active: false },
+        { formType: 'teamRegistration', active: false }
+      ];
+      
+      await Form.insertMany(defaultForms);
+      return res.json({
+        samuhLagan: { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
+        studentAwards: { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
+        teamRegistration: { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false }
+      });
+    }
+
+    
+    if (formType) {
+      const form = forms.find(f => f.formType === formType);
+      if (!form) {
+        return res.status(404).json({ message: 'Form type not found' });
+      }
+      return res.json({
+        ...form.toObject(),
+        isCurrentlyActive: form.isCurrentlyActive()
+      });
+    }
+
+    
+    const formStatus = {
+      samuhLagan: forms.find(f => f.formType === 'samuhLagan') || { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
+      studentAwards: forms.find(f => f.formType === 'studentAwards') || { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
+      teamRegistration: forms.find(f => f.formType === 'teamRegistration') || { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false }
+    };
+
+    
+    if (formStatus.samuhLagan._id) {
+      formStatus.samuhLagan.isCurrentlyActive = forms.find(f => f.formType === 'samuhLagan').isCurrentlyActive();
+    }
+    
+    if (formStatus.studentAwards._id) {
+      formStatus.studentAwards.isCurrentlyActive = forms.find(f => f.formType === 'studentAwards').isCurrentlyActive();
+    }
+
+    if (formStatus.teamRegistration._id) {
+      formStatus.teamRegistration.isCurrentlyActive = forms.find(f => f.formType === 'teamRegistration').isCurrentlyActive();
+    }
+
+    res.json(formStatus);
+  } catch (error) {
+    console.error('Error fetching form status:', error);
+    res.status(500).json({ message: 'Error fetching form status' });
+  }
+});
+
+
+router.put('/status/:formType', formManagerAuth, async (req, res) => {
   try {
     const { formType } = req.params;
     const { active, startTime, endTime, eventDate } = req.body;
@@ -302,7 +337,7 @@ router.get('/can-access-form/:formName', userAuth, async (req, res) => {
 });
 
 // Admin endpoint to set form timer
-router.post('/set-form-timer', adminAuth, async (req, res) => {
+router.post('/set-form-timer', formManagerAuth, async (req, res) => {
   try {
     const { formName, startTime, endTime } = req.body;
     
@@ -441,4 +476,4 @@ router.get('/samuhLagan/user-submissions', userAuth, async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;

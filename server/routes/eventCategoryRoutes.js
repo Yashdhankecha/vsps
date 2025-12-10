@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const { adminAuth } = require('../middleware/auth');
+const { contentManagerAuth } = require('../middleware/auth');
 const {
   getEventCategories,
   createEventCategory,
@@ -30,8 +30,8 @@ const upload = multer({ storage: storage });
 
 
 router.get('/events/categories', getEventCategories);
-router.post('/events/categories', adminAuth, upload.single('image'), createEventCategory);
-router.put('/events/categories/:id', adminAuth, upload.single('image'), updateEventCategory);
-router.delete('/events/categories/:id', adminAuth, deleteEventCategory);
+router.post('/events/categories', contentManagerAuth, upload.single('image'), createEventCategory);
+router.put('/events/categories/:id', contentManagerAuth, upload.single('image'), updateEventCategory);
+router.delete('/events/categories/:id', contentManagerAuth, deleteEventCategory);
 
-module.exports = router; 
+module.exports = router;

@@ -43,7 +43,11 @@ const userSchema = new mongoose.Schema({
   resetPasswordToken: String,
   resetPasswordExpires: Date,
   passwordHistory: [{ type: String }],
-  role: { type: String, enum: ['user', 'admin'], default: 'user' },
+  role: { 
+    type: String, 
+    enum: ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'], 
+    default: 'user' 
+  },
   otp: {
     code: String,
     expiresAt: Date

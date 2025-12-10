@@ -4,6 +4,6 @@
     "jspdf-autotable": "^5.0.2"
   },
   "devDependencies": {
-    "nodemon": "^3.1.10"
+    "nodemon": "^3.1.11"
   }
 }

@@ -155,9 +155,9 @@ const userController = {
 
   getAllUsers: async (req, res) => {
     try {
-     
-      if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Admins only.' });
+      // Allow access to super admins and user managers
+      if (!['superadmin', 'usermanager'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Super admins and user managers only.' });
       }
   
       const users = await User.find({})
@@ -170,10 +170,75 @@ const userController = {
     }
   },
 
+  createUser: async (req, res) => {
+    try {
+      // Allow access to super admins and user managers
+      if (!['superadmin', 'usermanager'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Super admins and user managers only.' });
+      }
+
+      const { username, email, password, role, isVerified } = req.body;
+
+      // Validate required fields
+      if (!username || !email || !password) {
+        return res.status(400).json({ message: 'Username, email, and password are required' });
+      }
+
+      // Validate role assignment permissions
+      const validRoles = ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'];
+      if (role && !validRoles.includes(role)) {
+        return res.status(400).json({ message: 'Invalid role specified' });
+      }
+
+      // Only super admins can assign superadmin role
+      if (role === 'superadmin' && req.user.role !== 'superadmin') {
+        return res.status(403).json({ message: 'Only super admins can assign superadmin role' });
+      }
+
+      // Check if user already exists
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: 'User with this email already exists' });
+      }
+
+      // Check if username is already taken
+      const existingUsername = await User.findOne({ username });
+      if (existingUsername) {
+        return res.status(400).json({ message: 'Username already taken' });
+      }
+
+      // Create new user
+      const user = new User({
+        username,
+        email,
+        password,
+        role: role || 'user',
+        isVerified: isVerified || false
+      });
+
+      await user.save();
+
+      const newUser = await User.findById(user._id)
+        .select('-password -passwordHistory -verificationToken -resetPasswordToken -otp');
+
+      res.status(201).json({
+        message: 'User created successfully',
+        user: newUser
+      });
+    } catch (error) {
+      console.error('Error creating user:', error);
+      res.status(500).json({ 
+        message: 'Server error',
+        error: error.message 
+      });
+    }
+  },
+
   deleteUser: async (req, res) => {
     try {
-      if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Admins only.' });
+      // Allow access to super admins and user managers
+      if (!['superadmin', 'usermanager'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Super admins and user managers only.' });
       }
 
       const userId = req.params.id;
@@ -213,8 +278,9 @@ const userController = {
   
   updateUser: async (req, res) => {
     try {
-      if (req.user.role !== 'admin') {
-        return res.status(403).json({ message: 'Access denied. Admins only.' });
+      // Allow access to super admins and user managers
+      if (!['superadmin', 'usermanager'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Super admins and user managers only.' });
       }
 
       const userId = req.params.id;
@@ -234,8 +300,15 @@ const userController = {
         return res.status(400).json({ message: 'Username and email are required' });
       }
 
-      if (role && !['user', 'admin'].includes(role)) {
+      // Validate role assignment permissions
+      const validRoles = ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'];
+      if (role && !validRoles.includes(role)) {
         return res.status(400).json({ message: 'Invalid role specified' });
+      }
+
+      // Only super admins can assign superadmin role
+      if (role === 'superadmin' && req.user.role !== 'superadmin') {
+        return res.status(403).json({ message: 'Only super admins can assign superadmin role' });
       }
 
       user.username = username;
@@ -265,7 +338,9 @@ const userController = {
     try {
       console.log('Fetching dashboard stats for user:', req.user.id);
       
-      if (req.user.role !== 'admin') {
+      // Allow access to all admin roles
+      const adminRoles = ['superadmin', 'admin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'];
+      if (!adminRoles.includes(req.user.role)) {
         console.log('Access denied for user:', req.user.id, 'Role:', req.user.role);
         return res.status(403).json({ message: 'Access denied. Admins only.' });
       }
@@ -373,4 +448,4 @@ const userController = {
   }
 };
 
-module.exports = userController; 
+module.exports = userController;

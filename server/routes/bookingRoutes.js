@@ -5,7 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const router = express.Router();
 const { authMiddleware } = require('../middleware/authMiddleware');
-const { adminAuth, userAuth, authorizeRoles } = require('../middleware/auth');
+const { adminAuth, userAuth, bookingManagerAuth, authorizeRoles } = require('../middleware/auth');
 const Booking = require('../models/Booking');
 
 
@@ -77,11 +77,11 @@ const studentAwardUpload = multer({
 router.post('/submit', bookingController.submitBookingRequest);
 
 
-router.get('/', userAuth, bookingController.getAllBookings);
+router.get('/', bookingManagerAuth, bookingController.getAllBookings);
 
-router.put('/approve/:bookingId', adminAuth, bookingController.approveBooking);
+router.put('/approve/:bookingId', bookingManagerAuth, bookingController.approveBooking);
 
-router.put('/reject/:bookingId', adminAuth, bookingController.rejectBooking);
+router.put('/reject/:bookingId', bookingManagerAuth, bookingController.rejectBooking);
 
 router.put('/confirm-payment/:bookingId', bookingController.confirmPayment);
 
@@ -134,11 +134,11 @@ router.post('/samuh-lagan/submit',
   ]), 
   bookingController.submitSamuhLaganRequest
 );
-router.get('/samuh-lagan', bookingController.getAllSamuhLaganRequests);
-router.get('/samuh-lagan/:id', bookingController.getSamuhLaganRequestById);
-router.put('/samuh-lagan/approve/:requestId', bookingController.approveSamuhLaganRequest);
-router.put('/samuh-lagan/reject/:requestId', bookingController.rejectSamuhLaganRequest);
-router.put('/samuh-lagan/confirm/:requestId', bookingController.confirmSamuhLaganRequest);
+router.get('/samuh-lagan', bookingManagerAuth, bookingController.getAllSamuhLaganRequests);
+router.get('/samuh-lagan/:id', bookingManagerAuth, bookingController.getSamuhLaganRequestById);
+router.put('/samuh-lagan/approve/:requestId', bookingManagerAuth, bookingController.approveSamuhLaganRequest);
+router.put('/samuh-lagan/reject/:requestId', bookingManagerAuth, bookingController.rejectSamuhLaganRequest);
+router.put('/samuh-lagan/confirm/:requestId', bookingManagerAuth, bookingController.confirmSamuhLaganRequest);
 
 
 router.post('/student-awards/register', 
@@ -146,11 +146,11 @@ router.post('/student-awards/register',
   bookingController.submitStudentAwardRequest
 );
 
-router.get('/student-awards', adminAuth, bookingController.getAllStudentAwardRequests);
-router.get('/student-awards/:id', adminAuth, bookingController.getStudentAwardRequestById);
-router.put('/student-awards/approve/:requestId', adminAuth, bookingController.approveStudentAwardRequest);
-router.put('/student-awards/reject/:requestId', adminAuth, bookingController.rejectStudentAwardRequest);
-router.patch('/student-awards/:id', adminAuth, bookingController.updateStudentAward);
+router.get('/student-awards', bookingManagerAuth, bookingController.getAllStudentAwardRequests);
+router.get('/student-awards/:id', bookingManagerAuth, bookingController.getStudentAwardRequestById);
+router.put('/student-awards/approve/:requestId', bookingManagerAuth, bookingController.approveStudentAwardRequest);
+router.put('/student-awards/reject/:requestId', bookingManagerAuth, bookingController.rejectStudentAwardRequest);
+router.patch('/student-awards/:id', bookingManagerAuth, bookingController.updateStudentAward);
 
 // Add delete route for bookings
 router.delete('/:id', authMiddleware, async (req, res) => {

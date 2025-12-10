@@ -1,27 +1,28 @@
 const express = require('express');
 const router = express.Router();
-const { authMiddleware: auth } = require('../middleware/authMiddleware');
+const { adminAuth, userManagerAuth, userAuth } = require('../middleware/auth');
 const userController = require('../controllers/userController');
 const bookingController = require('../controllers/bookingController');
 const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Profile routes
-router.get('/profile', auth, userController.getProfile);
-router.put('/profile', auth, userController.updateProfile);
-router.put('/password', auth, userController.updatePassword);
-router.put('/notifications', auth, userController.updateNotifications);
-router.put('/profile-image', auth, upload.single('image'), userController.updateProfileImage);
-router.delete('/profile-image', auth, userController.removeProfileImage);
+router.get('/profile', userAuth, userController.getProfile);
+router.put('/profile', userAuth, userController.updateProfile);
+router.put('/password', userAuth, userController.updatePassword);
+router.put('/notifications', userAuth, userController.updateNotifications);
+router.put('/profile-image', userAuth, upload.single('image'), userController.updateProfileImage);
+router.delete('/profile-image', userAuth, userController.removeProfileImage);
 
-// Admin routes
-router.get('/all', auth, userController.getAllUsers);
-router.delete('/:id', auth, userController.deleteUser);
-router.put('/:id', auth, userController.updateUser);
-router.get('/dashboard-stats', auth, userController.getDashboardStats);
+// Admin routes - only accessible by admins and user managers
+router.get('/all', userManagerAuth, userController.getAllUsers);
+router.post('/create', userManagerAuth, userController.createUser);
+router.delete('/:id', userManagerAuth, userController.deleteUser);
+router.put('/:id', userManagerAuth, userController.updateUser);
+router.get('/dashboard-stats', adminAuth, userController.getDashboardStats);
 
 // Booking routes for user
-router.get('/bookings', auth, bookingController.getUserBookings);
-router.post('/bookings/:id/cancel', auth, bookingController.cancelBooking);
+router.get('/bookings', userAuth, bookingController.getUserBookings);
+router.post('/bookings/:id/cancel', userAuth, bookingController.cancelBooking);
 
-module.exports = router; 
+module.exports = router;

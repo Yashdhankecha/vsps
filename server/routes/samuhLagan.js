@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const SamuhLagan = require('../models/SamuhLagan');
-const { adminAuth, userAuth } = require('../middleware/auth');
+const { bookingManagerAuth, userAuth } = require('../middleware/auth');
 const { sendEmail } = require('../utils/emailService');
 
 // Submit new Samuh Lagan registration
@@ -43,7 +43,7 @@ router.post('/', userAuth, async (req, res) => {
 });
 
 
-router.get('/', adminAuth, async (req, res) => {
+router.get('/', bookingManagerAuth, async (req, res) => {
   try {
     const registrations = await SamuhLagan.find()
       .populate('user', 'name email')
@@ -66,7 +66,7 @@ router.get('/my-registrations', userAuth, async (req, res) => {
 });
 
 
-router.patch('/:id/approve', adminAuth, async (req, res) => {
+router.patch('/:id/approve', bookingManagerAuth, async (req, res) => {
   try {
     const registration = await SamuhLagan.findById(req.params.id)
       .populate('user', 'name email');
@@ -108,7 +108,7 @@ router.patch('/:id/approve', adminAuth, async (req, res) => {
 });
 
 
-router.patch('/:id/confirm-payment', adminAuth, async (req, res) => {
+router.patch('/:id/confirm-payment', bookingManagerAuth, async (req, res) => {
   try {
     const registration = await SamuhLagan.findById(req.params.id)
       .populate('user', 'name email');
@@ -151,7 +151,7 @@ router.patch('/:id/confirm-payment', adminAuth, async (req, res) => {
 });
 
 
-router.patch('/:id/reject', adminAuth, async (req, res) => {
+router.patch('/:id/reject', bookingManagerAuth, async (req, res) => {
   try {
     const registration = await SamuhLagan.findById(req.params.id)
       .populate('user', 'name email');
@@ -170,7 +170,7 @@ router.patch('/:id/reject', adminAuth, async (req, res) => {
         await sendEmail(registration.bride.email, 'samuhLaganRejected', {
           name: registration.bride.name,
           date: registration.ceremonyDate,
-        reason: req.body.reason
+          reason: req.body.reason
         });
       }
 
@@ -195,7 +195,7 @@ router.patch('/:id/reject', adminAuth, async (req, res) => {
 });
 
 
-router.put('/update/:id', adminAuth, async (req, res) => {
+router.put('/update/:id', bookingManagerAuth, async (req, res) => {
   try {
     const updated = await SamuhLagan.findByIdAndUpdate(
       req.params.id,
@@ -210,7 +210,7 @@ router.put('/update/:id', adminAuth, async (req, res) => {
 });
 
 
-router.post('/test-email', adminAuth, async (req, res) => {
+router.post('/test-email', bookingManagerAuth, async (req, res) => {
   try {
     const { email } = req.body;
     
@@ -241,7 +241,7 @@ router.post('/test-email', adminAuth, async (req, res) => {
 });
 
 
-router.delete('/:id', adminAuth, async (req, res) => {
+router.delete('/:id', bookingManagerAuth, async (req, res) => {
   try {
     const registration = await SamuhLagan.findById(req.params.id);
     
@@ -265,4 +265,4 @@ router.delete('/:id', adminAuth, async (req, res) => {
   }
 });
 
-module.exports = router; 
+module.exports = router;
