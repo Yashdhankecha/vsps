@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../../contexts/AuthContext';
 import { 
   BellIcon, 
   MagnifyingGlassIcon, 
@@ -14,9 +15,7 @@ import {
 import { BellIcon as BellIconSolid } from '@heroicons/react/24/solid';
 
 const AdminHeader = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userRole, setUserRole] = useState('');
-  const [userName, setUserName] = useState('');
+  const { user, setUser } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [notifications] = useState([
@@ -28,42 +27,16 @@ const AdminHeader = () => {
   const location = useLocation();
 
   useEffect(() => {
-    // Check authentication only once when component mounts
-    // or when location changes
-    checkAuth();
-  }, [location.pathname]); // Add location.pathname as dependency
-
-  const checkAuth = () => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decodedToken = JSON.parse(atob(token.split('.')[1]));
-        setUserRole(decodedToken.role);
-        setUserName(decodedToken.username || 'Admin');
-        setIsLoggedIn(true);
-        
-        // Only redirect if we're not already on an admin route
-        if (decodedToken.role !== 'admin' && !location.pathname.startsWith('/admin')) {
-          navigate('/');
-        }
-      } catch (error) {
-        console.error('Error decoding token:', error);
-        handleLogout();
-      }
-    } else if (!location.pathname.includes('/auth')) {
-      // Only redirect to auth if we're not already there
+    // If user becomes null, navigate to auth page
+    if (!user) {
       navigate('/auth');
     }
-  };
+  }, [user, navigate]);
 
   const handleLogout = () => {
     // Clear all auth-related state and storage
     localStorage.clear(); // Clear all localStorage items
-    setIsLoggedIn(false);
-    setUserRole('');
-    
-    // Force a page reload and redirect to auth
-    window.location.href = '/auth';
+    setUser(null);
   };
 
   const getPageTitle = () => {
@@ -81,12 +54,15 @@ const AdminHeader = () => {
     return pathMap[location.pathname] || 'Admin Panel';
   };
 
-  const unreadCount = notifications.filter(n => n.unread).length;
+  const userName = user?.username || 'Admin';
+  const userRole = user?.role || '';
 
   // Only render the header if user is logged in and is admin
-  if (!isLoggedIn || userRole !== 'admin') {
+  if (!user || user.role !== 'admin') {
     return null;
   }
+
+  const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
     <header className="glass-effect border-b border-white/10 sticky top-0 z-40 backdrop-blur-xl">

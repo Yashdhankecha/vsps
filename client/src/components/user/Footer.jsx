@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FaFacebook, FaTwitter, FaInstagram, FaYoutube, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaTwitter, FaInstagram, FaYoutube, FaEnvelope, FaPhone, FaMapMarkerAlt } from 'react-icons/fa';
 import { Button } from '../index';
 
 function Footer() {
@@ -29,9 +29,6 @@ function Footer() {
               Your premier platform for organizing and streaming community events. Connect, celebrate, and share moments that matter.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-neutral-400 hover:text-electric-400 transition-colors duration-300">
-                <FaFacebook size={24} />
-              </a>
               <a href="#" className="text-neutral-400 hover:text-electric-400 transition-colors duration-300">
                 <FaTwitter size={24} />
               </a>
