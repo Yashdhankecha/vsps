@@ -25,7 +25,7 @@ export function AuthProvider({ children }) {
           };
           
           // Validate role
-          const validRoles = ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'];
+          const validRoles = ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager', 'committeemember'];
           if (!validRoles.includes(normalizedUser.role)) {
             console.error('Invalid user role:', normalizedUser.role);
             localStorage.removeItem('token');
@@ -54,10 +54,11 @@ export function AuthProvider({ children }) {
   const isFormManager = () => user?.role === 'formmanager' || user?.role === 'superadmin';
   const isBookingManager = () => user?.role === 'bookingmanager' || user?.role === 'superadmin';
   const isContactManager = () => user?.role === 'contactmanager' || user?.role === 'superadmin';
+  const isCommitteeMember = () => user?.role === 'committeemember' || user?.role === 'superadmin';
   
   // Combined access checks
   const hasAdminAccess = () => ['admin', 'superadmin'].includes(user?.role);
-  const hasUserAccess = () => ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'].includes(user?.role);
+  const hasUserAccess = () => ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager', 'committeemember'].includes(user?.role);
 
   const value = {
     user,
@@ -71,6 +72,7 @@ export function AuthProvider({ children }) {
     isFormManager,
     isBookingManager,
     isContactManager,
+    isCommitteeMember,
     hasAdminAccess,
     hasUserAccess
   };

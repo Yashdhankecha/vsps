@@ -45,8 +45,12 @@ const userSchema = new mongoose.Schema({
   passwordHistory: [{ type: String }],
   role: { 
     type: String, 
-    enum: ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'], 
+    enum: ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager', 'committeemember'], 
     default: 'user' 
+  },
+  village: { 
+    type: String,
+    trim: true
   },
   otp: {
     code: String,

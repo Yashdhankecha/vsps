@@ -57,8 +57,9 @@ const AdminHeader = () => {
   const userName = user?.username || 'Admin';
   const userRole = user?.role || '';
 
-  // Only render the header if user is logged in and is admin
-  if (!user || user.role !== 'admin') {
+  // Only render the header if user is logged in and has admin access
+  const adminRoles = ['admin', 'superadmin'];
+  if (!user || !adminRoles.includes(user.role)) {
     return null;
   }
 

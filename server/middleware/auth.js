@@ -67,9 +67,10 @@ const contentManagerAuth = authorizeRoles('contentmanager', 'superadmin');
 const formManagerAuth = authorizeRoles('formmanager', 'superadmin');
 const bookingManagerAuth = authorizeRoles('bookingmanager', 'superadmin');
 const contactManagerAuth = authorizeRoles('contactmanager', 'superadmin');
+const committeeMemberAuth = authorizeRoles('committeemember', 'superadmin');
 
 // User authorization (all authenticated users)
-const userAuth = authorizeRoles('user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager');
+const userAuth = authorizeRoles('user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager', 'committeemember');
 
 module.exports = { 
   superAdminAuth, 
@@ -79,6 +80,7 @@ module.exports = {
   formManagerAuth, 
   bookingManagerAuth, 
   contactManagerAuth, 
+  committeeMemberAuth,
   userAuth, 
   authorizeRoles 
 };

@@ -177,7 +177,7 @@ const userController = {
         return res.status(403).json({ message: 'Access denied. Super admins and user managers only.' });
       }
 
-      const { username, email, password, role, isVerified } = req.body;
+      const { username, email, password, role, isVerified, village } = req.body;
 
       // Validate required fields
       if (!username || !email || !password) {
@@ -185,7 +185,7 @@ const userController = {
       }
 
       // Validate role assignment permissions
-      const validRoles = ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'];
+      const validRoles = ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager', 'committeemember'];
       if (role && !validRoles.includes(role)) {
         return res.status(400).json({ message: 'Invalid role specified' });
       }
@@ -193,6 +193,11 @@ const userController = {
       // Only super admins can assign superadmin role
       if (role === 'superadmin' && req.user.role !== 'superadmin') {
         return res.status(403).json({ message: 'Only super admins can assign superadmin role' });
+      }
+
+      // For committee members, village is required
+      if (role === 'committeemember' && (!village || village.trim() === '')) {
+        return res.status(400).json({ message: 'Village is required for committee members' });
       }
 
       // Check if user already exists
@@ -213,7 +218,8 @@ const userController = {
         email,
         password,
         role: role || 'user',
-        isVerified: isVerified || false
+        isVerified: isVerified || false,
+        village: village || undefined
       });
 
       await user.save();
@@ -289,7 +295,7 @@ const userController = {
         return res.status(400).json({ message: 'Invalid user ID format' });
       }
 
-      const { username, email, role, isVerified } = req.body;
+      const { username, email, role, isVerified, village } = req.body;
 
       const user = await User.findById(userId);
       if (!user) {
@@ -301,7 +307,7 @@ const userController = {
       }
 
       // Validate role assignment permissions
-      const validRoles = ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'];
+      const validRoles = ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager', 'committeemember'];
       if (role && !validRoles.includes(role)) {
         return res.status(400).json({ message: 'Invalid role specified' });
       }
@@ -311,10 +317,16 @@ const userController = {
         return res.status(403).json({ message: 'Only super admins can assign superadmin role' });
       }
 
+      // For committee members, village is required
+      if (role === 'committeemember' && (!village || village.trim() === '')) {
+        return res.status(400).json({ message: 'Village is required for committee members' });
+      }
+
       user.username = username;
       user.email = email;
       if (role) user.role = role;
       if (typeof isVerified === 'boolean') user.isVerified = isVerified;
+      if (village !== undefined) user.village = village;
 
       await user.save();
 
@@ -444,6 +456,158 @@ const userController = {
     } catch (error) {
       console.error('Error fetching dashboard stats:', error);
       res.status(500).json({ message: 'Server error' });
+    }
+  },
+
+  // Get unapproved villagers for a specific village (for committee member approval)
+  getUnapprovedVillagers: async (req, res) => {
+    try {
+      // Allow access to committee members and super admins
+      if (!['committeemember', 'superadmin'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Committee members and super admins only.' });
+      }
+
+      const { village } = req.query;
+      
+      // For committee members, they can only see unapproved villagers from their own village
+      let villageFilter = village;
+      if (req.user.role === 'committeemember') {
+        const committeeMember = await User.findById(req.user.id);
+        if (!committeeMember || !committeeMember.village) {
+          return res.status(400).json({ message: 'Committee member village not found' });
+        }
+        villageFilter = committeeMember.village;
+      }
+
+      if (!villageFilter) {
+        return res.status(400).json({ message: 'Village parameter is required' });
+      }
+
+      // Find unapproved users from the specified village
+      const unapprovedVillagers = await User.find({ 
+        village: { $regex: villageFilter, $options: 'i' },
+        isVerified: false,
+        role: 'user' // Only regular users, not admins or committee members
+      }).select('-password -passwordHistory -verificationToken -resetPasswordToken -otp');
+
+      res.json(unapprovedVillagers);
+    } catch (error) {
+      console.error('Error fetching unapproved villagers:', error);
+      res.status(500).json({ 
+        message: 'Server error',
+        error: error.message 
+      });
+    }
+  },
+
+  // Approve a villager (for committee members)
+  approveVillager: async (req, res) => {
+    try {
+      // Allow access to committee members and super admins
+      if (!['committeemember', 'superadmin'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Committee members and super admins only.' });
+      }
+
+      const userId = req.params.id;
+      
+      if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(400).json({ message: 'Invalid user ID format' });
+      }
+
+      // Find the user to approve
+      const userToApprove = await User.findById(userId);
+      if (!userToApprove) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // For committee members, verify the user belongs to their village
+      if (req.user.role === 'committeemember') {
+        const committeeMember = await User.findById(req.user.id);
+        if (!committeeMember || !committeeMember.village) {
+          return res.status(400).json({ message: 'Committee member village not found' });
+        }
+
+        if (userToApprove.village !== committeeMember.village) {
+          return res.status(403).json({ message: 'You can only approve villagers from your village' });
+        }
+      }
+
+      // Update the user's verification status
+      userToApprove.isVerified = req.body.isVerified !== undefined ? req.body.isVerified : true;
+      await userToApprove.save();
+
+      const updatedUser = await User.findById(userId)
+        .select('-password -passwordHistory -verificationToken -resetPasswordToken -otp');
+
+      res.json({
+        message: 'Villager approved successfully',
+        user: updatedUser
+      });
+    } catch (error) {
+      console.error('Error approving villager:', error);
+      res.status(500).json({ 
+        message: 'Server error',
+        error: error.message 
+      });
+    }
+  },
+
+  // Delete a user (for committee members to reject villagers)
+  deleteUser: async (req, res) => {
+    try {
+      const userId = req.params.id;
+      
+      // Allow access to super admins, user managers, and committee members
+      const allowedRoles = ['superadmin', 'usermanager', 'committeemember'];
+      if (!allowedRoles.includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Super admins, user managers, and committee members only.' });
+      }
+
+      if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
+        return res.status(400).json({ message: 'Invalid user ID format' });
+      }
+
+      // Find the user to delete
+      const userToDelete = await User.findById(userId);
+      if (!userToDelete) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      // For committee members, verify the user belongs to their village and is not an admin
+      if (req.user.role === 'committeemember') {
+        const committeeMember = await User.findById(req.user.id);
+        if (!committeeMember || !committeeMember.village) {
+          return res.status(400).json({ message: 'Committee member village not found' });
+        }
+
+        // Prevent committee members from deleting admins or other committee members
+        const protectedRoles = ['admin', 'superadmin', 'committeemember'];
+        if (protectedRoles.includes(userToDelete.role)) {
+          return res.status(403).json({ message: 'You cannot delete admin or committee member accounts' });
+        }
+
+        // Only allow deletion of unverified users from their own village
+        if (userToDelete.village !== committeeMember.village) {
+          return res.status(403).json({ message: 'You can only delete unverified users from your village' });
+        }
+
+        if (userToDelete.isVerified) {
+          return res.status(403).json({ message: 'You can only delete unverified users' });
+        }
+      }
+
+      // Delete the user
+      await User.findByIdAndDelete(userId);
+
+      res.json({ 
+        message: 'User deleted successfully' 
+      });
+    } catch (error) {
+      console.error('Error deleting user:', error);
+      res.status(500).json({ 
+        message: 'Server error',
+        error: error.message 
+      });
     }
   }
 };

@@ -96,6 +96,11 @@ function Header() {
     navigate('/auth');
   };
 
+  // Hide auth buttons on auth page
+  const isAuthPage = location.pathname === '/auth' || 
+                    location.pathname === '/ForgotPassword' || 
+                    location.pathname.startsWith('/ResetPassword');
+
   return (
     <header className="bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white shadow-2xl relative z-50 backdrop-blur-xl border-b border-white/10">
       <div className="container mx-auto px-4">
@@ -172,77 +177,81 @@ function Header() {
               </div>
             ))}
 
-            {/* Profile Dropdown */}
-            {isLoggedIn ? (
-              <div className="relative" ref={profileDropdownRef}>
-                <button
-                  onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                  className="ml-4 px-6 py-3 glass-effect rounded-2xl hover:bg-electric-500/20 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-lg hover:shadow-electric-500/30 border border-white/10 hover:border-electric-500/30"
-                >
-                  <div className="w-8 h-8 bg-gradient-electric rounded-full flex items-center justify-center">
-                    <FaUser className="w-4 h-4" />
+            {/* Profile Dropdown or Sign In button (only show if not on auth page) */}
+            {!isAuthPage && (
+              <>
+                {isLoggedIn ? (
+                  <div className="relative" ref={profileDropdownRef}>
+                    <button
+                      onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                      className="ml-4 px-6 py-3 glass-effect rounded-2xl hover:bg-electric-500/20 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-lg hover:shadow-electric-500/30 border border-white/10 hover:border-electric-500/30"
+                    >
+                      <div className="w-8 h-8 bg-gradient-electric rounded-full flex items-center justify-center">
+                        <FaUser className="w-4 h-4" />
+                      </div>
+                      <span>Profile</span>
+                    </button>
+                    {/* Profile Dropdown Menu */}
+                    {isProfileDropdownOpen && (
+                      <div className="absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl bg-neutral-800/95 backdrop-blur-xl border border-white/20 z-50">
+                        <div className="py-3">
+                          <div className="px-6 py-3 border-b border-white/10">
+                            <p className="text-sm text-neutral-400">Welcome back!</p>
+                            <p className="font-semibold text-white">User Profile</p>
+                          </div>
+                          <Link
+                            to="/notifications"
+                            className="flex px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white items-center justify-between transition-all duration-200"
+                            onClick={() => setIsProfileDropdownOpen(false)}
+                          >
+                            <span className="flex items-center font-medium">
+                              <FaBell className="mr-3 w-4 h-4" />
+                              Notifications
+                            </span>
+                            {unreadNotificationsCount > 0 && (
+                              <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">
+                                {unreadNotificationsCount}
+                              </span>
+                            )}
+                          </Link>
+                          <Link
+                            to="/profile-settings"
+                            className="block px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white font-medium transition-all duration-200"
+                            onClick={() => setIsProfileDropdownOpen(false)}
+                          >
+                            Profile Settings
+                          </Link>
+                          <Link
+                            to="/recently-booked"
+                            className="block px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white font-medium transition-all duration-200"
+                            onClick={() => setIsProfileDropdownOpen(false)}
+                          >
+                            Recent Bookings
+                          </Link>
+                          <div className="border-t border-white/10 mt-2">
+                            <button
+                              onClick={handleLogout}
+                              className="block w-full text-left px-6 py-4 text-sm text-red-400 hover:bg-red-500/20 font-medium transition-all duration-200"
+                            >
+                              Logout
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <span>Profile</span>
-                </button>
-                {/* Profile Dropdown Menu */}
-                {isProfileDropdownOpen && (
-                  <div className="absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl bg-neutral-800/95 backdrop-blur-xl border border-white/20 z-50">
-                    <div className="py-3">
-                      <div className="px-6 py-3 border-b border-white/10">
-                        <p className="text-sm text-neutral-400">Welcome back!</p>
-                        <p className="font-semibold text-white">User Profile</p>
-                      </div>
-                      <Link
-                        to="/notifications"
-                        className="flex px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white items-center justify-between transition-all duration-200"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                      >
-                        <span className="flex items-center font-medium">
-                          <FaBell className="mr-3 w-4 h-4" />
-                          Notifications
-                        </span>
-                        {unreadNotificationsCount > 0 && (
-                          <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">
-                            {unreadNotificationsCount}
-                          </span>
-                        )}
-                      </Link>
-                      <Link
-                        to="/profile-settings"
-                        className="block px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white font-medium transition-all duration-200"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                      >
-                        Profile Settings
-                      </Link>
-                      <Link
-                        to="/recently-booked"
-                        className="block px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white font-medium transition-all duration-200"
-                        onClick={() => setIsProfileDropdownOpen(false)}
-                      >
-                        Recent Bookings
-                      </Link>
-                      <div className="border-t border-white/10 mt-2">
-                        <button
-                          onClick={handleLogout}
-                          className="block w-full text-left px-6 py-4 text-sm text-red-400 hover:bg-red-500/20 font-medium transition-all duration-200"
-                        >
-                          Logout
-                        </button>
-                      </div>
+                ) : (
+                  <Link
+                    to="/auth"
+                    className="ml-4 px-6 py-3 bg-gradient-electric rounded-2xl hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-lg"
+                  >
+                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                      <FaUser className="w-4 h-4" />
                     </div>
-                  </div>
+                    <span>Sign In</span>
+                  </Link>
                 )}
-              </div>
-            ) : (
-              <Link
-                to="/auth"
-                className="ml-4 px-6 py-3 bg-gradient-electric rounded-2xl hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-lg"
-              >
-                <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-                  <FaUser className="w-4 h-4" />
-                </div>
-                <span>Sign In</span>
-              </Link>
+              </>
             )}
           </nav>
 
@@ -325,59 +334,61 @@ function Header() {
                 </div>
               ))}
             </div>
-            {/* Mobile Login/Signup */}
-            <div className="px-6 pt-6 border-t border-white/20">
-              {isLoggedIn ? (
-                <div className="space-y-3">
-                  <div className="text-center mb-4">
-                    <p className="text-white/80 text-sm">Welcome back!</p>
-                    <p className="text-white font-bold">User Profile</p>
+            {/* Mobile Login/Signup (only show if not on auth page) */}
+            {!isAuthPage && (
+              <div className="px-6 pt-6 border-t border-white/20">
+                {isLoggedIn ? (
+                  <div className="space-y-3">
+                    <div className="text-center mb-4">
+                      <p className="text-white/80 text-sm">Welcome back!</p>
+                      <p className="text-white font-bold">User Profile</p>
+                    </div>
+                    <Link
+                      to="/notifications"
+                      className="flex items-center justify-center px-6 py-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all duration-300 font-semibold text-white"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      <FaBell className="mr-3 w-4 h-4" />
+                      Notifications
+                      {unreadNotificationsCount > 0 && (
+                        <span className="ml-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                          {unreadNotificationsCount}
+                        </span>
+                      )}
+                    </Link>
+                    <Link
+                      to="/profile-settings"
+                      className="block text-center px-6 py-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all duration-300 font-semibold text-white"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Profile Settings
+                    </Link>
+                    <Link
+                      to="/recently-booked"
+                      className="block text-center px-6 py-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all duration-300 font-semibold text-white"
+                      onClick={() => setIsMenuOpen(false)}
+                    >
+                      Recent Bookings
+                    </Link>
+                    <button
+                      onClick={handleLogout}
+                      className="block w-full text-center px-6 py-4 bg-red-500/20 rounded-2xl hover:bg-red-500/30 transition-all duration-300 font-semibold text-red-200 hover:text-red-100"
+                    >
+                      Logout
+                    </button>
                   </div>
+                ) : (
                   <Link
-                    to="/notifications"
-                    className="flex items-center justify-center px-6 py-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all duration-300 font-semibold text-white"
+                    to="/auth"
+                    className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-white/10 to-white/20 rounded-2xl hover:from-white/20 hover:to-white/30 transition-all duration-300 font-bold text-white shadow-lg"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    <FaBell className="mr-3 w-4 h-4" />
-                    Notifications
-                    {unreadNotificationsCount > 0 && (
-                      <span className="ml-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                        {unreadNotificationsCount}
-                      </span>
-                    )}
+                    <FaUser className="mr-3 w-5 h-5" />
+                    Sign In / Register
                   </Link>
-                  <Link
-                    to="/profile-settings"
-                    className="block text-center px-6 py-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all duration-300 font-semibold text-white"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Profile Settings
-                  </Link>
-                  <Link
-                    to="/recently-booked"
-                    className="block text-center px-6 py-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all duration-300 font-semibold text-white"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Recent Bookings
-                  </Link>
-                  <button
-                    onClick={handleLogout}
-                    className="block w-full text-center px-6 py-4 bg-red-500/20 rounded-2xl hover:bg-red-500/30 transition-all duration-300 font-semibold text-red-200 hover:text-red-100"
-                  >
-                    Logout
-                  </button>
-                </div>
-              ) : (
-                <Link
-                  to="/auth"
-                  className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-white/10 to-white/20 rounded-2xl hover:from-white/20 hover:to-white/30 transition-all duration-300 font-bold text-white shadow-lg"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <FaUser className="mr-3 w-5 h-5" />
-                  Sign In / Register
-                </Link>
-              )}
-            </div>
+                )}
+              </div>
+            )}
           </nav>
         )}
       </div>

@@ -36,12 +36,21 @@ import ContentManagerRoute from './components/ContentManagerRoute';
 import FormManagerRoute from './components/FormManagerRoute';
 import BookingManagerRoute from './components/BookingManagerRoute';
 import ContactManagerRoute from './components/ContactManagerRoute';
+import CommitteeMemberRoute from './components/CommitteeMemberRoute';
+import CommitteeMemberSidebar from './components/admin/CommitteeMemberSidebar';
 import BookedDatesCalendar from './pages/adminpanel/BookedDatesCalendar';
 import axios from './utils/axiosConfig';
 import React from 'react';
 
 import ContactManagement from './pages/adminpanel/ContactManagement';
 import Reviews from './pages/adminpanel/Reviews';
+
+// Committee Pages
+import CommitteeDashboard from './pages/committee/CommitteeDashboard';
+import AddVillageMember from './pages/committee/AddVillageMember';
+import BookVillageEvent from './pages/committee/BookVillageEvent';
+import CommitteeMembersList from './pages/committee/CommitteeMembersList';
+import VillagerApproval from './pages/committee/VillagerApproval';
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
 
@@ -315,6 +324,25 @@ function AppContent() {
           </AdminLayoutProvider>
         );
       
+      case "committeemember":
+        return (
+          <AdminLayoutProvider>
+            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+              <CommitteeMemberSidebar />
+              <AdminPageContainer>
+                <Routes>
+                  <Route path="/committee/dashboard" element={<CommitteeDashboard />} />
+                  <Route path="/committee/add-member" element={<AddVillageMember />} />
+                  <Route path="/committee/book-event" element={<BookVillageEvent />} />
+                  <Route path="/committee/members" element={<CommitteeMembersList />} />
+                  <Route path="/committee/approve-villagers" element={<VillagerApproval />} />
+                  <Route path="/committee/*" element={<Navigate to="/committee/dashboard" />} />
+                </Routes>
+              </AdminPageContainer>
+            </div>
+          </AdminLayoutProvider>
+        );
+      
       case "admin":
         // Regular admin gets full access like super admin for backward compatibility
         return (
@@ -345,87 +373,75 @@ function AppContent() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50 overflow-x-hidden">
-      
       {isAdminRoute ? (
         renderAdminLayout()
       ) : (
         <>
-          {user?.role !== "admin" && user?.role !== "superadmin" && 
-           user?.role !== "usermanager" && user?.role !== "contentmanager" && 
-           user?.role !== "formmanager" && user?.role !== "bookingmanager" && 
-           user?.role !== "contactmanager" ? (
-            <>
-              {!isAuthPage && <Header />}
-              <main className="flex-grow overflow-x-hidden">
-                <Routes>
-                  <Route path="/" element={<Home />} />
-                  <Route path="/auth" element={<Auth />} />
-                  <Route path="/contact" element={<Contact />} />
-                  <Route path="/gallery" element={<Gallery />} />
-                  <Route path="/services" element={<Services />} />
-                  <Route path="/testimonials" element={<Testimonials />} />
-                  <Route path="/resources" element={<Resources />} />
-                  <Route path="/events/categories" element={<EventCategories />} />
-                  <Route path="/ForgotPassword" element={<ForgotPassword />} />
-                  <Route path="/ResetPassword/:token" element={<ResetPassword />} />
-                  
-                  
-                  <Route 
-                    path="/samuh-lagan" 
-                    element={
-                      <FormStatusCheck formType="samuhLagan">
-                        <SamuhLaganBooking />
-                      </FormStatusCheck>
-                    } 
-                  />
-                  <Route 
-                    path="/student-awards" 
-                    element={
-                      <FormStatusCheck formType="studentAwards">
-                        <StudentAwardRegistration />
-                      </FormStatusCheck>
-                    } 
-                  />
+          {/* Show header and footer on all non-admin pages including auth */}
+          <Header />
+          <main className="flex-grow overflow-x-hidden">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/auth" element={<Auth />} />
+              <Route path="/contact" element={<Contact />} />
+              <Route path="/gallery" element={<Gallery />} />
+              <Route path="/services" element={<Services />} />
+              <Route path="/testimonials" element={<Testimonials />} />
+              <Route path="/resources" element={<Resources />} />
+              <Route path="/events/categories" element={<EventCategories />} />
+              <Route path="/ForgotPassword" element={<ForgotPassword />} />
+              <Route path="/ResetPassword/:token" element={<ResetPassword />} />
+              
+              <Route 
+                path="/samuh-lagan" 
+                element={
+                  <FormStatusCheck formType="samuhLagan">
+                    <SamuhLaganBooking />
+                  </FormStatusCheck>
+                } 
+              />
+              <Route 
+                path="/student-awards" 
+                element={
+                  <FormStatusCheck formType="studentAwards">
+                    <StudentAwardRegistration />
+                  </FormStatusCheck>
+                } 
+              />
 
-                  
-                  
-                  <Route path="/booking" element={<Booking />} />
-                  
-                  
-                  <Route path="/live-streaming" element={
-                    <ProtectedRoute>
-                      <LiveStreaming />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/reviews/submit-review" element={
-                    <ProtectedRoute>
-                      <SubmitReview />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/profile-settings" element={
-                    <ProtectedRoute>
-                      <ProfileSettings />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/recently-booked" element={
-                    <ProtectedRoute>
-                      <RecentBookings />
-                    </ProtectedRoute>
-                  } />
-                  <Route path="/notifications" element={
-                    <ProtectedRoute>
-                      <Notifications />
-                    </ProtectedRoute>
-                  } />
-                  
-                  <Route path="*" element={<Navigate to="/" />} />
-                </Routes>
-              </main>
-              {!isAuthPage && <Footer />}
-            </>
-          ) : (
-            <Navigate to="/admin/dashboard" />
-          )}
+              
+              <Route path="/booking" element={<Booking />} />
+              
+              <Route path="/live-streaming" element={
+                <ProtectedRoute>
+                  <LiveStreaming />
+                </ProtectedRoute>
+              } />
+              <Route path="/reviews/submit-review" element={
+                <ProtectedRoute>
+                  <SubmitReview />
+                </ProtectedRoute>
+              } />
+              <Route path="/profile-settings" element={
+                <ProtectedRoute>
+                  <ProfileSettings />
+                </ProtectedRoute>
+              } />
+              <Route path="/recently-booked" element={
+                <ProtectedRoute>
+                  <RecentBookings />
+                </ProtectedRoute>
+              } />
+              <Route path="/notifications" element={
+                <ProtectedRoute>
+                  <Notifications />
+                </ProtectedRoute>
+              } />
+              
+              <Route path="*" element={<Navigate to="/" />} />
+            </Routes>
+          </main>
+          <Footer />
         </>
       )}
     </div>

@@ -44,6 +44,11 @@ const Users = () => {
     isVerified: false
   });
   const [notifications, setNotifications] = useState([]);
+  
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,6 +67,22 @@ const Users = () => {
     return matchesSearch && matchesRole && matchesStatus;
   });
 
+  // Pagination logic
+  const indexOfLastUser = currentPage * itemsPerPage;
+  const indexOfFirstUser = indexOfLastUser - itemsPerPage;
+  const currentUsers = filteredUsers.slice(indexOfFirstUser, indexOfLastUser);
+  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
+
+  // Change page
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Change items per page
+  const handleItemsPerPageChange = (e) => {
+    const newItemsPerPage = parseInt(e.target.value);
+    setItemsPerPage(newItemsPerPage);
+    setCurrentPage(1); // Reset to first page
+  };
+
   // Get user statistics - with safety check
   const userStats = {
     total: (users || []).length,
@@ -73,7 +94,8 @@ const Users = () => {
     contentManagers: (users || []).filter(u => u.role === 'contentmanager').length,
     formManagers: (users || []).filter(u => u.role === 'formmanager').length,
     bookingManagers: (users || []).filter(u => u.role === 'bookingmanager').length,
-    contactManagers: (users || []).filter(u => u.role === 'contactmanager').length
+    contactManagers: (users || []).filter(u => u.role === 'contactmanager').length,
+    committeeMembers: (users || []).filter(u => u.role === 'committeemember').length
   };
 
   // Function to show notification with modern styling
@@ -539,6 +561,18 @@ const Users = () => {
                 <span className="hidden sm:inline">Contact Managers</span>
                 <span className="sm:hidden">CM</span>
               </button>
+              <button
+                onClick={() => setFilterRole('committeemember')}
+                className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
+                  filterRole === 'committeemember' 
+                    ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
+                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                }`}
+              >
+                <span className="hidden sm:inline">Committee Members</span>
+                <span className="sm:hidden">Comm</span>
+              </button>
+
             </div>
           </div>
         </div>
@@ -593,7 +627,7 @@ const Users = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {filteredUsers.map((user, idx) => (
+                  {currentUsers.map((user, idx) => (
                     <tr key={user._id} className={`transition-colors duration-200 ${
                       idx % 2 === 0 ? 'bg-transparent' : 'bg-white/5'
                     } hover:bg-white/10`}>
@@ -617,6 +651,7 @@ const Users = () => {
                           user.role === 'formmanager' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
                           user.role === 'bookingmanager' ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' :
                           user.role === 'contactmanager' ? 'bg-pink-500/20 text-pink-300 border border-pink-500/30' :
+                          user.role === 'committeemember' ? 'bg-teal-500/20 text-teal-300 border border-teal-500/30' :
                           'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
                         }`}>
                           {user.role === 'admin' ? 'Admin' :
@@ -626,6 +661,7 @@ const Users = () => {
                            user.role === 'formmanager' ? 'Form Manager' :
                            user.role === 'bookingmanager' ? 'Booking Manager' :
                            user.role === 'contactmanager' ? 'Contact Manager' :
+                           user.role === 'committeemember' ? 'Committee Member' :
                            'User'}
                         </span>
                       </td>
@@ -656,6 +692,89 @@ const Users = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+            
+            {/* Pagination Controls */}
+            <div className="flex flex-col sm:flex-row items-center justify-between px-6 py-4 border-t border-white/10 bg-neutral-800/30">
+              <div className="flex items-center mb-4 sm:mb-0">
+                <span className="text-neutral-300 mr-2">Users per page:</span>
+                <select
+                  value={itemsPerPage}
+                  onChange={handleItemsPerPageChange}
+                  className="input-field ml-2"
+                >
+                  <option value={5}>5</option>
+                  <option value={10}>10</option>
+                  <option value={15}>15</option>
+                  <option value={20}>20</option>
+                  <option value={25}>25</option>
+                </select>
+                <span className="text-neutral-300 ml-4">
+                  Showing {indexOfFirstUser + 1}-{Math.min(indexOfLastUser, filteredUsers.length)} of {filteredUsers.length} users
+                </span>
+              </div>
+              
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => paginate(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === 1 
+                      ? 'bg-neutral-700 text-neutral-500 cursor-not-allowed' 
+                      : 'bg-neutral-700 text-white hover:bg-neutral-600'
+                  }`}
+                >
+                  Previous
+                </button>
+                
+                {/* Page Numbers */}
+                {[...Array(totalPages)].map((_, index) => {
+                  const pageNumber = index + 1;
+                  // Show first, last, current, and nearby pages
+                  if (
+                    pageNumber === 1 ||
+                    pageNumber === totalPages ||
+                    (pageNumber >= currentPage - 1 && pageNumber <= currentPage + 1)
+                  ) {
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => paginate(pageNumber)}
+                        className={`px-3 py-1 rounded-md ${
+                          currentPage === pageNumber
+                            ? 'bg-electric-500 text-white'
+                            : 'bg-neutral-700 text-white hover:bg-neutral-600'
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  }
+                  
+                  // Show ellipsis for skipped pages
+                  if (pageNumber === currentPage - 2 || pageNumber === currentPage + 2) {
+                    return (
+                      <span key={pageNumber} className="px-2 py-1 text-neutral-500">
+                        ...
+                      </span>
+                    );
+                  }
+                  
+                  return null;
+                })}
+                
+                <button
+                  onClick={() => paginate(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className={`px-3 py-1 rounded-md ${
+                    currentPage === totalPages 
+                      ? 'bg-neutral-700 text-neutral-500 cursor-not-allowed' 
+                      : 'bg-neutral-700 text-white hover:bg-neutral-600'
+                  }`}
+                >
+                  Next
+                </button>
+              </div>
             </div>
           </div>
         )}
@@ -727,8 +846,27 @@ const Users = () => {
                     <option value="formmanager">Form Manager</option>
                     <option value="bookingmanager">Booking Manager</option>
                     <option value="contactmanager">Contact Manager</option>
+                    <option value="committeemember">Committee Member</option>
                   </select>
                 </div>
+                
+                {/* Village field for committee members */}
+                {editForm.role === 'committeemember' && (
+                  <div>
+                    <label className="form-label">Village Name</label>
+                    <input
+                      type="text"
+                      value={editForm.village || ''}
+                      onChange={(e) => setEditForm({...editForm, village: e.target.value})}
+                      className="input-field"
+                      placeholder="Enter village name"
+                      required
+                    />
+                    <p className="text-xs text-neutral-400 mt-1">
+                      Committee members must be assigned to a village
+                    </p>
+                  </div>
+                )}
                 
                 <div className="flex items-center">
                   <input

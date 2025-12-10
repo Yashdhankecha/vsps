@@ -7,7 +7,6 @@ import { verifyEmailOTP, resendOTP } from '../api/auth'; // Import the API funct
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
   const [showOTPVerification, setShowOTPVerification] = useState(false);
-  const [registeredEmail, setRegisteredEmail] = useState('');
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
   const [resendTimer, setResendTimer] = useState(0);
   const [formData, setFormData] = useState({
@@ -28,16 +27,38 @@ function Auth() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
-    
-      const selectedBookingDate = localStorage.getItem('selectedBookingDate');
-      if (selectedBookingDate) {
-      
-        localStorage.removeItem('selectedBookingDate');
-      
-        navigate('/booking');
-      } else {
-        
-        navigate('/');
+      // Decode token to check if it's valid
+      try {
+        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        // Check if token is expired
+        if (decodedToken.exp * 1000 > Date.now()) {
+          // Token is valid, redirect based on role
+          if (decodedToken.role === 'admin' || decodedToken.role === 'superadmin') {
+            window.location.href = '/admin/dashboard';
+          } else if (decodedToken.role === 'committeemember') {
+            window.location.href = '/committee/dashboard';
+          } else {
+            const redirectPath = localStorage.getItem('redirectAfterLogin');
+            if (redirectPath) {
+              localStorage.removeItem('redirectAfterLogin');
+              window.location.href = redirectPath;
+            } else {
+              const selectedBookingDate = localStorage.getItem('selectedBookingDate');
+              if (selectedBookingDate) {
+                localStorage.removeItem('selectedBookingDate');
+                navigate('/booking');
+              } else {
+                window.location.href = '/';
+              }
+            }
+          }
+        } else {
+          // Token is expired, remove it
+          localStorage.removeItem('token');
+        }
+      } catch (error) {
+        console.error('Error decoding token:', error);
+        localStorage.removeItem('token');
       }
     }
   }, [navigate]);
@@ -99,43 +120,39 @@ function Auth() {
           
           try {
             const decodedToken = JSON.parse(atob(response.data.token.split('.')[1]));
-            if (decodedToken.role === 'admin') {
+            // Redirect based on role
+            if (decodedToken.role === 'admin' || decodedToken.role === 'superadmin') {
               window.location.href = '/admin/dashboard';
+            } else if (decodedToken.role === 'committeemember') {
+              window.location.href = '/committee/dashboard';
             } else {
-              
               const redirectPath = localStorage.getItem('redirectAfterLogin');
               if (redirectPath) {
                 localStorage.removeItem('redirectAfterLogin');
-                
                 window.location.href = redirectPath;
               } else {
-            
                 const selectedBookingDate = localStorage.getItem('selectedBookingDate');
                 if (selectedBookingDate) {
-              
                   localStorage.removeItem('selectedBookingDate');
-                  
                   navigate('/booking');
                 } else {
-              
                   window.location.href = '/';
                 }
               }
             }
           } catch (error) {
-            console.error('Error decoding token:', error);
-            navigate('/');
+            console.error('Error processing login response:', error);
+            setError('An error occurred during login. Please try again.');
           }
         }
       } else {
-        setRegisteredEmail(formData.email);
         setShowOTPVerification(true);
-        setResendTimer(60);
+        setOtpEmail(formData.email);
       }
-    } catch (error) {
+    } catch (err) {
       setError(
-        error.response?.data?.msg ||
-        error.response?.data?.message ||
+        err.response?.data?.msg ||
+        err.response?.data?.message ||
         'An error occurred. Please try again.'
       );
     } finally {
@@ -155,7 +172,7 @@ function Auth() {
     setError('');
 
     try {
-      const response = await verifyEmailOTP(registeredEmail, combinedOTP);
+      const response = await verifyEmailOTP(otpEmail, combinedOTP);
       setVerificationSuccess(true);
       setTimeout(() => {
         setShowOTPVerification(false);
@@ -175,7 +192,7 @@ function Auth() {
       setIsLoading(true);
       setError('');
       
-      await resendOTP(registeredEmail, 'email');
+      await resendOTP(otpEmail, 'email');
       
       setResendTimer(60); 
       setError('');
@@ -193,7 +210,7 @@ function Auth() {
 
   if (showOTPVerification) {
     return (
-      <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gradient-mesh py-12 px-4 sm:px-6 lg:px-8">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-mesh py-8 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8 glass-effect p-8 rounded-xl shadow-lg border border-white/10">
           {verificationSuccess ? (
             <div className="text-center">
@@ -222,17 +239,17 @@ function Auth() {
           ) : (
             <>
               <div>
-                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
                   Verify your email
                 </h2>
-                <p className="mt-2 text-center text-sm text-gray-600">
+                <p className="mt-2 text-center text-sm text-neutral-300">
                   Please enter the 6-digit OTP sent to<br/>
-                  <span className="font-medium text-purple-600">{registeredEmail}</span>
+                  <span className="font-medium text-electric-400">{otpEmail}</span>
                 </p>
               </div>
               
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-600 rounded-md p-3 text-sm text-center">
+                <div className="bg-red-500/20 border border-red-500/30 text-red-300 rounded-md p-3 text-sm text-center">
                   {error}
                 </div>
               )}
@@ -248,7 +265,7 @@ function Auth() {
                       value={value}
                       onChange={(e) => handleOTPChange(index, e.target.value)}
                       onKeyDown={(e) => handleOTPKeyDown(index, e)}
-                      className="w-12 h-12 text-center text-xl font-semibold border rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-12 h-12 text-center text-xl font-semibold border rounded-lg focus:ring-2 focus:ring-electric-500 focus:border-electric-500 bg-neutral-800/50 border-white/20 text-white"
                     />
                   ))}
                 </div>
@@ -273,7 +290,8 @@ function Auth() {
                       <button
                         type="button"
                         onClick={handleResendOTP}
-                        className="text-sm text-electric-400 hover:text-electric-300"
+                        disabled={isLoading}
+                        className="text-sm text-electric-400 hover:text-electric-300 disabled:opacity-50"
                       >
                         Resend OTP
                       </button>
@@ -289,7 +307,7 @@ function Auth() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gradient-mesh py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-mesh py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 glass-effect p-8 rounded-xl shadow-lg border border-white/10">
         {isSubmitted ? (
           <div className="text-center py-8">
@@ -338,7 +356,11 @@ function Auth() {
                 </button>
               </p>
             </div>
-            {error && <p className="text-red-400 text-center">{error}</p>}
+            {error && (
+              <div className="bg-red-500/20 border border-red-500/30 text-red-300 rounded-md p-3 text-sm text-center">
+                {error}
+              </div>
+            )}
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
               <div className="rounded-md shadow-sm space-y-4">
                 {!isLogin && (
@@ -485,8 +507,6 @@ function Auth() {
                 </button>
               </div>
             </form>
-
-            
           </>
         )}
       </div>

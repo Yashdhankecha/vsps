@@ -35,7 +35,8 @@ const FormManagement = () => {
   });
 
   useEffect(() => {
-    if (user && user.role === 'admin') {
+    const adminRoles = ['admin', 'superadmin'];
+    if (user && adminRoles.includes(user.role)) {
       fetchFormStatus();
       // Set up an interval to check form status every minute
       const intervalId = setInterval(fetchFormStatus, 60000);
@@ -126,7 +127,6 @@ const FormManagement = () => {
           eventDate: eventDate.toISOString()
         }
       );
-
       if (response.data) {
         // Update the forms state with the new data
         const updatedForm = response.data[formData.formName] || {
@@ -253,7 +253,8 @@ const FormManagement = () => {
     );
   }
 
-  if (!user || user.role !== 'admin') {
+  const adminRoles = ['admin', 'superadmin'];
+  if (!user || !adminRoles.includes(user.role)) {
     return <Navigate to="/auth" replace />;
   }
 
@@ -261,12 +262,12 @@ const FormManagement = () => {
     <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
       {/* Main Content Container */}
       <div className="card-glass animate-fade-in-up">
-      {/* Header Section */}
-      <div className="mb-6 sm:mb-8 animate-fade-in-up">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center space-x-3 mb-2">
-            <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
-              <CogIcon className="w-6 h-6 text-white" />
+        {/* Header Section */}
+        <div className="mb-6 sm:mb-8 animate-fade-in-up">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center space-x-3 mb-2">
+              <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                <CogIcon className="w-6 h-6 text-white" />
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold text-white">Form Management</h1>
@@ -484,8 +485,9 @@ const FormManagement = () => {
         </form>
       </div>
     </div>
-  </div>
+    </div>
   );
-};
+}
+export default FormManagement;
 
-export default FormManagement; 
+

@@ -10,15 +10,15 @@ const contactRoutes = require('./routes/contactRoutes');
 const path = require('path');
 const contentRoutes = require('./routes/contentRoutes');
 const formRoutes = require('./routes/formRoutes');
+const homeContentRoutes = require('./routes/homeContentRoutes');
+const eventCategoryRoutes = require('./routes/eventCategoryRoutes');
+const reviewRoutes = require('./routes/reviewRoutes');
+const samuhLaganRoutes = require('./routes/samuhLagan');
 const studentAwardRoutes = require('./routes/studentAwardRoutes');
+const youtubeRoutes = require('./routes/youtube');
+const committeeRoutes = require('./routes/committeeRoutes');
 const multer = require('multer');
 const fs = require('fs');
-const homeContentRoutes = require('./routes/homeContentRoutes');
-const samuhLaganRoutes = require('./routes/samuhLagan');
-const youtubeRoutes = require('./routes/youtube');
-const eventCategoryRoutes = require('./routes/eventCategoryRoutes');
-
-const reviewRoutes = require('./routes/reviewRoutes');
 
 dotenv.config();
 
@@ -227,6 +227,7 @@ app.use('/api/content', eventCategoryRoutes);
 app.use('/api/admin/forms', formRoutes);
 app.use('/api/student-awards', studentAwardRoutes);
 app.use('/api/youtube', youtubeRoutes);
+app.use('/api/committee', committeeRoutes);
 
 app.use('/api/reviews', reviewRoutes);
 
