@@ -45,12 +45,21 @@ const testEmailConfig = async () => {
 
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      pool: true, // Use pooled connections
+      host: 'smtp.googlemail.com', // Try googlemail alias
+      port: 465,
+      secure: true,
       auth: {
         user: process.env.EMAIL_USER,
         pass: cleanPassword,
       },
-      // Keep debug for now to see what defaults are picked
+      tls: {
+        rejectUnauthorized: false
+      },
+      // Increase connection timeout settings
+      connectionTimeout: 60000,
+      greetingTimeout: 60000,
+      socketTimeout: 60000,
       debug: true,
       logger: true
     });
