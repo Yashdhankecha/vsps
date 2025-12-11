@@ -1,4 +1,4 @@
-const express = require('express');
+  const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
@@ -47,8 +47,8 @@ const testEmailConfig = async () => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       host: 'smtp.gmail.com',
-      port: 465, // Use port 465 for secure connection
-      secure: true, // true for 465, false for other ports
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.EMAIL_USER,
         pass: cleanPassword,
