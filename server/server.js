@@ -45,24 +45,14 @@ const testEmailConfig = async () => {
 
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
-      // service: 'gmail', // Commented out to prevent overriding manual settings
-      port: 587,
-      secure: false, // true for 465, false for other ports
-      requireTLS: true, // Force TLS
-      family: 4, // Force IPv4 to avoid IPv6 issues
+      service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
         pass: cleanPassword,
       },
-      tls: {
-        rejectUnauthorized: false
-      },
-      // Increase connection timeout settings
-      connectionTimeout: 60000, // 60 seconds
-      greetingTimeout: 60000,   // 60 seconds
-      socketTimeout: 60000,     // 60 seconds
-      debug: true,              // Enable debug output
-      logger: true              // Log information to console
+      // Keep debug for now to see what defaults are picked
+      debug: true,
+      logger: true
     });
 
     // Verify connection configuration
