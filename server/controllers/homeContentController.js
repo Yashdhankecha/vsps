@@ -12,7 +12,7 @@ exports.getHomeContent = async (req, res) => {
   try {
     console.log('Fetching home content...');
     let homeContent = await HomeContent.findOne();
-    
+
     if (!homeContent) {
       console.log('No home content found, creating default...');
       homeContent = new HomeContent({
@@ -42,7 +42,7 @@ exports.getHomeContent = async (req, res) => {
           note: ''
         }
       });
-      
+
       try {
         await homeContent.save();
         console.log('Default home content created successfully');
@@ -57,17 +57,17 @@ exports.getHomeContent = async (req, res) => {
     }
 
     console.log('Home content fetched successfully:', homeContent);
-    res.status(200).json({ 
-      success: true, 
+    res.status(200).json({
+      success: true,
       data: homeContent,
       message: 'Home content fetched successfully'
     });
   } catch (error) {
     console.error('Error in getHomeContent:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Error fetching home content',
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -99,7 +99,7 @@ exports.updateHomeContent = async (req, res) => {
     homeContent.description = req.body.description || homeContent.description;
     homeContent.about.title = req.body.aboutTitle || homeContent.about.title;
     homeContent.about.description = req.body.aboutDescription || homeContent.about.description;
-    
+
     if (req.body.features) {
       try {
         homeContent.about.features = JSON.parse(req.body.features);
@@ -108,7 +108,7 @@ exports.updateHomeContent = async (req, res) => {
         return res.status(400).json({ success: false, message: 'Invalid features format' });
       }
     }
-    
+
     homeContent.stats = req.body.stats || homeContent.stats;
 
     await homeContent.save();
@@ -143,8 +143,8 @@ exports.handleHeroSlide = async (req, res) => {
     console.log('Current heroSlider:', homeContent.heroSlider);
 
     let imageUrl = null;
-    
-    
+
+
     if (req.file) {
       try {
         const result = await uploadToCloudinary(req.file, 'website-content/slides');
@@ -162,8 +162,8 @@ exports.handleHeroSlide = async (req, res) => {
 
     if (req.method === 'PUT' && req.params.id) {
       console.log('Updating slide with ID:', req.params.id);
-      
-      
+
+
       const slideIndex = homeContent.heroSlider.findIndex(slide => {
         const slideId = slide._id ? slide._id.toString() : null;
         console.log('Comparing slide ID:', slideId, 'with request ID:', req.params.id);
@@ -192,7 +192,7 @@ exports.handleHeroSlide = async (req, res) => {
       }
 
       const updatedSlide = {
-        _id: homeContent.heroSlider[slideIndex]._id, 
+        _id: homeContent.heroSlider[slideIndex]._id,
         title: req.body.title || homeContent.heroSlider[slideIndex].title,
         description: req.body.description || homeContent.heroSlider[slideIndex].description,
         isActive: req.body.isActive === 'true',
@@ -224,17 +224,17 @@ exports.handleHeroSlide = async (req, res) => {
       imageUrl: imageUrl || req.body.image
     });
 
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       data: homeContent.heroSlider,
       message: req.method === 'PUT' ? 'Slide updated successfully' : 'Slide added successfully'
     });
   } catch (error) {
     console.error('Error handling hero slide:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Error handling hero slide',
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -253,7 +253,7 @@ exports.deleteHeroSlide = async (req, res) => {
       return res.status(404).json({ success: false, message: 'Slide not found' });
     }
 
-   
+
     if (homeContent.heroSlider[slideIndex].image) {
       try {
         const publicId = homeContent.heroSlider[slideIndex].image.split('/').pop().split('.')[0];
@@ -261,24 +261,24 @@ exports.deleteHeroSlide = async (req, res) => {
         console.log('Slide image deleted from Cloudinary');
       } catch (error) {
         console.error('Error deleting slide image:', error);
-    
+
       }
     }
 
     homeContent.heroSlider.splice(slideIndex, 1);
     await homeContent.save();
     console.log('Hero slide deleted successfully');
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       data: homeContent.heroSlider,
       message: 'Slide deleted successfully'
     });
   } catch (error) {
     console.error('Error deleting hero slide:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Error deleting hero slide',
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -295,17 +295,17 @@ exports.updateAbout = async (req, res) => {
 
     if (req.body.title) homeContent.about.title = req.body.title;
     if (req.body.description) homeContent.about.description = req.body.description;
-    
- 
+
+
     if (req.file) {
       try {
-   
+
         if (homeContent.about.image) {
           const publicId = homeContent.about.image.split('/').pop().split('.')[0];
           await cloudinary.uploader.destroy(`website-content/about/${publicId}`);
         }
 
-      
+
         const result = await uploadToCloudinary(req.file, 'website-content/about');
         homeContent.about.image = result.secure_url;
         console.log('About image updated in Cloudinary:', result.secure_url);
@@ -319,7 +319,7 @@ exports.updateAbout = async (req, res) => {
       }
     }
 
-   
+
     if (req.body.features) {
       try {
         const features = JSON.parse(req.body.features);
@@ -354,7 +354,7 @@ exports.updateIntroduction = async (req, res) => {
 
     if (req.body.heading) homeContent.introduction.heading = req.body.heading;
     if (req.body.description) homeContent.introduction.description = req.body.description;
-    
+
     if (req.body.highlights) {
       try {
         homeContent.introduction.highlights = JSON.parse(req.body.highlights);
@@ -367,14 +367,21 @@ exports.updateIntroduction = async (req, res) => {
     // Handle PDF file upload
     if (req.file) {
       try {
-        // Update the download section with the correct file path
+        const result = await uploadToCloudinary(req.file, 'website-content/documents');
+
+        // Update the download section with the Cloudinary URL
         homeContent.introduction.download = {
           label: req.body.downloadLabel || 'Download PDF',
           fileName: req.file.originalname,
-          filePath: `/uploads/${req.file.filename}` // Store the full path relative to the server
+          filePath: result.secure_url
         };
 
-        console.log('PDF file uploaded successfully:', req.file.filename);
+        console.log('PDF file uploaded to Cloudinary:', result.secure_url);
+
+        // Clean up local file after upload
+        if (req.file.path && fs.existsSync(req.file.path)) {
+          fs.unlinkSync(req.file.path);
+        }
       } catch (error) {
         console.error('Error handling PDF upload:', error);
         return res.status(500).json({
@@ -387,18 +394,18 @@ exports.updateIntroduction = async (req, res) => {
 
     await homeContent.save();
     console.log('Introduction section updated successfully');
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       data: homeContent,
       message: 'Introduction section updated successfully'
     });
   } catch (error) {
     console.error('Error in updateIntroduction:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Error updating introduction section',
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -412,7 +419,7 @@ exports.updateLeadership = async (req, res) => {
       homeContent = new HomeContent();
     }
 
-    
+
     if (!homeContent.leadership) {
       homeContent.leadership = {
         heading: '',
@@ -422,12 +429,12 @@ exports.updateLeadership = async (req, res) => {
       };
     }
 
-    
+
     homeContent.leadership.heading = req.body.heading || homeContent.leadership.heading;
     homeContent.leadership.description = req.body.description || homeContent.leadership.description;
     homeContent.leadership.note = req.body.note || homeContent.leadership.note;
 
-   
+
     let parsedMembers = req.body.members;
     if (typeof parsedMembers === 'string') {
       try {
@@ -438,21 +445,21 @@ exports.updateLeadership = async (req, res) => {
       }
     }
 
-  
+
     const existingMembersMap = new Map(
       homeContent.leadership.members.map(member => [member._id?.toString(), member])
     );
 
-   
+
     const updatedMembers = await Promise.all(parsedMembers.map(async (member, index) => {
       let updatedMember;
-      
-      
+
+
       if (member._id) {
         const existingMember = existingMembersMap.get(member._id);
         if (existingMember) {
           updatedMember = { ...existingMember.toObject() };
-         
+
           existingMembersMap.delete(member._id);
         }
       }
@@ -469,14 +476,14 @@ exports.updateLeadership = async (req, res) => {
       const memberImage = req.files.find(file => file.fieldname === `memberImage${index}`);
       if (memberImage) {
         try {
-         
+
           if (updatedMember.image) {
             const publicId = updatedMember.image.split('/').pop().split('.')[0];
             await cloudinary.uploader.destroy(`website-content/leadership/members/${publicId}`);
             console.log('Old member image deleted from Cloudinary');
           }
 
-     
+
           const result = await uploadToCloudinary(memberImage, 'website-content/leadership/members');
           updatedMember.image = result.secure_url;
           console.log('New member image uploaded to Cloudinary:', result.secure_url);
@@ -484,11 +491,11 @@ exports.updateLeadership = async (req, res) => {
           console.error('Error updating member image in Cloudinary:', uploadError);
         }
       } else if (member.image) {
-      
+
         updatedMember.image = member.image;
       }
 
-     
+
       updatedMember.name = member.name || updatedMember.name;
       updatedMember.position = member.position || updatedMember.position;
       updatedMember.description = member.description || updatedMember.description;
@@ -500,18 +507,18 @@ exports.updateLeadership = async (req, res) => {
 
     await homeContent.save();
     console.log('Leadership section updated successfully');
-    res.json({ 
-      success: true, 
+    res.json({
+      success: true,
       data: homeContent.leadership,
       message: 'Leadership section updated successfully'
     });
 
   } catch (error) {
     console.error('Error updating leadership section:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Error updating leadership section',
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -520,11 +527,11 @@ exports.deleteLeadershipMember = async (req, res) => {
   try {
     console.log('Deleting leadership member...', req.params.id);
     let homeContent = await HomeContent.findOne();
-    
+
     if (!homeContent || !homeContent.leadership) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Leadership section not found' 
+      return res.status(404).json({
+        success: false,
+        message: 'Leadership section not found'
       });
     }
 
@@ -533,15 +540,15 @@ exports.deleteLeadershipMember = async (req, res) => {
     );
 
     if (memberIndex === -1) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Leadership member not found' 
+      return res.status(404).json({
+        success: false,
+        message: 'Leadership member not found'
       });
     }
 
     const memberToDelete = homeContent.leadership.members[memberIndex];
 
- 
+
     if (memberToDelete.image) {
       try {
         const publicId = memberToDelete.image.split('/').pop().split('.')[0];
@@ -552,25 +559,25 @@ exports.deleteLeadershipMember = async (req, res) => {
       }
     }
 
-  
+
     homeContent.leadership.members.splice(memberIndex, 1);
 
 
     await homeContent.save();
     console.log('Leadership member deleted successfully');
-    
-    res.json({ 
-      success: true, 
+
+    res.json({
+      success: true,
       message: 'Leadership member deleted successfully',
-      data: homeContent.leadership 
+      data: homeContent.leadership
     });
 
   } catch (error) {
     console.error('Error deleting leadership member:', error);
-    res.status(500).json({ 
-      success: false, 
+    res.status(500).json({
+      success: false,
       message: 'Error deleting leadership member',
-      error: error.message 
+      error: error.message
     });
   }
 };
@@ -584,8 +591,8 @@ exports.updateHeroSlider = async (req, res) => {
     }
 
     const { heroSlider } = req.body;
-    
-  
+
+
     if (!Array.isArray(heroSlider)) {
       return res.status(400).json({
         success: false,
@@ -598,7 +605,7 @@ exports.updateHeroSlider = async (req, res) => {
 
     await homeContent.save();
     console.log('Hero slider updated successfully');
-    
+
     res.json({
       success: true,
       message: 'Hero slider updated successfully',
