@@ -1,6 +1,6 @@
 const express = require('express');
 const dotenv = require('dotenv');
-const cors = require('cors'); 
+const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
@@ -38,26 +38,32 @@ const testEmailConfig = async () => {
       console.warn('Email configuration warning: EMAIL_USER or EMAIL_PASS not set in .env file');
       return;
     }
-    
+
     // Clean the password by removing any spaces
     const cleanPassword = process.env.EMAIL_PASS.replace(/\s+/g, '');
     console.log('Cleaned EMAIL_PASS for testing:', cleanPassword ? '****' + cleanPassword.substring(cleanPassword.length - 4) : 'Not found');
-    
+
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       host: 'smtp.gmail.com',
-      port: 587,
-      secure: false, // true for 465, false for other ports
+      port: 465, // Use port 465 for secure connection
+      secure: true, // true for 465, false for other ports
       auth: {
         user: process.env.EMAIL_USER,
-        pass: cleanPassword, // Use cleaned password
+        pass: cleanPassword,
       },
       tls: {
         rejectUnauthorized: false
-      }
+      },
+      // Increase connection timeout settings
+      connectionTimeout: 10000, // 10 seconds
+      greetingTimeout: 10000,   // 10 seconds
+      socketTimeout: 10000,     // 10 seconds
+      debug: true,              // Enable debug output
+      logger: true              // Log information to console
     });
-    
+
     // Verify connection configuration
     await transporter.verify();
     console.log('Email configuration: OK');
@@ -82,8 +88,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production' 
-    ? process.env.FRONTEND_URL 
+  origin: process.env.NODE_ENV === 'production'
+    ? process.env.FRONTEND_URL
     : ['http://localhost:5173', 'http://127.0.0.1:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
@@ -98,10 +104,10 @@ app.use(bodyParser.json({
   verify: (req, res, buf) => {
     try {
       JSON.parse(buf);
-    } catch(e) {
-      res.status(400).json({ 
-        success: false, 
-        message: 'Invalid JSON' 
+    } catch (e) {
+      res.status(400).json({
+        success: false,
+        message: 'Invalid JSON'
       });
     }
   }
@@ -144,7 +150,7 @@ const pdfStorage = multer.diskStorage({
   }
 });
 
-const upload = multer({ 
+const upload = multer({
   storage: storage,
   fileFilter: (req, file, cb) => {
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif|mp4|webm|mov)$/)) {
@@ -189,7 +195,7 @@ app.use('/uploads', (req, res, next) => {
   res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
   res.header('Access-Control-Allow-Credentials', 'true');
-  
+
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
@@ -207,9 +213,9 @@ app.use('/uploads', (req, res, next) => {
 app.use('/uploads', (req, res, next) => {
   const filePath = path.join(uploadsDir, req.url);
   if (!fs.existsSync(filePath)) {
-    return res.status(404).json({ 
-      success: false, 
-      message: 'File not found' 
+    return res.status(404).json({
+      success: false,
+      message: 'File not found'
     });
   }
   next();
@@ -234,7 +240,7 @@ app.use('/api/reviews', reviewRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Unhandled error:', err);
-  
+
   // Mongoose validation error
   if (err.name === 'ValidationError') {
     const errors = Object.values(err.errors).map(e => e.message);
@@ -244,7 +250,7 @@ app.use((err, req, res, next) => {
       errors
     });
   }
-  
+
   // Mongoose duplicate key error
   if (err.code === 11000) {
     return res.status(400).json({
@@ -252,7 +258,7 @@ app.use((err, req, res, next) => {
       message: 'Duplicate field value entered'
     });
   }
-  
+
   // Mongoose bad ObjectId
   if (err.name === 'CastError') {
     return res.status(400).json({
@@ -260,7 +266,7 @@ app.use((err, req, res, next) => {
       message: 'Resource not found'
     });
   }
-  
+
   // JWT error
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
@@ -268,7 +274,7 @@ app.use((err, req, res, next) => {
       message: 'Not authorized, token failed'
     });
   }
-  
+
   res.status(500).json({
     success: false,
     message: 'Internal Server Error',
