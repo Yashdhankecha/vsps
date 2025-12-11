@@ -43,12 +43,10 @@ const testEmailConfig = async () => {
     const cleanPassword = process.env.EMAIL_PASS.replace(/\s+/g, '');
     console.log('Cleaned EMAIL_PASS for testing:', cleanPassword ? '****' + cleanPassword.substring(cleanPassword.length - 4) : 'Not found');
 
-    const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
-      pool: true, // Use pooled connections
-      host: 'smtp.googlemail.com', // Try googlemail alias
-      port: 465,
-      secure: true,
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // true for 465, false for other ports
       auth: {
         user: process.env.EMAIL_USER,
         pass: cleanPassword,
@@ -56,23 +54,21 @@ const testEmailConfig = async () => {
       tls: {
         rejectUnauthorized: false
       },
-      // Increase connection timeout settings
-      connectionTimeout: 60000,
-      greetingTimeout: 60000,
-      socketTimeout: 60000,
-      debug: true,
-      logger: true
+      connectionTimeout: 10000 // 10 seconds
     });
 
     // Verify connection configuration
     await transporter.verify();
     console.log('Email configuration: OK');
   } catch (error) {
-    console.error('Email configuration error:', error.message);
-    console.warn('Email service may not work properly. Please check your email configuration in .env file.');
-    console.warn('For Gmail, you need to use an App Password, not your regular password.');
-    console.warn('Visit: https://myaccount.google.com/apppasswords to generate an App Password');
-    console.warn('Make sure 2-factor authentication is enabled on your Gmail account.');
+    console.warn('Email configuration warning:', error.message);
+    if (error.code === 'ETIMEDOUT') {
+      console.warn('NOTE: Gmail often blocks cloud server IPs (like Render) causing timeouts.');
+      console.warn('The application is still running correctly, but emails may not send.');
+      console.warn('Recommended solution: Use a dedicated email service like SendGrid, Mailgun, or AWS SES.');
+    } else {
+      console.warn('Please check your email configuration in .env file.');
+    }
   }
 };
 
