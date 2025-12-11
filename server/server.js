@@ -46,9 +46,10 @@ const testEmailConfig = async () => {
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
       // service: 'gmail', // Commented out to prevent overriding manual settings
-      host: 'smtp.gmail.com',
       port: 587,
       secure: false, // true for 465, false for other ports
+      requireTLS: true, // Force TLS
+      family: 4, // Force IPv4 to avoid IPv6 issues
       auth: {
         user: process.env.EMAIL_USER,
         pass: cleanPassword,
