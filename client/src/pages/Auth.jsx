@@ -33,10 +33,10 @@ function Auth() {
         // Check if token is expired
         if (decodedToken.exp * 1000 > Date.now()) {
           // Token is valid, redirect based on role
-          if (decodedToken.role === 'admin' || decodedToken.role === 'superadmin') {
-            window.location.href = '/admin/dashboard';
+          if (decodedToken.role === 'admin' || decodedToken.role === 'superadmin' || decodedToken.role === 'manager') {
+            navigate('/admin/dashboard');
           } else if (decodedToken.role === 'committeemember') {
-            window.location.href = '/committee/dashboard';
+            navigate('/committee/dashboard');
           } else {
             const redirectPath = localStorage.getItem('redirectAfterLogin');
             if (redirectPath) {
@@ -121,10 +121,10 @@ function Auth() {
           try {
             const decodedToken = JSON.parse(atob(response.data.token.split('.')[1]));
             // Redirect based on role
-            if (decodedToken.role === 'admin' || decodedToken.role === 'superadmin') {
-              window.location.href = '/admin/dashboard';
+            if (decodedToken.role === 'admin' || decodedToken.role === 'superadmin' || decodedToken.role === 'manager') {
+              navigate('/admin/dashboard');
             } else if (decodedToken.role === 'committeemember') {
-              window.location.href = '/committee/dashboard';
+              navigate('/committee/dashboard');
             } else {
               const redirectPath = localStorage.getItem('redirectAfterLogin');
               if (redirectPath) {
