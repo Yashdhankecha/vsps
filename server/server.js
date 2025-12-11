@@ -1,4 +1,4 @@
-  const express = require('express');
+const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
 const connectDB = require('./config/db');
@@ -45,7 +45,7 @@ const testEmailConfig = async () => {
 
     const nodemailer = require('nodemailer');
     const transporter = nodemailer.createTransport({
-      service: 'gmail',
+      // service: 'gmail', // Commented out to prevent overriding manual settings
       host: 'smtp.gmail.com',
       port: 587,
       secure: false, // true for 465, false for other ports
