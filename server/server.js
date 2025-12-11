@@ -57,9 +57,9 @@ const testEmailConfig = async () => {
         rejectUnauthorized: false
       },
       // Increase connection timeout settings
-      connectionTimeout: 10000, // 10 seconds
-      greetingTimeout: 10000,   // 10 seconds
-      socketTimeout: 10000,     // 10 seconds
+      connectionTimeout: 60000, // 60 seconds
+      greetingTimeout: 60000,   // 60 seconds
+      socketTimeout: 60000,     // 60 seconds
       debug: true,              // Enable debug output
       logger: true              // Log information to console
     });
