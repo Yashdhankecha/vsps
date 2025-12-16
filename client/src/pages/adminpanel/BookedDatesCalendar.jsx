@@ -247,17 +247,10 @@ const BookedDatesCalendar = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative mb-6">
-            <div className="w-20 h-20 mx-auto">
-              <div className="absolute inset-0 rounded-full border-4 border-neutral-600/30 animate-pulse"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-t-electric-500 animate-spin"></div>
-            </div>
-          </div>
-          <div className="space-y-3">
-            <h3 className="text-xl font-bold text-white">Loading Calendar</h3>
-            <p className="text-neutral-300">Please wait while we fetch booking data...</p>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center p-4 sm:p-6">
+        <div className="card-glass p-8 animate-fade-in-up">
+          <div className="flex justify-center items-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
           </div>
         </div>
       </div>
@@ -295,9 +288,9 @@ const BookedDatesCalendar = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
+    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up">
+      <div className="card-glass animate-fade-in-up p-6">
       {/* Header Section */}
       <div className="mb-2 sm:mb-3 animate-fade-in-up">
         <div className="flex items-center space-x-1.5 mb-0.5">

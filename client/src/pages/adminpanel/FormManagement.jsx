@@ -236,17 +236,10 @@ const FormManagement = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-mesh">
-        <div className="text-center">
-          <div className="relative">
-            <div className="w-16 h-16 mx-auto mb-4">
-              <div className="absolute inset-0 rounded-full border-4 border-neutral-600/30 animate-pulse"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-t-electric-500 animate-spin"></div>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-white">Loading Form Management</h3>
-            <p className="text-neutral-300">Please wait while we load the form configuration...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-mesh p-4 sm:p-6">
+        <div className="card-glass p-8 animate-fade-in-up">
+          <div className="flex justify-center items-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
           </div>
         </div>
       </div>
@@ -259,9 +252,9 @@ const FormManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
+    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up">
+      <div className="card-glass animate-fade-in-up p-6">
         {/* Header Section */}
         <div className="mb-6 sm:mb-8 animate-fade-in-up">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">

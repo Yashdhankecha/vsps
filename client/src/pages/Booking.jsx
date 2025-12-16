@@ -105,7 +105,7 @@ function Booking() {
 
   const fetchBookings = async () => {
     try {
-      const response = await axios.get('/api/bookings');
+      const response = await axios.get('/api/users/bookings');
       const bookingsData = Array.isArray(response.data) ? response.data : [];
       // Filter out rejected bookings and only show pending and booked events
       const filteredBookings = bookingsData.filter(booking => booking.status !== 'Rejected');
@@ -137,7 +137,19 @@ function Booking() {
   };
 
   const handleDateSelect = (slotInfo) => {
-    const selectedDate = new Date(slotInfo.start);
+    // For mobile devices, slotInfo may be different, so we need to handle both cases
+    let selectedDate;
+    
+    if (slotInfo.start) {
+      selectedDate = new Date(slotInfo.start);
+    } else if (slotInfo.slots && slotInfo.slots.length > 0) {
+      // Handle mobile/touch selection
+      selectedDate = new Date(slotInfo.slots[0]);
+    } else {
+      // Fallback
+      selectedDate = new Date();
+    }
+    
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
@@ -418,29 +430,38 @@ function Booking() {
     const isToday = format(date, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
     const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
 
+    // Add a class for booked dates to improve styling
+    let className = `transition-all duration-300 ${
+      isHovered && !isBooked && !isPast ? 'bg-violet-200 cursor-pointer hover:bg-violet-300 hover:scale-105 hover:shadow-md' : ''
+    } ${
+      isSelected ? 'bg-violet-300 font-bold ring-2 ring-violet-600 ring-opacity-70 scale-105 shadow-md' : ''
+    } ${
+      isBooked ? 'bg-red-100 cursor-not-allowed booked' : ''
+    } ${
+      isToday ? 'font-bold text-violet-700 ring-1 ring-violet-400' : ''
+    } ${
+      isPast ? 'bg-gray-100 cursor-not-allowed opacity-50' : ''
+    }`;
+
+    // For mobile, ensure we have proper touch targets
+    if (window.innerWidth <= 768) {
+      className += ' touch-target';
+    }
+
     return {
-      className: `transition-all duration-300 ${
-        isHovered && !isBooked && !isPast ? 'bg-violet-200 cursor-pointer hover:bg-violet-300 hover:scale-105 hover:shadow-md' : ''
-      } ${
-        isSelected ? 'bg-violet-300 font-bold ring-2 ring-violet-600 ring-opacity-70 scale-105 shadow-md' : ''
-      } ${
-        isBooked ? 'bg-red-100 cursor-not-allowed' : ''
-      } ${
-        isToday ? 'font-bold text-violet-700 ring-1 ring-violet-400' : ''
-      } ${
-        isPast ? 'bg-gray-100 cursor-not-allowed opacity-50' : ''
-      }`,
+      className,
       style: {
         borderRadius: '12px',
         margin: '3px',
-        minHeight: '90px',
+        minHeight: window.innerWidth <= 480 ? '50px' : window.innerWidth <= 768 ? '60px' : '90px',
         position: 'relative',
         boxShadow: isSelected ? '0 4px 8px -2px rgba(124, 58, 237, 0.4)' : 'none',
         transition: 'all 0.3s ease-in-out',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        cursor: isBooked || isPast ? 'not-allowed' : 'pointer'
       }
     };
   };
@@ -494,10 +515,7 @@ function Booking() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-mesh">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-electric-500 mx-auto"></div>
-          <p className="mt-4 text-neutral-300">Loading booking page...</p>
-        </div>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }
@@ -619,6 +637,10 @@ function Booking() {
               endAccessor="end"
               {...calendarCustomStyles}
               onSelectSlot={handleDateSelect}
+              onSelectEvent={(event) => {
+                // Handle event click if needed
+                console.log('Event clicked:', event);
+              }}
               selectable
               views={['month']}
               defaultView="month"
@@ -626,36 +648,59 @@ function Booking() {
               dayPropGetter={dayPropGetter}
               onMouseEnter={handleDateHover}
               onMouseLeave={handleDateLeave}
+              onTouchStart={(e) => {
+                // Handle touch events for mobile
+                console.log('Touch start:', e);
+              }}
               tooltipAccessor={event => `${event.title} - ${format(event.start, 'MMMM d, yyyy')}`}
               components={calendarComponents}
               formats={{
                 dateFormat: 'd',
                 dayFormat: 'd',
-                monthHeaderFormat: 'MMMM',
-                dayHeaderFormat: 'd',
-                dayRangeHeaderFormat: ({ start, end }) => `${format(start, 'd')} - ${format(end, 'd')}`
+                monthHeaderFormat: 'MMMM yyyy',
+                dayHeaderFormat: 'EEE d',
+                dayRangeHeaderFormat: ({ start, end }) => `${format(start, 'MMM d')} - ${format(end, 'MMM d')}`
               }}
               min={new Date()} // Set minimum date to today
+              // Improve mobile responsiveness
+              style={{
+                height: 'auto',
+                minHeight: '500px'
+              }}
             />
           </div>
 
-          {/* Booking Form Section */}
+          {/* Booking Form Section - Improved mobile design */}
           <div className="lg:col-span-1">
             {showForm ? (
               <div className="glass-effect rounded-2xl p-6 border border-white/10">
                 <div className="mb-6 p-4 bg-gradient-electric rounded-xl border border-white/10">
-                  <h2 className="text-2xl font-bold text-white mb-2">
-                    Selected Date:
-                  </h2>
-                  <div className="text-3xl font-bold text-white">
-                    {selectedDate && format(selectedDate, 'MMMM d, yyyy')}
-                  </div>
-                  <div className="mt-2 text-lg text-white">
-                    {selectedDate && format(selectedDate, 'EEEE')}
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h2 className="text-2xl font-bold text-white mb-2">
+                        Selected Date:
+                      </h2>
+                      <div className="text-3xl font-bold text-white">
+                        {selectedDate && format(selectedDate, 'MMMM d, yyyy')}
+                      </div>
+                      <div className="mt-2 text-lg text-white">
+                        {selectedDate && format(selectedDate, 'EEEE')}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setShowForm(false);
+                        setSelectedDate(null);
+                      }}
+                      className="text-white hover:text-gray-200 transition-colors"
+                      aria-label="Close form"
+                    >
+                      <FaTimes className="h-6 w-6" />
+                    </button>
                   </div>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <Input
                         label="First Name"

@@ -216,7 +216,6 @@ const StyledAvatar = styled(Avatar)(({ theme }) => ({
 const LoadingFallback = () => (
   <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center" minHeight="200px">
     <CircularProgress size={40} sx={{ color: colors.primary.main, mb: 2 }} />
-    <Typography variant="body1" color="textSecondary">Loading form...</Typography>
   </Box>
 );
 

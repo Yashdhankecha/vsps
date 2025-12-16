@@ -85,12 +85,15 @@ function AppContent() {
 
   useEffect(() => {
     if (!loading && !user) {
-      
-      
-      
-
+      // Only navigate if we're not on auth pages and user is not authenticated
+      if (!isAuthPage && !isAdminRoute) {
+        // Using setTimeout to avoid immediate navigation conflicts
+        setTimeout(() => {
+          navigate("/auth");
+        }, 100);
+      }
     }
-  }, [loading, user, navigate]);
+  }, [loading, user, isAuthPage, isAdminRoute, navigate]);
 
   
   const ProtectedRoute = ({ children }) => {
@@ -237,6 +240,8 @@ function AppContent() {
                 <Route path="/admin/users" element={<Users />} />
                 <Route path="/admin/form-management" element={<FormManagement />} />
                 <Route path="/admin/reviews" element={<Reviews />} />
+                {/* Add the missing route for booked dates calendar */}
+                <Route path="/admin/booked-dates" element={<BookedDatesCalendar />} />
                 <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
               </Routes>
             </AdminPageContainer>

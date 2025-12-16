@@ -416,28 +416,10 @@ const ContactManagement = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
-        <div className="card-glass animate-fade-in-up">
-          <div className="mb-8 animate-fade-in-up">
-            <div className="flex items-center space-x-3 mb-2">
-              <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg">
-                <EnvelopeIcon className="w-6 h-6 text-white" />
-              </div>
-              <h1 className="text-3xl font-bold text-white">Contact Management</h1>
-            </div>
-            <p className="text-neutral-300 text-lg">View, reply to, and manage user contact messages</p>
-          </div>
-          
-          <div className="glass-effect rounded-xl shadow-lg p-6 border border-white/10 animate-fade-in-up">
-            <div className="py-12 text-center">
-              <div className="relative">
-                <div className="w-12 h-12 mx-auto mb-4">
-                  <div className="absolute inset-0 rounded-full border-4 border-neutral-600/30 animate-pulse"></div>
-                  <div className="absolute inset-0 rounded-full border-4 border-t-electric-500 animate-spin"></div>
-                </div>
-              </div>
-              <p className="text-neutral-300">Loading contacts...</p>
-            </div>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center p-4 sm:p-6">
+        <div className="card-glass p-8 animate-fade-in-up">
+          <div className="flex justify-center items-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
           </div>
         </div>
       </div>
@@ -445,17 +427,19 @@ const ContactManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
-      <div className="card-glass animate-fade-in-up">
+    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6">
+      <div className="card-glass animate-fade-in-up p-6">
         {/* Header Section */}
         <div className="mb-8 animate-fade-in-up">
           <div className="flex items-center space-x-3 mb-2">
             <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg">
               <EnvelopeIcon className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-3xl font-bold text-white">Contact Management</h1>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold text-white">Contact Management</h1>
+              <p className="text-neutral-300 text-base sm:text-lg">View, reply to, and manage user contact messages</p>
+            </div>
           </div>
-          <p className="text-neutral-300 text-lg">View, reply to, and manage user contact messages</p>
         </div>
         
         {/* Notifications */}

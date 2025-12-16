@@ -554,3 +554,158 @@
     transform: translateX(100%);
   }
 }
+
+/* Custom styles for react-big-calendar responsive design */
+@media (max-width: 768px) {
+  .rbc-month-view {
+    font-size: 0.8rem;
+  }
+  
+  .rbc-header {
+    padding: 5px 0;
+  }
+  
+  .rbc-day-bg {
+    min-height: 60px;
+    padding: 2px;
+  }
+  
+  .rbc-event {
+    padding: 1px 2px;
+    font-size: 0.7rem;
+  }
+  
+  .rbc-event-label {
+    display: none;
+  }
+  
+  .rbc-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  
+  .rbc-toolbar button {
+    padding: 8px;
+    font-size: 0.9rem;
+  }
+  
+  .rbc-btn-group button {
+    padding: 8px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rbc-month-view {
+    font-size: 0.7rem;
+  }
+  
+  .rbc-day-bg {
+    min-height: 50px;
+    padding: 1px;
+  }
+  
+  .rbc-header {
+    padding: 3px 0;
+    font-size: 0.8rem;
+  }
+  
+  .custom-calendar {
+    padding: 10px !important;
+  }
+  
+  .rbc-event {
+    padding: 0 1px;
+    font-size: 0.6rem;
+  }
+}
+
+/* Improve calendar accessibility and touch targets */
+.rbc-day-bg {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.rbc-day-bg:hover {
+  transform: scale(1.02);
+}
+
+.rbc-off-range-bg {
+  background-color: #f8f9fa;
+}
+
+.rbc-today {
+  background-color: #fff7ed;
+}
+
+/* Better contrast for booked dates */
+.rbc-day-bg.booked {
+  background-color: #fee2e2;
+  cursor: not-allowed;
+}
+
+/* Responsive container for calendar */
+.custom-calendar {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Improve date cell sizing */
+.rbc-month-row {
+  min-height: 80px;
+}
+
+@media (max-width: 768px) {
+  .rbc-month-row {
+    min-height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  .rbc-month-row {
+    min-height: 50px;
+  }
+}
+
+/* Improve touch targets for mobile */
+@media (hover: none) and (pointer: coarse) {
+  .rbc-day-bg {
+    min-height: 70px;
+    padding: 5px;
+  }
+  
+  .touch-target {
+    min-height: 70px !important;
+    padding: 5px !important;
+  }
+  
+  .rbc-event {
+    min-height: 24px;
+    padding: 2px 4px;
+  }
+}
+
+/* Ensure proper scrolling on mobile */
+.custom-calendar {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: manipulation;
+}
+
+/* Improve focus states for accessibility */
+.rbc-day-bg:focus,
+.rbc-day-bg:focus-within {
+  outline: 2px solid #6366f1;
+  outline-offset: -2px;
+}
+
+/* Better contrast for visually impaired users */
+@media (prefers-contrast: high) {
+  .rbc-day-bg.booked {
+    background-color: #fecaca;
+  }
+  
+  .rbc-today {
+    background-color: #fed7aa;
+  }
+}

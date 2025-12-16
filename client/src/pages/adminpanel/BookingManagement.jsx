@@ -841,18 +841,7 @@ const BookingManagement = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative mb-6">
-            <div className="w-20 h-20 mx-auto">
-              <div className="absolute inset-0 rounded-full border-4 border-neutral-600/30 animate-pulse"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-t-electric-500 animate-spin"></div>
-            </div>
-          </div>
-          <div className="space-y-3">
-            <h3 className="text-xl font-bold text-white">Loading Booking Management</h3>
-            <p className="text-neutral-300">Please wait while we fetch the booking data...</p>
-          </div>
-        </div>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
       </div>
     );
   }
@@ -884,9 +873,9 @@ const BookingManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6 flex flex-col">
+    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6 flex flex-col">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up flex-grow flex flex-col">
+      <div className="card-glass animate-fade-in-up flex-grow flex flex-col p-6">
         {notification && (
           <Notification
             message={notification.message}
@@ -895,8 +884,7 @@ const BookingManagement = () => {
           />
         )}
 
-      {showDocumentViewer && (
-        <DocumentViewer
+      {showDocumentViewer && (        <DocumentViewer
           documentUrl={selectedDocument}
           documentType={selectedDocumentType}
           onClose={() => {

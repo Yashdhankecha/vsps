@@ -10,9 +10,18 @@ export function AuthProvider({ children }) {
     const token = localStorage.getItem('token');
     if (token) {
       try {
-        const decodedToken = JSON.parse(atob(token.split('.')[1]));
+        // Decode JWT token
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const decodedToken = JSON.parse(window.atob(base64));
         
-        if (!decodedToken._id && !decodedToken.id && !decodedToken.userId) {
+        // Check if token is expired
+        const currentTime = Date.now() / 1000;
+        if (decodedToken.exp && decodedToken.exp < currentTime) {
+          console.warn('Token has expired');
+          localStorage.removeItem('token');
+          setUser(null);
+        } else if (!decodedToken._id && !decodedToken.id && !decodedToken.userId) {
           console.error('Token does not contain user ID');
           localStorage.removeItem('token');
           setUser(null);
@@ -21,7 +30,8 @@ export function AuthProvider({ children }) {
           const normalizedUser = {
             ...decodedToken,
             _id: decodedToken._id || decodedToken.id || decodedToken.userId,
-            role: decodedToken.role || 'user' // Default to 'user' if no role
+            role: decodedToken.role || 'user', // Default to 'user' if no role
+            username: decodedToken.username || '' // Extract username from token
           };
           
           // Validate role

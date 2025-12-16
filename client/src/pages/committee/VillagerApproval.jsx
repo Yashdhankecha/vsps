@@ -117,18 +117,7 @@ const VillagerApproval = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
-        <div className="text-center">
-          <div className="relative">
-            <div className="w-16 h-16 mx-auto mb-4">
-              <div className="absolute inset-0 rounded-full border-4 border-neutral-600/30 animate-pulse"></div>
-              <div className="absolute inset-0 rounded-full border-4 border-t-electric-500 animate-spin"></div>
-            </div>
-          </div>
-          <div className="space-y-2">
-            <h3 className="text-lg font-semibold text-white">Loading Villagers</h3>
-            <p className="text-neutral-300">Please wait while we load villagers for approval...</p>
-          </div>
-        </div>
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }

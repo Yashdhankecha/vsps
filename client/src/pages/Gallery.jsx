@@ -218,17 +218,7 @@ function Gallery() {
         {/* Gallery Grid */}
         {loading ? (
           <div className="text-center py-16">
-            <div className="relative">
-              <div className="w-20 h-20 border-4 border-neutral-600/30 rounded-full animate-spin"></div>
-              <div className="w-20 h-20 border-4 border-transparent border-t-electric-500 rounded-full animate-spin absolute top-0 left-0"></div>
-              <div className="w-20 h-20 border-4 border-transparent border-r-neon-500 rounded-full animate-spin absolute top-0 left-0" style={{animationDirection: 'reverse', animationDuration: '1.5s'}}></div>
-            </div>
-            <p className="mt-6 text-xl font-semibold text-white animate-pulse">Loading gallery items...</p>
-            <div className="mt-4 flex justify-center space-x-2">
-              <div className="w-2 h-2 bg-electric-500 rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-neon-500 rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-              <div className="w-2 h-2 bg-secondary-500 rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
-            </div>
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500 mx-auto"></div>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">

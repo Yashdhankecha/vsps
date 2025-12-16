@@ -30,7 +30,7 @@
     "jspdf-autotable": "^5.0.2",
     "mongoose": "^8.10.2",
     "multer": "^1.4.5-lts.1",
-    "nodemailer": "^6.10.0",
+    "nodemailer": "^7.0.11",
     "rate-limiter-flexible": "^5.0.5",
     "twilio": "^5.5.1",
     "uuid": "^11.1.0"

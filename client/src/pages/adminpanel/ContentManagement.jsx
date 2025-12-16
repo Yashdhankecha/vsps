@@ -583,7 +583,15 @@ const ContentManagement = () => {
 
   // Render content based on active tab
   const renderContent = () => {
-    if (loading) return <div className="py-8 text-center">Loading content...</div>;
+    if (loading) return (
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center p-4 sm:p-6">
+        <div className="card-glass p-8 animate-fade-in-up">
+          <div className="flex justify-center items-center h-32">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+          </div>
+        </div>
+      </div>
+    );
     if (error) return <div className="py-8 text-center text-red-500">{error}</div>;
 
     switch (activeTab) {
@@ -1907,9 +1915,9 @@ const ContentManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
+    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up">
+      <div className="card-glass animate-fade-in-up p-6">
         {/* Header Section - Responsive */}
         <div className="border-b border-white/10 pb-6 mb-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">

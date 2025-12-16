@@ -1,25 +1,23 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaVideo, FaUser, FaBars, FaTimes, FaBell } from 'react-icons/fa';
+import { useAuth } from '../../contexts/AuthContext'; // Import the useAuth hook
 
 function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
   const profileDropdownRef = useRef(null);
+  
+  // Get user data from AuthContext
+  const { user } = useAuth();
 
   // Check authentication status when component mounts or location changes
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsLoggedIn(!!token);
-  }, [location.pathname]);
-
-  // Close profile dropdown when clicking outside
-  useEffect(() => {
+    // Close profile dropdown when clicking outside
     const handleClickOutside = (event) => {
       if (profileDropdownRef.current && !profileDropdownRef.current.contains(event.target)) {
         setIsProfileDropdownOpen(false);
@@ -180,7 +178,7 @@ function Header() {
             {/* Profile Dropdown or Sign In button (only show if not on auth page) */}
             {!isAuthPage && (
               <>
-                {isLoggedIn ? (
+                {user ? (
                   <div className="relative" ref={profileDropdownRef}>
                     <button
                       onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
@@ -189,7 +187,7 @@ function Header() {
                       <div className="w-8 h-8 bg-gradient-electric rounded-full flex items-center justify-center">
                         <FaUser className="w-4 h-4" />
                       </div>
-                      <span>Profile</span>
+                      <span>{user.username || user.name || 'Profile'}</span>
                     </button>
                     {/* Profile Dropdown Menu */}
                     {isProfileDropdownOpen && (
@@ -197,7 +195,7 @@ function Header() {
                         <div className="py-3">
                           <div className="px-6 py-3 border-b border-white/10">
                             <p className="text-sm text-neutral-400">Welcome back!</p>
-                            <p className="font-semibold text-white">User Profile</p>
+                            <p className="font-semibold text-white">{user.username || user.name || 'User Profile'}</p>
                           </div>
                           <Link
                             to="/notifications"
@@ -275,7 +273,7 @@ function Header() {
         {isMenuOpen && (
           <nav className="lg:hidden py-6 border-t border-white/20 bg-gradient-to-b from-neutral-800/95 to-neutral-900/95 backdrop-blur-xl">
             {/* Notifications Section for Mobile */}
-            {isLoggedIn && (
+            {user && (
               <div className="px-6 py-4 mb-4">
                 <div className="flex items-center justify-between mb-4">
                   <div className="font-bold text-lg text-white">Notifications</div>
@@ -337,11 +335,11 @@ function Header() {
             {/* Mobile Login/Signup (only show if not on auth page) */}
             {!isAuthPage && (
               <div className="px-6 pt-6 border-t border-white/20">
-                {isLoggedIn ? (
+                {user ? (
                   <div className="space-y-3">
                     <div className="text-center mb-4">
                       <p className="text-white/80 text-sm">Welcome back!</p>
-                      <p className="text-white font-bold">User Profile</p>
+                      <p className="text-white font-bold">{user.username || user.name || 'User Profile'}</p>
                     </div>
                     <Link
                       to="/notifications"

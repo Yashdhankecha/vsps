@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { 
   CalendarIcon, 
   UserGroupIcon, 
@@ -18,7 +19,11 @@ import {
   BanknotesIcon,
   UsersIcon,
   CheckCircleIcon,
-  XCircleIcon
+  XCircleIcon,
+  ArrowRightIcon,
+  ShieldCheckIcon,
+  UserIcon,
+  DocumentTextIcon
 } from '@heroicons/react/24/outline';
 import {
   CalendarIcon as CalendarIconSolid,
@@ -32,6 +37,7 @@ import axiosInstance from '../../utils/axiosConfig';
 import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({
     totalBookings: 0,
     pendingBookings: 0,
@@ -217,61 +223,71 @@ const Dashboard = () => {
     
     const now = new Date();
     const currentMonth = now.getMonth();
+    const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
     const currentYear = now.getFullYear();
-
+    const previousMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+    
     // Initialize monthly and yearly totals
     let monthlyRevenue = 0;
+    let previousMonthlyRevenue = 0;
     let yearlyRevenue = 0;
     const monthlyBreakdown = Array(12).fill(0);
     const yearlyBreakdown = {};
-
+    
     safeBookings.forEach(booking => {
       if (booking && booking.status === 'Booked' && booking.paymentConfirmed) {
         const bookingDate = new Date(booking.date);
         const bookingMonth = bookingDate.getMonth();
         const bookingYear = bookingDate.getFullYear();
         const amount = booking.amount || 0;
-
+        
         // Add to yearly breakdown
         if (!yearlyBreakdown[bookingYear]) {
           yearlyBreakdown[bookingYear] = 0;
         }
         yearlyBreakdown[bookingYear] += amount;
-
+        
         // Add to monthly breakdown
         monthlyBreakdown[bookingMonth] += amount;
-
+        
         // Add to current year's total
         if (bookingYear === currentYear) {
           yearlyRevenue += amount;
         }
-
+        
         // Add to current month's total
         if (bookingYear === currentYear && bookingMonth === currentMonth) {
           monthlyRevenue += amount;
         }
+        
+        // Add to previous month's total
+        if (bookingYear === previousMonthYear && bookingMonth === previousMonth) {
+          previousMonthlyRevenue += amount;
+        }
       }
     });
-
+    
+    // Calculate growth percentage
+    let growthPercentage = 0;
+    if (previousMonthlyRevenue > 0) {
+      growthPercentage = Math.round(((monthlyRevenue - previousMonthlyRevenue) / previousMonthlyRevenue) * 100);
+    } else if (monthlyRevenue > 0) {
+      growthPercentage = 100; // If previous month was 0 but current isn't, show 100% growth
+    }
+    
     return {
       monthly: monthlyRevenue,
       yearly: yearlyRevenue,
       monthlyBreakdown,
-      yearlyBreakdown
+      yearlyBreakdown,
+      growth: growthPercentage
     };
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
-        <div className="card-glass animate-fade-in-up">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-2xl font-bold text-white">Dashboard Overview</h1>
-          </div>
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500"></div>
-          </div>
-        </div>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
       </div>
     );
   }
@@ -312,6 +328,12 @@ const Dashboard = () => {
     return Math.round(((current - previous) / previous) * 100);
   };
 
+  // Add the missing calculatePercentage function
+  const calculatePercentage = (part, total) => {
+    if (total === 0) return 0;
+    return Math.round((part / total) * 100);
+  };
+
   // Get user role counts
   const getUserRoleCount = (role) => {
     const roleData = stats.userRoles.find(r => r._id === role);
@@ -331,12 +353,12 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
+    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up">
+      <div className="card-glass animate-fade-in-up p-6">
         {/* Welcome Section with Modern Dark Design */}
         <div className="relative mb-8 overflow-hidden animate-fade-in-up">
-          <div className="glass-effect p-8 relative rounded-2xl">
+          <div className="glass-effect p-6 sm:p-8 relative rounded-2xl">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-electric-400/20 to-neon-400/20 rounded-bl-full"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-secondary-400/20 to-electric-400/20 rounded-tr-full"></div>
             <div className="relative z-10">
@@ -345,8 +367,8 @@ const Dashboard = () => {
                   <ChartBarIconSolid className="w-7 h-7 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h1 className="text-3xl font-bold text-white">Dashboard Overview</h1>
-                  <p className="text-neutral-300 text-lg">Welcome back! Here's what's happening today.</p>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard Overview</h1>
+                  <p className="text-neutral-300 text-base sm:text-lg">Welcome back! Here's what's happening today.</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   {lastUpdated && (
@@ -406,8 +428,8 @@ const Dashboard = () => {
         </div>
 
         {/* Enhanced Revenue Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
-          <div className="card-hover p-8 relative overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+          <div className="card-hover p-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-neon opacity-20 rounded-bl-3xl"></div>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
@@ -421,222 +443,268 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="flex items-baseline space-x-3 mb-4">
-              <span className="text-4xl font-bold text-white">
+              <span className="text-3xl sm:text-4xl font-bold text-white">
                 ₹{stats.revenue.monthly.toLocaleString()}
               </span>
               <div className="flex items-center space-x-1">
-                <ArrowTrendingUpIcon className="w-4 h-4 text-neon-400" />
-                <span className="text-neon-400 font-semibold text-sm">
-                  +{calculateGrowth(stats.revenue.monthly, Math.max(stats.revenue.monthly - 1000, 0))}%
+                {stats.revenue.growth >= 0 ? (
+                  <ArrowTrendingUpIcon className="w-5 h-5 text-green-500" />
+                ) : (
+                  <ArrowTrendingDownIcon className="w-5 h-5 text-red-500" />
+                )}
+                <span className={`text-sm font-medium ${stats.revenue.growth >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {Math.abs(stats.revenue.growth)}%
                 </span>
               </div>
             </div>
-            <p className="text-sm text-neutral-400 mb-6">
-              {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
+            <p className="text-neutral-400 text-sm">
+              Compared to last month
             </p>
-            
-            {/* Mini Chart */}
-            <div className="grid grid-cols-6 gap-2">
-              {stats.revenue.monthlyBreakdown.slice(0, 6).map((amount, index) => (
-                <div key={index} className="text-center">
-                  <div className="h-8 bg-neutral-700/50 rounded-sm mb-2 relative overflow-hidden">
-                    <div 
-                      className="absolute bottom-0 left-0 right-0 bg-gradient-neon rounded-sm transition-all duration-1000"
-                      style={{
-                        height: `${Math.max((amount / Math.max(...stats.revenue.monthlyBreakdown)) * 100, 10)}%`,
-                        animationDelay: `${index * 0.1}s`
-                      }}
-                    ></div>
-                  </div>
-                  <div className="text-xs text-neutral-400">
-                    {new Date(0, index).toLocaleString('default', { month: 'short' })}
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
 
-          <div className="card-hover p-8 relative overflow-hidden">
+          <div className="card-hover p-6 relative overflow-hidden">
             <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-electric opacity-20 rounded-bl-3xl"></div>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-electric-500/20 rounded-xl flex items-center justify-center border border-electric-500/30">
-                  <BanknotesIcon className="w-7 h-7 text-electric-400" />
+                  <UserGroupIconSolid className="w-7 h-7 text-electric-400" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">Yearly Revenue</h2>
-                  <p className="text-sm text-neutral-400">Annual performance metrics</p>
+                  <h2 className="text-xl font-bold text-white">User Growth</h2>
+                  <p className="text-sm text-neutral-400">New users this month</p>
                 </div>
               </div>
             </div>
             <div className="flex items-baseline space-x-3 mb-4">
-              <span className="text-4xl font-bold text-white">
-                ₹{stats.revenue.yearly.toLocaleString()}
+              <span className="text-3xl sm:text-4xl font-bold text-white">
+                {stats.recentUsers}
               </span>
               <div className="flex items-center space-x-1">
-                <ArrowTrendingUpIcon className="w-4 h-4 text-electric-400" />
-                <span className="text-electric-400 font-semibold text-sm">
-                  +{calculateGrowth(stats.revenue.yearly, Math.max(stats.revenue.yearly - 5000, 0))}%
+                {stats.recentUsers > 0 ? (
+                  <ArrowTrendingUpIcon className="w-5 h-5 text-green-500" />
+                ) : (
+                  <ArrowTrendingDownIcon className="w-5 h-5 text-red-500" />
+                )}
+                <span className={`text-sm font-medium ${stats.recentUsers > 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {stats.recentUsers}%
                 </span>
               </div>
             </div>
-            <p className="text-sm text-neutral-400 mb-6">
-              {new Date().getFullYear()} Annual Report
+            <p className="text-neutral-400 text-sm">
+              {stats.totalUsers} total users
             </p>
-            
-            {/* Yearly Breakdown */}
-            <div className="grid grid-cols-2 gap-4">
-              {Object.entries(stats.revenue.yearlyBreakdown).map(([year, amount]) => (
-                <div key={year} className="flex items-center justify-between p-3 bg-neutral-800/30 rounded-lg border border-white/5">
-                  <span className="text-neutral-300">{year}</span>
-                  <span className="font-semibold text-white">₹{amount.toLocaleString()}</span>
-                </div>
-              ))}
-            </div>
           </div>
         </div>
 
-        {/* Statistics Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-          <div className="card-hover p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-electric opacity-20 rounded-bl-3xl"></div>
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-electric-500/20 rounded-xl flex items-center justify-center border border-electric-500/30">
-                <CalendarIcon className="w-6 h-6 text-electric-400" />
-              </div>
-              <div>
-                <p className="text-sm text-neutral-400">Total Bookings</p>
-                <p className="text-2xl font-bold text-white">{stats.totalBookings}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card-hover p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-neon opacity-20 rounded-bl-3xl"></div>
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-neon-500/20 rounded-xl flex items-center justify-center border border-neon-500/30">
-                <UserGroupIcon className="w-6 h-6 text-neon-400" />
-              </div>
-              <div>
-                <p className="text-sm text-neutral-400">Pending Bookings</p>
-                <p className="text-2xl font-bold text-white">{stats.pendingBookings}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card-hover p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-secondary opacity-20 rounded-bl-3xl"></div>
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-secondary-500/20 rounded-xl flex items-center justify-center border border-secondary-500/30">
-                <AcademicCapIcon className="w-6 h-6 text-secondary-400" />
-              </div>
-              <div>
-                <p className="text-sm text-neutral-400">Samuh Lagan</p>
-                <p className="text-2xl font-bold text-white">{stats.totalSamuhLagan}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="card-hover p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-sunset opacity-20 rounded-bl-3xl"></div>
-            <div className="flex items-center space-x-4">
-              <div className="w-12 h-12 bg-sunset-500/20 rounded-xl flex items-center justify-center border border-sunset-500/30">
-                <TrophyIcon className="w-6 h-6 text-sunset-400" />
-              </div>
-              <div>
-                <p className="text-sm text-neutral-400">Student Awards</p>
-                <p className="text-2xl font-bold text-white">{stats.totalStudentAwards}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Recent Activity and Upcoming Events */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8 animate-fade-in-up" style={{animationDelay: '0.3s'}}>
-          {/* Recent Bookings */}
+        {/* Booking Analytics */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
           <div className="card-hover p-6">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-electric-500/20 rounded-lg flex items-center justify-center border border-electric-500/30">
-                <DocumentChartBarIcon className="w-5 h-5 text-electric-400" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-secondary rounded-xl flex items-center justify-center shadow-lg">
+                  <CalendarIconSolid className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">Booking Stats</h2>
+                  <p className="text-sm text-neutral-400">Current status breakdown</p>
+                </div>
               </div>
-              <h2 className="text-xl font-bold text-white">Recent Bookings</h2>
             </div>
             
-            {stats.recentBookings.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-neutral-400">No recent bookings found</p>
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-neutral-300">Pending</span>
+                  <span className="text-white font-medium">{getBookingStatusCount('Pending')}</span>
+                </div>
+                <div className="w-full bg-neutral-700 rounded-full h-2">
+                  <div 
+                    className="bg-amber-500 h-2 rounded-full" 
+                    style={{width: `${calculatePercentage(getBookingStatusCount('Pending'), stats.totalBookings)}%`}}
+                  ></div>
+                </div>
               </div>
-            ) : (
+              
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-neutral-300">Approved</span>
+                  <span className="text-white font-medium">{getBookingStatusCount('Approved')}</span>
+                </div>
+                <div className="w-full bg-neutral-700 rounded-full h-2">
+                  <div 
+                    className="bg-electric-500 h-2 rounded-full" 
+                    style={{width: `${calculatePercentage(getBookingStatusCount('Approved'), stats.totalBookings)}%`}}
+                  ></div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-neutral-300">Booked</span>
+                  <span className="text-white font-medium">{getBookingStatusCount('Booked')}</span>
+                </div>
+                <div className="w-full bg-neutral-700 rounded-full h-2">
+                  <div 
+                    className="bg-neon-500 h-2 rounded-full" 
+                    style={{width: `${calculatePercentage(getBookingStatusCount('Booked'), stats.totalBookings)}%`}}
+                  ></div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="flex justify-between mb-1">
+                  <span className="text-neutral-300">Rejected</span>
+                  <span className="text-white font-medium">{getBookingStatusCount('Rejected')}</span>
+                </div>
+                <div className="w-full bg-neutral-700 rounded-full h-2">
+                  <div 
+                    className="bg-red-500 h-2 rounded-full" 
+                    style={{width: `${calculatePercentage(getBookingStatusCount('Rejected'), stats.totalBookings)}%`}}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Recent Bookings */}
+          <div className="lg:col-span-2 card-hover p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
+                  <DocumentChartBarIcon className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">Recent Bookings</h2>
+                  <p className="text-sm text-neutral-400">Latest booking requests</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => navigate('/admin/booking-management')}
+                className="text-sm text-electric-400 hover:text-electric-300 font-medium flex items-center"
+              >
+                View All
+                <ArrowRightIcon className="w-4 h-4 ml-1" />
+              </button>
+            </div>
+            
+            {stats.recentBookings && stats.recentBookings.length > 0 ? (
               <div className="space-y-4">
-                {stats.recentBookings.map((booking) => (
-                  <div key={booking._id} className="flex items-center justify-between p-4 bg-neutral-800/30 rounded-lg border border-white/5 hover:bg-neutral-800/50 transition-colors duration-200">
+                {stats.recentBookings.slice(0, 5).map((booking) => (
+                  <div key={booking._id} className="flex items-center justify-between p-4 glass-effect rounded-xl border border-white/10 hover:bg-white/5 transition-colors">
                     <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-gradient-electric rounded-lg flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-full bg-gradient-electric flex items-center justify-center">
                         <CalendarIcon className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-semibold text-white">
-                          {booking.firstName && booking.surname ? 
-                            `${booking.firstName} ${booking.surname}` : 
-                            booking.name || 'N/A'}
-                        </h3>
-                        <p className="text-sm text-neutral-400">{booking.eventType}</p>
+                        <h3 className="font-medium text-white">{booking.eventType}</h3>
+                        <p className="text-sm text-neutral-400">
+                          {booking.firstName && booking.surname 
+                            ? `${booking.firstName} ${booking.surname}` 
+                            : booking.name || 'N/A'}
+                        </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-white">
-                        ₹{booking.amount?.toLocaleString() || '0'}
-                      </p>
-                      <p className="text-xs text-neutral-400">
+                      <p className="text-white font-medium">₹{booking.amount || 0}</p>
+                      <p className="text-sm text-neutral-400">
                         {new Date(booking.date).toLocaleDateString()}
                       </p>
                     </div>
                   </div>
                 ))}
               </div>
+            ) : (
+              <div className="text-center py-8">
+                <DocumentTextIcon className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
+                <p className="text-neutral-400">No recent bookings</p>
+              </div>
             )}
+          </div>
+        </div>
+
+        {/* User Roles Distribution */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-fade-in-up" style={{animationDelay: '0.3s'}}>
+          <div className="card-hover p-6">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-neon rounded-xl flex items-center justify-center shadow-lg">
+                  <UserGroupIcon className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">User Roles</h2>
+                  <p className="text-sm text-neutral-400">Distribution across the platform</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              <div className="text-center p-4 glass-effect rounded-xl border border-white/10">
+                <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <ShieldCheckIcon className="w-6 h-6 text-purple-400" />
+                </div>
+                <p className="text-2xl font-bold text-white">{getUserRoleCount('admin')}</p>
+                <p className="text-sm text-neutral-400">Admins</p>
+              </div>
+              
+              <div className="text-center p-4 glass-effect rounded-xl border border-white/10">
+                <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <UserIcon className="w-6 h-6 text-blue-400" />
+                </div>
+                <p className="text-2xl font-bold text-white">{getUserRoleCount('user')}</p>
+                <p className="text-sm text-neutral-400">Users</p>
+              </div>
+              
+              <div className="text-center p-4 glass-effect rounded-xl border border-white/10">
+                <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <UsersIcon className="w-6 h-6 text-green-400" />
+                </div>
+                <p className="text-2xl font-bold text-white">{getUserRoleCount('committeemember')}</p>
+                <p className="text-sm text-neutral-400">Committee</p>
+              </div>
+            </div>
           </div>
 
           {/* Upcoming Events */}
           <div className="card-hover p-6">
-            <div className="flex items-center space-x-3 mb-6">
-              <div className="w-10 h-10 bg-neon-500/20 rounded-lg flex items-center justify-center border border-neon-500/30">
-                <ClockIcon className="w-5 h-5 text-neon-400" />
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3">
+                <div className="w-12 h-12 bg-gradient-secondary rounded-xl flex items-center justify-center shadow-lg">
+                  <CalendarIcon className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-xl font-bold text-white">Upcoming Events</h2>
+                  <p className="text-sm text-neutral-400">Next scheduled bookings</p>
+                </div>
               </div>
-              <h2 className="text-xl font-bold text-white">Upcoming Events</h2>
             </div>
             
-            {stats.upcomingEvents.length === 0 ? (
-              <div className="text-center py-8">
-                <p className="text-neutral-400">No upcoming events found</p>
-              </div>
-            ) : (
+            {stats.upcomingEvents && stats.upcomingEvents.length > 0 ? (
               <div className="space-y-4">
-                {stats.upcomingEvents.map((event) => (
-                  <div key={event._id} className="flex items-center justify-between p-4 bg-neutral-800/30 rounded-lg border border-white/5 hover:bg-neutral-800/50 transition-colors duration-200">
-                    <div className="flex items-center space-x-4">
-                      <div className="w-10 h-10 bg-gradient-neon rounded-lg flex items-center justify-center">
-                        <CalendarIcon className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <h3 className="font-semibold text-white">
-                          {event.firstName && event.surname ? 
-                            `${event.firstName} ${event.surname}` : 
-                            event.name || 'N/A'}
-                        </h3>
-                        <p className="text-sm text-neutral-400">{event.eventType}</p>
-                      </div>
+                {stats.upcomingEvents.slice(0, 3).map((event) => (
+                  <div key={event._id} className="flex items-center justify-between p-4 glass-effect rounded-xl border border-white/10">
+                    <div>
+                      <h3 className="font-medium text-white">{event.eventType}</h3>
+                      <p className="text-sm text-neutral-400">
+                        {event.firstName && event.surname 
+                          ? `${event.firstName} ${event.surname}` 
+                          : event.name || 'N/A'}
+                      </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-medium text-white">
-                        ₹{event.amount?.toLocaleString() || '0'}
-                      </p>
-                      <p className="text-xs text-neutral-400">
+                      <p className="text-white font-medium">
                         {new Date(event.date).toLocaleDateString()}
+                      </p>
+                      <p className="text-sm text-neutral-400">
+                        {new Date(event.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                       </p>
                     </div>
                   </div>
                 ))}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <CalendarIcon className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
+                <p className="text-neutral-400">No upcoming events</p>
               </div>
             )}
           </div>
