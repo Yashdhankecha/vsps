@@ -5,17 +5,17 @@ const authorizeRoles = (...roles) => {
   return (req, res, next) => {
     try {
       const token = req.headers.authorization?.split(' ')[1];
-      
+
       if (!token) {
         return res.status(401).json({ message: 'No token provided' });
       }
 
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
+
       if (!decoded.role) {
         return res.status(403).json({ message: 'No role found in token' });
       }
-      
+
       // Super admin has access to everything
       if (decoded.role === 'superadmin') {
         req.user = {
@@ -24,10 +24,10 @@ const authorizeRoles = (...roles) => {
         };
         return next();
       }
-      
+
       if (!roles.includes(decoded.role)) {
-        return res.status(403).json({ 
-          message: `Access denied. Required roles: ${roles.join(', ')}, your role: ${decoded.role}` 
+        return res.status(403).json({
+          message: `Access denied. Required roles: ${roles.join(', ')}, your role: ${decoded.role}`
         });
       }
 
@@ -37,7 +37,7 @@ const authorizeRoles = (...roles) => {
         ...decoded,
         _id: userId
       };
-      
+
       next();
     } catch (error) {
       console.error('Auth error:', error);
@@ -47,9 +47,9 @@ const authorizeRoles = (...roles) => {
       if (error.name === 'TokenExpiredError') {
         return res.status(401).json({ message: 'Token expired' });
       }
-      res.status(500).json({ 
+      res.status(500).json({
         message: 'Server error',
-        error: error.message 
+        error: error.message
       });
     }
   };
@@ -62,25 +62,26 @@ const superAdminAuth = authorizeRoles('superadmin');
 const adminAuth = authorizeRoles('admin', 'superadmin');
 
 // Specialized role authorizations
-const userManagerAuth = authorizeRoles('usermanager', 'superadmin');
-const contentManagerAuth = authorizeRoles('contentmanager', 'superadmin');
-const formManagerAuth = authorizeRoles('formmanager', 'superadmin');
-const bookingManagerAuth = authorizeRoles('bookingmanager', 'superadmin');
-const contactManagerAuth = authorizeRoles('contactmanager', 'superadmin');
-const committeeMemberAuth = authorizeRoles('committeemember', 'superadmin');
+// Specialized role authorizations
+const userManagerAuth = authorizeRoles('usermanager', 'admin', 'superadmin');
+const contentManagerAuth = authorizeRoles('contentmanager', 'admin', 'superadmin');
+const formManagerAuth = authorizeRoles('formmanager', 'admin', 'superadmin');
+const bookingManagerAuth = authorizeRoles('bookingmanager', 'admin', 'superadmin');
+const contactManagerAuth = authorizeRoles('contactmanager', 'admin', 'superadmin');
+const committeeMemberAuth = authorizeRoles('committeemember', 'admin', 'superadmin');
 
 // User authorization (all authenticated users)
 const userAuth = authorizeRoles('user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager', 'committeemember');
 
-module.exports = { 
-  superAdminAuth, 
-  adminAuth, 
-  userManagerAuth, 
-  contentManagerAuth, 
-  formManagerAuth, 
-  bookingManagerAuth, 
-  contactManagerAuth, 
+module.exports = {
+  superAdminAuth,
+  adminAuth,
+  userManagerAuth,
+  contentManagerAuth,
+  formManagerAuth,
+  bookingManagerAuth,
+  contactManagerAuth,
   committeeMemberAuth,
-  userAuth, 
-  authorizeRoles 
+  userAuth,
+  authorizeRoles
 };

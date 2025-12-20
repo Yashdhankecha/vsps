@@ -9,6 +9,7 @@ router.get('/members/search', committeeController.searchCommitteeMembersByVillag
 
 // Committee member routes (committee members and super admins)
 router.post('/members/add', committeeMemberAuth, committeeController.addVillageMember);
+router.get('/members/village', committeeMemberAuth, committeeController.getVillageMembers);
 router.post('/bookings', committeeMemberAuth, committeeController.bookEventForMember);
 
 module.exports = router;

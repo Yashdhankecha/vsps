@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAdminLayout } from '../../contexts/AdminLayoutContext';
 import { useAuth } from '../../contexts/AuthContext';
 import {
@@ -9,11 +9,9 @@ import {
   MagnifyingGlassIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  CogIcon,
   ShieldCheckIcon,
   ArrowRightOnRectangleIcon,
-  UserGroupIcon,
-  CheckBadgeIcon
+  UserGroupIcon
 } from '@heroicons/react/24/outline';
 import {
   HomeIcon as HomeIconSolid,
@@ -23,10 +21,16 @@ import {
 
 const Sidebar = () => {
   const { sidebarExpanded, toggleSidebar } = useAdminLayout();
-  const { user } = useAuth();
+  const { user, setUser } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  // Define all menu items
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setUser(null);
+    navigate('/auth');
+  };
+
   // Define all menu items
   const allMenuItems = [
     {
@@ -153,7 +157,10 @@ const Sidebar = () => {
 
       {/* Footer */}
       <div className="p-4 border-t border-white/10">
-        <button className="group flex items-center w-full px-4 py-3 rounded-xl text-neutral-300 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200">
+        <button
+          onClick={handleLogout}
+          className="group flex items-center w-full px-4 py-3 rounded-xl text-neutral-300 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200"
+        >
           <ArrowRightOnRectangleIcon className="w-5 h-5 flex-shrink-0" />
           {sidebarExpanded && (
             <span className="ml-3 animate-fade-in-right">Logout</span>

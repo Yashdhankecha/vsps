@@ -193,6 +193,54 @@ const committeeController = {
         error: error.message
       });
     }
+  },
+
+  // Get members belonging to committee member's village
+  getVillageMembers: async (req, res) => {
+    try {
+      if (!['committeemember', 'superadmin', 'admin'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied.' });
+      }
+
+      let targetVillage;
+
+      if (req.user.role === 'committeemember') {
+        const committeeMember = await User.findById(req.user.id);
+        if (!committeeMember || !committeeMember.village) {
+          return res.status(400).json({ message: 'Committee member village not found' });
+        }
+        targetVillage = committeeMember.village;
+      } else {
+        // For admin/superadmin, perhaps they pass a village query param? 
+        // Or for now, just return empty if they don't specify?
+        // Let's assume this endpoint is primarily for committee members to seeing THEIR village.
+        // If admin wants to see village members, they can use the general user management or committee member search.
+        // However, if admin calls this, we might want to return all village members or error.
+        // Let's rely on query param for admin, or return empty.
+        targetVillage = req.query.village;
+        if (!targetVillage) {
+          // Fallback: if admin doesn't provide village, return everything?
+          // The frontend for VillageMembers.jsx seems to expect "My Village Members".
+          // Admin doesn't have a "My Village".
+          // So for admin, maybe we should return nothing or standard users?
+          // Let's default to returning nothing if no village specified for admin.
+          return res.status(200).json([]);
+        }
+      }
+
+      // Find users in this village with role 'user' (villagers)
+      const villageMembers = await User.find({
+        village: targetVillage,
+        role: 'user'
+      })
+        .select('-password -passwordHistory -verificationToken -resetPasswordToken -otp')
+        .sort({ username: 1 });
+
+      res.json(villageMembers);
+    } catch (error) {
+      console.error('Error fetching village members:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
   }
 };
 

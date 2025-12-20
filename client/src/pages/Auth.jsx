@@ -3,9 +3,11 @@ import { FaEnvelope, FaLock, FaUser, FaArrowLeft, FaEye, FaEyeSlash } from 'reac
 import axios from '../utils/axiosConfig';
 import { useNavigate, Link } from 'react-router-dom';
 import { verifyEmailOTP, resendOTP } from '../api/auth'; // Import the API function
+import { useAuth } from '../contexts/AuthContext';
 
 function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const { login } = useAuth();
   const [showOTPVerification, setShowOTPVerification] = useState(false);
   const [otpValues, setOtpValues] = useState(['', '', '', '', '', '']);
   const [resendTimer, setResendTimer] = useState(0);
@@ -61,7 +63,7 @@ function Auth() {
         localStorage.removeItem('token');
       }
     }
-  }, [navigate]);
+  }, []);
 
   useEffect(() => {
     let interval;
@@ -116,7 +118,7 @@ function Auth() {
 
       if (isLogin) {
         if (response.data.token) {
-          localStorage.setItem('token', response.data.token);
+          login(response.data.token);
 
           try {
             const decodedToken = JSON.parse(atob(response.data.token.split('.')[1]));

@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
 const AuthContext = createContext();
 
@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
         const base64Url = token.split('.')[1];
         const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
         const decodedToken = JSON.parse(window.atob(base64));
-        
+
         // Check if token is expired
         const currentTime = Date.now() / 1000;
         if (decodedToken.exp && decodedToken.exp < currentTime) {
@@ -33,7 +33,7 @@ export function AuthProvider({ children }) {
             role: decodedToken.role || 'user', // Default to 'user' if no role
             username: decodedToken.username || '' // Extract username from token
           };
-          
+
           // Validate role
           const validRoles = ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager', 'committeemember'];
           if (!validRoles.includes(normalizedUser.role)) {
@@ -55,37 +55,64 @@ export function AuthProvider({ children }) {
     setLoading(false);
   }, []);
 
-  // Helper functions for role checking
-  const isSuperAdmin = () => user?.role === 'superadmin';
-  const isAdmin = () => user?.role === 'admin' || user?.role === 'superadmin';
-  const isUser = () => user?.role === 'user';
-  const isUserManager = () => user?.role === 'usermanager' || user?.role === 'superadmin';
-  const isContentManager = () => user?.role === 'contentmanager' || user?.role === 'superadmin';
-  const isFormManager = () => user?.role === 'formmanager' || user?.role === 'superadmin';
-  const isBookingManager = () => user?.role === 'bookingmanager' || user?.role === 'superadmin';
-  const isContactManager = () => user?.role === 'contactmanager' || user?.role === 'superadmin';
-  const isCommitteeMember = () => user?.role === 'committeemember' || user?.role === 'superadmin';
-  
-  // Combined access checks
-  const hasAdminAccess = () => ['admin', 'superadmin'].includes(user?.role);
-  const hasUserAccess = () => ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager', 'committeemember'].includes(user?.role);
+  const login = (token) => {
+    localStorage.setItem('token', token);
+    try {
+      // Decode JWT token
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const decodedToken = JSON.parse(window.atob(base64));
 
-  const value = {
-    user,
-    loading,
-    setUser,
-    isSuperAdmin,
-    isAdmin,
-    isUser,
-    isUserManager,
-    isContentManager,
-    isFormManager,
-    isBookingManager,
-    isContactManager,
-    isCommitteeMember,
-    hasAdminAccess,
-    hasUserAccess
+      // Check for expiry, etc if needed, though usually fresh login returns valid token.
+
+      const normalizedUser = {
+        ...decodedToken,
+        _id: decodedToken._id || decodedToken.id || decodedToken.userId,
+        role: decodedToken.role || 'user',
+        username: decodedToken.username || ''
+      };
+
+      setUser(normalizedUser);
+      return true;
+    } catch (error) {
+      console.error('Error in login:', error);
+      return false;
+    }
   };
+
+  const value = useMemo(() => {
+    const isSuperAdmin = () => user?.role === 'superadmin';
+    const isAdmin = () => user?.role === 'admin' || user?.role === 'superadmin';
+    const isUser = () => user?.role === 'user';
+    const isUserManager = () => user?.role === 'usermanager' || user?.role === 'superadmin';
+    const isContentManager = () => user?.role === 'contentmanager' || user?.role === 'superadmin';
+    const isFormManager = () => user?.role === 'formmanager' || user?.role === 'superadmin';
+    const isBookingManager = () => user?.role === 'bookingmanager' || user?.role === 'superadmin';
+    const isContactManager = () => user?.role === 'contactmanager' || user?.role === 'superadmin';
+    const isCommitteeMember = () => user?.role === 'committeemember' || user?.role === 'superadmin';
+
+    // Combined access checks
+    const hasAdminAccess = () => ['admin', 'superadmin'].includes(user?.role);
+    const hasUserAccess = () => ['user', 'admin', 'superadmin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager', 'committeemember'].includes(user?.role);
+
+    return {
+      user,
+      loading,
+      setUser,
+      login,
+      isSuperAdmin,
+      isAdmin,
+      isUser,
+      isUserManager,
+      isContentManager,
+      isFormManager,
+      isBookingManager,
+      isContactManager,
+      isCommitteeMember,
+      hasAdminAccess,
+      hasUserAccess
+    };
+  }, [user, loading]);
 
   return (
     <AuthContext.Provider value={value}>

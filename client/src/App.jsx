@@ -56,6 +56,118 @@ import VillageMembers from './pages/committee/VillageMembers';
 
 const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
 
+const ProtectedRoute = ({ children }) => {
+  const { user } = useAuth();
+  if (!user) {
+    return <Navigate to="/auth" />;
+  }
+  return children;
+};
+
+const FormStatusCheck = ({ children, formType }) => {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [formDetails, setFormDetails] = useState(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkFormStatus = async () => {
+      try {
+        setLoading(true);
+        const formNameMap = {
+          'samuhLagan': 'registrationForm',
+          'studentAwards': 'studentAwardForm',
+        };
+
+        const formName = formNameMap[formType];
+        if (!formName) {
+          setError(`Invalid form type: ${formType}`);
+          setLoading(false);
+          return;
+        }
+
+        const publicStatusResponse = await axios.get(`${API_BASE_URL}/api/admin/forms/public/status`);
+        const formData = publicStatusResponse.data[formType];
+
+        if (!formData) {
+          setError(`Form data not found for: ${formType}`);
+          setLoading(false);
+          return;
+        }
+
+        setFormDetails(formData);
+
+        if (!formData.active) {
+          setError('This form is not currently available. Please check back later.');
+          setLoading(false);
+          return;
+        }
+
+        if (formData.startTime && new Date(formData.startTime) > new Date()) {
+          setError(`This form will be available from ${new Date(formData.startTime).toLocaleString()}`);
+          setLoading(false);
+          return;
+        }
+
+        if (formData.endTime && new Date(formData.endTime) < new Date()) {
+          setError('This form has expired. Please check back for future opportunities.');
+          setLoading(false);
+          return;
+        }
+
+        setLoading(false);
+      } catch (error) {
+        console.error('Error checking form status:', error);
+        setError('Unable to access the form at this time. Please try again later.');
+        setLoading(false);
+      }
+    };
+
+    checkFormStatus();
+  }, [formType]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Checking form availability...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-red-500 text-center p-4 max-w-md">
+          <h2 className="text-xl font-bold mb-2">Form Unavailable</h2>
+          <p>{error}</p>
+          {formDetails && (formDetails.startTime || formDetails.endTime) && (
+            <div className="mt-4 p-3 bg-gray-100 rounded-lg">
+              <h3 className="font-semibold mb-2">Form Availability:</h3>
+              {formDetails.startTime && (
+                <p>Start Time: {new Date(formDetails.startTime).toLocaleString()}</p>
+              )}
+              {formDetails.endTime && (
+                <p>End Time: {new Date(formDetails.endTime).toLocaleString()}</p>
+              )}
+            </div>
+          )}
+          <button
+            onClick={() => navigate('/services')}
+            className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            Return to Services
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return React.cloneElement(children, { formDetails });
+};
+
 function AppContent() {
   const { user, loading } = useAuth();
   const location = useLocation();
@@ -84,122 +196,6 @@ function AppContent() {
 
     fetchFormStatus();
   }, []);
-
-
-
-
-  const ProtectedRoute = ({ children }) => {
-    if (!user) {
-      return <Navigate to="/auth" />;
-    }
-    return children;
-  };
-
-
-  const FormStatusCheck = ({ children, formType }) => {
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [formDetails, setFormDetails] = useState(null);
-
-    useEffect(() => {
-      const checkFormStatus = async () => {
-        try {
-          setLoading(true);
-          const formNameMap = {
-            'samuhLagan': 'registrationForm',
-            'studentAwards': 'studentAwardForm',
-
-          };
-
-          const formName = formNameMap[formType];
-          if (!formName) {
-            setError(`Invalid form type: ${formType}`);
-            setLoading(false);
-            return;
-          }
-
-          const publicStatusResponse = await axios.get(`${API_BASE_URL}/api/admin/forms/public/status`);
-          const formData = publicStatusResponse.data[formType];
-
-          if (!formData) {
-            setError(`Form data not found for: ${formType}`);
-            setLoading(false);
-            return;
-          }
-
-          setFormDetails(formData);
-
-          if (!formData.active) {
-            setError('This form is not currently available. Please check back later.');
-            setLoading(false);
-            return;
-          }
-
-          if (formData.startTime && new Date(formData.startTime) > new Date()) {
-            setError(`This form will be available from ${new Date(formData.startTime).toLocaleString()}`);
-            setLoading(false);
-            return;
-          }
-
-          if (formData.endTime && new Date(formData.endTime) < new Date()) {
-            setError('This form has expired. Please check back for future opportunities.');
-            setLoading(false);
-            return;
-          }
-
-          setLoading(false);
-        } catch (error) {
-          console.error('Error checking form status:', error);
-          setError('Unable to access the form at this time. Please try again later.');
-          setLoading(false);
-        }
-      };
-
-      checkFormStatus();
-    }, [formType]);
-
-    if (loading) {
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto"></div>
-            <p className="mt-4 text-gray-600">Checking form availability...</p>
-          </div>
-        </div>
-      );
-    }
-
-    if (error) {
-      return (
-        <div className="min-h-screen flex items-center justify-center">
-          <div className="text-red-500 text-center p-4 max-w-md">
-            <h2 className="text-xl font-bold mb-2">Form Unavailable</h2>
-            <p>{error}</p>
-            {formDetails && (formDetails.startTime || formDetails.endTime) && (
-              <div className="mt-4 p-3 bg-gray-100 rounded-lg">
-                <h3 className="font-semibold mb-2">Form Availability:</h3>
-                {formDetails.startTime && (
-                  <p>Start Time: {new Date(formDetails.startTime).toLocaleString()}</p>
-                )}
-                {formDetails.endTime && (
-                  <p>End Time: {new Date(formDetails.endTime).toLocaleString()}</p>
-                )}
-              </div>
-            )}
-            <button
-              onClick={() => navigate('/services')}
-              className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-            >
-              Return to Services
-            </button>
-          </div>
-        </div>
-      );
-    }
-
-
-    return React.cloneElement(children, { formDetails });
-  };
 
 
   if (loading) {

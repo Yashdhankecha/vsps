@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import axiosInstance from '../../utils/axiosConfig';
 import {
@@ -11,6 +12,7 @@ import {
 
 const VillageMembers = () => {
     const { user } = useAuth();
+    const navigate = useNavigate();
     const [members, setMembers] = useState([]);
     const [filteredMembers, setFilteredMembers] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -85,7 +87,7 @@ const VillageMembers = () => {
                             </div>
                         </div>
                         <button
-                            onClick={() => window.location.href = '/committee/add-member'}
+                            onClick={() => navigate('/committee/add-member')}
                             className="btn-primary mt-4 sm:mt-0"
                         >
                             Add New Member
