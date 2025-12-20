@@ -12,6 +12,7 @@ const axiosInstance = axios.create({
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   (config) => {
+    console.log('Axios request:', config);
     // Get the token from localStorage
     const token = localStorage.getItem('token');
     
@@ -23,6 +24,7 @@ axiosInstance.interceptors.request.use(
     return config;
   },
   (error) => {
+    console.error('Axios request error:', error);
     return Promise.reject(error);
   }
 );
@@ -30,9 +32,11 @@ axiosInstance.interceptors.request.use(
 // Add a response interceptor
 axiosInstance.interceptors.response.use(
   (response) => {
+    console.log('Axios response:', response);
     return response;
   },
   (error) => {
+    console.error('Axios response error:', error);
     // Handle 401 Unauthorized errors
     if (error.response && error.response.status === 401) {
       // Clear token and redirect to login
@@ -44,4 +48,4 @@ axiosInstance.interceptors.response.use(
   }
 );
 
-export default axiosInstance; 
+export default axiosInstance;

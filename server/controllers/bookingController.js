@@ -8,15 +8,63 @@ const { sendEmail } = require('../utils/emailService');
 
 exports.submitBookingRequest = async (req, res) => {
   try {
-    const booking = new Booking(req.body);
+    console.log('=== BOOKING SUBMISSION STARTED ===');
+    console.log('Received booking request:', req.body);
+    console.log('Request headers:', req.headers);
     
+    // Validate required fields
+    const requiredFields = ['firstName', 'surname', 'email', 'phone', 'eventType', 'date', 'villageName', 'guestCount', 'eventDocument'];
+    const missingFields = requiredFields.filter(field => !req.body[field]);
+    
+    if (missingFields.length > 0) {
+      console.log('Missing required fields:', missingFields);
+      return res.status(400).json({ 
+        message: 'Missing required fields', 
+        missingFields 
+      });
+    }
+    
+    // Validate date format
+    const date = new Date(req.body.date);
+    if (isNaN(date.getTime())) {
+      console.log('Invalid date format:', req.body.date);
+      return res.status(400).json({ 
+        message: 'Invalid date format', 
+        invalidDate: req.body.date 
+      });
+    }
+    
+    // Validate guest count
+    const guestCount = parseInt(req.body.guestCount);
+    if (isNaN(guestCount) || guestCount < 0) {
+      console.log('Invalid guest count:', req.body.guestCount);
+      return res.status(400).json({ 
+        message: 'Invalid guest count', 
+        invalidGuestCount: req.body.guestCount 
+      });
+    }
+    
+    const bookingData = {
+      firstName: req.body.firstName,
+      surname: req.body.surname,
+      email: req.body.email,
+      phone: req.body.phone,
+      eventType: req.body.eventType,
+      date: date,
+      villageName: req.body.villageName,
+      guestCount: guestCount,
+      additionalNotes: req.body.additionalNotes || '',
+      eventDocument: req.body.eventDocument,
+      documentType: req.body.documentType || 'Other',
+      status: 'Pending'
+    };
+    
+    console.log('Prepared booking data:', bookingData);
     
     const samajVillages = ['Vadodara', 'Ahmedabad', 'Surat', 'Rajkot', 'Gandhinagar'];
     
-    
-    const userSurname = (booking.surname || '').trim().toLowerCase();
-    const userVillage = (booking.villageName || '').trim();
-    
+    const userSurname = (bookingData.surname || '').trim().toLowerCase();
+    const userVillage = (bookingData.villageName || '').trim();
     
     const isSamajMember = userSurname === 'patel' && 
       samajVillages.some(village => village.toLowerCase() === userVillage.toLowerCase());
@@ -28,9 +76,13 @@ exports.submitBookingRequest = async (req, res) => {
       samajVillages
     });
     
+    bookingData.isSamajMember = isSamajMember;
     
-    booking.isSamajMember = isSamajMember;
+    console.log('Creating booking with data:', bookingData);
+    const booking = new Booking(bookingData);
+    console.log('Saving booking...');
     await booking.save();
+    console.log('Booking saved successfully:', booking._id);
 
     await sendEmail(
       req.body.email,
@@ -63,13 +115,26 @@ exports.submitBookingRequest = async (req, res) => {
       console.error('Failed to send admin notification email:', adminEmailError);
     }
 
+    console.log('=== BOOKING SUBMISSION COMPLETED SUCCESSFULLY ===');
     res.status(201).json({ 
       message: 'Booking request submitted successfully', 
       booking,
       isSamajMember 
     });
   } catch (error) {
+    console.error('=== BOOKING SUBMISSION FAILED ===');
     console.error('Error in submitBookingRequest:', error);
+    if (error.name === 'ValidationError') {
+      console.error('Validation error details:', error.errors);
+      return res.status(400).json({ 
+        message: 'Validation error', 
+        error: error.message,
+        details: Object.keys(error.errors).map(key => ({
+          field: key,
+          message: error.errors[key].message
+        }))
+      });
+    }
     res.status(500).json({ message: 'Error submitting booking request', error: error.message });
   }
 };
@@ -297,14 +362,21 @@ exports.cancelBooking = async (req, res) => {
 
 exports.uploadDocument = async (req, res) => {
   try {
+    console.log('=== DOCUMENT UPLOAD STARTED ===');
+    console.log('Received file upload request');
+    console.log('Request file:', req.file);
+    console.log('Request body:', req.body);
+    
     if (!req.file) {
+      console.log('No file uploaded in request');
       return res.status(400).json({ message: 'No file uploaded' });
     }
     
+    // Use the correct port for the server
+    const port = process.env.PORT || 3001;
     const baseUrl = process.env.NODE_ENV === 'production' 
-      ? process.env.BASE_URL || 'http://localhost:3000'
-      : 'http://localhost:3000';
-    
+      ? process.env.BASE_URL || `http://localhost:${port}`
+      : `http://localhost:${port}`;
     
     const formattedBaseUrl = baseUrl.startsWith('http://') || baseUrl.startsWith('https://') 
       ? baseUrl 
@@ -312,8 +384,8 @@ exports.uploadDocument = async (req, res) => {
     
     const documentUrl = `${formattedBaseUrl}/uploads/${req.file.filename}`;
     
-   
-    const formattedUrl = documentUrl.replace(/\/+/g, '/');
+    // Fix double slashes in URL
+    const formattedUrl = documentUrl.replace(/([^:]\/)\/+/g, '$1');
     
     console.log('Document uploaded:', {
       originalName: req.file.originalname,
@@ -341,12 +413,14 @@ exports.uploadDocument = async (req, res) => {
       documentType = 'Marriage Certificate';
     }
     
+    console.log('=== DOCUMENT UPLOAD COMPLETED SUCCESSFULLY ===');
     res.status(200).json({ 
       message: 'Document uploaded successfully',
       documentUrl: formattedUrl,
       documentType: documentType
     });
   } catch (error) {
+    console.error('=== DOCUMENT UPLOAD FAILED ===');
     console.error('Error uploading document:', error);
     res.status(500).json({ 
       message: 'Error uploading document', 

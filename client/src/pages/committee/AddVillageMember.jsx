@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import axiosInstance from '../../utils/axiosConfig';
-import { 
+import {
   UserPlusIcon,
   UserIcon,
   EnvelopeIcon,
@@ -47,9 +47,9 @@ const AddVillageMember = () => {
       };
 
       const response = await axiosInstance.post('/api/committee/members/add', requestData);
-      
+
       setSuccess(response.data.message);
-      
+
       // Reset form
       setFormData({
         username: '',
@@ -111,11 +111,11 @@ const AddVillageMember = () => {
         )}
 
         {/* Add Member Form */}
-        <div className="card-glass animate-fade-in-up" style={{animationDelay: '0.1s'}}>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="card-glass animate-fade-in-up p-8" style={{ animationDelay: '0.1s' }}>
+          <form onSubmit={handleSubmit} className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Username */}
-              <div>
+              <div className="space-y-2">
                 <label className="form-label flex items-center space-x-2">
                   <UserIcon className="w-4 h-4" />
                   <span>Username</span>
@@ -132,7 +132,7 @@ const AddVillageMember = () => {
               </div>
 
               {/* Email */}
-              <div>
+              <div className="space-y-2">
                 <label className="form-label flex items-center space-x-2">
                   <EnvelopeIcon className="w-4 h-4" />
                   <span>Email Address</span>
@@ -149,7 +149,7 @@ const AddVillageMember = () => {
               </div>
 
               {/* Phone */}
-              <div>
+              <div className="space-y-2">
                 <label className="form-label flex items-center space-x-2">
                   <PhoneIcon className="w-4 h-4" />
                   <span>Phone Number</span>
@@ -165,7 +165,7 @@ const AddVillageMember = () => {
               </div>
 
               {/* Village (readonly for committee members) */}
-              <div>
+              <div className="space-y-2">
                 <label className="form-label flex items-center space-x-2">
                   <BuildingLibraryIcon className="w-4 h-4" />
                   <span>Village</span>
@@ -192,9 +192,8 @@ const AddVillageMember = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`btn-primary w-full sm:w-auto sm:min-w-[200px] flex items-center justify-center space-x-2 ${
-                  loading ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                className={`btn-primary w-full sm:w-auto sm:min-w-[200px] flex items-center justify-center space-x-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
               >
                 {loading ? (
                   <>
@@ -213,7 +212,7 @@ const AddVillageMember = () => {
         </div>
 
         {/* Instructions */}
-        <div className="card-glass mt-6 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+        <div className="card-glass mt-6 animate-fade-in-up p-8" style={{ animationDelay: '0.2s' }}>
           <h3 className="text-lg font-semibold text-white mb-3">Instructions</h3>
           <ul className="space-y-2 text-neutral-300 text-sm">
             <li className="flex items-start space-x-2">

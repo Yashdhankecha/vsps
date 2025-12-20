@@ -23,7 +23,7 @@ function Auth() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
-  
+
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -78,7 +78,7 @@ function Auth() {
       const newOtpValues = [...otpValues];
       newOtpValues[index] = value;
       setOtpValues(newOtpValues);
-      
+
       // Auto-focus next input
       if (value !== '' && index < 5) {
         const nextInput = document.getElementById(`otp-${index + 1}`);
@@ -96,28 +96,28 @@ function Auth() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     if (!isLogin && formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       return;
     }
-  
+
     const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
-  
+
     const data = isLogin
       ? { email: formData.email, password: formData.password }
       : { username: formData.name, email: formData.email, password: formData.password };
-  
+
     setIsLoading(true);
     setError('');
-  
+
     try {
       const response = await axios.post(endpoint, data);
-  
+
       if (isLogin) {
         if (response.data.token) {
           localStorage.setItem('token', response.data.token);
-          
+
           try {
             const decodedToken = JSON.parse(atob(response.data.token.split('.')[1]));
             // Redirect based on role
@@ -191,10 +191,10 @@ function Auth() {
     try {
       setIsLoading(true);
       setError('');
-      
+
       await resendOTP(otpEmail, 'email');
-      
-      setResendTimer(60); 
+
+      setResendTimer(60);
       setError('');
     } catch (error) {
       console.error('Resend OTP Error:', error);
@@ -243,17 +243,17 @@ function Auth() {
                   Verify your email
                 </h2>
                 <p className="mt-2 text-center text-sm text-neutral-300">
-                  Please enter the 6-digit OTP sent to<br/>
+                  Please enter the 6-digit OTP sent to<br />
                   <span className="font-medium text-electric-400">{otpEmail}</span>
                 </p>
               </div>
-              
+
               {error && (
                 <div className="bg-red-500/20 border border-red-500/30 text-red-300 rounded-md p-3 text-sm text-center">
                   {error}
                 </div>
               )}
-              
+
               <form className="mt-8 space-y-6" onSubmit={handleOTPVerification}>
                 <div className="flex justify-center space-x-2">
                   {otpValues.map((value, index) => (
@@ -274,9 +274,8 @@ function Auth() {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className={`w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electric-500 ${
-                      isLoading ? 'opacity-70 cursor-not-allowed' : ''
-                    }`}
+                    className={`w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electric-500 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                      }`}
                   >
                     {isLoading ? 'Verifying...' : 'Verify OTP'}
                   </button>
@@ -364,7 +363,7 @@ function Auth() {
             <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
               <div className="rounded-md shadow-sm space-y-4">
                 {!isLogin && (
-                  <div>
+                  <div className="mb-4">
                     <label htmlFor="name" className="sr-only">
                       Full Name
                     </label>
@@ -385,7 +384,7 @@ function Auth() {
                     </div>
                   </div>
                 )}
-                <div>
+                <div className="mb-4">
                   <label htmlFor="email" className="sr-only">
                     Email address
                   </label>
@@ -406,7 +405,7 @@ function Auth() {
                     />
                   </div>
                 </div>
-                <div>
+                <div className="mb-4">
                   <label htmlFor="password" className="sr-only">
                     Password
                   </label>
@@ -439,7 +438,7 @@ function Auth() {
                   </div>
                 </div>
                 {!isLogin && (
-                  <div>
+                  <div className="mb-4">
                     <label htmlFor="confirmPassword" className="sr-only">
                       Confirm Password
                     </label>
@@ -499,9 +498,8 @@ function Auth() {
                 <button
                   type="submit"
                   disabled={isLoading}
-                  className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electric-500 transition-all duration-200 ${
-                    isLoading ? 'opacity-70 cursor-not-allowed' : ''
-                  }`}
+                  className={`group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electric-500 transition-all duration-200 ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                    }`}
                 >
                   {isLoading ? 'Processing...' : isLogin ? 'Sign in' : 'Register'}
                 </button>

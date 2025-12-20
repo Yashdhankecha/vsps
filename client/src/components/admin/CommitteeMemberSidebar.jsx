@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAdminLayout } from '../../contexts/AdminLayoutContext';
 import { useAuth } from '../../contexts/AuthContext';
-import { 
-  HomeIcon, 
+import {
+  HomeIcon,
   UsersIcon,
   CalendarIcon,
   MagnifyingGlassIcon,
@@ -27,10 +27,11 @@ const Sidebar = () => {
   const location = useLocation();
 
   // Define all menu items
+  // Define all menu items
   const allMenuItems = [
-    { 
-      name: 'Dashboard', 
-      icon: HomeIcon, 
+    {
+      name: 'Dashboard',
+      icon: HomeIcon,
       iconSolid: HomeIconSolid,
       path: '/committee/dashboard',
       color: 'text-electric-400',
@@ -38,9 +39,9 @@ const Sidebar = () => {
       borderColor: 'border-electric-500/30',
       roles: ['committeemember', 'superadmin']
     },
-    { 
-      name: 'Add Member', 
-      icon: UsersIcon, 
+    {
+      name: 'Add Member',
+      icon: UsersIcon,
       iconSolid: UsersIconSolid,
       path: '/committee/add-member',
       color: 'text-secondary-400',
@@ -48,28 +49,18 @@ const Sidebar = () => {
       borderColor: 'border-secondary-500/30',
       roles: ['committeemember', 'superadmin']
     },
-    { 
-      name: 'Book Event', 
-      icon: CalendarIcon, 
-      iconSolid: CalendarIconSolid,
-      path: '/committee/book-event',
-      color: 'text-neon-400',
-      bgColor: 'bg-neon-500/20',
-      borderColor: 'border-neon-500/30',
-      roles: ['committeemember', 'superadmin']
-    },
-    { 
-      name: 'Approve Villagers', 
-      icon: CheckBadgeIcon, 
-      path: '/committee/approve-villagers',
+    {
+      name: 'My Village Members',
+      icon: UserGroupIcon,
+      path: '/committee/village-members',
       color: 'text-primary-400',
       bgColor: 'bg-primary-500/20',
       borderColor: 'border-primary-500/30',
       roles: ['committeemember', 'superadmin']
     },
-    { 
-      name: 'Committee Members', 
-      icon: MagnifyingGlassIcon, 
+    {
+      name: 'Committee Members',
+      icon: MagnifyingGlassIcon,
       path: '/committee/members',
       color: 'text-sunset-400',
       bgColor: 'bg-sunset-500/20',
@@ -81,12 +72,12 @@ const Sidebar = () => {
   // Filter menu items based on user role
   const getMenuItems = () => {
     if (!user || !user.role) return [];
-    
+
     // Super admin gets all items
     if (user.role === 'superadmin') {
       return allMenuItems;
     }
-    
+
     // Filter items based on user role
     return allMenuItems.filter(item => item.roles && item.roles.includes(user.role));
   };
@@ -113,8 +104,8 @@ const Sidebar = () => {
           {sidebarExpanded && (
             <div className="animate-fade-in-right">
               <h2 className="text-xl font-bold text-white">
-                {user?.role === 'superadmin' ? 'Super Admin' : 
-                 user?.role === 'committeemember' ? 'Committee Member' : 'Admin'} Panel
+                {user?.role === 'superadmin' ? 'Super Admin' :
+                  user?.role === 'committeemember' ? 'Committee Member' : 'Admin'} Panel
               </h2>
               <p className="text-xs text-neutral-300 font-medium">Management Dashboard</p>
               {user?.village && (
@@ -130,16 +121,15 @@ const Sidebar = () => {
         {menuItems.map((item, index) => {
           const active = isActive(item.path);
           const Icon = active && item.iconSolid ? item.iconSolid : item.icon;
-          
+
           return (
             <Link
               key={item.name}
               to={item.path}
-              className={`group flex items-center px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden border ${
-                active 
-                  ? `${item.bgColor} ${item.color} ${item.borderColor} shadow-lg font-semibold` 
-                  : 'text-neutral-300 hover:bg-white/5 hover:text-white font-medium border-transparent hover:border-white/10'
-              }`}
+              className={`group flex items-center px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden border ${active
+                ? `${item.bgColor} ${item.color} ${item.borderColor} shadow-lg font-semibold`
+                : 'text-neutral-300 hover:bg-white/5 hover:text-white font-medium border-transparent hover:border-white/10'
+                }`}
               style={{
                 animationDelay: `${index * 0.05}s`
               }}
@@ -148,9 +138,9 @@ const Sidebar = () => {
               {active && (
                 <div className="absolute left-0 top-0 bottom-0 w-1 bg-current rounded-r"></div>
               )}
-              
+
               <Icon className="w-5 h-5 flex-shrink-0" />
-              
+
               {sidebarExpanded && (
                 <span className="ml-3 truncate animate-fade-in-right">
                   {item.name}

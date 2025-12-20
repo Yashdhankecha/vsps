@@ -1,306 +1,192 @@
 import React, { useState, useEffect } from 'react';
-import { FaUser, FaEnvelope, FaPhone, FaCalendarAlt, FaMapMarkerAlt, FaSchool, FaGraduationCap, FaTrophy, FaFileUpload, FaCheck, FaExclamationCircle, FaClock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import axios from '../utils/axiosConfig';
 import { useAuth } from '../contexts/AuthContext';
-
+import axios from '../utils/axiosConfig';
+import {
+  FaUserGraduate,
+  FaCalendarAlt,
+  FaClock,
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaSpinner,
+  FaArrowLeft,
+  FaAward,
+  FaSchool,
+  FaFileUpload
+} from 'react-icons/fa';
 
 const StudentAwardRegistration = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [formExpired, setFormExpired] = useState(false);
-  const [formNotStarted, setFormNotStarted] = useState(false);
-  const [formEndTime, setFormEndTime] = useState(null);
-  const [formStartTime, setFormStartTime] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [canAccessForm, setCanAccessForm] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(null);
-  const [eventDate, setEventDate] = useState(null);
+  const [success, setSuccess] = useState(false);
+
+  // Form Status State
+  const [formStatus, setFormStatus] = useState({
+    active: false,
+    startTime: null,
+    endTime: null,
+    message: ''
+  });
+
+  // Time remaining state
+  const [timeLeft, setTimeLeft] = useState('');
+
+  // Form Data State
+  const [formData, setFormData] = useState({
+    studentName: '',
+    fatherName: '',
+    surname: '',
+    standard: '',
+    percentile: '',
+    village: '',
+    mobileNumber: '',
+    schoolName: '',
+    schoolAddress: '',
+    resultImage: null
+  });
 
   useEffect(() => {
-    const checkFormStatus = async () => {
-      try {
-        setLoading(true);
-        
-        // Check if user is logged in
-        if (!user) {
-          setError('You need to be logged in to access this form. Please log in and try again.');
-          navigate('/auth');
-          return;
-        }
-        
-        // Check form visibility
-        const visibilityResponse = await axios.get('/api/admin/forms/check-form-visibility/studentAwardForm');
-        
-        if (!visibilityResponse.data.visible) {
-          setError('This form is not currently available. Please check back later.');
-          return;
-        }
-        
-        // Check if user can access the form
-        try {
-          const accessResponse = await axios.get('/api/admin/forms/can-access-form/studentAwardForm');
-          
-          if (!accessResponse.data.canAccess) {
-            // Get form status details
-            const formStatus = accessResponse.data.formStatus;
-            
-            if (!formStatus.active) {
-              setError('This form is currently disabled by the administrator.');
-            } else if (formStatus.endTime && new Date(formStatus.endTime) < new Date()) {
-              setFormExpired(true);
-              setFormEndTime(new Date(formStatus.endTime));
-              setError(`This form was available until ${new Date(formStatus.endTime).toLocaleString()}. The submission period has ended.`);
-            } else if (formStatus.startTime && new Date(formStatus.startTime) > new Date()) {
-              setFormNotStarted(true);
-              setFormStartTime(new Date(formStatus.startTime));
-              setError(`This form will be available starting from ${new Date(formStatus.startTime).toLocaleString()}. Please check back later.`);
-            } else {
-              setError('This form is currently not accessible.');
-            }
-            return;
-          }
-          
-          // User can access the form
-          setError(null);
-          setCanAccessForm(true);
-        } catch (accessError) {
-          console.error('Error checking form access:', accessError);
-          
-          // Handle authentication errors
-          if (accessError.response && accessError.response.status === 401) {
-            setError('Your session has expired. Please log in again.');
-            navigate('/auth');
-            return;
-          }
-          
-          // Handle other errors
-          setError('Unable to verify form access. Please try again later.');
-          return;
-        }
-        
-        // Get public form status
-        const publicStatusResponse = await axios.get('/api/admin/forms/public/status');
-        const studentAwardForm = publicStatusResponse.data.studentAwards;
-        
-        // Set form timing information
-        if (studentAwardForm.startTime) {
-          setFormStartTime(new Date(studentAwardForm.startTime));
-        }
-        if (studentAwardForm.endTime) {
-          setFormEndTime(new Date(studentAwardForm.endTime));
-        }
-        if (studentAwardForm.eventDate) {
-          setEventDate(new Date(studentAwardForm.eventDate));
-        }
-        
-      } catch (error) {
-        console.error('Error checking form status:', error);
-        setError('Unable to access the registration form at this time. Please try again later.');
-      } finally {
-        setLoading(false);
-      }
-    };
+    checkFormAccess();
+    const timer = setInterval(updateTimeLeft, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
-    checkFormStatus();
-  }, [navigate, user]);
-
-  
-  useEffect(() => {
-    if (!formEndTime) return;
-
-    const calculateTimeLeft = () => {
-      const now = new Date();
-      const difference = formEndTime - now;
-      
-      if (difference <= 0) {
-        setTimeLeft(null);
+  const checkFormAccess = async () => {
+    try {
+      // Check authentication
+      if (!user) {
+        navigate('/auth');
         return;
       }
 
-      const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-      const hours = Math.floor((difference / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((difference / 1000 / 60) % 60);
-      const seconds = Math.floor((difference / 1000) % 60);
+      // Check form visibility and status
+      const statusRes = await axios.get('/api/admin/forms/public/status');
+      const status = statusRes.data.studentAwards;
 
-      setTimeLeft({ days, hours, minutes, seconds });
-    };
+      if (!status || !status.active) {
+        setError('Registration is currently closed.');
+        setLoading(false);
+        return;
+      }
 
-    calculateTimeLeft();
-    const timer = setInterval(calculateTimeLeft, 1000);
+      setFormStatus(status);
 
-    return () => clearInterval(timer);
-  }, [formEndTime]);
+      // Check if user has already submitted
+      try {
+        const accessRes = await axios.get('/api/admin/forms/can-access-form/studentAwardForm');
+        if (!accessRes.data.canAccess) {
+          setError('You have already submitted this form.');
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        console.error('Error checking form access:', err);
+        // Don't block if just checking access fails, backend will block submission anyway.
+      }
 
-  const [formData, setFormData] = useState({
-    // Section A: Student Information
-    fullName: '',
-    dateOfBirth: '',
-    contactNumber: '',
-    email: '',
-    address: '',
-    
-    // Section B: Academic Details
-    schoolName: '',
-    standard: '',
-    boardName: '',
-    examYear: '',
-    totalPercentage: '',
-    rank: 'none',
-    marksheet: null,
-    
-    // Section C: Declaration
-    declaration: false
-  });
+      // Pre-fill user data
+      setFormData(prev => ({
+        ...prev,
+        studentName: user.username || '',
+        mobileNumber: user.phone || '',
+        village: user.village || ''
+      }));
 
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error in checkFormAccess:', err);
+      setError('Failed to load form. Please try again later.');
+      setLoading(false);
+    }
+  };
+
+  const updateTimeLeft = () => {
+    if (!formStatus.endTime) return;
+
+    const now = new Date().getTime();
+    const end = new Date(formStatus.endTime).getTime();
+    const distance = end - now;
+
+    if (distance < 0) {
+      setTimeLeft('EXPIRED');
+      if (!error && !success) setError('Registration has closed.');
+    } else {
+      const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+    }
+  };
 
   const handleChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : type === 'file' ? files[0] : value
-    }));
+    const { name, value, files } = e.target;
+    if (name === 'resultImage') {
+      setFormData(prev => ({ ...prev, resultImage: files[0] }));
+    } else {
+      setFormData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsSubmitting(true);
-    setError('');
+    setSubmitting(true);
+    setError(null);
 
     try {
       const formDataToSend = new FormData();
-      
-      
-      formDataToSend.append('name', formData.fullName);
-      formDataToSend.append('contactNumber', formData.contactNumber);
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('address', formData.address);
-      formDataToSend.append('schoolName', formData.schoolName);
-      formDataToSend.append('standard', formData.standard);
-      formDataToSend.append('boardName', formData.boardName);
-      formDataToSend.append('examYear', formData.examYear);
-      formDataToSend.append('totalPercentage', formData.totalPercentage);
-      
-    
-      const rankValue = formData.rank === 'none' ? 'none' : 
-        formData.rank === '1st' ? '1st' :
-        formData.rank === '2nd' ? '2nd' :
-        formData.rank === '3rd' ? '3rd' : 'none';
-      formDataToSend.append('rank', rankValue);
-
-      
-      if (formData.marksheet) {
-        formDataToSend.append('marksheet', formData.marksheet);
-      }
-
-      
-      const userId = user?._id || user?.id;
-      if (!userId) {
-        throw new Error('User ID not found. Please try logging in again.');
-      }
-      formDataToSend.append('user', userId);
-
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('Please log in to submit the form');
-      }
-
-      
-      console.log('Submitting form data:', {
-        name: formData.fullName,
-        contactNumber: formData.contactNumber,
-        email: formData.email,
-        address: formData.address,
-        schoolName: formData.schoolName,
-        standard: formData.standard,
-        boardName: formData.boardName,
-        examYear: formData.examYear,
-        totalPercentage: formData.totalPercentage,
-        rank: rankValue,
-        userId: userId
+      Object.keys(formData).forEach(key => {
+        formDataToSend.append(key, formData[key]);
       });
 
-      const response = await axios.post(`/api/bookings/student-awards/register`, formDataToSend, {
+      await axios.post('/api/bookings/student-awards/register', formDataToSend, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
       });
 
-      if (response.data.success) {
-        setShowSuccessPopup(true);
-        setFormData({
-          fullName: '',
-          dateOfBirth: '',
-          contactNumber: '',
-          email: '',
-          address: '',
-          schoolName: '',
-          standard: '',
-          boardName: '',
-          examYear: '',
-          totalPercentage: '',
-          rank: 'none',
-          marksheet: null,
-          declaration: false
-        });
-
-        setTimeout(() => {
-          setShowSuccessPopup(false);
-          navigate('/services');
-        }, 3000);
-      } else {
-        throw new Error(response.data.message || 'Failed to submit form');
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      if (error.response?.data?.message) {
-        setError(error.response.data.message);
-      } else if (error.message) {
-        setError(error.message);
-      } else {
-        setError('Failed to submit form. Please try again.');
-      }
+      setSuccess(true);
+      window.scrollTo(0, 0);
+    } catch (err) {
+      console.error('Submission error:', err);
+      setError(err.response?.data?.message || 'Failed to submit application. Please try again.');
     } finally {
-      setIsSubmitting(false);
+      setSubmitting(false);
     }
   };
 
-  
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+        <div className="text-center">
+          <FaSpinner className="animate-spin text-electric-500 text-4xl mx-auto mb-4" />
+          <p className="text-neutral-300">Loading form...</p>
+        </div>
       </div>
     );
   }
 
-  if (error) {
+  if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="bg-white p-8 rounded-lg shadow-md max-w-md w-full">
-          <div className="text-center">
-            <FaExclamationCircle className="mx-auto text-red-500 text-5xl mb-4" />
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">Form Access Error</h2>
-            <p className="text-gray-600 mb-6">{error}</p>
-            {(formNotStarted || formExpired) && (
-              <div className="bg-gray-50 p-4 rounded-lg mb-6">
-                <h3 className="font-semibold mb-2">Form Availability:</h3>
-                {formStartTime && (
-                  <p className="text-sm text-gray-600">Start Time: {formStartTime.toLocaleString()}</p>
-                )}
-                {formEndTime && (
-                  <p className="text-sm text-gray-600">End Time: {formEndTime.toLocaleString()}</p>
-                )}
-              </div>
-            )}
+      <div className="min-h-screen bg-gradient-mesh py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="max-w-md w-full glass-effect p-8 rounded-2xl border border-white/10 text-center shadow-2xl relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-electric"></div>
+          <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-500/20 border border-green-500/30 mb-6">
+            <FaCheckCircle className="h-10 w-10 text-green-400" />
+          </div>
+          <h2 className="text-3xl font-bold text-white mb-4">Application Submitted!</h2>
+          <p className="text-neutral-300 mb-8">
+            Your application for the Student Saraswati Sanman has been successfully received. We will review your details and contact you shortly.
+          </p>
+          <div className="space-y-4">
             <button
-              onClick={() => navigate('/services')}
-              className="bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+              onClick={() => navigate('/')}
+              className="w-full btn-ghost"
             >
-              Return to Services
+              Return to Home
             </button>
           </div>
         </div>
@@ -308,368 +194,244 @@ const StudentAwardRegistration = () => {
     );
   }
 
-  if (!canAccessForm) {
-    return null;
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-mesh py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Back Button */}
+        <button
+          onClick={() => navigate('/services')}
+          className="flex items-center text-neutral-400 hover:text-white transition-colors mb-6 group"
+        >
+          <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
+          Back to Services
+        </button>
+
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Student Award Registration Form</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-            For Students Scoring ≥85% or Securing Rank 1, 2, or 3
-          </p>
-          <p className="text-md text-gray-500 mt-2">
-            Wadi (Samaj) proudly honors meritorious students for their academic excellence.
-          </p>
-          
-          {/* Display form availability period and timer */}
-          <div className="mt-4 space-y-2">
-            {(formStartTime || formEndTime) && (
-              <div className="p-3 bg-purple-50 rounded-lg inline-block">
-                <p className="text-sm text-purple-700">
-                  {formStartTime && formEndTime ? (
-                    <>Available from <span className="font-semibold">{formStartTime.toLocaleDateString()}</span> to <span className="font-semibold">{formEndTime.toLocaleDateString()}</span></>
-                  ) : formStartTime ? (
-                    <>Available from <span className="font-semibold">{formStartTime.toLocaleDateString()}</span></>
-                  ) : formEndTime ? (
-                    <>Available until <span className="font-semibold">{formEndTime.toLocaleDateString()}</span></>
-                  ) : null}
-                </p>
-              </div>
-            )}
-
-            {/* Timer Display */}
-            {timeLeft && (
-              <div className="p-3 bg-blue-50 rounded-lg inline-block">
-                <div className="flex items-center justify-center space-x-2">
-                  <FaClock className="text-blue-500" />
-                  <p className="text-sm text-blue-700">
-                    Time remaining: <span className="font-semibold">
-                      {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
-                    </span>
-                  </p>
+        <div className="glass-effect rounded-2xl p-8 mb-8 border border-white/10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-electric opacity-10 rounded-bl-full pointer-events-none"></div>
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
+            <div>
+              <div className="flex items-center mb-3">
+                <div className="p-3 bg-gradient-electric rounded-lg shadow-lg shadow-electric-500/20 mr-4">
+                  <FaAward className="text-2xl text-white" />
                 </div>
+                <h1 className="text-3xl md:text-4xl font-bold text-white">Student Saraswati Sanman</h1>
               </div>
-            )}
+              <p className="text-neutral-300 text-lg max-w-2xl">
+                Celebrating academic excellence. Register now to be recognized for your outstanding achievements.
+              </p>
+            </div>
 
-            {/* Event Date Display */}
-            {eventDate && (
-              <div className="p-3 bg-green-50 rounded-lg inline-block">
-                <div className="flex items-center justify-center space-x-2">
-                  <FaCalendarAlt className="text-green-500" />
-                  <p className="text-sm text-green-700">
-                    Award Ceremony Date: <span className="font-semibold">{eventDate.toLocaleDateString()}</span>
-                  </p>
+            {/* Timer & Date */}
+            <div className="mt-6 md:mt-0 flex flex-col items-end space-y-3">
+              {timeLeft && timeLeft !== 'EXPIRED' && (
+                <div className="flex items-center space-x-2 bg-electric-500/10 px-4 py-2 rounded-full border border-electric-500/20">
+                  <FaClock className="text-electric-400" />
+                  <span className="text-electric-300 font-mono font-medium">{timeLeft} left</span>
                 </div>
+              )}
+              <div className="flex items-center space-x-2 text-neutral-400 text-sm">
+                <FaCalendarAlt />
+                <span>Event Date: 12th Aug, 2026</span>
               </div>
-            )}
+            </div>
           </div>
         </div>
 
-        {/* Success Popup */}
-        {showSuccessPopup && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 transform transition-all">
-              <div className="text-center">
-                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100 mb-4">
-                  <svg className="h-6 w-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2">Application Submitted Successfully!</h3>
-                <p className="text-sm text-gray-500">
-                  We will review your application and get back to you shortly.
-                </p>
-              </div>
-            </div>
+        {error && (
+          <div className="mb-8 glass-effect bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-center text-red-200">
+            <FaExclamationTriangle className="mr-3 text-xl flex-shrink-0" />
+            <p>{error}</p>
           </div>
         )}
 
-        {/* Main Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-md p-8">
-          {/* Section A: Student Information */}
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Section A: Student Information</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Full Name *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaUser className="text-gray-400" />
-                  </div>
+        {/* Form */}
+        <div className="glass-effect rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
+          <div className="p-1 bg-gradient-to-r from-electric-500 via-purple-500 to-electric-500 opacity-50"></div>
+          <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-8">
+
+            {/* Student Details Section */}
+            <div>
+              <div className="flex items-center mb-6">
+                <div className="w-10 h-10 rounded-lg bg-gradient-electric flex items-center justify-center mr-4 shadow-lg shadow-electric-500/20">
+                  <FaUserGraduate className="text-white text-xl" />
+                </div>
+                <h3 className="text-xl font-bold text-white">Student Information</h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="form-label">Student Name</label>
                   <input
                     type="text"
-                    name="fullName"
-                    value={formData.fullName}
+                    name="studentName"
+                    value={formData.studentName}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     required
+                    className="input-field"
+                    placeholder="First Name"
                   />
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Date of Birth *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaCalendarAlt className="text-gray-400" />
-                  </div>
+                <div>
+                  <label className="form-label">Surname</label>
                   <input
-                    type="date"
-                    name="dateOfBirth"
-                    value={formData.dateOfBirth}
+                    type="text"
+                    name="surname"
+                    value={formData.surname}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     required
+                    className="input-field"
+                    placeholder="Last Name"
                   />
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Contact Number *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaPhone className="text-gray-400" />
-                  </div>
+                <div>
+                  <label className="form-label">Father's Name</label>
+                  <input
+                    type="text"
+                    name="fatherName"
+                    value={formData.fatherName}
+                    onChange={handleChange}
+                    required
+                    className="input-field"
+                    placeholder="Father's Full Name"
+                  />
+                </div>
+                <div>
+                  <label className="form-label">Village</label>
+                  <input
+                    type="text"
+                    name="village"
+                    value={formData.village}
+                    onChange={handleChange}
+                    required
+                    className="input-field"
+                    placeholder="Native Village"
+                  />
+                </div>
+                <div>
+                  <label className="form-label">Mobile Number</label>
                   <input
                     type="tel"
-                    name="contactNumber"
-                    value={formData.contactNumber}
+                    name="mobileNumber"
+                    value={formData.mobileNumber}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     required
+                    pattern="[0-9]{10}"
+                    className="input-field"
+                    placeholder="10-digit Mobile Number"
                   />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Email Address *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaEnvelope className="text-gray-400" />
-                  </div>
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Address *
-                </label>
-                <div className="relative">
-                  <div className="absolute top-3 left-3 flex items-center pointer-events-none">
-                    <FaMapMarkerAlt className="text-gray-400" />
-                  </div>
-                  <textarea
-                    name="address"
-                    value={formData.address}
-                    onChange={handleChange}
-                    rows="3"
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    required
-                  ></textarea>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Section B: Academic Details */}
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Section B: Academic Details</h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  School/College Name *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaSchool className="text-gray-400" />
-                  </div>
+            <div className="border-t border-white/10 my-8"></div>
+
+            {/* Academic Details Section */}
+            <div>
+              <div className="flex items-center mb-6">
+                <div className="w-10 h-10 rounded-lg bg-gradient-secondary flex items-center justify-center mr-4 shadow-lg shadow-secondary-500/20">
+                  <FaSchool className="text-white text-xl" />
+                </div>
+                <h3 className="text-xl font-bold text-white">Academic Details</h3>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="form-label">Standard/Grade</label>
+                  <select
+                    name="standard"
+                    value={formData.standard}
+                    onChange={handleChange}
+                    required
+                    className="input-field bg-neutral-800/50"
+                  >
+                    <option value="" className="bg-neutral-800 text-neutral-400">Select Standard</option>
+                    <option value="10th" className="bg-neutral-800">10th SSC</option>
+                    <option value="12th" className="bg-neutral-800">12th HSC</option>
+                    <option value="Graduate" className="bg-neutral-800">Graduate</option>
+                    <option value="Post-Graduate" className="bg-neutral-800">Post-Graduate</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="form-label">Percentage/Percentile</label>
+                  <input
+                    type="number"
+                    name="percentile"
+                    value={formData.percentile}
+                    onChange={handleChange}
+                    required
+                    min="0"
+                    max="100"
+                    step="0.01"
+                    className="input-field"
+                    placeholder="e.g. 85.50"
+                  />
+                </div>
+                <div className="md:col-span-2">
+                  <label className="form-label">School/College Name</label>
                   <input
                     type="text"
                     name="schoolName"
                     value={formData.schoolName}
                     onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
                     required
+                    className="input-field"
+                    placeholder="Full Name of Institution"
                   />
                 </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Standard/Grade *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaGraduationCap className="text-gray-400" />
+                <div className="md:col-span-2">
+                  <label className="form-label">Upload Result/Markhseet</label>
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-white/10 border-dashed rounded-xl hover:border-electric-500/50 transition-colors bg-neutral-800/30">
+                    <div className="space-y-1 text-center">
+                      <FaFileUpload className="mx-auto h-12 w-12 text-neutral-400" />
+                      <div className="flex text-sm text-neutral-400">
+                        <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-electric-400 hover:text-electric-300 focus-within:outline-none">
+                          <span>Upload a file</span>
+                          <input id="file-upload" name="resultImage" type="file" className="sr-only" onChange={handleChange} required accept="image/*,.pdf" />
+                        </label>
+                        <p className="pl-1">or drag and drop</p>
+                      </div>
+                      <p className="text-xs text-neutral-500">
+                        PNG, JPG, PDF up to 5MB
+                      </p>
+                      {formData.resultImage && (
+                        <p className="text-sm text-green-400 font-medium mt-2">
+                          Selected: {formData.resultImage.name}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                  <input
-                    type="text"
-                    name="standard"
-                    value={formData.standard}
-                    onChange={handleChange}
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Board/University Name *
-                </label>
-                <input
-                  type="text"
-                  name="boardName"
-                  value={formData.boardName}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Exam Year *
-                </label>
-                <input
-                  type="number"
-                  name="examYear"
-                  value={formData.examYear}
-                  onChange={handleChange}
-                  min="2000"
-                  max="2100"
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Total Percentage *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaTrophy className="text-gray-400" />
-                  </div>
-                  <input
-                    type="number"
-                    name="totalPercentage"
-                    value={formData.totalPercentage}
-                    onChange={handleChange}
-                    min="0"
-                    max="100"
-                    step="0.01"
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Rank (if applicable)
-                </label>
-                <select
-                  name="rank"
-                  value={formData.rank}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                >
-                  <option value="none">None</option>
-                  <option value="1st">1st</option>
-                  <option value="2nd">2nd</option>
-                  <option value="3rd">3rd</option>
-                </select>
-              </div>
-
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Attach Marksheet (PDF/Image) *
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <FaFileUpload className="text-gray-400" />
-                  </div>
-                  <input
-                    type="file"
-                    name="marksheet"
-                    onChange={handleChange}
-                    accept=".pdf,.jpg,.jpeg,.png"
-                    className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-                    required
-                  />
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Section C: Declaration */}
-          <div className="mb-8">
-            <h2 className="text-xl font-semibold text-gray-900 mb-4">Section C: Declaration</h2>
-            <div className="bg-gray-50 p-4 rounded-lg mb-4">
-              <p className="text-gray-700">
-                I hereby declare that the information provided above is true and correct to the best of my knowledge. 
-                I understand that the final verification will be done by the Wadi (Samaj) committee before the award is granted.
-              </p>
-            </div>
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                name="declaration"
-                checked={formData.declaration}
-                onChange={handleChange}
-                className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-gray-300 rounded"
-                required
-              />
-              <label className="ml-2 block text-sm text-gray-700">
-                I agree
+            {/* Declaration */}
+            <div className="bg-white/5 p-6 rounded-xl mb-6 border border-white/10">
+              <label className="flex items-start">
+                <input type="checkbox" required className="mt-1 mr-3 h-4 w-4 rounded border-white/30 text-electric-500 focus:ring-electric-500 bg-neutral-700" />
+                <span className="text-sm text-neutral-300 leading-relaxed">
+                  I hereby declare that the information provided above is true and correct to the best of my knowledge. I understand that providing false information will result in disqualification.
+                </span>
               </label>
             </div>
-          </div>
 
-          {/* Submit Button */}
-          <div className="flex justify-center">
+            {/* Submit Button */}
             <button
               type="submit"
-              disabled={isSubmitting}
-              className={`px-8 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-colors duration-200 ${
-                isSubmitting ? 'opacity-70 cursor-not-allowed' : ''
-              }`}
+              disabled={submitting || (formStatus.endTime && new Date(formStatus.endTime) < new Date())}
+              className={`w-full btn-primary py-4 text-lg shadow-lg shadow-electric-500/25 ${submitting ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              {isSubmitting ? 'Submitting...' : 'Submit Application'}
+              {submitting ? (
+                <span className="flex items-center">
+                  <FaSpinner className="animate-spin mr-2" /> Submitting...
+                </span>
+              ) : 'Submit Application'}
             </button>
-          </div>
-
-          {/* Error Message */}
-          {error && (
-            <div className="mt-4 text-center text-red-600">
-              {error}
-            </div>
-          )}
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
 };
 
-export default StudentAwardRegistration; 
+export default StudentAwardRegistration;

@@ -9,7 +9,7 @@ const committeeController = {
       const committeeMembers = await User.find({ role: 'committeemember' })
         .select('-password -passwordHistory -verificationToken -resetPasswordToken -otp')
         .sort({ village: 1, username: 1 });
-      
+
       res.json(committeeMembers);
     } catch (error) {
       console.error('Error fetching committee members:', error);
@@ -21,18 +21,18 @@ const committeeController = {
   searchCommitteeMembersByVillage: async (req, res) => {
     try {
       const { village } = req.query;
-      
+
       if (!village) {
         return res.status(400).json({ message: 'Village name is required' });
       }
 
-      const committeeMembers = await User.find({ 
+      const committeeMembers = await User.find({
         role: 'committeemember',
         village: { $regex: village, $options: 'i' }
       })
         .select('-password -passwordHistory -verificationToken -resetPasswordToken -otp')
         .sort({ username: 1 });
-      
+
       res.json(committeeMembers);
     } catch (error) {
       console.error('Error searching committee members:', error);
@@ -104,9 +104,9 @@ const committeeController = {
       });
     } catch (error) {
       console.error('Error adding village member:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         message: 'Server error',
-        error: error.message 
+        error: error.message
       });
     }
   },
@@ -119,7 +119,7 @@ const committeeController = {
         return res.status(403).json({ message: 'Access denied. Committee members and super admins only.' });
       }
 
-      const { 
+      const {
         memberId,
         eventType,
         date,
@@ -136,8 +136,8 @@ const committeeController = {
 
       // Validate required fields
       if (!memberId || !eventType || !date || !startTime || !endTime || !guestCount) {
-        return res.status(400).json({ 
-          message: 'Member ID, event type, date, start time, end time, and guest count are required' 
+        return res.status(400).json({
+          message: 'Member ID, event type, date, start time, end time, and guest count are required'
         });
       }
 
@@ -188,9 +188,9 @@ const committeeController = {
       });
     } catch (error) {
       console.error('Error booking event:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         message: 'Server error',
-        error: error.message 
+        error: error.message
       });
     }
   }

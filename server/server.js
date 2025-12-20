@@ -85,7 +85,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const corsOptions = {
   origin: process.env.NODE_ENV === 'production'
-    ? process.env.FRONTEND_URL
+    ? process.env.FRONTEND_URL || ['https://vsps.onrender.com', 'http://localhost:5173']
     : ['http://localhost:5173', 'http://127.0.0.1:5173'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
@@ -175,6 +175,8 @@ const pdfUploadsDir = path.join(__dirname, 'public/uploads');
   if (!fs.existsSync(dir)) {
     fs.mkdirSync(dir, { recursive: true });
     console.log('Created uploads directory:', dir);
+  } else {
+    console.log('Uploads directory already exists:', dir);
   }
 });
 
@@ -282,5 +284,10 @@ app.use((err, req, res, next) => {
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
+console.log(`Starting server on port ${PORT}`);
+console.log(`NODE_ENV: ${process.env.NODE_ENV || 'development'}`);
+console.log(`FRONTEND_URL: ${process.env.FRONTEND_URL || 'not set'}`);
+console.log(`BASE_URL: ${process.env.BASE_URL || 'not set'}`);
+
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

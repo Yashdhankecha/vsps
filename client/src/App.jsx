@@ -21,7 +21,7 @@ import BookingManagement from "./pages/adminpanel/BookingManagement";
 import ContentManagement from "./pages/adminpanel/ContentManagement";
 import LiveStreams from "./pages/adminpanel/LiveStreams";
 import AdminSidebar from "./components/admin/AdminSidebar";
-import AdminPageContainer from "./components/admin/AdminPageContainer"; 
+import AdminPageContainer from "./components/admin/AdminPageContainer";
 import Header from "./components/user/Header";
 import ProfileSettings from './pages/ProfileSettings';
 import RecentBookings from './pages/RecentBookings';
@@ -52,12 +52,14 @@ import BookVillageEvent from './pages/committee/BookVillageEvent';
 import CommitteeMembersList from './pages/committee/CommitteeMembersList';
 import VillagerApproval from './pages/committee/VillagerApproval';
 
+import VillageMembers from './pages/committee/VillageMembers';
+
 const API_BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:3000').replace(/\/$/, '');
 
 function AppContent() {
   const { user, loading } = useAuth();
   const location = useLocation();
-  const isAdminRoute = location.pathname.startsWith("/admin");
+  const isAdminRoute = location.pathname.startsWith("/admin") || location.pathname.startsWith("/committee");
   const isAuthPage = location.pathname === "/auth" || location.pathname === "/ForgotPassword" || location.pathname.startsWith("/ResetPassword");
   const [formStatus, setFormStatus] = useState({
     samuhLagan: { active: false, isCurrentlyActive: false },
@@ -81,21 +83,11 @@ function AppContent() {
     };
 
     fetchFormStatus();
-  }, []); 
+  }, []);
 
-  useEffect(() => {
-    if (!loading && !user) {
-      // Only navigate if we're not on auth pages and user is not authenticated
-      if (!isAuthPage && !isAdminRoute) {
-        // Using setTimeout to avoid immediate navigation conflicts
-        setTimeout(() => {
-          navigate("/auth");
-        }, 100);
-      }
-    }
-  }, [loading, user, isAuthPage, isAdminRoute, navigate]);
 
-  
+
+
   const ProtectedRoute = ({ children }) => {
     if (!user) {
       return <Navigate to="/auth" />;
@@ -103,7 +95,7 @@ function AppContent() {
     return children;
   };
 
-  
+
   const FormStatusCheck = ({ children, formType }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -118,43 +110,43 @@ function AppContent() {
             'studentAwards': 'studentAwardForm',
 
           };
-          
+
           const formName = formNameMap[formType];
           if (!formName) {
             setError(`Invalid form type: ${formType}`);
             setLoading(false);
             return;
           }
-          
+
           const publicStatusResponse = await axios.get(`${API_BASE_URL}/api/admin/forms/public/status`);
           const formData = publicStatusResponse.data[formType];
-          
+
           if (!formData) {
             setError(`Form data not found for: ${formType}`);
             setLoading(false);
             return;
           }
-          
+
           setFormDetails(formData);
-          
+
           if (!formData.active) {
             setError('This form is not currently available. Please check back later.');
             setLoading(false);
             return;
           }
-          
+
           if (formData.startTime && new Date(formData.startTime) > new Date()) {
             setError(`This form will be available from ${new Date(formData.startTime).toLocaleString()}`);
             setLoading(false);
             return;
           }
-          
+
           if (formData.endTime && new Date(formData.endTime) < new Date()) {
             setError('This form has expired. Please check back for future opportunities.');
             setLoading(false);
             return;
           }
-          
+
           setLoading(false);
         } catch (error) {
           console.error('Error checking form status:', error);
@@ -194,7 +186,7 @@ function AppContent() {
                 )}
               </div>
             )}
-            <button 
+            <button
               onClick={() => navigate('/services')}
               className="mt-4 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
             >
@@ -205,11 +197,11 @@ function AppContent() {
       );
     }
 
-    
+
     return React.cloneElement(children, { formDetails });
   };
 
-  
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -266,7 +258,7 @@ function AppContent() {
             </div>
           </AdminLayoutProvider>
         );
-      
+
       case "contentmanager":
         return (
           <AdminLayoutProvider>
@@ -281,7 +273,7 @@ function AppContent() {
             </div>
           </AdminLayoutProvider>
         );
-      
+
       case "formmanager":
         return (
           <AdminLayoutProvider>
@@ -296,7 +288,7 @@ function AppContent() {
             </div>
           </AdminLayoutProvider>
         );
-      
+
       case "bookingmanager":
         return (
           <AdminLayoutProvider>
@@ -312,7 +304,7 @@ function AppContent() {
             </div>
           </AdminLayoutProvider>
         );
-      
+
       case "contactmanager":
         return (
           <AdminLayoutProvider>
@@ -328,7 +320,7 @@ function AppContent() {
             </div>
           </AdminLayoutProvider>
         );
-      
+
       case "committeemember":
         return (
           <AdminLayoutProvider>
@@ -341,13 +333,14 @@ function AppContent() {
                   <Route path="/committee/book-event" element={<BookVillageEvent />} />
                   <Route path="/committee/members" element={<CommitteeMembersList />} />
                   <Route path="/committee/approve-villagers" element={<VillagerApproval />} />
+                  <Route path="/committee/village-members" element={<VillageMembers />} />
                   <Route path="/committee/*" element={<Navigate to="/committee/dashboard" />} />
                 </Routes>
               </AdminPageContainer>
             </div>
           </AdminLayoutProvider>
         );
-      
+
       case "admin":
         // Regular admin gets full access like super admin for backward compatibility
         return (
@@ -370,7 +363,7 @@ function AppContent() {
             </div>
           </AdminLayoutProvider>
         );
-      
+
       default:
         return <Navigate to="/auth" />;
     }
@@ -396,27 +389,27 @@ function AppContent() {
               <Route path="/events/categories" element={<EventCategories />} />
               <Route path="/ForgotPassword" element={<ForgotPassword />} />
               <Route path="/ResetPassword/:token" element={<ResetPassword />} />
-              
-              <Route 
-                path="/samuh-lagan" 
+
+              <Route
+                path="/samuh-lagan"
                 element={
                   <FormStatusCheck formType="samuhLagan">
                     <SamuhLaganBooking />
                   </FormStatusCheck>
-                } 
+                }
               />
-              <Route 
-                path="/student-awards" 
+              <Route
+                path="/student-awards"
                 element={
                   <FormStatusCheck formType="studentAwards">
                     <StudentAwardRegistration />
                   </FormStatusCheck>
-                } 
+                }
               />
 
-              
+
               <Route path="/booking" element={<Booking />} />
-              
+
               <Route path="/live-streaming" element={
                 <ProtectedRoute>
                   <LiveStreaming />
@@ -442,7 +435,7 @@ function AppContent() {
                   <Notifications />
                 </ProtectedRoute>
               } />
-              
+
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </main>

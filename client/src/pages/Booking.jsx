@@ -209,10 +209,14 @@ function Booking() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log('Form validation starting...');
     if (!validateForm()) {
+      console.log('Form validation failed');
       setIsSubmitting(false); // Ensure isSubmitting is reset if validation fails
       return;
     }
+    console.log('Form validation passed');
+    
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
@@ -256,8 +260,14 @@ function Booking() {
       };
 
       console.log('Submitting booking data:', bookingData);
+      
+      // Log the axios instance configuration
+      console.log('Axios instance baseURL:', axios.defaults?.baseURL || 'not set');
+      console.log('Using axios instance from utils/axiosConfig');
 
       const response = await axios.post('/api/bookings/submit', bookingData);
+      
+      console.log('Booking submission response:', response);
       
       if (response.data) {
         setShowSuccessPopup(true);
@@ -275,7 +285,7 @@ function Booking() {
           villageName: ''
         });
         fetchBookings();
-        
+      
         // Hide the success popup after 3 seconds
         setTimeout(() => {
           setShowSuccessPopup(false);
@@ -283,11 +293,38 @@ function Booking() {
       }
     } catch (error) {
       console.error('Error submitting booking:', error);
-      if (error.response?.status === 401) {
-        navigate('/auth');
+      console.error('Error response:', error.response);
+      
+      // More detailed error handling
+      let errorMessage = 'Error submitting booking request. Please try again.';
+      
+      if (error.response) {
+        // Server responded with error status
+        if (error.response.status === 400) {
+          if (error.response.data.missingFields) {
+            errorMessage = `Missing required fields: ${error.response.data.missingFields.join(', ')}`;
+          } else if (error.response.data.details) {
+            errorMessage = `Validation error: ${error.response.data.details.map(d => `${d.field}: ${d.message}`).join(', ')}`;
+          } else {
+            errorMessage = error.response.data.message || 'Bad request';
+          }
+        } else if (error.response.status === 401) {
+          navigate('/auth');
+          return;
+        } else if (error.response.status >= 500) {
+          errorMessage = 'Server error. Please try again later.';
+        } else {
+          errorMessage = error.response.data.message || `HTTP ${error.response.status} error`;
+        }
+      } else if (error.request) {
+        // Request was made but no response received
+        errorMessage = 'Network error. Please check your connection and try again.';
       } else {
-        alert(`Error submitting booking request: ${error.response?.data?.message || 'Please try again'}`);
+        // Something else happened
+        errorMessage = error.message || 'Unknown error occurred';
       }
+      
+      alert(errorMessage);
     } finally {
       setIsSubmitting(false);
     }
@@ -330,6 +367,8 @@ function Booking() {
           throw new Error('No authentication token found');
         }
 
+        console.log('Uploading document...');
+        
         const response = await axios.post('/api/bookings/upload-document', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
@@ -338,19 +377,41 @@ function Booking() {
         
         console.log('Document upload response:', response.data);
         
-        // Update state with the new document
-        setFormData(prev => ({
-          ...prev,
-          eventDocuments: [...prev.eventDocuments, response.data.documentUrl],
-          documentTypes: [...prev.documentTypes, response.data.documentType]
-        }));
+        // Check if the response contains the expected data
+        if (response.data && response.data.documentUrl) {
+          // Update state with the new document
+          setFormData(prev => ({
+            ...prev,
+            eventDocuments: [...prev.eventDocuments, response.data.documentUrl],
+            documentTypes: [...prev.documentTypes, response.data.documentType]
+          }));
+        } else {
+          throw new Error('Invalid response from server');
+        }
       } catch (error) {
         console.error('Error uploading documents:', error);
-        if (error.response?.status === 401) {
-          navigate('/auth');
+        console.error('Error response:', error.response);
+        
+        let errorMessage = 'Failed to upload documents. Please try again.';
+        
+        if (error.response) {
+          if (error.response.status === 400) {
+            errorMessage = error.response.data.message || 'Bad request';
+          } else if (error.response.status === 401) {
+            navigate('/auth');
+            return;
+          } else if (error.response.status >= 500) {
+            errorMessage = 'Server error. Please try again later.';
+          } else {
+            errorMessage = error.response.data.message || `HTTP ${error.response.status} error`;
+          }
+        } else if (error.request) {
+          errorMessage = 'Network error. Please check your connection and try again.';
         } else {
-          alert('Failed to upload documents: ' + (error.response?.data?.message || error.message));
+          errorMessage = error.message || 'Unknown error occurred';
         }
+        
+        alert(errorMessage);
       }
     }
   };

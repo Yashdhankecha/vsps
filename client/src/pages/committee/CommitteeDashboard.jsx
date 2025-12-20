@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import axiosInstance from '../../utils/axiosConfig';
-import { 
+import {
   UsersIcon,
   CalendarIcon,
   MagnifyingGlassIcon,
@@ -29,7 +29,7 @@ const CommitteeDashboard = () => {
   const fetchDashboardStats = async () => {
     try {
       setLoading(true);
-      
+
       // In a real implementation, you would fetch actual stats from the backend
       // For now, we'll simulate the data
       setStats({
@@ -39,7 +39,7 @@ const CommitteeDashboard = () => {
         totalEvents: 15,
         pendingApprovals: 5
       });
-      
+
       setError(null);
     } catch (err) {
       console.error('Error fetching dashboard stats:', err);
@@ -93,7 +93,7 @@ const CommitteeDashboard = () => {
       )}
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-6 sm:mb-8 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6 mb-6 sm:mb-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
         {/* Total Members */}
         <div className="card-hover p-4 sm:p-6 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-neon opacity-20 rounded-bl-3xl"></div>
@@ -166,7 +166,7 @@ const CommitteeDashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
         {/* Add Member Card */}
         <div className="card-glass">
           <div className="p-4 sm:p-6">
@@ -179,53 +179,11 @@ const CommitteeDashboard = () => {
             <p className="text-neutral-300 mb-4">
               Register a new member from your village to the community platform.
             </p>
-            <button 
+            <button
               onClick={() => window.location.href = '/committee/add-member'}
               className="btn-primary w-full"
             >
               Add Member
-            </button>
-          </div>
-        </div>
-
-        {/* Book Event Card */}
-        <div className="card-glass">
-          <div className="p-4 sm:p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-electric rounded-lg flex items-center justify-center">
-                <CalendarIcon className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-white">Book Event</h3>
-            </div>
-            <p className="text-neutral-300 mb-4">
-              Schedule an event for a village member on the community platform.
-            </p>
-            <button 
-              onClick={() => window.location.href = '/committee/book-event'}
-              className="btn-primary w-full"
-            >
-              Book Event
-            </button>
-          </div>
-        </div>
-
-        {/* Approve Villagers Card */}
-        <div className="card-glass">
-          <div className="p-4 sm:p-6">
-            <div className="flex items-center space-x-3 mb-4">
-              <div className="w-10 h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
-                <CheckBadgeIcon className="w-5 h-5 text-white" />
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold text-white">Approve Villagers</h3>
-            </div>
-            <p className="text-neutral-300 mb-4">
-              Approve or reject villagers who claim to be from your village.
-            </p>
-            <button 
-              onClick={() => window.location.href = '/committee/approve-villagers'}
-              className="btn-primary w-full"
-            >
-              Approve Villagers
             </button>
           </div>
         </div>
