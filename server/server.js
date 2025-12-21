@@ -20,6 +20,8 @@ const committeeRoutes = require('./routes/committeeRoutes');
 const multer = require('multer');
 const fs = require('fs');
 
+// ... (existing code)
+
 dotenv.config();
 
 // Debug logging for email configuration

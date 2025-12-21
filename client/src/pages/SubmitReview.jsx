@@ -40,7 +40,7 @@ function SubmitReview() {
 
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
-    
+
     // Limit to 5 images
     if (formData.images.length + files.length > 5) {
       setError('You can upload maximum 5 images');
@@ -50,7 +50,7 @@ function SubmitReview() {
     // Create previews
     const previews = files.map(file => URL.createObjectURL(file));
     setImagePreviews(prev => [...prev, ...previews]);
-    
+
     // Add files to form data
     setFormData(prev => ({
       ...prev,
@@ -64,7 +64,7 @@ function SubmitReview() {
     URL.revokeObjectURL(newPreviews[index]);
     newPreviews.splice(index, 1);
     setImagePreviews(newPreviews);
-    
+
     // Remove file
     const newImages = [...formData.images];
     newImages.splice(index, 1);
@@ -76,14 +76,14 @@ function SubmitReview() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validation
-    if (!formData.name || !formData.email || !formData.eventType || 
-        !formData.eventDate || !formData.rating || !formData.title || !formData.review) {
+    if (!formData.name || !formData.email || !formData.eventType ||
+      !formData.eventDate || !formData.rating || !formData.title || !formData.review) {
       setError('Please fill in all required fields');
       return;
     }
-    
+
     if (formData.rating === 0) {
       setError('Please provide a rating');
       return;
@@ -101,7 +101,7 @@ function SubmitReview() {
       formDataToSend.append('rating', formData.rating);
       formDataToSend.append('title', formData.title);
       formDataToSend.append('review', formData.review);
-      
+
       // Append images
       formData.images.forEach(image => {
         formDataToSend.append('images', image);
@@ -127,7 +127,7 @@ function SubmitReview() {
           images: []
         });
         setImagePreviews([]);
-        
+
         // Redirect to testimonials page after 3 seconds
         setTimeout(() => {
           navigate('/testimonials');
@@ -174,7 +174,7 @@ function SubmitReview() {
           </div>
           <h1 className="text-4xl font-bold text-white mb-4">Share Your Experience</h1>
           <p className="text-lg text-neutral-300 max-w-2xl mx-auto">
-            Your feedback helps us improve and helps others make informed decisions. 
+            Your feedback helps us improve and helps others make informed decisions.
             Tell us about your experience at our venue.
           </p>
         </div>
@@ -186,7 +186,7 @@ function SubmitReview() {
               <p className="text-red-400 font-medium">{error}</p>
             </div>
           )}
-          
+
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Personal Information */}
             <div className="grid md:grid-cols-2 gap-6">
@@ -268,11 +268,10 @@ function SubmitReview() {
                     className="focus:outline-none transition-transform duration-200 hover:scale-110"
                   >
                     <FaStar
-                      className={`text-3xl ${
-                        star <= (hoverRating || formData.rating)
+                      className={`text-3xl ${star <= (hoverRating || formData.rating)
                           ? 'text-yellow-400'
                           : 'text-neutral-500'
-                      }`}
+                        }`}
                     />
                   </button>
                 ))}
@@ -335,7 +334,7 @@ function SubmitReview() {
                   Supported formats: JPG, PNG, GIF (Max 5 images)
                 </p>
               </div>
-              
+
               {/* Image Previews */}
               {imagePreviews.length > 0 && (
                 <div className="mt-4 grid grid-cols-3 gap-4">
@@ -361,9 +360,9 @@ function SubmitReview() {
 
             {/* Submit Button */}
             <div className="text-center pt-4">
-              <Button 
-                type="submit" 
-                variant="primary" 
+              <Button
+                type="submit"
+                variant="primary"
                 size="lg"
                 className="w-full sm:w-auto"
                 disabled={loading}

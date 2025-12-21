@@ -11,7 +11,7 @@ export const useAdminLayout = () => {
 };
 
 export const AdminLayoutProvider = ({ children }) => {
-  const [sidebarExpanded, setSidebarExpanded] = useState(true);
+  const [sidebarExpanded, setSidebarExpanded] = useState(window.innerWidth >= 768);
 
   const toggleSidebar = () => {
     setSidebarExpanded(prev => !prev);

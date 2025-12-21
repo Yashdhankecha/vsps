@@ -36,8 +36,12 @@ const AddVillageMember = () => {
 
     try {
       // Validate form data
-      if (!formData.username || !formData.email) {
-        throw new Error('Username and email are required');
+      if (!formData.username || !formData.email || !formData.phone) {
+        throw new Error('All fields are required');
+      }
+
+      if (formData.phone.length !== 10) {
+        throw new Error('Phone number must be exactly 10 digits');
       }
 
       // For committee members, use their own village
@@ -66,8 +70,8 @@ const AddVillageMember = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
-      <div className="card-glass animate-fade-in-up">
+    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-8">
+      <div className="card-glass animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
         {/* Header */}
         <div className="mb-6 sm:mb-8 animate-fade-in-up">
           <div className="flex items-center space-x-3 mb-2">
@@ -155,35 +159,20 @@ const AddVillageMember = () => {
                   <span>Phone Number</span>
                 </label>
                 <input
-                  type="tel"
+                  type="text"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="Enter phone number"
+                  placeholder="Enter 10 digit phone number"
+                  maxLength="10"
+                  pattern="\d{10}"
+                  title="Phone number must be 10 digits"
+                  onInput={(e) => {
+                    e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+                  }}
+                  required
                 />
-              </div>
-
-              {/* Village (readonly for committee members) */}
-              <div className="space-y-2">
-                <label className="form-label flex items-center space-x-2">
-                  <BuildingLibraryIcon className="w-4 h-4" />
-                  <span>Village</span>
-                </label>
-                <input
-                  type="text"
-                  name="village"
-                  value={user?.village || formData.village}
-                  readOnly={!!user?.village}
-                  onChange={handleChange}
-                  className={`input-field ${user?.village ? 'bg-neutral-700/50 cursor-not-allowed' : ''}`}
-                  placeholder="Enter village name"
-                />
-                {user?.village && (
-                  <p className="text-xs text-neutral-400 mt-1">
-                    Village is automatically set to your committee village
-                  </p>
-                )}
               </div>
             </div>
 

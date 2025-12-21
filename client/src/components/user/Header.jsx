@@ -7,11 +7,10 @@ function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
   const location = useLocation();
   const navigate = useNavigate();
   const profileDropdownRef = useRef(null);
-  
+
   // Get user data from AuthContext
   const { user } = useAuth();
 
@@ -29,21 +28,6 @@ function Header() {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  // Calculate unread notifications count
-  const unreadNotificationsCount = notifications.filter(n => !n.read).length;
-
-  const handleNotificationClick = (notificationId) => {
-    setNotifications(notifications.map(notification => 
-      notification.id === notificationId 
-        ? { ...notification, read: true }
-        : notification
-    ));
-  };
-
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(notification => ({ ...notification, read: true })));
-  };
 
   const navigationItems = [
     {
@@ -95,9 +79,9 @@ function Header() {
   };
 
   // Hide auth buttons on auth page
-  const isAuthPage = location.pathname === '/auth' || 
-                    location.pathname === '/ForgotPassword' || 
-                    location.pathname.startsWith('/ResetPassword');
+  const isAuthPage = location.pathname === '/auth' ||
+    location.pathname === '/ForgotPassword' ||
+    location.pathname.startsWith('/ResetPassword');
 
   return (
     <header className="bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white shadow-2xl relative z-50 backdrop-blur-xl border-b border-white/10">
@@ -126,15 +110,14 @@ function Header() {
                   <div>
                     <button
                       className={`px-4 py-3 rounded-xl transition-all duration-300 flex items-center space-x-2 font-semibold glass-effect
-                        ${activeDropdown === index 
-                          ? 'bg-electric-500/20 text-white shadow-lg transform scale-105 border-electric-500/30' 
+                        ${activeDropdown === index
+                          ? 'bg-electric-500/20 text-white shadow-lg transform scale-105 border-electric-500/30'
                           : 'hover:bg-white/10 hover:scale-105 border-white/10'}`}
                     >
                       <span>{item.label}</span>
                       <svg
-                        className={`w-4 h-4 transition-transform duration-300 ${
-                          activeDropdown === index ? 'rotate-180' : ''
-                        }`}
+                        className={`w-4 h-4 transition-transform duration-300 ${activeDropdown === index ? 'rotate-180' : ''
+                          }`}
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -165,8 +148,8 @@ function Header() {
                   <Link
                     to={item.path}
                     className={`px-4 py-3 rounded-xl transition-all duration-300 font-semibold glass-effect border
-                      ${isActive(item.path) 
-                        ? 'bg-electric-500/20 text-white shadow-lg transform scale-105 border-electric-500/30' 
+                      ${isActive(item.path)
+                        ? 'bg-electric-500/20 text-white shadow-lg transform scale-105 border-electric-500/30'
                         : 'hover:bg-white/10 hover:scale-105 border-white/10'}`}
                   >
                     {item.label}
@@ -197,21 +180,6 @@ function Header() {
                             <p className="text-sm text-neutral-400">Welcome back!</p>
                             <p className="font-semibold text-white">{user.username || user.name || 'User Profile'}</p>
                           </div>
-                          <Link
-                            to="/notifications"
-                            className="flex px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white items-center justify-between transition-all duration-200"
-                            onClick={() => setIsProfileDropdownOpen(false)}
-                          >
-                            <span className="flex items-center font-medium">
-                              <FaBell className="mr-3 w-4 h-4" />
-                              Notifications
-                            </span>
-                            {unreadNotificationsCount > 0 && (
-                              <span className="bg-gradient-to-r from-red-500 to-pink-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">
-                                {unreadNotificationsCount}
-                              </span>
-                            )}
-                          </Link>
                           <Link
                             to="/profile-settings"
                             className="block px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white font-medium transition-all duration-200"
@@ -272,34 +240,6 @@ function Header() {
         {/* Mobile Menu */}
         {isMenuOpen && (
           <nav className="lg:hidden py-6 border-t border-white/20 bg-gradient-to-b from-neutral-800/95 to-neutral-900/95 backdrop-blur-xl">
-            {/* Notifications Section for Mobile */}
-            {user && (
-              <div className="px-6 py-4 mb-4">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="font-bold text-lg text-white">Notifications</div>
-                  {unreadNotificationsCount > 0 && (
-                    <span className="bg-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold">
-                      {unreadNotificationsCount}
-                    </span>
-                  )}
-                </div>
-                <div className="space-y-3">
-                  {notifications.map((notification) => (
-                    <div
-                      key={notification.id}
-                      className={`p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 ${
-                        notification.read ? 'bg-white/5' : 'bg-white/10 border border-white/20'
-                      }`}
-                      onClick={() => handleNotificationClick(notification.id)}
-                    >
-                      <p className="text-sm text-white/90 font-medium">{notification.message}</p>
-                      <p className="text-xs text-white/60 mt-2">{notification.time}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-            
             {/* Mobile Navigation Items */}
             <div className="px-6 space-y-2">
               {navigationItems.map((item, index) => (
@@ -341,19 +281,6 @@ function Header() {
                       <p className="text-white/80 text-sm">Welcome back!</p>
                       <p className="text-white font-bold">{user.username || user.name || 'User Profile'}</p>
                     </div>
-                    <Link
-                      to="/notifications"
-                      className="flex items-center justify-center px-6 py-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all duration-300 font-semibold text-white"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      <FaBell className="mr-3 w-4 h-4" />
-                      Notifications
-                      {unreadNotificationsCount > 0 && (
-                        <span className="ml-2 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                          {unreadNotificationsCount}
-                        </span>
-                      )}
-                    </Link>
                     <Link
                       to="/profile-settings"
                       className="block text-center px-6 py-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all duration-300 font-semibold text-white"

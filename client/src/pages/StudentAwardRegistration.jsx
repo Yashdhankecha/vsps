@@ -137,6 +137,10 @@ const StudentAwardRegistration = () => {
     setError(null);
 
     try {
+      if (formData.mobileNumber.length !== 10) {
+        throw new Error('Please enter a valid 10-digit mobile number.');
+      }
+
       const formDataToSend = new FormData();
       Object.keys(formData).forEach(key => {
         formDataToSend.append(key, formData[key]);
@@ -316,9 +320,15 @@ const StudentAwardRegistration = () => {
                     value={formData.mobileNumber}
                     onChange={handleChange}
                     required
+                    maxLength={10}
+                    minLength={10}
                     pattern="[0-9]{10}"
+                    title="Please enter exactly 10 digits"
                     className="input-field"
                     placeholder="10-digit Mobile Number"
+                    onInput={(e) => {
+                      e.target.value = e.target.value.replace(/[^0-9]/g, '');
+                    }}
                   />
                 </div>
               </div>

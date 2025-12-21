@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import axiosInstance from '../../utils/axiosConfig';
-import { 
+import {
   CalendarDaysIcon,
   UserIcon,
   EnvelopeIcon,
@@ -93,8 +93,8 @@ const BookVillageEvent = () => {
 
     try {
       // Validate form data
-      if (!formData.memberId || !formData.eventType || !formData.date || 
-          !formData.startTime || !formData.endTime || !formData.guestCount) {
+      if (!formData.memberId || !formData.eventType || !formData.date ||
+        !formData.startTime || !formData.endTime || !formData.guestCount) {
         throw new Error('All required fields must be filled');
       }
 
@@ -105,10 +105,10 @@ const BookVillageEvent = () => {
 
       // In a real implementation, you would send this to the backend
       // const response = await axiosInstance.post('/api/committee/bookings', requestData);
-      
+
       // Simulate successful booking
       setSuccess('Event booked successfully!');
-      
+
       // Reset form
       setFormData({
         memberId: '',
@@ -133,10 +133,10 @@ const BookVillageEvent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
-      <div className="card-glass animate-fade-in-up">
+    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-8">
+      <div className="card-glass animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
         {/* Header */}
-        <div className="mb-6 sm:mb-8 animate-fade-in-up">
+        <div className="mb-8 sm:mb-10 animate-fade-in-up">
           <div className="flex items-center space-x-3 mb-2">
             <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
               <CalendarDaysIcon className="w-6 h-6 text-white" />
@@ -178,7 +178,7 @@ const BookVillageEvent = () => {
         )}
 
         {/* Book Event Form */}
-        <div className="card-glass animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+        <div className="card-glass animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Select Member */}
@@ -360,12 +360,18 @@ const BookVillageEvent = () => {
                   <span>Phone Number</span>
                 </label>
                 <input
-                  type="tel"
+                  type="text"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
                   className="input-field"
-                  placeholder="Enter phone number"
+                  placeholder="Enter 10 digit phone number"
+                  maxLength="10"
+                  pattern="\d{10}"
+                  title="Phone number must be exactly 10 digits"
+                  onInput={(e) => {
+                    e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 10);
+                  }}
                 />
               </div>
 
@@ -393,9 +399,8 @@ const BookVillageEvent = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className={`btn-primary w-full sm:w-auto sm:min-w-[200px] flex items-center justify-center space-x-2 ${
-                  loading ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
+                className={`btn-primary w-full sm:w-auto sm:min-w-[200px] flex items-center justify-center space-x-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
               >
                 {loading ? (
                   <>
@@ -414,7 +419,7 @@ const BookVillageEvent = () => {
         </div>
 
         {/* Instructions */}
-        <div className="card-glass mt-6 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+        <div className="card-glass mt-8 animate-fade-in-up p-6 sm:p-8" style={{ animationDelay: '0.2s' }}>
           <h3 className="text-lg font-semibold text-white mb-3">Instructions</h3>
           <ul className="space-y-2 text-neutral-300 text-sm">
             <li className="flex items-start space-x-2">

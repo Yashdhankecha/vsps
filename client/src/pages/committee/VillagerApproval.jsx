@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import axiosInstance from '../../utils/axiosConfig';
-import { 
+import {
   UserGroupIcon,
   UserIcon,
   EnvelopeIcon,
@@ -33,7 +33,7 @@ const VillagerApproval = () => {
     try {
       setLoading(true);
       setError('');
-      
+
       // Fetch unapproved villagers from the same village
       const response = await axiosInstance.get(`/api/users/unapproved`);
       setVillagers(response.data);
@@ -51,12 +51,12 @@ const VillagerApproval = () => {
       return;
     }
 
-    const filtered = villagers.filter(villager => 
+    const filtered = villagers.filter(villager =>
       villager.username.toLowerCase().includes(searchTerm.toLowerCase()) ||
       villager.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (villager.phone && villager.phone.includes(searchTerm))
     );
-    
+
     setFilteredVillagers(filtered);
   };
 
@@ -68,18 +68,18 @@ const VillagerApproval = () => {
     try {
       setApproving(true);
       setError('');
-      
+
       // Approve the villager
       const response = await axiosInstance.put(`/api/users/${userId}/approve`, {
         isVerified: true
       });
-      
+
       setSuccess(response.data.message);
-      
+
       // Remove the approved villager from the list
       setVillagers(prev => prev.filter(v => v._id !== userId));
       setFilteredVillagers(prev => prev.filter(v => v._id !== userId));
-      
+
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
@@ -94,16 +94,16 @@ const VillagerApproval = () => {
     try {
       setApproving(true);
       setError('');
-      
+
       // Delete the villager (reject)
       await axiosInstance.delete(`/api/users/${userId}`);
-      
+
       setSuccess('Villager rejected and removed from the system');
-      
+
       // Remove the rejected villager from the list
       setVillagers(prev => prev.filter(v => v._id !== userId));
       setFilteredVillagers(prev => prev.filter(v => v._id !== userId));
-      
+
       // Clear success message after 3 seconds
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
@@ -123,10 +123,10 @@ const VillagerApproval = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
-      <div className="card-glass animate-fade-in-up">
+    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-8">
+      <div className="card-glass animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
         {/* Header */}
-        <div className="mb-6 sm:mb-8 animate-fade-in-up">
+        <div className="mb-8 sm:mb-10 animate-fade-in-up">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center space-x-3 mb-2">
               <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
@@ -144,7 +144,7 @@ const VillagerApproval = () => {
                 )}
               </div>
             </div>
-            <button 
+            <button
               onClick={fetchUnapprovedVillagers}
               className="btn-secondary text-sm mt-4 sm:mt-0"
             >
@@ -176,7 +176,7 @@ const VillagerApproval = () => {
         )}
 
         {/* Search Bar */}
-        <div className="mb-6 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
+        <div className="mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
               <svg className="h-5 w-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -194,7 +194,7 @@ const VillagerApproval = () => {
         </div>
 
         {/* Villagers List */}
-        <div className="animate-fade-in-up" style={{animationDelay: '0.2s'}}>
+        <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           {filteredVillagers.length === 0 ? (
             <div className="text-center py-12">
               <UserGroupIcon className="mx-auto h-12 w-12 text-neutral-400" />
@@ -220,7 +220,7 @@ const VillagerApproval = () => {
                       <p className="text-sm text-electric-300 font-medium">
                         Unapproved Villager
                       </p>
-                      
+
                       <div className="mt-3 space-y-2">
                         <div className="flex items-center text-sm text-neutral-300">
                           <BuildingLibraryIcon className="flex-shrink-0 mr-2 h-4 w-4 text-neon-400" />
@@ -237,9 +237,9 @@ const VillagerApproval = () => {
                           </div>
                         )}
                       </div>
-                      
+
                       <div className="mt-4 flex space-x-3">
-                        <button 
+                        <button
                           onClick={() => approveVillager(villager._id)}
                           disabled={approving}
                           className="btn-primary text-sm flex-1 flex items-center justify-center space-x-1"
@@ -247,7 +247,7 @@ const VillagerApproval = () => {
                           <CheckBadgeIcon className="w-4 h-4" />
                           <span>Approve</span>
                         </button>
-                        <button 
+                        <button
                           onClick={() => rejectVillager(villager._id)}
                           disabled={approving}
                           className="btn-danger text-sm flex-1 flex items-center justify-center space-x-1"
@@ -265,7 +265,7 @@ const VillagerApproval = () => {
         </div>
 
         {/* Stats */}
-        <div className="mt-8 pt-6 border-t border-white/10 animate-fade-in-up" style={{animationDelay: '0.3s'}}>
+        <div className="mt-8 pt-6 border-t border-white/10 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
             <p className="text-neutral-300 text-sm">
               Showing {filteredVillagers.length} of {villagers.length} villagers awaiting approval

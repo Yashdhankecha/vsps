@@ -87,9 +87,8 @@ const committeeController = {
         isVerified: true // Automatically verified by committee member
       });
 
-      // Generate a random password for the user
-      const randomPassword = Math.random().toString(36).slice(-8);
-      user.password = randomPassword;
+      // Set password to phone number by default
+      user.password = phone;
 
       await user.save();
 
@@ -211,19 +210,8 @@ const committeeController = {
         }
         targetVillage = committeeMember.village;
       } else {
-        // For admin/superadmin, perhaps they pass a village query param? 
-        // Or for now, just return empty if they don't specify?
-        // Let's assume this endpoint is primarily for committee members to seeing THEIR village.
-        // If admin wants to see village members, they can use the general user management or committee member search.
-        // However, if admin calls this, we might want to return all village members or error.
-        // Let's rely on query param for admin, or return empty.
         targetVillage = req.query.village;
         if (!targetVillage) {
-          // Fallback: if admin doesn't provide village, return everything?
-          // The frontend for VillageMembers.jsx seems to expect "My Village Members".
-          // Admin doesn't have a "My Village".
-          // So for admin, maybe we should return nothing or standard users?
-          // Let's default to returning nothing if no village specified for admin.
           return res.status(200).json([]);
         }
       }
@@ -239,6 +227,90 @@ const committeeController = {
       res.json(villageMembers);
     } catch (error) {
       console.error('Error fetching village members:', error);
+      res.status(500).json({ message: 'Server error', error: error.message });
+    }
+  },
+
+  // Get dashboard stats for committee member
+  getDashboardStats: async (req, res) => {
+    try {
+      if (!['committeemember', 'superadmin'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied.' });
+      }
+
+      let villageName;
+      if (req.user.role === 'committeemember') {
+        const committeeMember = await User.findById(req.user.id);
+        if (!committeeMember || !committeeMember.village) {
+          return res.status(400).json({ message: 'Committee member village not found' });
+        }
+        villageName = committeeMember.village;
+      } else {
+        // Superadmin might pass village query param, or we might not support it yet. 
+        // For now let's assume superadmin behaves like a committee member if they have a village, 
+        // or if they don't, return 0s or handle error. 
+        // Simplified: strictly use user's village for now as per prompt context.
+        if (req.query.village) {
+          villageName = req.query.village;
+        } else {
+          // If superadmin and no village param, return empty stats?
+          return res.json({
+            totalMembers: 0,
+            pendingBookings: 0,
+            upcomingEvents: 0,
+            totalEvents: 0,
+            pendingApprovals: 0
+          });
+        }
+      }
+
+      // Use regex for booking village name matching as it might be case sensitive or have whitespace
+      const villageRegex = { $regex: villageName, $options: 'i' };
+
+      // 1. Total Members: Verified users in the village
+      const totalMembers = await User.countDocuments({
+        village: villageName,
+        role: 'user',
+        isVerified: true
+      });
+
+      // 2. Pending Bookings: Bookings for this village that are pending
+      const pendingBookings = await Booking.countDocuments({
+        villageName: villageRegex,
+        status: 'Pending'
+      });
+
+      // 3. Upcoming Events: Confirmed bookings in future
+      const upcomingEvents = await Booking.countDocuments({
+        villageName: villageRegex,
+        status: { $in: ['Approved', 'Booked', 'Confirmed'] },
+        date: { $gte: new Date() }
+      });
+
+      // 4. Total Events: All bookings (excluding rejected/cancelled if desired, but "Total Events" usually implies completed or confirmed ones)
+      // Let's count all non-cancelled/rejected for "Total Events" generally, or maybe just all. 
+      // User prompt shows "Total Events 15". 
+      const totalEvents = await Booking.countDocuments({
+        villageName: villageRegex,
+        status: { $in: ['Approved', 'Booked', 'Confirmed', 'Completed'] }
+      });
+
+      // 5. Pending Approvals: Unverified users in the village
+      const pendingApprovals = await User.countDocuments({
+        village: villageName,
+        role: 'user',
+        isVerified: false
+      });
+
+      res.json({
+        totalMembers,
+        pendingBookings,
+        upcomingEvents,
+        totalEvents,
+        pendingApprovals
+      });
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
       res.status(500).json({ message: 'Server error', error: error.message });
     }
   }

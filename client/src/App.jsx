@@ -27,7 +27,6 @@ import ProfileSettings from './pages/ProfileSettings';
 import RecentBookings from './pages/RecentBookings';
 import Users from './pages/adminpanel/Users';
 import FormManagement from './pages/adminpanel/FormManagement';
-import Notifications from './pages/Notifications';
 import SamuhLaganBooking from './pages/SamuhLaganBooking';
 import StudentAwardRegistration from './pages/StudentAwardRegistration';
 import AdminRoute from './components/AdminRoute';
@@ -426,9 +425,9 @@ function AppContent() {
                   <RecentBookings />
                 </ProtectedRoute>
               } />
-              <Route path="/notifications" element={
+              <Route path="/recently-booked" element={
                 <ProtectedRoute>
-                  <Notifications />
+                  <RecentBookings />
                 </ProtectedRoute>
               } />
 

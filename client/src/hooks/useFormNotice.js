@@ -6,13 +6,13 @@ const NOTICE_SHOWN_KEY = 'notice_shown';
 const LAST_FORM_STATUS_KEY = 'last_form_status';
 
 const forms = [
-  { 
+  {
     name: 'registrationForm',
     title: 'Samuh Lagan Registration',
     route: '/samuh-lagan',
     formType: 'samuhLagan'
   },
-  { 
+  {
     name: 'studentAwardForm',
     title: 'Student Award Registration',
     route: '/student-awards',
@@ -32,20 +32,20 @@ const useFormNotice = () => {
 
     const checkFormVisibility = async () => {
       try {
-        
+
         const lastStatus = JSON.parse(localStorage.getItem(LAST_FORM_STATUS_KEY) || '{}');
         const activeFormsArray = [];
-        
+
         for (const form of forms) {
           try {
             const response = await axios.get(`/api/admin/forms/check-form-visibility/${form.name}`);
-            
+
             if (!mounted) return;
 
             const currentStatus = response.data.visible;
             const wasActive = lastStatus[form.name];
-            
-           
+
+
             if (currentStatus && !wasActive) {
               try {
                 const notification = await createFormNotification(
@@ -57,7 +57,7 @@ const useFormNotice = () => {
                 }
               } catch (notifError) {
                 console.error('Error creating notification:', notifError);
-                
+
               }
             }
 
@@ -69,7 +69,7 @@ const useFormNotice = () => {
                 message: `${form.title} is now open. Please fill the form before the deadline.`,
                 deadline: response.data.timing?.endTime
               };
-              
+
               activeFormsArray.push(formData);
             }
           } catch (formError) {
@@ -78,7 +78,7 @@ const useFormNotice = () => {
           }
         }
 
-    
+
         localStorage.setItem(LAST_FORM_STATUS_KEY, JSON.stringify(lastStatus));
 
         if (mounted && activeFormsArray.length > 0) {
@@ -96,8 +96,8 @@ const useFormNotice = () => {
 
     checkFormVisibility();
 
-    
-    const interval = setInterval(checkFormVisibility, 5 * 60 * 1000); 
+
+    const interval = setInterval(checkFormVisibility, 5 * 60 * 1000);
 
     return () => {
       mounted = false;
@@ -107,10 +107,10 @@ const useFormNotice = () => {
 
   const handleCloseNotice = () => {
     if (currentFormIndex < activeForms.length - 1) {
-      
+
       setCurrentFormIndex(prev => prev + 1);
     } else {
-     
+
       setShowNotice(false);
       setCurrentFormIndex(0);
       sessionStorage.setItem(NOTICE_SHOWN_KEY, 'true');

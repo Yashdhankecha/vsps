@@ -30,20 +30,20 @@ const upload = multer({ storage: storage });
 const samuhLaganStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadPath = path.join(__dirname, '../uploads/samuh-lagan');
-   
+
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
     cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
- 
+
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
   }
 });
 
-const samuhLaganUpload = multer({ 
+const samuhLaganUpload = multer({
   storage: samuhLaganStorage,
   fileFilter: (req, file, cb) => {
 
@@ -57,20 +57,20 @@ const samuhLaganUpload = multer({
 const studentAwardStorage = multer.diskStorage({
   destination: function (req, file, cb) {
     const uploadPath = path.join(__dirname, '../uploads/student-awards');
-    
+
     if (!fs.existsSync(uploadPath)) {
       fs.mkdirSync(uploadPath, { recursive: true });
     }
     cb(null, uploadPath);
   },
   filename: function (req, file, cb) {
-    
+
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
   }
 });
 
-const studentAwardUpload = multer({ 
+const studentAwardUpload = multer({
   storage: studentAwardStorage,
   fileFilter: (req, file, cb) => {
     if (!file.originalname.match(/\.(jpg|jpeg|png|gif|pdf)$/)) {
@@ -101,7 +101,7 @@ router.post('/test-email', async (req, res) => {
     });
 
     await sendEmail(
-      process.env.ADMIN_EMAIL, 
+      process.env.ADMIN_EMAIL,
       'bookingRequest',
       {
         firstName: 'Test',
@@ -114,8 +114,8 @@ router.post('/test-email', async (req, res) => {
     res.status(200).json({ message: 'Test email sent successfully' });
   } catch (error) {
     console.error('Test email error:', error);
-    res.status(500).json({ 
-      message: 'Failed to send test email', 
+    res.status(500).json({
+      message: 'Failed to send test email',
       error: error.message,
       stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
@@ -132,13 +132,13 @@ router.put('/update/:bookingId', bookingController.updateBooking);
 router.put('/confirm-booking/:bookingId', bookingController.confirmBooking);
 
 
-router.post('/samuh-lagan/submit', 
+router.post('/samuh-lagan/submit',
   samuhLaganUpload.fields([
     { name: 'bridePhoto', maxCount: 1 },
     { name: 'groomPhoto', maxCount: 1 },
     { name: 'brideDocuments', maxCount: 5 },
     { name: 'groomDocuments', maxCount: 5 }
-  ]), 
+  ]),
   bookingController.submitSamuhLaganRequest
 );
 router.get('/samuh-lagan', bookingManagerAuth, bookingController.getAllSamuhLaganRequests);
@@ -148,8 +148,9 @@ router.put('/samuh-lagan/reject/:requestId', bookingManagerAuth, bookingControll
 router.put('/samuh-lagan/confirm/:requestId', bookingManagerAuth, bookingController.confirmSamuhLaganRequest);
 
 
-router.post('/student-awards/register', 
-  studentAwardUpload.single('marksheet'), 
+router.post('/student-awards/register',
+  authMiddleware,
+  studentAwardUpload.single('resultImage'),
   bookingController.submitStudentAwardRequest
 );
 
@@ -163,7 +164,7 @@ router.patch('/student-awards/:id', bookingManagerAuth, bookingController.update
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
-    
+
     if (!booking) {
       return res.status(404).json({ error: 'Booking not found' });
     }
@@ -182,7 +183,7 @@ router.delete('/samuh-lagan/:id', authMiddleware, async (req, res) => {
   try {
     const SamuhLagan = require('../models/SamuhLagan');
     const registration = await SamuhLagan.findById(req.params.id);
-    
+
     if (!registration) {
       return res.status(404).json({ error: 'Samuh Lagan registration not found' });
     }
@@ -199,7 +200,7 @@ router.delete('/student-awards/:id', authMiddleware, async (req, res) => {
   try {
     const StudentAward = require('../models/StudentAward');
     const award = await StudentAward.findById(req.params.id);
-    
+
     if (!award) {
       return res.status(404).json({ error: 'Student Award registration not found' });
     }
@@ -216,7 +217,7 @@ router.delete('/team-registrations/:id', authMiddleware, async (req, res) => {
   try {
     const TeamRegistration = require('../models/TeamRegistration');
     const registration = await TeamRegistration.findById(req.params.id);
-    
+
     if (!registration) {
       return res.status(404).json({ error: 'Team Registration not found' });
     }

@@ -20,11 +20,11 @@ if (!API_KEY || !CHANNEL_ID) {
 router.get('/check-live', async (req, res) => {
   try {
     if (!API_KEY || !CHANNEL_ID) {
-      console.error('Missing credentials:', { 
-        hasApiKey: !!API_KEY, 
-        hasChannelId: !!CHANNEL_ID 
+      console.error('Missing credentials:', {
+        hasApiKey: !!API_KEY,
+        hasChannelId: !!CHANNEL_ID
       });
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'YouTube API configuration missing',
         details: 'Please set YOUTUBE_API_KEY and YOUTUBE_CHANNEL_ID in .env file'
       });
@@ -55,8 +55,8 @@ router.get('/check-live', async (req, res) => {
     if (response.data.items && response.data.items.length > 0) {
       const videoId = response.data.items[0].id.videoId;
       const streamInfo = response.data.items[0].snippet;
-      res.json({ 
-        live: true, 
+      res.json({
+        live: true,
         videoId,
         title: streamInfo.title,
         description: streamInfo.description,
@@ -73,7 +73,7 @@ router.get('/check-live', async (req, res) => {
       status: err.response?.status,
       params: err.config?.params
     });
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'YouTube API error',
       details: err.response?.data?.error?.message || err.message
     });
@@ -84,11 +84,11 @@ router.get('/check-live', async (req, res) => {
 router.get('/upcoming', async (req, res) => {
   try {
     if (!API_KEY || !CHANNEL_ID) {
-      console.error('Missing credentials:', { 
-        hasApiKey: !!API_KEY, 
-        hasChannelId: !!CHANNEL_ID 
+      console.error('Missing credentials:', {
+        hasApiKey: !!API_KEY,
+        hasChannelId: !!CHANNEL_ID
       });
-      return res.status(500).json({ 
+      return res.status(500).json({
         error: 'YouTube API configuration missing',
         details: 'Please set YOUTUBE_API_KEY and YOUTUBE_CHANNEL_ID in .env file'
       });
@@ -136,7 +136,7 @@ router.get('/upcoming', async (req, res) => {
       status: err.response?.status,
       params: err.config?.params
     });
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'YouTube API error',
       details: err.response?.data?.error?.message || err.message
     });
