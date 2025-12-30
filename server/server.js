@@ -93,7 +93,9 @@ const allowedOrigins = [
 ];
 
 if (process.env.FRONTEND_URL) {
-  allowedOrigins.push(process.env.FRONTEND_URL);
+  // Support comma-separated URLs in the environment variable
+  const urls = process.env.FRONTEND_URL.split(',').map(url => url.trim());
+  allowedOrigins.push(...urls);
 }
 
 const corsOptions = {
