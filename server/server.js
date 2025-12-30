@@ -79,12 +79,47 @@ setTimeout(() => {
   testEmailConfig();
 }, 2000);
 
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
+const hpp = require('hpp');
+const rateLimit = require('express-rate-limit');
+
+// ... (existing code)
+
 const app = express();
 
-// Basic middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// Security Middleware
 
+// Set security HTTP headers
+app.use(helmet({
+  crossOriginResourcePolicy: false, // Allow loading resources across origins (needed for uploads)
+}));
+
+// Rate limiting to prevent brute-force/DoS
+const limiter = rateLimit({
+  windowMs: 10 * 60 * 1000, // 10 minutes
+  max: 100, // limit each IP to 100 requests per windowMs
+  message: 'Too many requests from this IP, please try again later'
+});
+
+// Apply rate limiting to all requests (or just /api)
+app.use('/api', limiter);
+
+// Data Sanitization against NoSQL Query Injection
+app.use(mongoSanitize());
+
+// Data Sanitization against XSS
+app.use(xss());
+
+// Prevent Parameter Pollution
+app.use(hpp());
+
+// Basic middleware
+app.use(express.json({ limit: '50kb' })); // Limit body size
+app.use(express.urlencoded({ extended: true, limit: '50kb' }));
+
+// CORS Policy (Updated)
 const allowedOrigins = [
   'https://vansolsamaj.netlify.app',
   'https://vsps.onrender.com',

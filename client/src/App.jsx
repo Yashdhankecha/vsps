@@ -441,11 +441,23 @@ function AppContent() {
   );
 }
 
+import IntroVideo from "./components/IntroVideo";
+
 function App() {
+  const [showIntro, setShowIntro] = useState(true);
+
+  const handleIntroComplete = () => {
+    setShowIntro(false);
+  };
+
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <AuthProvider>
-        <AppContent />
+        {showIntro ? (
+          <IntroVideo onComplete={handleIntroComplete} />
+        ) : (
+          <AppContent />
+        )}
       </AuthProvider>
     </BrowserRouter>
   );
