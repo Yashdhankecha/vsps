@@ -444,9 +444,12 @@ function AppContent() {
 import IntroVideo from "./components/IntroVideo";
 
 function App() {
-  const [showIntro, setShowIntro] = useState(true);
+  const [showIntro, setShowIntro] = useState(() => {
+    return !sessionStorage.getItem('hasSeenIntro');
+  });
 
   const handleIntroComplete = () => {
+    sessionStorage.setItem('hasSeenIntro', 'true');
     setShowIntro(false);
   };
 
