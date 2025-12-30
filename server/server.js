@@ -85,10 +85,19 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+const allowedOrigins = [
+  'https://vansolsamaj.netlify.app',
+  'https://vsps.onrender.com',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173'
+];
+
+if (process.env.FRONTEND_URL) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
 const corsOptions = {
-  origin: process.env.NODE_ENV === 'production'
-    ? process.env.FRONTEND_URL || ['https://vsps.onrender.com', 'http://localhost:5173']
-    : ['http://localhost:5173', 'http://127.0.0.1:5173'],
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
   credentials: true,
@@ -191,7 +200,10 @@ app.locals.uploadPDF = uploadPDF;
 
 // Uploads route middleware
 app.use('/uploads', (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', corsOptions.origin);
+  const origin = req.headers.origin;
+  if (allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
   res.header('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Accept');
   res.header('Access-Control-Allow-Credentials', 'true');
