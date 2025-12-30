@@ -68,13 +68,13 @@ function Booking() {
     // Check if user is authenticated
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
-    
+
     if (token) {
       // Fetch user profile to get email
       const fetchUserProfile = async () => {
         try {
           const response = await axios.get('/api/users/profile');
-          
+
           if (response.data && response.data.email) {
             setFormData(prev => ({
               ...prev,
@@ -85,13 +85,13 @@ function Booking() {
           console.error('Error fetching user profile:', error);
         }
       };
-      
+
       fetchUserProfile();
-      
+
       // Fetch bookings only when authenticated
       fetchBookings();
     }
-    
+
     // Check if there's a stored booking date from previous session
     const storedDate = localStorage.getItem('selectedBookingDate');
     if (storedDate && token) {
@@ -99,7 +99,7 @@ function Booking() {
       setShowForm(true);
       localStorage.removeItem('selectedBookingDate');
     }
-    
+
     setIsLoading(false);
   }, [isAuthenticated]);
 
@@ -130,8 +130,8 @@ function Booking() {
   };
 
   const isDateBooked = (date) => {
-    return bookedEvents.some(event => 
-      format(date, 'yyyy-MM-dd') === format(event.start, 'yyyy-MM-dd') && 
+    return bookedEvents.some(event =>
+      format(date, 'yyyy-MM-dd') === format(event.start, 'yyyy-MM-dd') &&
       (event.status === 'Booked' || event.status === 'Pending')
     );
   };
@@ -139,7 +139,7 @@ function Booking() {
   const handleDateSelect = (slotInfo) => {
     // For mobile devices, slotInfo may be different, so we need to handle both cases
     let selectedDate;
-    
+
     if (slotInfo.start) {
       selectedDate = new Date(slotInfo.start);
     } else if (slotInfo.slots && slotInfo.slots.length > 0) {
@@ -149,21 +149,21 @@ function Booking() {
       // Fallback
       selectedDate = new Date();
     }
-    
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    
+
     // Check if the selected date is in the past
     if (selectedDate < today) {
       alert('You cannot book dates in the past. Please select a future date.');
       return;
     }
-    
+
     if (isDateBooked(selectedDate)) {
       alert('This date is already booked. Please select another date.');
       return;
     }
-    
+
     // Check if user is logged in
     if (!isAuthenticated) {
       // Store the selected date in localStorage to restore it after login
@@ -174,7 +174,7 @@ function Booking() {
       navigate('/auth');
       return;
     }
-    
+
     setSelectedDate(selectedDate);
     setShowForm(true);
   };
@@ -216,7 +216,7 @@ function Booking() {
       return;
     }
     console.log('Form validation passed');
-    
+
     setIsSubmitting(true);
     try {
       const token = localStorage.getItem('token');
@@ -232,7 +232,7 @@ function Booking() {
       }
 
       const formattedDate = selectedDate.toISOString();
-      
+
       // Ensure document URL is properly formatted
       let documentUrl = formData.eventDocuments[0];
       if (documentUrl.startsWith('http:/')) {
@@ -240,9 +240,9 @@ function Booking() {
       }
 
       // Check if user is a Samaj member
-      const isSamajMember = formData.surname.toLowerCase() === 'patel' && 
+      const isSamajMember = formData.surname.toLowerCase() === 'patel' &&
         ['Vadodara', 'Ahmedabad', 'Surat', 'Rajkot', 'Gandhinagar'].includes(formData.villageName);
-      
+
       const bookingData = {
         firstName: formData.firstName,
         surname: formData.surname,
@@ -260,15 +260,15 @@ function Booking() {
       };
 
       console.log('Submitting booking data:', bookingData);
-      
+
       // Log the axios instance configuration
       console.log('Axios instance baseURL:', axios.defaults?.baseURL || 'not set');
       console.log('Using axios instance from utils/axiosConfig');
 
       const response = await axios.post('/api/bookings/submit', bookingData);
-      
+
       console.log('Booking submission response:', response);
-      
+
       if (response.data) {
         setShowSuccessPopup(true);
         setShowForm(false);
@@ -285,7 +285,7 @@ function Booking() {
           villageName: ''
         });
         fetchBookings();
-      
+
         // Hide the success popup after 3 seconds
         setTimeout(() => {
           setShowSuccessPopup(false);
@@ -294,10 +294,10 @@ function Booking() {
     } catch (error) {
       console.error('Error submitting booking:', error);
       console.error('Error response:', error.response);
-      
+
       // More detailed error handling
       let errorMessage = 'Error submitting booking request. Please try again.';
-      
+
       if (error.response) {
         // Server responded with error status
         if (error.response.status === 400) {
@@ -323,7 +323,7 @@ function Booking() {
         // Something else happened
         errorMessage = error.message || 'Unknown error occurred';
       }
-      
+
       alert(errorMessage);
     } finally {
       setIsSubmitting(false);
@@ -339,15 +339,15 @@ function Booking() {
     }
     // Special handling for guestCount to use its dedicated error state and logic if preferred
     if (name === 'guestCount') {
-        const numValue = parseInt(value, 10);
-        if (value === '' || (numValue >= 0 && numValue <= 1000)) {
-            setGuestCountError(''); // Clear guest count specific error
-            if (formErrors.guestCount) setFormErrors(prev => ({ ...prev, guestCount: null })); // Also clear general form error for guestCount
-        } else if (numValue < 0) {
-            setGuestCountError('Guest count cannot be negative.');
-        } else if (numValue > 1000) {
-            setGuestCountError('Guest count cannot exceed 1000.');
-        }
+      const numValue = parseInt(value, 10);
+      if (value === '' || (numValue >= 0 && numValue <= 1000)) {
+        setGuestCountError(''); // Clear guest count specific error
+        if (formErrors.guestCount) setFormErrors(prev => ({ ...prev, guestCount: null })); // Also clear general form error for guestCount
+      } else if (numValue < 0) {
+        setGuestCountError('Guest count cannot be negative.');
+      } else if (numValue > 1000) {
+        setGuestCountError('Guest count cannot exceed 1000.');
+      }
     }
   };
 
@@ -355,12 +355,12 @@ function Booking() {
     const files = Array.from(e.target.files);
     if (files.length > 0) {
       const formData = new FormData();
-      
+
       // Append each file to the FormData with the correct key 'document'
       files.forEach((file, index) => {
         formData.append(`document`, file);
       });
-      
+
       try {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -368,15 +368,15 @@ function Booking() {
         }
 
         console.log('Uploading document...');
-        
+
         const response = await axios.post('/api/bookings/upload-document', formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         });
-        
+
         console.log('Document upload response:', response.data);
-        
+
         // Check if the response contains the expected data
         if (response.data && response.data.documentUrl) {
           // Update state with the new document
@@ -391,9 +391,9 @@ function Booking() {
       } catch (error) {
         console.error('Error uploading documents:', error);
         console.error('Error response:', error.response);
-        
+
         let errorMessage = 'Failed to upload documents. Please try again.';
-        
+
         if (error.response) {
           if (error.response.status === 400) {
             errorMessage = error.response.data.message || 'Bad request';
@@ -410,7 +410,7 @@ function Booking() {
         } else {
           errorMessage = error.message || 'Unknown error occurred';
         }
-        
+
         alert(errorMessage);
       }
     }
@@ -427,28 +427,28 @@ function Booking() {
   const viewDocument = (docUrl, docType) => {
     // Ensure the URL is properly formatted
     let formattedUrl = docUrl;
-    
+
     // Fix common URL issues
     if (formattedUrl.startsWith('http:/')) {
       formattedUrl = formattedUrl.replace('http:/', 'http://');
     }
-    
+
     // Determine file type from URL
     const fileExtension = formattedUrl.split('.').pop().toLowerCase();
     const isImage = ['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(fileExtension);
-    
+
     // For non-image files, directly open in default application
     if (!isImage) {
       window.open(formattedUrl, '_blank');
       return;
     }
-    
+
     // For images, show in modal
     setSelectedDocument(formattedUrl);
     setSelectedDocumentType(docType || 'Document');
     setShowDocumentViewer(true);
   };
-  
+
   const closeDocumentViewer = () => {
     setShowDocumentViewer(false);
     setSelectedDocument(null);
@@ -492,17 +492,12 @@ function Booking() {
     const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
 
     // Add a class for booked dates to improve styling
-    let className = `transition-all duration-300 ${
-      isHovered && !isBooked && !isPast ? 'bg-violet-200 cursor-pointer hover:bg-violet-300 hover:scale-105 hover:shadow-md' : ''
-    } ${
-      isSelected ? 'bg-violet-300 font-bold ring-2 ring-violet-600 ring-opacity-70 scale-105 shadow-md' : ''
-    } ${
-      isBooked ? 'bg-red-100 cursor-not-allowed booked' : ''
-    } ${
-      isToday ? 'font-bold text-violet-700 ring-1 ring-violet-400' : ''
-    } ${
-      isPast ? 'bg-gray-100 cursor-not-allowed opacity-50' : ''
-    }`;
+    let className = `transition-all duration-300 ${isHovered && !isBooked && !isPast ? 'bg-violet-200 cursor-pointer hover:bg-violet-300 hover:scale-105 hover:shadow-md' : ''
+      } ${isSelected ? 'bg-violet-300 font-bold ring-2 ring-violet-600 ring-opacity-70 scale-105 shadow-md' : ''
+      } ${isBooked ? 'bg-red-100 cursor-not-allowed booked' : ''
+      } ${isToday ? 'font-bold text-violet-700 ring-1 ring-violet-400' : ''
+      } ${isPast ? 'bg-gray-100 cursor-not-allowed opacity-50' : ''
+      }`;
 
     // For mobile, ensure we have proper touch targets
     if (window.innerWidth <= 768) {
@@ -526,7 +521,7 @@ function Booking() {
       }
     };
   };
-  
+
   const calendarCustomStyles = {
     className: 'custom-calendar',
     style: {
@@ -580,7 +575,7 @@ function Booking() {
       </div>
     );
   }
-  
+
   return (
     <div className="min-h-screen bg-gradient-mesh">
       {/* Document Viewer Modal */}
@@ -597,9 +592,9 @@ function Booking() {
               </button>
             </div>
             <div className="flex-1 overflow-hidden flex flex-col items-center justify-center">
-              <img 
-                src={selectedDocument} 
-                alt={selectedDocumentType} 
+              <img
+                src={selectedDocument}
+                alt={selectedDocumentType}
                 className="max-w-full max-h-[80vh] object-contain"
                 onError={(e) => {
                   console.error('Error loading image:', e);
@@ -616,7 +611,7 @@ function Booking() {
           </div>
         </div>
       )}
-      
+
       {/* Success Popup */}
       {showSuccessPopup && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -654,13 +649,13 @@ function Booking() {
             <p className="text-xl max-w-2xl mx-auto">
               Select your preferred date and let us help you create an unforgettable event
             </p>
-            
+
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 py-12">
-       
+
 
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -912,7 +907,7 @@ function Booking() {
                       required={formData.eventDocuments.length === 0}
                     />
                     {formErrors.eventDocuments && <p className="text-sm text-red-400 mt-1">{formErrors.eventDocuments}</p>}
-                    
+
                     {formData.eventDocuments.length > 0 && (
                       <div className="mt-4">
                         <h4 className="text-sm font-medium text-neutral-200 mb-2">Uploaded Documents:</h4>

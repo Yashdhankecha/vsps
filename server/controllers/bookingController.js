@@ -84,43 +84,55 @@ exports.submitBookingRequest = async (req, res) => {
     await booking.save();
     console.log('Booking saved successfully:', booking._id);
 
-    await sendEmail(
-      req.body.email,
-      'bookingRequest',
-      {
-        firstName: req.body.firstName,
-        surname: req.body.surname,
-        date: req.body.date,
-        isSamajMember: isSamajMember,
-        eventType: req.body.eventType
-      }
-    );
-
-    // Send notification to admin
-    try {
-      await sendEmail(
-        process.env.ADMIN_EMAIL,
-        'adminBookingNotification',
-        {
-          firstName: req.body.firstName,
-          surname: req.body.surname,
-          email: req.body.email,
-          phone: req.body.phone,
-          date: req.body.date,
-          eventType: req.body.eventType,
-          isSamajMember: isSamajMember
-        }
-      );
-    } catch (adminEmailError) {
-      console.error('Failed to send admin notification email:', adminEmailError);
-    }
-
-    console.log('=== BOOKING SUBMISSION COMPLETED SUCCESSFULLY ===');
+    // Send response immediately
     res.status(201).json({
       message: 'Booking request submitted successfully',
       booking,
       isSamajMember
     });
+
+    console.log('=== BOOKING SUBMISSION RESPONSE SENT ===');
+
+    // Handle emails asynchronously
+    const sendEmails = async () => {
+      try {
+        await sendEmail(
+          req.body.email,
+          'bookingRequest',
+          {
+            firstName: req.body.firstName,
+            surname: req.body.surname,
+            date: req.body.date,
+            isSamajMember: isSamajMember,
+            eventType: req.body.eventType
+          }
+        );
+      } catch (err) {
+        console.error('Failed to send user email:', err);
+      }
+
+      // Send notification to admin
+      try {
+        await sendEmail(
+          process.env.ADMIN_EMAIL,
+          'adminBookingNotification',
+          {
+            firstName: req.body.firstName,
+            surname: req.body.surname,
+            email: req.body.email,
+            phone: req.body.phone,
+            date: req.body.date,
+            eventType: req.body.eventType,
+            isSamajMember: isSamajMember
+          }
+        );
+      } catch (adminEmailError) {
+        console.error('Failed to send admin notification email:', adminEmailError);
+      }
+    };
+
+    sendEmails().catch(err => console.error('Error in background email task:', err));
+    console.log('=== BOOKING SUBMISSION BACKGROUND TASKS STARTED ===');
   } catch (error) {
     console.error('=== BOOKING SUBMISSION FAILED ===');
     console.error('Error in submitBookingRequest:', error);
@@ -592,62 +604,68 @@ exports.submitSamuhLaganRequest = async (req, res) => {
     const samuhLagan = new SamuhLagan(samuhLaganData);
     await samuhLagan.save();
 
-    try {
-      console.log('Sending thank you emails to:', {
-        brideEmail: samuhLaganData.bride.email,
-        brideName: samuhLaganData.bride.name,
-        groomEmail: samuhLaganData.groom.email,
-        groomName: samuhLaganData.groom.name
-      });
-
-      if (samuhLaganData.bride.email) {
-        console.log(`Sending thank you email to bride: ${samuhLaganData.bride.email}`);
-        await sendEmail(samuhLaganData.bride.email, 'samuhLaganRequest', {
-          name: samuhLaganData.bride.name,
-          date: new Date(samuhLaganData.ceremonyDate).toLocaleDateString()
-        });
-        console.log(`Successfully sent thank you email to bride: ${samuhLaganData.bride.email}`);
-      }
-
-      if (samuhLaganData.groom.email) {
-        console.log(`Sending thank you email to groom: ${samuhLaganData.groom.email}`);
-        await sendEmail(samuhLaganData.groom.email, 'samuhLaganRequest', {
-          name: samuhLaganData.groom.name,
-          date: new Date(samuhLaganData.ceremonyDate).toLocaleDateString()
-        });
-        console.log(`Successfully sent thank you email to groom: ${samuhLaganData.groom.email}`);
-      }
-
-      console.log('All thank you emails sent successfully');
-    } catch (emailError) {
-      console.error('Failed to send thank you emails:', emailError);
-
-    }
-
-    // Send notification to admin
-    try {
-      await sendEmail(
-        process.env.ADMIN_EMAIL,
-        'adminSamuhLaganNotification',
-        {
-          brideName: samuhLaganData.bride.name,
-          groomName: samuhLaganData.groom.name,
-          brideEmail: samuhLaganData.bride.email,
-          groomEmail: samuhLaganData.groom.email,
-          ceremonyDate: samuhLaganData.ceremonyDate,
-          bridePhone: samuhLaganData.bride.contactNumber,
-          groomPhone: samuhLaganData.groom.contactNumber
-        }
-      );
-    } catch (adminEmailError) {
-      console.error('Failed to send admin notification email for Samuh Lagan:', adminEmailError);
-    }
-
+    // Send response immediately to prevent client timeout
     res.status(201).json({
       success: true,
       message: 'Samuh Lagan request submitted successfully',
       samuhLagan
     });
+
+    // Handle emails asynchronously
+    const sendEmails = async () => {
+      try {
+        console.log('Sending thank you emails to:', {
+          brideEmail: samuhLaganData.bride.email,
+          brideName: samuhLaganData.bride.name,
+          groomEmail: samuhLaganData.groom.email,
+          groomName: samuhLaganData.groom.name
+        });
+
+        if (samuhLaganData.bride.email) {
+          console.log(`Sending thank you email to bride: ${samuhLaganData.bride.email}`);
+          await sendEmail(samuhLaganData.bride.email, 'samuhLaganRequest', {
+            name: samuhLaganData.bride.name,
+            date: new Date(samuhLaganData.ceremonyDate).toLocaleDateString()
+          });
+          console.log(`Successfully sent thank you email to bride: ${samuhLaganData.bride.email}`);
+        }
+
+        if (samuhLaganData.groom.email) {
+          console.log(`Sending thank you email to groom: ${samuhLaganData.groom.email}`);
+          await sendEmail(samuhLaganData.groom.email, 'samuhLaganRequest', {
+            name: samuhLaganData.groom.name,
+            date: new Date(samuhLaganData.ceremonyDate).toLocaleDateString()
+          });
+          console.log(`Successfully sent thank you email to groom: ${samuhLaganData.groom.email}`);
+        }
+
+        console.log('All thank you emails sent successfully');
+      } catch (emailError) {
+        console.error('Failed to send thank you emails:', emailError);
+      }
+
+      // Send notification to admin
+      try {
+        await sendEmail(
+          process.env.ADMIN_EMAIL,
+          'adminSamuhLaganNotification',
+          {
+            brideName: samuhLaganData.bride.name,
+            groomName: samuhLaganData.groom.name,
+            brideEmail: samuhLaganData.bride.email,
+            groomEmail: samuhLaganData.groom.email,
+            ceremonyDate: samuhLaganData.ceremonyDate,
+            bridePhone: samuhLaganData.bride.contactNumber,
+            groomPhone: samuhLaganData.groom.contactNumber
+          }
+        );
+      } catch (adminEmailError) {
+        console.error('Failed to send admin notification email for Samuh Lagan:', adminEmailError);
+      }
+    };
+
+    // Execute email sending in background
+    sendEmails().catch(err => console.error('Error in background email task:', err));
   } catch (error) {
     console.error('Error submitting Samuh Lagan request:', error);
     res.status(500).json({

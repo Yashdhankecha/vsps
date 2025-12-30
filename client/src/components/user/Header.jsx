@@ -41,10 +41,10 @@ function Header() {
         { label: 'Book Event', path: '/booking' }
       ]
     },
-    {
-      label: 'Live',
-      path: '/live-streaming'
-    },
+    // {
+    //   label: 'Live',
+    //   path: '/live-streaming'
+    // },
     {
       label: 'Gallery',
       path: '/gallery'
