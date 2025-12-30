@@ -57,15 +57,15 @@ function Footer() {
             <ul className="space-y-3">
               <li className="flex items-start space-x-3">
                 <FaPhone className="text-electric-400 mt-1 flex-shrink-0" />
-                <span className="text-neutral-300">9106110380</span>
+                <span className="text-neutral-300">8799038003</span>
               </li>
               <li className="flex items-start space-x-3">
                 <FaEnvelope className="text-electric-400 mt-1 flex-shrink-0" />
-                <span className="text-neutral-300 break-all">insanethunder.2103@gmail.com</span>
+                <span className="text-neutral-300 break-all">developerstripod@gmail.com</span>
               </li>
               <li className="flex items-start space-x-3">
                 <FaMapMarkerAlt className="text-electric-400 mt-1 flex-shrink-0" />
-                <span className="text-neutral-300">vansol village Bhalej Road ,anand ,Gujarat 388001</span>
+                <span className="text-neutral-300">Vansol Patidar Samaj Sanskrutik Kendra,bhalej road</span>
               </li>
             </ul>
           </div>

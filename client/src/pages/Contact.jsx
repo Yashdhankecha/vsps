@@ -118,7 +118,7 @@ function Contact() {
                 <FaPhone className="text-white text-2xl" />
               </div>
               <h3 className="text-xl font-bold text-white mb-4 group-hover:text-electric-400 transition-colors">Phone</h3>
-              <p className="text-lg font-semibold text-neutral-300 mb-2">9106110380</p>
+              <p className="text-lg font-semibold text-neutral-300 mb-2">8799038003</p>
               <p className="text-neutral-400">Mon-Fri 9am-6pm</p>
             </div>
 
@@ -127,7 +127,7 @@ function Contact() {
                 <FaEnvelope className="text-white text-2xl" />
               </div>
               <h3 className="text-xl font-bold text-white mb-4 group-hover:text-electric-400 transition-colors">Email</h3>
-              <p className="text-lg font-semibold text-neutral-300 break-all">insanethunder.2103@gmail.com</p>
+              <p className="text-lg font-semibold text-neutral-300 break-all">developerstripod@gmail.com</p>
             </div>
 
             <div className="group glass-effect p-8 rounded-2xl hover:shadow-2xl transition-all duration-500 text-center transform hover:-translate-y-2 border border-white/10 hover:border-electric-500/30">
@@ -135,8 +135,8 @@ function Contact() {
                 <FaMapMarkerAlt className="text-white text-2xl" />
               </div>
               <h3 className="text-xl font-bold text-white mb-4 group-hover:text-electric-400 transition-colors">Location</h3>
-              <p className="text-lg font-semibold text-neutral-300 mb-1">Vansol Village Bhalej Road</p>
-              <p className="text-neutral-400">Anand, Gujarat 388001</p>
+              <p className="text-lg font-semibold text-neutral-300 mb-1">Vansol Patidar Samaj Sanskrutik Kendra</p>
+              <p className="text-neutral-400">bhalej road</p>
             </div>
           </div>
 
