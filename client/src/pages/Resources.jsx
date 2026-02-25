@@ -94,11 +94,7 @@ function Resources() {
         <div className="absolute inset-0 texture-diagonal opacity-10"></div>
         <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-white/5 blur-3xl"></div>
         <div className="relative container mx-auto px-4 text-center">
-          <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-gray-200 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-gray-200">
-              Resources
-            </span>
-          </div>
+
           <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
             Planning Resources
           </h1>
@@ -119,8 +115,8 @@ function Resources() {
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
                 className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${selectedCategory === category.id
-                    ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   }`}
               >
                 {category.label}

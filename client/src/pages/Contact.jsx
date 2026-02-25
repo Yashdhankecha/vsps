@@ -96,11 +96,7 @@ function Contact() {
         <div className="absolute -bottom-10 -right-10 w-64 h-64 rounded-full bg-white/5 blur-3xl"></div>
         <div className="absolute -top-10 -left-10 w-48 h-48 rounded-full bg-white/5 blur-3xl"></div>
         <div className="relative container mx-auto px-4 text-center">
-          <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm">
-              Contact Us
-            </span>
-          </div>
+
           <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
             Get In Touch
           </h1>
@@ -160,7 +156,7 @@ function Contact() {
                     name="name"
                     value={formData.name}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-800 rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium placeholder-gray-400"
+                    className="w-full px-4 py-3 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid border border-gray-300 text-gray-800 rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium placeholder-gray-400"
                     placeholder="Enter your full name"
                     required
                   />
@@ -176,7 +172,7 @@ function Contact() {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-800 rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium placeholder-gray-400"
+                    className="w-full px-4 py-3 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid border border-gray-300 text-gray-800 rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium placeholder-gray-400"
                     placeholder="Enter your email address"
                     required
                   />
@@ -193,7 +189,7 @@ function Contact() {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-800 rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium placeholder-gray-400"
+                  className="w-full px-4 py-3 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid border border-gray-300 text-gray-800 rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium placeholder-gray-400"
                   placeholder="Enter your phone number"
                 />
               </div>
@@ -208,7 +204,7 @@ function Contact() {
                   value={formData.message}
                   onChange={handleChange}
                   rows="6"
-                  className="w-full px-4 py-3 bg-gray-50 border border-gray-300 text-gray-800 rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium resize-none placeholder-gray-400"
+                  className="w-full px-4 py-3 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid border border-gray-300 text-gray-800 rounded-xl focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium resize-none placeholder-gray-400"
                   placeholder="Tell us about your event or any questions you have..."
                   required
                 ></textarea>

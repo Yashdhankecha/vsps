@@ -19,8 +19,7 @@ const youtubeRoutes = require('./routes/youtube');
 const committeeRoutes = require('./routes/committeeRoutes');
 const multer = require('multer');
 const fs = require('fs');
-
-// ... (existing code)
+const nodemailer = require('nodemailer');
 
 dotenv.config();
 
@@ -85,8 +84,6 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const rateLimit = require('express-rate-limit');
 
-// ... (existing code)
-
 const app = express();
 
 // Security Middleware
@@ -99,7 +96,7 @@ app.use(helmet({
 // Rate limiting to prevent brute-force/DoS
 const limiter = rateLimit({
   windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 100, // limit each IP to 100 requests per windowMs
+  max: 1000, // Increased limit for development/admin panel
   message: 'Too many requests from this IP, please try again later'
 });
 
@@ -160,7 +157,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 // Request logging middleware
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
+  const start = Date.now();
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`${req.method} ${req.url} ${res.statusCode} - ${duration}ms`);
+  });
   next();
 });
 
@@ -281,7 +282,7 @@ app.use('/api/content', homeContentRoutes);
 app.use('/api/content', eventCategoryRoutes);
 app.use('/api/admin/forms', formRoutes);
 app.use('/api/student-awards', studentAwardRoutes);
-app.use('/api/youtube', youtubeRoutes);
+// app.use('/api/youtube', youtubeRoutes);
 app.use('/api/committee', committeeRoutes);
 
 app.use('/api/reviews', reviewRoutes);

@@ -33,14 +33,14 @@ function ForgotPassword() {
     try {
       const response = await forgotPassword(email);
       console.log('OTP Send Response:', response); // Debug log
-      
+
       // Check if there's a note about email delivery failure
       if (response.msg.includes('Email delivery failed')) {
         setError('Note: Email delivery failed, but OTP was generated. Contact admin for assistance.');
         // In a real app, you'd have a better way to get the OTP to the user
         // For now, we'll proceed to the OTP step
       }
-      
+
       setStep('otp');
       setResendTimer(60);
     } catch (error) {
@@ -56,7 +56,7 @@ function ForgotPassword() {
       const newOtpValues = [...otpValues];
       newOtpValues[index] = value;
       setOtpValues(newOtpValues);
-      
+
       if (value !== '' && index < 5) {
         document.getElementById(`otp-${index + 1}`).focus();
       }
@@ -112,7 +112,7 @@ function ForgotPassword() {
       const response = await resendOTP(email);
       setResendTimer(60);
       setError('');
-      
+
       // Check if there's a note about email delivery failure
       if (response.msg && response.msg.includes('Email delivery failed')) {
         setError('Note: Email delivery failed, but OTP was generated. Contact admin for assistance.');
@@ -124,12 +124,12 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 glass-effect p-8 rounded-xl shadow-lg border border-gray-200">
         {step === 'email' && (
           <>
             <div>
-              <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Reset your password
               </h2>
               <p className="mt-2 text-center text-sm text-gray-600">
@@ -148,7 +148,7 @@ function ForgotPassword() {
                     id="email"
                     type="email"
                     required
-                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-gray-50 border border-gray-300 placeholder-gray-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500"
+                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-white border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-electric-500 focus:border-electric-500"
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -158,9 +158,8 @@ function ForgotPassword() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/15 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${
-                  isLoading ? 'opacity-70 cursor-not-allowed' : ''
-                }`}
+                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/15 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
               >
                 {isLoading ? 'Sending...' : 'Send OTP'}
               </button>
@@ -171,11 +170,11 @@ function ForgotPassword() {
         {step === 'otp' && (
           <>
             <div>
-              <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Enter OTP
               </h2>
               <p className="mt-2 text-center text-sm text-gray-600">
-                Please enter the 6-digit OTP sent to<br/>
+                Please enter the 6-digit OTP sent to<br />
                 <span className="font-medium text-electric-600">{email}</span>
               </p>
             </div>
@@ -190,16 +189,15 @@ function ForgotPassword() {
                     maxLength="1"
                     value={value}
                     onChange={(e) => handleOTPChange(index, e.target.value)}
-                    className="w-12 h-12 text-center text-xl font-semibold border rounded-lg focus:ring-2 focus:ring-electric-500 focus:border-electric-500 bg-gray-50 border-gray-300 text-white"
+                    className="w-12 h-12 text-center text-xl font-semibold border rounded-lg focus:ring-2 focus:ring-electric-500 focus:border-electric-500 bg-white border-gray-300 text-gray-900"
                   />
                 ))}
               </div>
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/15 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${
-                  isLoading ? 'opacity-70 cursor-not-allowed' : ''
-                }`}
+                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/15 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
               >
                 {isLoading ? 'Verifying...' : 'Verify OTP'}
               </button>
@@ -225,7 +223,7 @@ function ForgotPassword() {
         {step === 'newPassword' && (
           <>
             <div>
-              <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
+              <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
                 Set New Password
               </h2>
               <p className="mt-2 text-center text-sm text-gray-600">
@@ -244,7 +242,7 @@ function ForgotPassword() {
                     id="newPassword"
                     type="password"
                     required
-                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-gray-50 border border-gray-300 placeholder-gray-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500"
+                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-white border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-electric-500 focus:border-electric-500"
                     placeholder="New Password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
@@ -261,7 +259,7 @@ function ForgotPassword() {
                     id="confirmPassword"
                     type="password"
                     required
-                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-gray-50 border border-gray-300 placeholder-gray-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500"
+                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-white border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-electric-500 focus:border-electric-500"
                     placeholder="Confirm Password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -271,9 +269,8 @@ function ForgotPassword() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/15 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${
-                  isLoading ? 'opacity-70 cursor-not-allowed' : ''
-                }`}
+                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/15 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                  }`}
               >
                 {isLoading ? 'Resetting...' : 'Reset Password'}
               </button>

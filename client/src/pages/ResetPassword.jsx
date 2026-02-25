@@ -33,10 +33,10 @@ function ResetPassword() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8 glass-effect p-8 rounded-xl shadow-lg border border-gray-200">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Reset Password</h2>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Reset Password</h2>
           <p className="mt-2 text-center text-sm text-gray-600">
             Enter your new password.
           </p>
@@ -58,7 +58,7 @@ function ResetPassword() {
                   name="password"
                   type={showPassword ? "text" : "password"}
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 bg-gray-50 border border-gray-300 placeholder-gray-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 bg-white border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
                   placeholder="New Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -89,7 +89,7 @@ function ResetPassword() {
                   name="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 bg-gray-50 border border-gray-300 placeholder-gray-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 bg-white border border-gray-300 placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
                   placeholder="Confirm Password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}

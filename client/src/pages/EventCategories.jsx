@@ -127,7 +127,7 @@ function EventCategories() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -135,7 +135,7 @@ function EventCategories() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid py-12">
         <div className="container mx-auto px-4">
           <div className="text-center">
             <Card className="max-w-md mx-auto p-6">
@@ -209,7 +209,7 @@ function EventCategories() {
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
-                <h3 className="text-lg font-medium text-yellow-300 mb-2">No Categories Available</h3>
+                <h3 className="text-lg font-medium text-yellow-600 mb-2">No Categories Available</h3>
                 <p className="text-gray-600 mb-4">There are currently no event categories configured.</p>
                 <Button
                   onClick={fetchCategories}
@@ -225,17 +225,17 @@ function EventCategories() {
               return (
                 <Card
                   key={category._id}
-                  className={`p-6 cursor-pointer transform transition-all duration-300 hover:shadow-xl ${selectedCategory?._id === category._id ? 'ring-2 ring-electric-500 border-electric-500' : 'border-gray-200'
+                  className={`p-6 cursor-pointer transform transition-all duration-300 hover:shadow-xl ${selectedCategory?._id === category._id ? 'ring-2 ring-electric-500 border-electric-500 bg-electric-50' : 'border-gray-200'
                     }`}
                   hoverEffect={true}
                   onClick={() => setSelectedCategory(category)}
                 >
-                  <div className="flex items-center justify-center mb-4">
-                    <IconComponent className="text-4xl text-white" />
+                  <div className="flex items-center justify-center w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-electric">
+                    <IconComponent className="text-3xl text-white" />
                   </div>
-                  <h3 className="text-xl font-semibold text-center mb-2 text-white">{category.title}</h3>
+                  <h3 className="text-xl font-semibold text-center mb-2 text-gray-900">{category.title}</h3>
                   <p className="text-gray-600 text-center mb-2">{category.description}</p>
-                  <p className="text-sm text-gray-500 text-center">Capacity: {category.capacity}</p>
+                  <p className="text-sm text-gray-500 text-center font-medium">Capacity: {category.capacity}</p>
                 </Card>
               );
             })
@@ -245,31 +245,31 @@ function EventCategories() {
         {selectedCategory && (
           <Card className="p-8 mb-12 animate-fade-in">
             <div className="max-w-4xl mx-auto">
-              <h2 className="text-3xl font-bold text-center mb-6 text-white">{selectedCategory.title}</h2>
+              <h2 className="text-3xl font-bold text-center mb-6 text-gray-900">{selectedCategory.title}</h2>
 
               <div className="mb-8">
-                <h3 className="text-xl font-semibold text-center mb-4 text-white">Venue Pricing</h3>
-                <div className="grid grid-cols-2 gap-6 max-w-2xl mx-auto">
-                  <Card className="p-6 text-center bg-gradient-electric">
-                    <h4 className="font-medium text-gray-800 mb-2">Samaj Member</h4>
-                    <p className="text-2xl font-bold text-gray-900">
+                <h3 className="text-xl font-semibold text-center mb-4 text-gray-900">Venue Pricing</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-2xl mx-auto">
+                  <div className="p-6 text-center bg-gradient-electric rounded-2xl shadow-md">
+                    <h4 className="font-medium text-white/90 mb-2">Samaj Member</h4>
+                    <p className="text-3xl font-bold text-white">
                       {selectedCategory.membershipPricing.samajMember}
                     </p>
-                  </Card>
-                  <Card className="p-6 text-center bg-gradient-neon">
-                    <h4 className="font-medium text-gray-800 mb-2">Non-Samaj Member</h4>
-                    <p className="text-2xl font-bold text-gray-900">
+                  </div>
+                  <div className="p-6 text-center bg-gradient-to-br from-neon-500 to-neon-700 rounded-2xl shadow-md">
+                    <h4 className="font-medium text-white/90 mb-2">Non-Samaj Member</h4>
+                    <p className="text-3xl font-bold text-white">
                       {selectedCategory.membershipPricing.nonSamajMember}
                     </p>
-                  </Card>
+                  </div>
                 </div>
               </div>
 
               <div className="mb-8">
-                <h3 className="text-xl font-semibold mb-4 text-white">Features</h3>
+                <h3 className="text-xl font-semibold mb-4 text-gray-900">Features</h3>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {selectedCategory.features.map((feature, index) => (
-                    <li key={index} className="flex items-center text-gray-600">
+                    <li key={index} className="flex items-center text-gray-700">
                       <span className="w-2 h-2 bg-electric-500 rounded-full mr-2"></span>
                       {feature}
                     </li>
@@ -279,7 +279,7 @@ function EventCategories() {
 
               {selectedCategory.packages && selectedCategory.packages.length > 0 && (
                 <div className="mb-8">
-                  <h3 className="text-xl font-semibold mb-4 text-white">Available Packages</h3>
+                  <h3 className="text-xl font-semibold mb-4 text-gray-900">Available Packages</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {selectedCategory.packages.map((pkg, index) => (
                       <Card
@@ -292,12 +292,12 @@ function EventCategories() {
                             Popular Choice
                           </div>
                         )}
-                        <h4 className="text-lg font-semibold mb-2 text-white">{pkg.name}</h4>
+                        <h4 className="text-lg font-semibold mb-2 text-gray-900">{pkg.name}</h4>
                         <p className="text-2xl font-bold text-electric-600 mb-4">{pkg.price}</p>
                         <ul className="space-y-2">
                           {pkg.includes.map((item, i) => (
                             <li key={i} className="flex items-start text-gray-600">
-                              <span className="text-green-400 mr-2">✓</span>
+                              <span className="text-green-600 mr-2">✓</span>
                               {item}
                             </li>
                           ))}

@@ -3,7 +3,26 @@ const express = require('express');
 const Booking = require('../models/Booking');
 const SamuhLagan = require('../models/SamuhLagan');
 const StudentAward = require('../models/StudentAward');
+const Form = require('../models/Form');
 const { sendEmail } = require('../utils/emailService');
+
+// Public endpoint: return all confirmed/booked dates so every user's calendar can block them
+exports.getBookedDates = async (req, res) => {
+  try {
+    const bookedBookings = await Booking.find({ status: 'Booked' }, 'date');
+    const confirmedSamuhLagans = await SamuhLagan.find({ status: 'confirmed' }, 'ceremonyDate');
+
+    const bookedDates = [
+      ...bookedBookings.map(b => b.date),
+      ...confirmedSamuhLagans.map(s => s.ceremonyDate)
+    ];
+
+    res.status(200).json({ bookedDates });
+  } catch (error) {
+    console.error('Error fetching booked dates:', error);
+    res.status(500).json({ message: 'Error fetching booked dates', error: error.message });
+  }
+};
 
 
 exports.submitBookingRequest = async (req, res) => {
@@ -77,6 +96,24 @@ exports.submitBookingRequest = async (req, res) => {
     });
 
     bookingData.isSamajMember = isSamajMember;
+
+    // Check if this date is already confirmed/booked globally
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const existingBooking = await Booking.findOne({
+      date: { $gte: startOfDay, $lte: endOfDay },
+      status: 'Booked'
+    });
+    const existingSamuhLagan = await SamuhLagan.findOne({
+      ceremonyDate: { $gte: startOfDay, $lte: endOfDay },
+      status: 'confirmed'
+    });
+    if (existingBooking || existingSamuhLagan) {
+      return res.status(409).json({ message: 'This date is already booked. Please select another date.' });
+    }
 
     console.log('Creating booking with data:', bookingData);
     const booking = new Booking(bookingData);
@@ -527,6 +564,23 @@ exports.submitSamuhLaganRequest = async (req, res) => {
       files: req.files
     });
 
+    const userId = req.body.user;
+    if (!userId) {
+      return res.status(400).json({ message: 'User ID is required' });
+    }
+
+    // Check if form is active
+    const form = await Form.findOne({ formType: 'samuhLagan' });
+    if (!form || !form.isCurrentlyActive()) {
+      return res.status(400).json({ message: 'Registration is currently closed' });
+    }
+
+    // Check for existing submission
+    const existing = await SamuhLagan.findOne({ user: userId });
+    if (existing) {
+      return res.status(400).json({ message: 'You have already submitted a request for Samuh Lagan' });
+    }
+
     const files = req.files;
     if (!files) {
       console.error('No files received in request');
@@ -597,6 +651,25 @@ exports.submitSamuhLaganRequest = async (req, res) => {
       return res.status(400).json({
         message: 'Missing required groom details'
       });
+    }
+
+    // Check if the ceremony date is already confirmed/booked globally
+    const ceremonyDate = new Date(samuhLaganData.ceremonyDate);
+    const startOfDay = new Date(ceremonyDate);
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date(ceremonyDate);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const existingBooking = await Booking.findOne({
+      date: { $gte: startOfDay, $lte: endOfDay },
+      status: 'Booked'
+    });
+    const existingSamuhLagan = await SamuhLagan.findOne({
+      ceremonyDate: { $gte: startOfDay, $lte: endOfDay },
+      status: 'confirmed'
+    });
+    if (existingBooking || existingSamuhLagan) {
+      return res.status(409).json({ message: 'This date is already booked. Please select another date.' });
     }
 
     console.log('Creating Samuh Lagan with data:', samuhLaganData);
@@ -875,6 +948,19 @@ exports.submitStudentAwardRequest = async (req, res) => {
       file: req.file
     });
 
+    const userId = req.user._id;
+
+    // Check if form is active
+    const form = await Form.findOne({ formType: 'studentAwards' });
+    if (!form || !form.isCurrentlyActive()) {
+      return res.status(400).json({ message: 'Registration is currently closed' });
+    }
+
+    // Check for existing submission
+    const existing = await StudentAward.findOne({ user: userId });
+    if (existing) {
+      return res.status(400).json({ message: 'You have already submitted an application for Student Award' });
+    }
 
     if (!req.file) {
       return res.status(400).json({

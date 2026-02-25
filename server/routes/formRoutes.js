@@ -3,30 +3,29 @@ const router = express.Router();
 const { adminAuth, formManagerAuth, userAuth } = require('../middleware/auth');
 const Form = require('../models/Form');
 const SamuhLagan = require('../models/SamuhLagan');
+const StudentAward = require('../models/StudentAward');
 
 // Public endpoint to get form status
 router.get('/public/status/:formType?', async (req, res) => {
   try {
     const { formType } = req.params;
     const forms = await Form.find({});
-    
-    
+
+
     if (forms.length === 0) {
       const defaultForms = [
         { formType: 'samuhLagan', active: false },
-        { formType: 'studentAwards', active: false },
-        { formType: 'teamRegistration', active: false }
+        { formType: 'studentAwards', active: false }
       ];
-      
+
       await Form.insertMany(defaultForms);
       return res.json({
         samuhLagan: { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
-        studentAwards: { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
-        teamRegistration: { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false }
+        studentAwards: { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false }
       });
     }
 
-    
+
     if (formType) {
       const form = forms.find(f => f.formType === formType);
       if (!form) {
@@ -38,24 +37,19 @@ router.get('/public/status/:formType?', async (req, res) => {
       });
     }
 
-    
+
     const formStatus = {
       samuhLagan: forms.find(f => f.formType === 'samuhLagan') || { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
-      studentAwards: forms.find(f => f.formType === 'studentAwards') || { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
-      teamRegistration: forms.find(f => f.formType === 'teamRegistration') || { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false }
+      studentAwards: forms.find(f => f.formType === 'studentAwards') || { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false }
     };
 
-    
+
     if (formStatus.samuhLagan._id) {
       formStatus.samuhLagan.isCurrentlyActive = forms.find(f => f.formType === 'samuhLagan').isCurrentlyActive();
     }
-    
+
     if (formStatus.studentAwards._id) {
       formStatus.studentAwards.isCurrentlyActive = forms.find(f => f.formType === 'studentAwards').isCurrentlyActive();
-    }
-
-    if (formStatus.teamRegistration._id) {
-      formStatus.teamRegistration.isCurrentlyActive = forms.find(f => f.formType === 'teamRegistration').isCurrentlyActive();
     }
 
     res.json(formStatus);
@@ -70,24 +64,22 @@ router.get('/status/:formType?', formManagerAuth, async (req, res) => {
   try {
     const { formType } = req.params;
     const forms = await Form.find({});
-    
-    
+
+
     if (forms.length === 0) {
       const defaultForms = [
         { formType: 'samuhLagan', active: false },
-        { formType: 'studentAwards', active: false },
-        { formType: 'teamRegistration', active: false }
+        { formType: 'studentAwards', active: false }
       ];
-      
+
       await Form.insertMany(defaultForms);
       return res.json({
         samuhLagan: { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
-        studentAwards: { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
-        teamRegistration: { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false }
+        studentAwards: { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false }
       });
     }
 
-    
+
     if (formType) {
       const form = forms.find(f => f.formType === formType);
       if (!form) {
@@ -99,24 +91,19 @@ router.get('/status/:formType?', formManagerAuth, async (req, res) => {
       });
     }
 
-    
+
     const formStatus = {
       samuhLagan: forms.find(f => f.formType === 'samuhLagan') || { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
-      studentAwards: forms.find(f => f.formType === 'studentAwards') || { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false },
-      teamRegistration: forms.find(f => f.formType === 'teamRegistration') || { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false }
+      studentAwards: forms.find(f => f.formType === 'studentAwards') || { active: false, lastUpdated: null, startTime: null, endTime: null, eventDate: null, isCurrentlyActive: false }
     };
 
-    
+
     if (formStatus.samuhLagan._id) {
       formStatus.samuhLagan.isCurrentlyActive = forms.find(f => f.formType === 'samuhLagan').isCurrentlyActive();
     }
-    
+
     if (formStatus.studentAwards._id) {
       formStatus.studentAwards.isCurrentlyActive = forms.find(f => f.formType === 'studentAwards').isCurrentlyActive();
-    }
-
-    if (formStatus.teamRegistration._id) {
-      formStatus.teamRegistration.isCurrentlyActive = forms.find(f => f.formType === 'teamRegistration').isCurrentlyActive();
     }
 
     res.json(formStatus);
@@ -140,28 +127,28 @@ router.put('/status/:formType', formManagerAuth, async (req, res) => {
       eventDate
     });
 
-   
-    if (!['samuhLagan', 'studentAwards', 'teamRegistration'].includes(formType)) {
-      return res.status(400).json({ 
-        message: 'Invalid form type', 
-        details: `Form type must be either 'samuhLagan', 'studentAwards', or 'teamRegistration', received: ${formType}` 
+
+    if (!['samuhLagan', 'studentAwards'].includes(formType)) {
+      return res.status(400).json({
+        message: 'Invalid form type',
+        details: `Form type must be either 'samuhLagan' or 'studentAwards', received: ${formType}`
       });
     }
 
     if (typeof active !== 'boolean') {
-      return res.status(400).json({ 
-        message: 'Invalid active status', 
-        details: 'Active status must be a boolean value' 
+      return res.status(400).json({
+        message: 'Invalid active status',
+        details: 'Active status must be a boolean value'
       });
     }
 
-   
+
     if (startTime) {
       const startDate = new Date(startTime);
       if (isNaN(startDate.getTime())) {
-        return res.status(400).json({ 
-          message: 'Invalid start time format', 
-          details: `Received: ${startTime}. Expected a valid date string.` 
+        return res.status(400).json({
+          message: 'Invalid start time format',
+          details: `Received: ${startTime}. Expected a valid date string.`
         });
       }
     }
@@ -169,9 +156,9 @@ router.put('/status/:formType', formManagerAuth, async (req, res) => {
     if (endTime) {
       const endDate = new Date(endTime);
       if (isNaN(endDate.getTime())) {
-        return res.status(400).json({ 
-          message: 'Invalid end time format', 
-          details: `Received: ${endTime}. Expected a valid date string.` 
+        return res.status(400).json({
+          message: 'Invalid end time format',
+          details: `Received: ${endTime}. Expected a valid date string.`
         });
       }
     }
@@ -179,26 +166,26 @@ router.put('/status/:formType', formManagerAuth, async (req, res) => {
     if (eventDate) {
       const eventDateObj = new Date(eventDate);
       if (isNaN(eventDateObj.getTime())) {
-        return res.status(400).json({ 
-          message: 'Invalid event date format', 
-          details: `Received: ${eventDate}. Expected a valid date string.` 
+        return res.status(400).json({
+          message: 'Invalid event date format',
+          details: `Received: ${eventDate}. Expected a valid date string.`
         });
       }
     }
 
-    
+
     if (startTime && endTime) {
       const startDate = new Date(startTime);
       const endDate = new Date(endTime);
       if (endDate <= startDate) {
-        return res.status(400).json({ 
-          message: 'Invalid time range', 
-          details: 'End time must be after start time' 
+        return res.status(400).json({
+          message: 'Invalid time range',
+          details: 'End time must be after start time'
         });
       }
     }
 
-   
+
     let form = await Form.findOne({ formType });
     if (!form) {
       form = new Form({ formType });
@@ -212,7 +199,7 @@ router.put('/status/:formType', formManagerAuth, async (req, res) => {
 
     await form.save();
 
-    
+
     const updatedForm = {
       [formType]: {
         active: form.active,
@@ -228,9 +215,9 @@ router.put('/status/:formType', formManagerAuth, async (req, res) => {
     res.json(updatedForm);
   } catch (error) {
     console.error('Error updating form status:', error);
-    res.status(500).json({ 
-      message: 'Error updating form status', 
-      details: `Unexpected error: ${error.message}` 
+    res.status(500).json({
+      message: 'Error updating form status',
+      details: `Unexpected error: ${error.message}`
     });
   }
 });
@@ -239,34 +226,33 @@ router.put('/status/:formType', formManagerAuth, async (req, res) => {
 router.get('/check-form-visibility/:formName', async (req, res) => {
   try {
     const { formName } = req.params;
-    
+
     const formTypeMap = {
       'registrationForm': 'samuhLagan',
-      'studentAwardForm': 'studentAwards',
-      'teamRegistrationForm': 'teamRegistration'
+      'studentAwardForm': 'studentAwards'
     };
-    
+
     const formType = formTypeMap[formName];
-    
+
     if (!formType) {
-      return res.status(400).json({ 
-        message: 'Invalid form name', 
-        details: `Form name must be one of: ${Object.keys(formTypeMap).join(', ')}` 
+      return res.status(400).json({
+        message: 'Invalid form name',
+        details: `Form name must be one of: ${Object.keys(formTypeMap).join(', ')}`
       });
     }
-    
+
     const form = await Form.findOne({ formType });
-    
+
     if (!form) {
-      return res.status(404).json({ 
-        message: 'Form not found', 
-        details: `No form found with type: ${formType}` 
+      return res.status(404).json({
+        message: 'Form not found',
+        details: `No form found with type: ${formType}`
       });
     }
-    
+
     const isVisible = form.isCurrentlyActive();
-    
-    res.json({ 
+
+    res.json({
       visible: isVisible,
       formStatus: {
         active: form.active,
@@ -279,9 +265,9 @@ router.get('/check-form-visibility/:formName', async (req, res) => {
     });
   } catch (error) {
     console.error('Error checking form visibility:', error);
-    res.status(500).json({ 
-      message: 'Error checking form visibility', 
-      details: `Unexpected error: ${error.message}` 
+    res.status(500).json({
+      message: 'Error checking form visibility',
+      details: `Unexpected error: ${error.message}`
     });
   }
 });
@@ -290,35 +276,44 @@ router.get('/check-form-visibility/:formName', async (req, res) => {
 router.get('/can-access-form/:formName', userAuth, async (req, res) => {
   try {
     const { formName } = req.params;
-    
+
     const formTypeMap = {
       'registrationForm': 'samuhLagan',
-      'studentAwardForm': 'studentAwards',
-      'teamRegistrationForm': 'teamRegistration'
+      'studentAwardForm': 'studentAwards'
     };
-    
+
     const formType = formTypeMap[formName];
-    
+
     if (!formType) {
-      return res.status(400).json({ 
-        message: 'Invalid form name', 
-        details: `Form name must be one of: ${Object.keys(formTypeMap).join(', ')}` 
+      return res.status(400).json({
+        message: 'Invalid form name',
+        details: `Form name must be one of: ${Object.keys(formTypeMap).join(', ')}`
       });
     }
-    
+
     const form = await Form.findOne({ formType });
-    
+
     if (!form) {
-      return res.status(404).json({ 
-        message: 'Form not found', 
-        details: `No form found with type: ${formType}` 
+      return res.status(404).json({
+        message: 'Form not found',
+        details: `No form found with type: ${formType}`
       });
     }
-    
+
     const isVisible = form.isCurrentlyActive();
-    
-    res.json({ 
-      canAccess: isVisible,
+    let hasSubmitted = false;
+
+    if (formType === 'samuhLagan') {
+      const existing = await SamuhLagan.findOne({ user: req.user._id });
+      if (existing) hasSubmitted = true;
+    } else if (formType === 'studentAwards') {
+      const existing = await StudentAward.findOne({ user: req.user._id });
+      if (existing) hasSubmitted = true;
+    }
+
+    res.json({
+      canAccess: isVisible && !hasSubmitted,
+      hasSubmitted,
       formStatus: {
         active: form.active,
         startTime: form.startTime,
@@ -329,7 +324,7 @@ router.get('/can-access-form/:formName', userAuth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error checking form access:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Error checking form access',
       error: error.message
     });
@@ -340,26 +335,26 @@ router.get('/can-access-form/:formName', userAuth, async (req, res) => {
 router.post('/set-form-timer', formManagerAuth, async (req, res) => {
   try {
     const { formName, startTime, endTime } = req.body;
-    
+
     console.log('Received form timer request:', {
       formName,
       startTime,
       endTime
     });
-    
+
     if (!['samuhLagan', 'studentAwards'].includes(formName)) {
-      return res.status(400).json({ 
-        message: 'Invalid form name', 
-        details: `Form name must be either 'samuhLagan' or 'studentAwards', received: ${formName}` 
+      return res.status(400).json({
+        message: 'Invalid form name',
+        details: `Form name must be either 'samuhLagan' or 'studentAwards', received: ${formName}`
       });
     }
-    
+
     if (startTime) {
       const startDate = new Date(startTime);
       if (isNaN(startDate.getTime())) {
-        return res.status(400).json({ 
-          message: 'Invalid start time format', 
-          details: `Received: ${startTime}. Expected a valid date string.` 
+        return res.status(400).json({
+          message: 'Invalid start time format',
+          details: `Received: ${startTime}. Expected a valid date string.`
         });
       }
     }
@@ -367,24 +362,24 @@ router.post('/set-form-timer', formManagerAuth, async (req, res) => {
     if (endTime) {
       const endDate = new Date(endTime);
       if (isNaN(endDate.getTime())) {
-        return res.status(400).json({ 
-          message: 'Invalid end time format', 
-          details: `Received: ${endTime}. Expected a valid date string.` 
+        return res.status(400).json({
+          message: 'Invalid end time format',
+          details: `Received: ${endTime}. Expected a valid date string.`
         });
       }
     }
-    
+
     if (startTime && endTime) {
       const startDate = new Date(startTime);
       const endDate = new Date(endTime);
       if (endDate <= startDate) {
-        return res.status(400).json({ 
-          message: 'Invalid time range', 
-          details: 'End time must be after start time' 
+        return res.status(400).json({
+          message: 'Invalid time range',
+          details: 'End time must be after start time'
         });
       }
     }
-    
+
     const form = await Form.findOneAndUpdate(
       { formType: formName },
       {
@@ -393,22 +388,22 @@ router.post('/set-form-timer', formManagerAuth, async (req, res) => {
         endTime: endTime ? new Date(endTime) : null,
         lastUpdated: new Date()
       },
-      { 
-        new: true, 
-        upsert: true, 
-        setDefaultsOnInsert: true 
+      {
+        new: true,
+        upsert: true,
+        setDefaultsOnInsert: true
       }
     );
-    
+
     if (!form) {
-      return res.status(500).json({ 
-        message: 'Error updating form', 
-        details: 'Form not found after update attempt' 
+      return res.status(500).json({
+        message: 'Error updating form',
+        details: 'Form not found after update attempt'
       });
     }
-    
+
     console.log('Form updated successfully:', form);
-    
+
     const response = {
       [formName]: {
         active: form.active,
@@ -418,14 +413,14 @@ router.post('/set-form-timer', formManagerAuth, async (req, res) => {
         isCurrentlyActive: form.isCurrentlyActive()
       }
     };
-    
+
     console.log('Sending response:', response);
     res.json(response);
   } catch (error) {
     console.error('Error setting form timer:', error);
-    res.status(500).json({ 
-      message: 'Error setting form timer', 
-      details: `Unexpected error: ${error.message}` 
+    res.status(500).json({
+      message: 'Error setting form timer',
+      details: `Unexpected error: ${error.message}`
     });
   }
 });
@@ -434,7 +429,7 @@ router.post('/samuhLagan/submit', userAuth, async (req, res) => {
   try {
     const form = await Form.findOne({ formType: 'samuhLagan' });
     if (!form || !form.isCurrentlyActive()) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         message: 'Form is not currently active',
         details: 'The Samuh Lagan registration form is not currently accepting submissions'
       });
@@ -454,7 +449,7 @@ router.post('/samuhLagan/submit', userAuth, async (req, res) => {
     });
   } catch (error) {
     console.error('Error submitting Samuh Lagan registration:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Error submitting registration',
       details: error.message
     });
@@ -465,11 +460,11 @@ router.get('/samuhLagan/user-submissions', userAuth, async (req, res) => {
   try {
     const submissions = await SamuhLagan.find({ submittedBy: req.user._id })
       .sort({ submittedAt: -1 });
-    
+
     res.json(submissions);
   } catch (error) {
     console.error('Error fetching user submissions:', error);
-    res.status(500).json({ 
+    res.status(500).json({
       message: 'Error fetching submissions',
       details: error.message
     });

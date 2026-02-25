@@ -61,14 +61,14 @@ const CommitteeMembersList = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-4 sm:p-8">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
         {/* Header */}
         <div className="mb-8 sm:mb-10 animate-fade-in-up">
@@ -117,7 +117,7 @@ const CommitteeMembersList = () => {
         {/* Members List */}
         <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           {filteredMembers.length === 0 ? (
-            <div className="text-center py-16 bg-gray-50 rounded-2xl border border-white/5">
+            <div className="text-center py-16 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid rounded-2xl border border-white/5">
               <MagnifyingGlassIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
               <h3 className="text-xl font-medium text-gray-800 mb-2">No committee members found</h3>
               <p className="text-gray-500">
@@ -143,16 +143,16 @@ const CommitteeMembersList = () => {
                       </p>
 
                       <div className="space-y-3">
-                        <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                        <div className="flex items-center text-sm text-gray-600 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-2 rounded-lg">
                           <BuildingLibraryIcon className="flex-shrink-0 mr-3 h-4 w-4 text-neon-600" />
                           <span className="truncate font-medium">{member.village || 'N/A'}</span>
                         </div>
-                        <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                        <div className="flex items-center text-sm text-gray-600 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-2 rounded-lg">
                           <EnvelopeIcon className="flex-shrink-0 mr-3 h-4 w-4 text-secondary-600" />
                           <span className="truncate">{member.email}</span>
                         </div>
                         {member.phone && (
-                          <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                          <div className="flex items-center text-sm text-gray-600 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-2 rounded-lg">
                             <PhoneIcon className="flex-shrink-0 mr-3 h-4 w-4 text-sunset-600" />
                             <span className="truncate">{member.phone}</span>
                           </div>
@@ -160,7 +160,7 @@ const CommitteeMembersList = () => {
                       </div>
 
                       <div className="mt-5 pt-4 border-t border-white/5 flex gap-3">
-                        <button className="flex-1 px-4 py-2 bg-gray-50 hover:bg-gray-100 text-white text-sm font-medium rounded-lg transition-colors border border-gray-200">
+                        <button className="flex-1 px-4 py-2 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid hover:bg-gray-100 text-white text-sm font-medium rounded-lg transition-colors border border-gray-200">
                           Contact
                         </button>
                         <button className="flex-1 px-4 py-2 bg-gradient-electric text-white text-sm font-medium rounded-lg hover:shadow-lg transition-all shadow-md">

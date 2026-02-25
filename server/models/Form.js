@@ -14,7 +14,7 @@ const formSchema = new mongoose.Schema({
   formType: {
     type: String,
     required: true,
-    enum: ['samuhLagan', 'studentAwards'], // Removed 'teamRegistration'
+    enum: ['samuhLagan', 'studentAwards'],
     unique: true
   },
   active: {
@@ -41,19 +41,19 @@ const formSchema = new mongoose.Schema({
   timestamps: true
 });
 
-formSchema.methods.isCurrentlyActive = function() {
+formSchema.methods.isCurrentlyActive = function () {
   const now = new Date();
-  
-  
+
+
   if (!this.active) return false;
-  
- 
+
+
   if (!this.startTime && !this.endTime) return true;
-  
- 
+
+
   const isAfterStart = !this.startTime || now >= this.startTime;
   const isBeforeEnd = !this.endTime || now <= this.endTime;
-  
+
   return isAfterStart && isBeforeEnd;
 };
 

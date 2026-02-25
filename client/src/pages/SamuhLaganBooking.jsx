@@ -1,12 +1,12 @@
 import React, { useState, Suspense, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
-import { 
-  Button, 
-  Alert, 
-  Box, 
-  Typography, 
-  TextField, 
+import {
+  Button,
+  Alert,
+  Box,
+  Typography,
+  TextField,
   Grid,
   Card,
   CardContent,
@@ -16,7 +16,7 @@ import {
   Divider,
   CircularProgress
 } from '@mui/material';
-import { PhotoCamera, CloudUpload, AccessTime, Person, Email, Phone, Home, Badge, Upload } from '@mui/icons-material';
+import { PhotoCamera, CloudUpload, AccessTime, Person, Email, Phone, Home, Badge, Upload, CheckCircle } from '@mui/icons-material';
 import { styled } from '@mui/material/styles';
 import axios from '../utils/axiosConfig';
 
@@ -232,18 +232,37 @@ const SamuhLaganBooking = ({ formDetails }) => {
     groom: []
   });
   const [formErrors, setFormErrors] = useState({});
-  
+
+
+  const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(true);
 
   useEffect(() => {
-    if (user) {
-      setShowForm(true);
-    }
+    const checkAccess = async () => {
+      if (user) {
+        try {
+          const response = await axios.get('/api/admin/forms/can-access-form/registrationForm');
+          if (response.data.hasSubmitted) {
+            setHasSubmitted(true);
+            setError('You have already submitted this form.');
+          }
+          setShowForm(true);
+        } catch (err) {
+          console.error('Error checking form access:', err);
+        } finally {
+          setCheckingAccess(false);
+        }
+      } else {
+        setCheckingAccess(false);
+      }
+    };
+    checkAccess();
   }, [user]);
 
-  
+
   useEffect(() => {
     let countdownTimer;
-    
+
     if (formDetails?.endTime) {
       const updateCountdown = () => {
         const now = new Date().getTime();
@@ -266,8 +285,8 @@ const SamuhLaganBooking = ({ formDetails }) => {
         setCountdown(`${days}d ${hours}h ${minutes}m ${seconds}s`);
       };
 
-      updateCountdown(); 
-      countdownTimer = setInterval(updateCountdown, 1000); 
+      updateCountdown();
+      countdownTimer = setInterval(updateCountdown, 1000);
     }
 
     return () => {
@@ -277,7 +296,7 @@ const SamuhLaganBooking = ({ formDetails }) => {
     };
   }, [formDetails]);
 
-  
+
   useEffect(() => {
     const checkRedirectFromLogin = () => {
       const redirectPath = localStorage.getItem('redirectAfterLogin');
@@ -288,11 +307,11 @@ const SamuhLaganBooking = ({ formDetails }) => {
     };
 
     checkRedirectFromLogin();
-  }, [user]); 
+  }, [user]);
 
-  
+
   const [formData, setFormData] = useState({
-    
+
     brideName: '',
     brideFatherName: '',
     brideMotherName: '',
@@ -302,8 +321,8 @@ const SamuhLaganBooking = ({ formDetails }) => {
     brideAddress: '',
     bridePhoto: null,
     brideDocuments: [],
-    
-    
+
+
     groomName: '',
     groomFatherName: '',
     groomMotherName: '',
@@ -319,7 +338,7 @@ const SamuhLaganBooking = ({ formDetails }) => {
   const [bridePhotoPreview, setBridePhotoPreview] = useState(null);
   const [groomPhotoPreview, setGroomPhotoPreview] = useState(null);
 
-  
+
   const formatDate = (dateString) => {
     if (!dateString) return 'Not set';
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -334,7 +353,7 @@ const SamuhLaganBooking = ({ formDetails }) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phoneRegex = /^\d{10}$/;
 
-  
+
     if (!formData.brideName.trim()) errors.brideName = 'Bride\'s name is required.';
     if (!formData.brideFatherName.trim()) errors.brideFatherName = 'Bride\'s father\'s name is required.';
     if (!formData.brideMotherName.trim()) errors.brideMotherName = 'Bride\'s mother\'s name is required.';
@@ -347,8 +366,8 @@ const SamuhLaganBooking = ({ formDetails }) => {
     if (!formData.brideAddress.trim()) errors.brideAddress = 'Bride\'s address is required.';
     if (!formData.bridePhoto || formData.bridePhoto.length === 0) errors.bridePhoto = 'Bride\'s photo is required.';
     if (!formData.brideDocuments || formData.brideDocuments.length === 0) errors.brideDocuments = 'At least one document for the bride is required.';
-    
-    
+
+
     if (!formData.groomName.trim()) errors.groomName = 'Groom\'s name is required.';
     if (!formData.groomFatherName.trim()) errors.groomFatherName = 'Groom\'s father\'s name is required.';
     if (!formData.groomMotherName.trim()) errors.groomMotherName = 'Groom\'s mother\'s name is required.';
@@ -368,7 +387,7 @@ const SamuhLaganBooking = ({ formDetails }) => {
 
   const handleChange = (e) => {
     const { name, value, type, files } = e.target;
-    
+
     setFormData(prev => ({
       ...prev,
       [name]: type === 'file' ? files : value
@@ -377,7 +396,7 @@ const SamuhLaganBooking = ({ formDetails }) => {
     if (formErrors[name]) {
       setFormErrors(prev => ({ ...prev, [name]: null }));
     }
-    
+
     if (type === 'file') {
       if (name === 'bridePhoto' || name === 'groomPhoto') {
         const file = files[0];
@@ -391,16 +410,16 @@ const SamuhLaganBooking = ({ formDetails }) => {
             }
           };
           reader.readAsDataURL(file);
-        } else { 
-            if (name === 'bridePhoto') setBridePhotoPreview(null);
-            else setGroomPhotoPreview(null);
+        } else {
+          if (name === 'bridePhoto') setBridePhotoPreview(null);
+          else setGroomPhotoPreview(null);
         }
       } else if (name === 'brideDocuments' || name === 'groomDocuments') {
         const newFiles = Array.from(files);
         const prefix = name === 'brideDocuments' ? 'bride' : 'groom';
         setUploadedDocuments(prev => ({
           ...prev,
-          [prefix]: newFiles 
+          [prefix]: newFiles
         }));
       }
     }
@@ -421,21 +440,21 @@ const SamuhLaganBooking = ({ formDetails }) => {
         throw new Error('Please log in to submit the form');
       }
 
-      
+
       console.log('Current user object:', user);
-      
-      
+
+
       const userId = user?._id || user?.id || user?.userId;
       if (!userId) {
         throw new Error('User ID not found. Please try logging in again.');
       }
 
       const formDataToSend = new FormData();
-      
-      
+
+
       formDataToSend.append('user', userId);
-      
-      
+
+
       formDataToSend.append('bride.name', formData.brideName);
       formDataToSend.append('bride.fatherName', formData.brideFatherName);
       formDataToSend.append('bride.motherName', formData.brideMotherName);
@@ -443,7 +462,7 @@ const SamuhLaganBooking = ({ formDetails }) => {
       formDataToSend.append('bride.contactNumber', formData.brideMobile);
       formDataToSend.append('bride.email', formData.brideEmail);
       formDataToSend.append('bride.address', formData.brideAddress);
-      
+
       if (formData.bridePhoto?.[0]) {
         formDataToSend.append('bridePhoto', formData.bridePhoto[0]);
       }
@@ -453,7 +472,7 @@ const SamuhLaganBooking = ({ formDetails }) => {
         });
       }
 
-    
+
       formDataToSend.append('groom.name', formData.groomName);
       formDataToSend.append('groom.fatherName', formData.groomFatherName);
       formDataToSend.append('groom.motherName', formData.groomMotherName);
@@ -461,7 +480,7 @@ const SamuhLaganBooking = ({ formDetails }) => {
       formDataToSend.append('groom.contactNumber', formData.groomMobile);
       formDataToSend.append('groom.email', formData.groomEmail);
       formDataToSend.append('groom.address', formData.groomAddress);
-      
+
       if (formData.groomPhoto?.[0]) {
         formDataToSend.append('groomPhoto', formData.groomPhoto[0]);
       }
@@ -471,10 +490,10 @@ const SamuhLaganBooking = ({ formDetails }) => {
         });
       }
 
-      
+
       formDataToSend.append('ceremonyDate', formDetails.eventDate);
 
-      
+
       console.log('Form data being sent:', {
         user: userId,
         bride: {
@@ -514,16 +533,20 @@ const SamuhLaganBooking = ({ formDetails }) => {
       }
     } catch (error) {
       console.error('Error submitting form:', error);
-      setError(error.message || 'An error occurred while submitting the form.');
+      if (error.response?.status === 409) {
+        setError(error.response.data.message || 'This date is already booked. Please select another date.');
+      } else {
+        setError(error.message || 'An error occurred while submitting the form.');
+      }
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  
+
   const handleBookClick = () => {
     if (!user) {
-      
+
       localStorage.setItem('redirectAfterLogin', '/samuh-lagan');
       navigate('/auth');
       return;
@@ -543,11 +566,11 @@ const SamuhLaganBooking = ({ formDetails }) => {
         <Grid container spacing={1}>
           {documents.map((file, index) => (
             <Grid item xs={12} key={index}>
-              <Paper 
-                elevation={1} 
-                sx={{ 
-                  p: 1, 
-                  display: 'flex', 
+              <Paper
+                elevation={1}
+                sx={{
+                  p: 1,
+                  display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'space-between',
                   backgroundColor: colors.secondary.light
@@ -614,11 +637,11 @@ const SamuhLaganBooking = ({ formDetails }) => {
   const renderFormSection = (prefix, title, photoPreview) => (
     <StyledCard>
       <CardContent sx={{ p: 4, background: colors.background.paper }}>
-        <Typography 
-          variant="h5" 
-          gutterBottom 
-          sx={{ 
-            mb: 4, 
+        <Typography
+          variant="h5"
+          gutterBottom
+          sx={{
+            mb: 4,
             fontWeight: 600,
             color: colors.primary.main,
             borderBottom: `2px solid ${colors.secondary.main}`,
@@ -801,12 +824,73 @@ const SamuhLaganBooking = ({ formDetails }) => {
     </StyledCard>
   );
 
+  if (hasSubmitted) {
+    return (
+      <Container maxWidth="md" sx={{ py: 12 }}>
+        <Box
+          sx={{
+            textAlign: 'center',
+            p: 8,
+            background: 'rgba(255, 255, 255, 0.8)',
+            backdropFilter: 'blur(20px)',
+            borderRadius: '2rem',
+            boxShadow: '0 20px 50px rgba(0,0,0,0.05)',
+            border: '1px solid rgba(147, 51, 234, 0.1)'
+          }}
+        >
+          <Box
+            sx={{
+              width: 80,
+              height: 80,
+              borderRadius: '50%',
+              backgroundColor: 'rgba(34, 197, 94, 0.1)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 24px'
+            }}
+          >
+            <CheckCircle sx={{ fontSize: 40, color: '#22c55e' }} />
+          </Box>
+          <Typography variant="h4" sx={{ fontWeight: 800, mb: 2, color: '#1e293b' }}>
+            Already Responded
+          </Typography>
+          <Typography variant="body1" sx={{ color: '#64748b', mb: 6, fontSize: '1.1rem' }}>
+            You have already submitted your Samuh Lagan registration. Our team is currently reviewing your application.
+          </Typography>
+          <Button
+            variant="contained"
+            onClick={() => navigate('/services')}
+            sx={{
+              background: colors.primary.gradient,
+              px: 6,
+              py: 2,
+              borderRadius: '1rem',
+              fontWeight: 700,
+              textTransform: 'none',
+              fontSize: '1rem'
+            }}
+          >
+            Return to Services
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
+
   if (error) {
     return (
-      <Container maxWidth="md">
-        <Box p={3}>
-          <Alert severity="error">{error}</Alert>
-        </Box>
+      <Container maxWidth="md" sx={{ py: 12 }}>
+        <Alert
+          severity="error"
+          sx={{
+            borderRadius: '1rem',
+            fontSize: '1.1rem',
+            alignItems: 'center'
+          }}
+        >
+          {error}
+        </Alert>
       </Container>
     );
   }
@@ -826,11 +910,11 @@ const SamuhLaganBooking = ({ formDetails }) => {
   return (
     <Container maxWidth="lg" sx={{ background: colors.background.light, borderRadius: '24px', my: 4 }}>
       <Box py={6}>
-        <Typography 
-          variant="h3" 
-          align="center" 
-          sx={{ 
-            mb: 4, 
+        <Typography
+          variant="h3"
+          align="center"
+          sx={{
+            mb: 4,
             fontWeight: 700,
             background: colors.primary.gradient,
             WebkitBackgroundClip: 'text',
@@ -842,8 +926,8 @@ const SamuhLaganBooking = ({ formDetails }) => {
         </Typography>
 
         {formDetails?.eventDate && (
-          <Box sx={{ 
-            textAlign: 'center', 
+          <Box sx={{
+            textAlign: 'center',
             mb: 4,
             p: 2,
             backgroundColor: colors.secondary.light,
@@ -858,19 +942,19 @@ const SamuhLaganBooking = ({ formDetails }) => {
 
         {countdown && (
           <CountdownTimer elevation={0}>
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
+            <Box sx={{
+              display: 'flex',
+              alignItems: 'center',
               gap: 3,
               width: '100%',
               justifyContent: 'center'
             }}>
-              <AccessTime 
-                sx={{ 
-                  fontSize: 32, 
+              <AccessTime
+                sx={{
+                  fontSize: 32,
                   color: colors.primary.main,
                   mr: 2
-                }} 
+                }}
               />
               {countdown.split(' ').map((part, index) => {
                 if (part.endsWith('d')) {
@@ -910,7 +994,7 @@ const SamuhLaganBooking = ({ formDetails }) => {
             </Box>
           </CountdownTimer>
         )}
-        
+
         <Suspense fallback={<LoadingFallback />}>
           {!showForm ? (
             <Box sx={{ textAlign: 'center', mt: 4 }}>

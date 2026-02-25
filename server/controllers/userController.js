@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Booking = require('../models/Booking');
 
 const userController = {
-  
+
   getProfile: async (req, res) => {
     try {
       const user = await User.findById(req.user.id)
@@ -22,13 +22,13 @@ const userController = {
   updateProfile: async (req, res) => {
     try {
       const { username, phone, company, address } = req.body;
-      
+
       const user = await User.findById(req.user.id);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
 
-     
+
       if (username) user.username = username;
       if (phone) user.phone = phone;
       if (company) user.company = company;
@@ -52,7 +52,7 @@ const userController = {
   updatePassword: async (req, res) => {
     try {
       const { currentPassword, newPassword } = req.body;
-      
+
       const user = await User.findById(req.user.id);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
@@ -63,7 +63,7 @@ const userController = {
         return res.status(400).json({ message: 'Current password is incorrect' });
       }
 
-     
+
       user.password = newPassword;
       await user.save();
 
@@ -74,11 +74,11 @@ const userController = {
     }
   },
 
-  
+
   updateNotifications: async (req, res) => {
     try {
       const { notifications } = req.body;
-      
+
       const user = await User.findById(req.user.id);
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
@@ -97,7 +97,7 @@ const userController = {
     }
   },
 
-  
+
   updateProfileImage: async (req, res) => {
     try {
       const user = await User.findById(req.user.id);
@@ -109,19 +109,19 @@ const userController = {
         return res.status(400).json({ message: 'No image file provided' });
       }
 
-      
+
       const base64Image = req.file.buffer.toString('base64');
       const imageUrl = `data:${req.file.mimetype};base64,${base64Image}`;
 
-      console.log('Image mime type:', req.file.mimetype); 
-      console.log('Base64 image length:', base64Image.length); 
+      console.log('Image mime type:', req.file.mimetype);
+      console.log('Base64 image length:', base64Image.length);
 
-      
+
       await user.updateProfileImage(imageUrl);
 
-    
+
       const updatedImageUrl = user.getProfileImageUrl();
-      console.log('Updated image URL:', updatedImageUrl); 
+      console.log('Updated image URL:', updatedImageUrl);
 
       res.json({
         message: 'Profile image updated successfully',
@@ -133,7 +133,7 @@ const userController = {
     }
   },
 
- 
+
   removeProfileImage: async (req, res) => {
     try {
       const user = await User.findById(req.user.id);
@@ -155,14 +155,14 @@ const userController = {
 
   getAllUsers: async (req, res) => {
     try {
-      // Allow access to super admins and user managers
-      if (!['superadmin', 'usermanager'].includes(req.user.role)) {
-        return res.status(403).json({ message: 'Access denied. Super admins and user managers only.' });
+      // Allow access to super admins, admins and user managers
+      if (!['superadmin', 'admin', 'usermanager'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Super admins, admins and user managers only.' });
       }
-  
+
       const users = await User.find({})
         .select('-password -passwordHistory -verificationToken -resetPasswordToken -otp');
-      
+
       res.json(users);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -172,9 +172,9 @@ const userController = {
 
   createUser: async (req, res) => {
     try {
-      // Allow access to super admins and user managers
-      if (!['superadmin', 'usermanager'].includes(req.user.role)) {
-        return res.status(403).json({ message: 'Access denied. Super admins and user managers only.' });
+      // Allow access to super admins, admins and user managers
+      if (!['superadmin', 'admin', 'usermanager'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Super admins, admins and user managers only.' });
       }
 
       const { username, email, password, role, isVerified, village } = req.body;
@@ -233,28 +233,28 @@ const userController = {
       });
     } catch (error) {
       console.error('Error creating user:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         message: 'Server error',
-        error: error.message 
+        error: error.message
       });
     }
   },
 
   deleteUser: async (req, res) => {
     try {
-      // Allow access to super admins and user managers
-      if (!['superadmin', 'usermanager'].includes(req.user.role)) {
-        return res.status(403).json({ message: 'Access denied. Super admins and user managers only.' });
+      // Allow access to super admins, admins and user managers
+      if (!['superadmin', 'admin', 'usermanager'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Super admins, admins and user managers only.' });
       }
 
       const userId = req.params.id;
-      
+
       if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
         return res.status(400).json({ message: 'Invalid user ID format' });
       }
 
       const user = await User.findById(userId);
-      
+
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -263,34 +263,34 @@ const userController = {
         return res.status(400).json({ message: 'Cannot delete your own account' });
       }
 
-     
+
       await Booking.deleteMany({ email: user.email });
 
-    
+
       await User.findByIdAndDelete(userId);
-      
-      res.json({ 
+
+      res.json({
         message: 'User and associated bookings deleted successfully',
-        deletedUserId: userId 
+        deletedUserId: userId
       });
     } catch (error) {
-      res.status(500).json({ 
+      res.status(500).json({
         message: 'Server error',
-        error: error.message 
+        error: error.message
       });
     }
   },
 
-  
+
   updateUser: async (req, res) => {
     try {
-      // Allow access to super admins and user managers
-      if (!['superadmin', 'usermanager'].includes(req.user.role)) {
-        return res.status(403).json({ message: 'Access denied. Super admins and user managers only.' });
+      // Allow access to super admins, admins and user managers
+      if (!['superadmin', 'admin', 'usermanager'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Super admins, admins and user managers only.' });
       }
 
       const userId = req.params.id;
-      
+
       if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
         return res.status(400).json({ message: 'Invalid user ID format' });
       }
@@ -338,18 +338,18 @@ const userController = {
         user: updatedUser
       });
     } catch (error) {
-      res.status(500).json({ 
+      res.status(500).json({
         message: 'Server error',
-        error: error.message 
+        error: error.message
       });
     }
   },
 
- 
+
   getDashboardStats: async (req, res) => {
     try {
       console.log('Fetching dashboard stats for user:', req.user.id);
-      
+
       // Allow access to all admin roles
       const adminRoles = ['superadmin', 'admin', 'usermanager', 'contentmanager', 'formmanager', 'bookingmanager', 'contactmanager'];
       if (!adminRoles.includes(req.user.role)) {
@@ -369,7 +369,7 @@ const userController = {
       const activeStreams = 0;
 
       // Get bookings with 'Booked' status for revenue calculation
-      const bookedBookings = await Booking.find({ 
+      const bookedBookings = await Booking.find({
         status: 'Booked'
       });
       console.log('Booked bookings count:', bookedBookings.length);
@@ -380,7 +380,7 @@ const userController = {
         if (booking.amount && typeof booking.amount === 'number') {
           return sum + booking.amount;
         }
-        
+
         // Fallback calculation based on event type and guest count
         let amount = 1000; // Base amount
 
@@ -393,7 +393,7 @@ const userController = {
         if (booking.eventType === 'wedding') {
           amount += 500;
         }
-        
+
         // Additional charges for large events
         if (booking.guestCount > 100) {
           amount += 200;
@@ -428,7 +428,7 @@ const userController = {
       // Get recent user registrations (last 7 days)
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-      
+
       const recentUsers = await User.countDocuments({
         createdAt: { $gte: oneWeekAgo }
       });
@@ -468,7 +468,7 @@ const userController = {
       }
 
       const { village } = req.query;
-      
+
       // For committee members, they can only see unapproved villagers from their own village
       let villageFilter = village;
       if (req.user.role === 'committeemember') {
@@ -484,7 +484,7 @@ const userController = {
       }
 
       // Find unapproved users from the specified village
-      const unapprovedVillagers = await User.find({ 
+      const unapprovedVillagers = await User.find({
         village: { $regex: villageFilter, $options: 'i' },
         isVerified: false,
         role: 'user' // Only regular users, not admins or committee members
@@ -493,9 +493,9 @@ const userController = {
       res.json(unapprovedVillagers);
     } catch (error) {
       console.error('Error fetching unapproved villagers:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         message: 'Server error',
-        error: error.message 
+        error: error.message
       });
     }
   },
@@ -509,7 +509,7 @@ const userController = {
       }
 
       const userId = req.params.id;
-      
+
       if (!userId.match(/^[0-9a-fA-F]{24}$/)) {
         return res.status(400).json({ message: 'Invalid user ID format' });
       }
@@ -545,9 +545,9 @@ const userController = {
       });
     } catch (error) {
       console.error('Error approving villager:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         message: 'Server error',
-        error: error.message 
+        error: error.message
       });
     }
   },
@@ -556,7 +556,7 @@ const userController = {
   deleteUser: async (req, res) => {
     try {
       const userId = req.params.id;
-      
+
       // Allow access to super admins, user managers, and committee members
       const allowedRoles = ['superadmin', 'usermanager', 'committeemember'];
       if (!allowedRoles.includes(req.user.role)) {
@@ -599,14 +599,14 @@ const userController = {
       // Delete the user
       await User.findByIdAndDelete(userId);
 
-      res.json({ 
-        message: 'User deleted successfully' 
+      res.json({
+        message: 'User deleted successfully'
       });
     } catch (error) {
       console.error('Error deleting user:', error);
-      res.status(500).json({ 
+      res.status(500).json({
         message: 'Server error',
-        error: error.message 
+        error: error.message
       });
     }
   }

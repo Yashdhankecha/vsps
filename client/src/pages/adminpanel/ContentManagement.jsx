@@ -584,7 +584,7 @@ const ContentManagement = () => {
   // Render content based on active tab
   const renderContent = () => {
     if (loading) return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center p-4 sm:p-6">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 animate-fade-in-up">
           <div className="flex justify-center items-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
@@ -1047,7 +1047,7 @@ const ContentManagement = () => {
                 <input type="hidden" name="slideCount" value={editingItem.slides?.length || 0} />
                 <div className="space-y-6">
                   {editingItem.slides?.map((slide, index) => (
-                    <div key={index} className="border rounded-lg p-4 space-y-4 border-gray-200 bg-gray-50/50">
+                    <div key={index} className="border rounded-lg p-4 space-y-4 border-gray-200 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid/50">
                       <div className="flex justify-between items-center">
                         <h4 className="text-lg font-medium text-gray-800">Slide {index + 1}</h4>
                         <button
@@ -1915,7 +1915,7 @@ const ContentManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-4 sm:p-6">
       {/* Main Content Container */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
         {/* Header Section - Responsive */}

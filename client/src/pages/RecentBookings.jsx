@@ -147,7 +147,7 @@ const RecentBookings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -155,7 +155,7 @@ const RecentBookings = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid py-12">
         <div className="container mx-auto px-4">
           <Card className="max-w-md mx-auto p-6 glass-effect border border-gray-200">
             <div className="text-center">
@@ -179,7 +179,7 @@ const RecentBookings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid py-12">
       {showDocumentViewer && (
         <DocumentViewer
           documentUrl={selectedDocument}

@@ -63,14 +63,14 @@ const VillageMembers = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+            <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-4 sm:p-8">
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
                 {/* Header */}
                 <div className="mb-8 sm:mb-10 animate-fade-in-up">
@@ -125,7 +125,7 @@ const VillageMembers = () => {
                 {/* Members List */}
                 <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                     {filteredMembers.length === 0 ? (
-                        <div className="text-center py-16 bg-gray-50 rounded-2xl border border-white/5">
+                        <div className="text-center py-16 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid rounded-2xl border border-white/5">
                             <UsersIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
                             <h3 className="text-xl font-medium text-gray-800 mb-2">No members found</h3>
                             <p className="text-gray-500">
@@ -151,12 +151,12 @@ const VillageMembers = () => {
                                             </p>
 
                                             <div className="space-y-3">
-                                                <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                                                <div className="flex items-center text-sm text-gray-600 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-2 rounded-lg">
                                                     <EnvelopeIcon className="flex-shrink-0 mr-3 h-4 w-4 text-secondary-600" />
                                                     <span className="truncate">{member.email}</span>
                                                 </div>
                                                 {member.phone && (
-                                                    <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                                                    <div className="flex items-center text-sm text-gray-600 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-2 rounded-lg">
                                                         <PhoneIcon className="flex-shrink-0 mr-3 h-4 w-4 text-sunset-600" />
                                                         <span className="truncate">{member.phone}</span>
                                                     </div>

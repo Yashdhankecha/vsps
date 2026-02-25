@@ -14,8 +14,7 @@ import {
   CheckCircleIcon as CheckCircleIconSolid,
   ExclamationTriangleIcon as ExclamationTriangleIconSolid
 } from '@heroicons/react/24/solid';
-
-
+import { Card, Input, Button } from '../../components';
 
 const FormManagement = () => {
   const { user, loading: authLoading } = useAuth();
@@ -25,7 +24,6 @@ const FormManagement = () => {
   const [forms, setForms] = useState({
     samuhLagan: { active: false, startTime: null, endTime: null, lastUpdated: null },
     studentAwards: { active: false, startTime: null, endTime: null, lastUpdated: null }
-
   });
   const [formData, setFormData] = useState({
     formName: 'samuhLagan',
@@ -38,7 +36,6 @@ const FormManagement = () => {
     const adminRoles = ['admin', 'superadmin', 'formmanager'];
     if (user && adminRoles.includes(user.role)) {
       fetchFormStatus();
-      // Set up an interval to check form status every minute
       const intervalId = setInterval(fetchFormStatus, 60000);
       return () => clearInterval(intervalId);
     }
@@ -48,14 +45,11 @@ const FormManagement = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
+      if (!token) throw new Error('No authentication token found');
 
       const response = await axiosInstance.get('/api/admin/forms/status');
 
       if (response.data) {
-        // Ensure all form types exist in the response
         const updatedForms = {
           samuhLagan: { active: false, startTime: null, endTime: null, lastUpdated: null },
           studentAwards: { active: false, startTime: null, endTime: null, lastUpdated: null },
@@ -74,10 +68,7 @@ const FormManagement = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -87,12 +78,6 @@ const FormManagement = () => {
     setSuccess('');
 
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
-        throw new Error('No authentication token found');
-      }
-
-      // Format dates to ISO string
       const startDate = new Date(formData.startTime);
       const endDate = new Date(formData.endTime);
       const eventDate = new Date(formData.eventDate);
@@ -101,22 +86,8 @@ const FormManagement = () => {
         throw new Error('Invalid date format');
       }
 
-      if (endDate <= startDate) {
-        throw new Error('End time must be after start time');
-      }
-
-      if (eventDate < new Date()) {
-        throw new Error('Event date cannot be in the past');
-      }
-
-      // Log the request payload for debugging
-      console.log('Request payload:', {
-        formName: formData.formName,
-        active: true,
-        startTime: startDate.toISOString(),
-        endTime: endDate.toISOString(),
-        eventDate: eventDate.toISOString()
-      });
+      if (endDate <= startDate) throw new Error('End time must be after start time');
+      if (eventDate < new Date()) throw new Error('Event date cannot be in the past');
 
       const response = await axiosInstance.put(
         `/api/admin/forms/status/${formData.formName}`,
@@ -127,22 +98,14 @@ const FormManagement = () => {
           eventDate: eventDate.toISOString()
         }
       );
+      
       if (response.data) {
-        // Update the forms state with the new data
-        const updatedForm = response.data[formData.formName] || {
-          active: true,
-          startTime: startDate.toISOString(),
-          endTime: endDate.toISOString(),
-          eventDate: eventDate.toISOString(),
-          lastUpdated: new Date().toISOString()
-        };
-
         setForms(prev => ({
           ...prev,
-          [formData.formName]: updatedForm
+          [formData.formName]: response.data[formData.formName]
         }));
 
-        setSuccess(`Successfully set timer for ${formData.formName === 'samuhLagan' ? 'Samuh Lagan' : formData.formName === 'studentAwards' ? 'Student Awards' : 'Team Registration'} Registration Form`);
+        setSuccess(`Successfully set timer for ${formData.formName === 'samuhLagan' ? 'Samuh Lagan' : 'Student Awards'} Registration Form`);
         setFormData({
           formName: 'samuhLagan',
           startTime: '',
@@ -152,20 +115,7 @@ const FormManagement = () => {
       }
     } catch (err) {
       console.error('Error setting form timer:', err);
-      // Log the full error response for debugging
-      if (err.response) {
-        console.error('Error response:', {
-          status: err.response.status,
-          data: err.response.data,
-          headers: err.response.headers
-        });
-      }
-      setError(
-        err.response?.data?.message ||
-        err.response?.data?.details ||
-        err.message ||
-        'Failed to set form timer. Please try again.'
-      );
+      setError(err.response?.data?.message || err.message || 'Failed to set form timer.');
     } finally {
       setLoading(false);
     }
@@ -173,75 +123,36 @@ const FormManagement = () => {
 
   const formatDateTime = (dateString) => {
     if (!dateString) return 'Not set';
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'Invalid date';
-    return date.toLocaleString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: 'numeric',
-      minute: '2-digit',
-      hour12: true
+    return new Date(dateString).toLocaleString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric',
+      hour: 'numeric', minute: '2-digit', hour12: true
     });
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'Not set';
-    const date = new Date(dateString);
-    if (isNaN(date.getTime())) return 'Invalid date';
-    return date.toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric', month: 'long', day: 'numeric'
     });
   };
 
-  const isTimerExpired = (form) => {
-    if (!form?.endTime) return false;
-
-    const endDate = new Date(form.endTime);
-    const now = new Date();
-
-    return now > endDate;
-  };
-
-  const isTimerActive = (form) => {
-    if (!form?.startTime || !form?.endTime) return false;
-
-    const startDate = new Date(form.startTime);
-    const endDate = new Date(form.endTime);
-    const now = new Date();
-
-    return now >= startDate && now <= endDate;
-  };
-
   const getFormStatus = (form) => {
-    if (!form) return { text: 'Inactive', color: 'text-red-500' };
-    if (!form.active) return { text: 'Inactive', color: 'text-red-500' };
+    if (!form || !form.active) return { text: 'Inactive', color: 'text-red-500', bg: 'bg-red-50', border: 'border-red-100' };
+    const now = new Date();
+    const end = new Date(form.endTime);
+    const start = new Date(form.startTime);
 
-    if (isTimerExpired(form)) {
-      return { text: 'Timer Expired', color: 'text-orange-500' };
-    }
-
-    if (isTimerActive(form)) {
-      return { text: 'Active', color: 'text-green-500' };
-    }
-
-    if (form.startTime && new Date(form.startTime) > new Date()) {
-      return { text: 'Scheduled', color: 'text-blue-500' };
-    }
-
-    return { text: 'Active', color: 'text-green-500' };
+    if (now > end) return { text: 'Timer Expired', color: 'text-orange-500', bg: 'bg-orange-50', border: 'border-orange-100' };
+    if (now >= start && now <= end) return { text: 'Active', color: 'text-neon-700', bg: 'bg-neon-50', border: 'border-neon-100' };
+    if (start > now) return { text: 'Scheduled', color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-100' };
+    
+    return { text: 'Active', color: 'text-neon-700', bg: 'bg-neon-50', border: 'border-neon-100' };
   };
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 sm:p-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 animate-fade-in-up">
-          <div className="flex justify-center items-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
-          </div>
-        </div>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-4 sm:p-6">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }
@@ -252,232 +163,184 @@ const FormManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
-      {/* Main Content Container */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-4 sm:p-6">
+      <div className="max-w-7xl mx-auto">
         {/* Header Section */}
-        <div className="mb-6 sm:mb-8 animate-fade-in-up">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center space-x-3 mb-2">
-              <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
-                <CogIcon className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Form Management</h1>
-                <p className="text-gray-600 text-sm sm:text-base">Configure registration form timers</p>
-              </div>
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center space-x-4">
+            <div className="w-12 h-12 bg-gradient-electric rounded-2xl flex items-center justify-center shadow-lg transform rotate-3">
+              <CogIcon className="w-7 h-7 text-white" />
             </div>
-            <button
-              onClick={fetchFormStatus}
-              className="btn-secondary flex items-center space-x-2 mt-4 sm:mt-0"
-            >
-              <ArrowPathIcon className="w-4 h-4" />
-              <span className="hidden sm:inline">Refresh Status</span>
-              <span className="sm:hidden">Refresh</span>
-            </button>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Form Management</h1>
+              <p className="text-gray-500 font-medium">Configure registration form timers</p>
+            </div>
           </div>
+          <Button
+            variant="secondary"
+            onClick={fetchFormStatus}
+            className="flex items-center space-x-2"
+          >
+            <ArrowPathIcon className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <span>Refresh Status</span>
+          </Button>
         </div>
 
         {error && (
-          <div className="glass-effect border border-red-500/30 bg-red-500/10 text-red-300 px-6 py-4 rounded-xl mb-6 animate-fade-in-up">
-            <div className="flex items-center space-x-3">
-              <ExclamationTriangleIconSolid className="w-5 h-5 text-red-400 flex-shrink-0" />
-              <span className="font-medium">{error}</span>
-            </div>
+          <div className="mb-6 p-4 rounded-2xl bg-red-500/10 border border-red-500/20 flex items-center text-red-600 animate-fade-in-up">
+            <ExclamationTriangleIconSolid className="w-5 h-5 mr-3 shrink-0" />
+            <p className="font-bold">{error}</p>
           </div>
         )}
 
         {success && (
-          <div className="glass-effect border border-neon-500/30 bg-neon-500/10 p-6 mb-8 rounded-xl animate-fade-in-up">
-            <div className="flex items-center space-x-3">
-              <div className="flex-shrink-0">
-                <CheckCircleIconSolid className="h-6 w-6 text-neon-600" />
-              </div>
-              <div>
-                <p className="text-neon-500 font-medium">{success}</p>
-              </div>
-            </div>
+          <div className="mb-6 p-4 rounded-2xl bg-neon-500/10 border border-neon-500/20 flex items-center text-neon-600 animate-fade-in-up">
+            <CheckCircleIconSolid className="w-5 h-5 mr-3 shrink-0" />
+            <p className="font-bold">{success}</p>
           </div>
         )}
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
-          {/* Samuh Lagan Form */}
-          <div className="card-hover p-4 sm:p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-neon opacity-20 rounded-bl-3xl"></div>
-            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">Samuh Lagan</h2>
-            <div className="space-y-3 sm:space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="font-medium text-gray-600 text-sm sm:text-base mb-1 sm:mb-0 sm:mr-2">Status:</span>
-                <span className={`font-semibold text-sm sm:text-base ${getFormStatus(forms.samuhLagan).color === 'text-red-500' ? 'text-red-400' :
-                  getFormStatus(forms.samuhLagan).color === 'text-green-500' ? 'text-neon-600' :
-                    getFormStatus(forms.samuhLagan).color === 'text-orange-500' ? 'text-sunset-600' :
-                      'text-electric-600'
-                  }`}>
-                  {getFormStatus(forms.samuhLagan).text}
-                </span>
-              </div>
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center text-gray-600 text-sm">
-                  <CalendarIcon className="w-4 h-4 mr-2 text-neon-600 flex-shrink-0" />
-                  <span className="truncate">Event: {formatDate(forms.samuhLagan?.eventDate)}</span>
+        {/* Form Status Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          {Object.entries({
+            samuhLagan: 'Samuh Lagan Registration',
+            studentAwards: 'Student Awards Registration'
+          }).map(([key, label]) => {
+            const status = getFormStatus(forms[key]);
+            return (
+              <Card key={key} className="p-8 relative overflow-hidden group border-gray-100">
+                <div className={`absolute top-0 right-0 w-24 h-24 ${key === 'samuhLagan' ? 'bg-gradient-electric' : 'bg-gradient-secondary'} opacity-[0.03] rounded-bl-full`}></div>
+                
+                <div className="flex items-center justify-between mb-8">
+                  <h3 className="text-xl font-bold text-gray-900">{label}</h3>
+                  <span className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${status.bg} ${status.color} ${status.border}`}>
+                    {status.text}
+                  </span>
                 </div>
-                <div className="flex items-center text-gray-600 text-sm">
-                  <ClockIcon className="w-4 h-4 mr-2 text-electric-600 flex-shrink-0" />
-                  <span className="truncate">Start: {formatDateTime(forms.samuhLagan?.startTime)}</span>
-                </div>
-                <div className="flex items-center text-gray-600 text-sm">
-                  <ClockIcon className="w-4 h-4 mr-2 text-secondary-600 flex-shrink-0" />
-                  <span className="truncate">End: {formatDateTime(forms.samuhLagan?.endTime)}</span>
-                </div>
-              </div>
-              {forms.samuhLagan?.lastUpdated && (
-                <div className="text-xs sm:text-sm text-gray-500 border-t border-gray-200 pt-2 sm:pt-3 mt-2 sm:mt-3">
-                  Updated: {formatDateTime(forms.samuhLagan.lastUpdated)}
-                </div>
-              )}
-            </div>
-          </div>
 
-          {/* Student Awards Form */}
-          <div className="card-hover p-4 sm:p-6 relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-secondary opacity-20 rounded-bl-3xl"></div>
-            <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">Student Awards</h2>
-            <div className="space-y-3 sm:space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="font-medium text-gray-600 text-sm sm:text-base mb-1 sm:mb-0 sm:mr-2">Status:</span>
-                <span className={`font-semibold text-sm sm:text-base ${getFormStatus(forms.studentAwards).color === 'text-red-500' ? 'text-red-400' :
-                  getFormStatus(forms.studentAwards).color === 'text-green-500' ? 'text-neon-600' :
-                    getFormStatus(forms.studentAwards).color === 'text-orange-500' ? 'text-sunset-600' :
-                      'text-electric-600'
-                  }`}>
-                  {getFormStatus(forms.studentAwards).text}
-                </span>
-              </div>
-              <div className="flex flex-col space-y-2">
-                <div className="flex items-center text-gray-600 text-sm">
-                  <CalendarIcon className="w-4 h-4 mr-2 text-secondary-600 flex-shrink-0" />
-                  <span className="truncate">Event: {formatDate(forms.studentAwards?.eventDate)}</span>
+                <div className="space-y-4">
+                  {[
+                    { icon: CalendarIcon, label: 'Event Date', value: formatDate(forms[key]?.eventDate), color: 'text-neon-600' },
+                    { icon: ClockIcon, label: 'Opens At', value: formatDateTime(forms[key]?.startTime), color: 'text-electric-600' },
+                    { icon: ClockIcon, label: 'Closes At', value: formatDateTime(forms[key]?.endTime), color: 'text-sunset-600' }
+                  ].map((field, idx) => (
+                    <div key={idx} className="flex items-center p-3 bg-gray-50 rounded-xl border border-gray-100/50">
+                      <field.icon className={`w-5 h-5 mr-4 ${field.color}`} />
+                      <div>
+                        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">{field.label}</p>
+                        <p className="text-sm font-bold text-gray-700">{field.value}</p>
+                      </div>
+                    </div>
+                  ))}
+                  {!forms[key]?.startTime && (
+                    <div className="py-4 text-center italic text-gray-400 text-sm">
+                      No schedule configuration set
+                    </div>
+                  )}
                 </div>
-                <div className="flex items-center text-gray-600 text-sm">
-                  <ClockIcon className="w-4 h-4 mr-2 text-electric-600 flex-shrink-0" />
-                  <span className="truncate">Start: {formatDateTime(forms.studentAwards?.startTime)}</span>
-                </div>
-                <div className="flex items-center text-gray-600 text-sm">
-                  <ClockIcon className="w-4 h-4 mr-2 text-secondary-600 flex-shrink-0" />
-                  <span className="truncate">End: {formatDateTime(forms.studentAwards?.endTime)}</span>
-                </div>
-              </div>
-              {forms.studentAwards?.lastUpdated && (
-                <div className="text-xs sm:text-sm text-gray-500 border-t border-gray-200 pt-2 sm:pt-3 mt-2 sm:mt-3">
-                  Updated: {formatDateTime(forms.studentAwards.lastUpdated)}
-                </div>
-              )}
-            </div>
-          </div>
-
-
+              </Card>
+            );
+          })}
         </div>
 
-        {/* Form Timer Settings */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-4 sm:pb-6 mb-6">
-            <div className="flex items-center space-x-3 mb-2 sm:mb-0">
-              <div className="w-8 h-8 bg-gradient-electric rounded-lg flex items-center justify-center neon-glow">
-                <ClockIcon className="w-5 h-5 text-white" />
+        {/* Timer Settings Card */}
+        <Card className="p-0 overflow-hidden shadow-2xl border-gray-200">
+          <div className="h-2 bg-gradient-to-r from-electric-500 via-neon-500 to-electric-500 opacity-80"></div>
+          <div className="p-8 sm:p-10">
+            <div className="flex items-center space-x-4 mb-10">
+              <div className="w-14 h-14 bg-gradient-electric rounded-2xl flex items-center justify-center shadow-lg transform -rotate-2">
+                <ClockIcon className="w-8 h-8 text-white" />
               </div>
               <div>
-                <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">Set Form Timer</h2>
-                <p className="text-gray-600 text-sm">Configure form availability</p>
+                <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Set Form Timer</h2>
+                <p className="text-gray-500 font-medium">Configure availability for registrations</p>
               </div>
             </div>
-          </div>
-          <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-              <div className="lg:col-span-2">
-                <label className="form-label">
-                  Form Type
-                </label>
-                <select
-                  name="formName"
-                  value={formData.formName}
-                  onChange={handleInputChange}
-                  className="input-field"
+
+            <form onSubmit={handleSubmit} className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold text-gray-700 mb-3 uppercase tracking-wider">Registration Type</label>
+                  <select
+                    name="formName"
+                    value={formData.formName}
+                    onChange={handleInputChange}
+                    className="w-full bg-gray-50 border-2 border-gray-100 text-gray-900 text-sm rounded-2xl focus:ring-4 focus:ring-electric-500/10 focus:border-electric-500 block p-4 shadow-sm appearance-none font-bold"
+                  >
+                    <option value="samuhLagan">Samuh Lagan Registration</option>
+                    <option value="studentAwards">Student Awards Registration</option>
+                  </select>
+                </div>
+                
+                <div className="md:col-span-2">
+                  <Input
+                    label="Scheduled Event Date"
+                    type="date"
+                    name="eventDate"
+                    value={formData.eventDate}
+                    onChange={handleInputChange}
+                    required
+                    variant="dark"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <Input
+                    label="Registration Opens At"
+                    type="datetime-local"
+                    name="startTime"
+                    value={formData.startTime}
+                    onChange={handleInputChange}
+                    required
+                    variant="dark"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <Input
+                    label="Registration Closes At"
+                    type="datetime-local"
+                    name="endTime"
+                    value={formData.endTime}
+                    onChange={handleInputChange}
+                    required
+                    variant="dark"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-8 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-6">
+                <div className="flex items-center text-sm text-gray-500 font-medium">
+                  <ExclamationCircleIcon className="w-5 h-5 mr-3 text-electric-400" />
+                  Updating the timer affects public form availability immediately.
+                </div>
+                <Button
+                  type="submit"
+                  disabled={loading}
+                  variant="primary"
+                  className="w-full sm:w-auto px-12 py-4 rounded-2xl text-lg font-bold shadow-xl shadow-electric-500/20"
                 >
-                  <option value="samuhLagan">Samuh Lagan Registration</option>
-                  <option value="studentAwards">Student Awards Registration</option>
-
-                </select>
+                  {loading ? (
+                    <div className="flex items-center space-x-3">
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <span>Syncing...</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center space-x-2">
+                      <span>Initialize Timer</span>
+                      <ClockIcon className="w-5 h-5" />
+                    </div>
+                  )}
+                </Button>
               </div>
-
-              <div className="lg:col-span-2">
-                <label className="form-label">
-                  Event Date
-                </label>
-                <input
-                  type="date"
-                  name="eventDate"
-                  value={formData.eventDate}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="form-label">
-                  Start Time
-                </label>
-                <input
-                  type="datetime-local"
-                  name="startTime"
-                  value={formData.startTime}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="form-label">
-                  End Time
-                </label>
-                <input
-                  type="datetime-local"
-                  name="endTime"
-                  value={formData.endTime}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="pt-4 border-t border-gray-200">
-              <button
-                type="submit"
-                disabled={loading}
-                className={`btn-primary w-full sm:w-auto sm:min-w-[200px] flex items-center justify-center space-x-2 ${loading ? 'opacity-50 cursor-not-allowed' : ''
-                  }`}
-              >
-                {loading ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    <span>Setting Timer...</span>
-                  </>
-                ) : (
-                  <>
-                    <ClockIcon className="w-4 h-4" />
-                    <span>Set Form Timer</span>
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        </Card>
       </div>
     </div>
   );
-}
+};
+
 export default FormManagement;
 
 

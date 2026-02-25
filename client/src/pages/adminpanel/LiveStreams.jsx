@@ -1,177 +1,40 @@
-import React, { useState, useEffect } from 'react';
-import { SignalIcon, EyeIcon, PlusIcon } from '@heroicons/react/24/outline';
-import axiosInstance from '../../utils/axiosConfig';
+import React from 'react';
+import { SignalIcon, AdjustmentsHorizontalIcon } from '@heroicons/react/24/outline';
 
 const LiveStreams = () => {
-  const [streams, setStreams] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
-  const fetchStreams = async () => {
-    try {
-      const [liveResponse, upcomingResponse] = await Promise.all([
-        axiosInstance.get('/api/youtube/check-live'),
-        axiosInstance.get('/api/youtube/upcoming')
-      ]);
-
-      const allStreams = [
-        ...(liveResponse.data.live ? [liveResponse.data] : []),
-        ...upcomingResponse.data.upcomingStreams
-      ];
-
-      setStreams(allStreams);
-      setError(null);
-    } catch (err) {
-      console.error('Error fetching streams:', err);
-      const errorMessage = err.response?.data?.details || err.response?.data?.error || err.message;
-      setError(`Failed to fetch streams: ${errorMessage}`);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchStreams();
-    const interval = setInterval(fetchStreams, 30000); // Refresh every 30 seconds
-    return () => clearInterval(interval);
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full">
-          <div className="glass-effect p-8 text-center animate-fade-in-up border border-gray-200">
-            <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
-              <SignalIcon className="w-8 h-8 text-red-400" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Error Loading Streams</h3>
-            <p className="text-gray-600 mb-6">{error}</p>
-            {error.includes('YouTube API configuration missing') && (
-              <div className="bg-sunset-500/10 border border-sunset-500/30 rounded-xl p-4 mb-6">
-                <p className="text-sunset-500 text-sm mb-3">
-                  Please configure YouTube API credentials in the server's .env file:
-                </p>
-                <pre className="text-xs bg-gray-50 p-3 rounded-lg text-gray-600 overflow-x-auto">
-                  YOUTUBE_API_KEY=your_api_key_here<br/>
-                  YOUTUBE_CHANNEL_ID=your_channel_id_here
-                </pre>
-              </div>
-            )}
-            <button
-              onClick={fetchStreams}
-              className="btn-primary w-full"
-            >
-              Try Again
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
-      {/* Main Content Container */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up">
-      {/* Header Section */}
-      <div className="mb-8 animate-fade-in-up">
-        <div className="flex items-center space-x-3 mb-2">
-          <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg">
-            <SignalIcon className="w-6 h-6 text-white" />
-          </div>
-          <h1 className="text-3xl font-bold text-gray-900">Live Streams</h1>
-        </div>
-        <p className="text-gray-600 text-lg">Manage and monitor your live streaming content</p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center p-4">
+      <div className="max-w-2xl w-full text-center animate-fade-in-up">
+        <div className="bg-white rounded-3xl shadow-premium border border-gray-200 p-8 sm:p-12 relative overflow-hidden">
+          {/* Background decoration */}
+          <div className="absolute top-0 right-0 w-32 h-32 bg-electric-50 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2"></div>
 
-      <div className="glass-effect rounded-xl shadow-lg p-6 border border-gray-200 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">Stream Management</h2>
-          <button
-            onClick={() => window.open('https://studio.youtube.com/channel/upload', '_blank')}
-            className="btn-primary flex items-center space-x-2 mt-4 lg:mt-0"
-          >
-            <PlusIcon className="h-5 w-5" />
-            <span>Create Stream</span>
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {streams.map((stream) => (
-            <div key={stream.videoId} className="card-hover overflow-hidden">
-              <div className="relative">
-                <img
-                  src={stream.thumbnailUrl}
-                  alt={stream.title}
-                  className="w-full h-48 object-cover"
-                />
-                {stream.live && (
-                  <div className="absolute top-4 left-4 flex items-center bg-red-500 text-white px-3 py-1 rounded-full border border-red-400 shadow-lg">
-                    <SignalIcon className="h-4 w-4 mr-1" />
-                    <span className="text-sm font-medium">Live</span>
-                  </div>
-                )}
-              </div>
-              <div className="p-4">
-                <h3 className="font-semibold truncate text-white">{stream.title}</h3>
-                <p className="text-gray-600 text-sm mt-1 truncate">{stream.description}</p>
-                <div className="mt-4 flex justify-between items-center">
-                  <div className="flex items-center text-gray-500">
-                    <EyeIcon className="h-5 w-5 mr-1" />
-                    <span>{stream.viewerCount || '0'}</span>
-                  </div>
-                  <span className={`px-3 py-1 rounded-full text-sm font-medium border ${
-                    stream.live 
-                      ? 'bg-red-500/20 text-red-300 border-red-500/30' 
-                      : 'bg-electric-500/20 text-electric-500 border-electric-500/30'
-                  }`}>
-                    {stream.live ? 'Live Now' : new Date(stream.scheduledStartTime).toLocaleString()}
-                  </span>
-                </div>
-                <div className="mt-4 flex space-x-2">
-                  <button
-                    onClick={() => window.open(`https://studio.youtube.com/video/${stream.videoId}/edit`, '_blank')}
-                    className="flex-1 btn-secondary text-sm"
-                  >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => window.open(`https://youtube.com/watch?v=${stream.videoId}`, '_blank')}
-                    className="flex-1 btn-accent text-sm"
-                  >
-                    View
-                  </button>
-                </div>
-              </div>
+          <div className="relative z-10">
+            <div className="w-20 h-20 bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl mx-auto flex items-center justify-center mb-8 shadow-inner border border-gray-200">
+              <AdjustmentsHorizontalIcon className="w-10 h-10 text-gray-500 animate-spin-slow" />
             </div>
-          ))}
-        </div>
 
-        {streams.length === 0 && (
-          <div className="text-center py-12">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-200/30 rounded-full flex items-center justify-center">
-              <SignalIcon className="w-8 h-8 text-gray-500" />
+            <div className="inline-flex items-center space-x-2 px-3 py-1 bg-amber-50 text-amber-700 rounded-full text-sm font-bold border border-amber-200 mb-6 uppercase tracking-wider">
+              <SignalIcon className="w-4 h-4" />
+              <span>Feature Paused</span>
             </div>
-            <p className="text-gray-500 mb-4">No streams found</p>
-            <button
-              onClick={() => window.open('https://studio.youtube.com/channel/upload', '_blank')}
-              className="btn-primary"
-            >
-              Create Your First Stream
-            </button>
+
+            <h1 className="text-3xl font-black text-gray-900 mb-4">
+              Live Stream Management
+            </h1>
+
+            <p className="text-gray-700 text-lg mb-8 leading-relaxed font-medium">
+              The live streaming module is currently undergoing backend maintenance and integration updates.
+              Management tools will be available soon.
+            </p>
+
+            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 text-sm text-gray-600 font-medium">
+              Need assistance? Contact the technical team at <span className="text-electric-600 font-bold">developerstripod@gmail.com</span>
+            </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
-  </div>
   );
 };
 

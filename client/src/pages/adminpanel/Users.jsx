@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../utils/axiosConfig';
 import { useNavigate } from 'react-router-dom';
-import { 
-  CheckCircleIcon, 
-  XCircleIcon, 
-  ExclamationCircleIcon, 
-  XMarkIcon, 
+import {
+  CheckCircleIcon,
+  XCircleIcon,
+  ExclamationCircleIcon,
+  XMarkIcon,
   ArrowPathIcon,
   UserIcon,
   MagnifyingGlassIcon,
@@ -21,7 +21,7 @@ import {
   EyeIcon,
   DocumentArrowDownIcon
 } from '@heroicons/react/24/outline';
-import { 
+import {
   CheckCircleIcon as CheckCircleIconSolid,
   XCircleIcon as XCircleIconSolid,
   ExclamationTriangleIcon as ExclamationTriangleIconSolid
@@ -45,14 +45,15 @@ const Users = () => {
     email: '',
     password: '', // Add password field for creating users
     role: 'user',
-    isVerified: false
+    isVerified: false,
+    village: ''
   });
   const [notifications, setNotifications] = useState([]);
-  
+
   // Pagination states
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
-  
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,12 +63,12 @@ const Users = () => {
   // Filter users based on search and filters - with safety check
   const filteredUsers = (users || []).filter(user => {
     const matchesSearch = user.username?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email?.toLowerCase().includes(searchTerm.toLowerCase());
+      user.email?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = filterRole === 'all' || user.role === filterRole;
-    const matchesStatus = filterStatus === 'all' || 
-                         (filterStatus === 'verified' && user.isVerified) ||
-                         (filterStatus === 'pending' && !user.isVerified);
-    
+    const matchesStatus = filterStatus === 'all' ||
+      (filterStatus === 'verified' && user.isVerified) ||
+      (filterStatus === 'pending' && !user.isVerified);
+
     return matchesSearch && matchesRole && matchesStatus;
   });
 
@@ -112,7 +113,7 @@ const Users = () => {
   // Function to show notification with modern styling
   const showNotification = (message, type = 'error', action = null, actionLabel = '') => {
     const id = Date.now().toString();
-    
+
     setNotifications(prev => [
       ...prev,
       {
@@ -123,13 +124,13 @@ const Users = () => {
         actionLabel
       }
     ]);
-    
+
     // Auto-close after 5 seconds
     setTimeout(() => {
       closeNotification(id);
     }, 5000);
   };
-  
+
   // Function to close notification
   const closeNotification = (id) => {
     setNotifications(prev => prev.filter(notification => notification.id !== id));
@@ -147,7 +148,7 @@ const Users = () => {
         new Date(user.createdAt || Date.now()).toLocaleDateString()
       ])
     ].map(row => row.join(',')).join('\n');
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -155,7 +156,7 @@ const Users = () => {
     a.download = `users-${new Date().toISOString().split('T')[0]}.csv`;
     a.click();
     window.URL.revokeObjectURL(url);
-    
+
     showNotification('Users data exported successfully', 'success');
   };
 
@@ -169,7 +170,7 @@ const Users = () => {
       }
 
       const response = await axiosInstance.get('/api/users/all');
-      
+
       // Ensure response.data is an array
       const userData = Array.isArray(response.data) ? response.data : [];
       setUsers(userData);
@@ -177,7 +178,7 @@ const Users = () => {
       setLoading(false);
     } catch (error) {
       console.error('Error fetching users:', error);
-      
+
       if (error.response && error.response.status === 401) {
         // Token is invalid or expired
         localStorage.removeItem('token');
@@ -198,7 +199,8 @@ const Users = () => {
       email: '',
       password: '',
       role: 'user',
-      isVerified: false
+      isVerified: false,
+      village: ''
     });
   };
 
@@ -210,8 +212,10 @@ const Users = () => {
       email: user.email,
       password: '', // Don't prefill password for security
       role: user.role,
-      isVerified: user.isVerified
+      isVerified: user.isVerified,
+      village: user.village || ''
     });
+    setIsEditing(true);
   };
 
   const handleDelete = async (userId) => {
@@ -231,15 +235,15 @@ const Users = () => {
       // If we get here, the request was successful
       setUsers(prevUsers => (prevUsers || []).filter(user => user._id !== userId));
       showNotification(
-        'User deleted successfully', 
-        'success', 
-        () => fetchUsers(), 
+        'User deleted successfully',
+        'success',
+        () => fetchUsers(),
         'Refresh List'
       );
     } catch (error) {
       console.error('Error deleting user:', error);
       showNotification(
-        error.response?.data?.message || error.message || 'Failed to delete user', 
+        error.response?.data?.message || error.message || 'Failed to delete user',
         'error',
         () => fetchUsers(),
         'Try Again'
@@ -249,7 +253,7 @@ const Users = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
-    
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -265,7 +269,7 @@ const Users = () => {
           showNotification('Password is required for new users', 'error');
           return;
         }
-        
+
         response = await axiosInstance.post('/api/users/create', editForm);
       } else {
         // Updating an existing user
@@ -279,29 +283,29 @@ const Users = () => {
       if (isCreating) {
         setUsers(prevUsers => [...(prevUsers || []), data.user]);
         showNotification(
-          `User created successfully`, 
-          'success', 
-          () => fetchUsers(), 
+          `User created successfully`,
+          'success',
+          () => fetchUsers(),
           'Refresh Users'
         );
       } else {
-        setUsers(prevUsers => (prevUsers || []).map(user => 
+        setUsers(prevUsers => (prevUsers || []).map(user =>
           user._id === editingUser._id ? data.user : user
         ));
         showNotification(
-          `User updated successfully`, 
-          'success', 
-          () => fetchUsers(), 
+          `User updated successfully`,
+          'success',
+          () => fetchUsers(),
           'Refresh Users'
         );
       }
-      
+
       setEditingUser(null);
       setIsCreating(false);
     } catch (error) {
       console.error('Error saving user:', error);
       showNotification(
-        error.response?.data?.message || error.message || `Failed to ${isCreating ? 'create' : 'update'} user`, 
+        error.response?.data?.message || error.message || `Failed to ${isCreating ? 'create' : 'update'} user`,
         'error',
         () => {
           if (isCreating) {
@@ -316,7 +320,7 @@ const Users = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -324,7 +328,7 @@ const Users = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center">
         <div className="max-w-md w-full">
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center animate-fade-in-up">
             <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
@@ -345,7 +349,7 @@ const Users = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-4 sm:p-6">
       {/* Main Content Container */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
         {/* Notifications - Positioned absolutely within the container to avoid layout issues */}
@@ -356,29 +360,26 @@ const Users = () => {
               error: XCircleIconSolid,
               warning: ExclamationTriangleIconSolid
             };
-            
+
             const Icon = iconMap[notification.type] || ExclamationTriangleIconSolid;
-            
+
             return (
-              <div 
+              <div
                 key={notification.id}
-                className={`notification max-w-sm p-4 animate-slide-left ${
-                  notification.type === 'success' ? 'notification-success' :
+                className={`notification max-w-sm p-4 animate-slide-left ${notification.type === 'success' ? 'notification-success' :
                   notification.type === 'error' ? 'notification-error' :
-                  'notification-warning'
-                }`}
+                    'notification-warning'
+                  }`}
               >
                 <div className="flex items-start space-x-3">
-                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
-                    notification.type === 'success' ? 'bg-accent-100' :
+                  <div className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${notification.type === 'success' ? 'bg-accent-100' :
                     notification.type === 'error' ? 'bg-red-100' :
-                    'bg-secondary-100'
-                  }`}>
-                    <Icon className={`w-5 h-5 ${
-                      notification.type === 'success' ? 'text-accent-600' :
+                      'bg-secondary-100'
+                    }`}>
+                    <Icon className={`w-5 h-5 ${notification.type === 'success' ? 'text-accent-600' :
                       notification.type === 'error' ? 'text-red-600' :
-                      'text-secondary-600'
-                    }`} />
+                        'text-secondary-600'
+                      }`} />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-medium">{notification.message}</p>
@@ -389,11 +390,10 @@ const Users = () => {
                             notification.action();
                             closeNotification(notification.id);
                           }}
-                          className={`text-xs font-medium px-3 py-1 rounded-md ${
-                            notification.type === 'success' ? 'bg-accent-600 hover:bg-accent-700 text-white' :
+                          className={`text-xs font-medium px-3 py-1 rounded-md ${notification.type === 'success' ? 'bg-accent-600 hover:bg-accent-700 text-white' :
                             notification.type === 'error' ? 'bg-red-600 hover:bg-red-700 text-white' :
-                            'bg-secondary-600 hover:bg-secondary-700 text-white'
-                          } transition-colors duration-200`}
+                              'bg-secondary-600 hover:bg-secondary-700 text-white'
+                            } transition-colors duration-200`}
                         >
                           {notification.actionLabel === 'Refresh List' || notification.actionLabel === 'Refresh Users' ? (
                             <>
@@ -430,7 +430,7 @@ const Users = () => {
                 </div>
                 <h2 className="text-xl sm:text-2xl font-bold text-gray-900">User Management</h2>
               </div>
-              
+
               {/* Stats Display */}
               <div className="glass-effect px-4 py-2 rounded-lg border border-gray-200">
                 <p className="text-sm text-gray-600">
@@ -438,7 +438,7 @@ const Users = () => {
                 </p>
               </div>
             </div>
-            
+
             {/* Action Buttons */}
             <div className="flex flex-wrap gap-2">
               <button
@@ -448,7 +448,7 @@ const Users = () => {
                 <PlusIcon className="w-5 h-5" />
                 <span>Create User</span>
               </button>
-              
+
               <button
                 onClick={exportUsers}
                 className="flex items-center space-x-2 px-4 py-2 bg-gradient-electric text-white rounded-lg hover:from-electric-600 hover:to-electric-700 transition-all duration-300 shadow-lg hover:shadow-xl"
@@ -456,13 +456,12 @@ const Users = () => {
                 <DocumentArrowDownIcon className="w-5 h-5" />
                 <span>Export CSV</span>
               </button>
-              
+
               <button
                 onClick={handleRefresh}
                 disabled={isRefreshing}
-                className={`flex items-center space-x-2 px-4 py-2 glass-effect rounded-lg border border-gray-200 transition-all duration-300 ${
-                  isRefreshing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'
-                }`}
+                className={`flex items-center space-x-2 px-4 py-2 glass-effect rounded-lg border border-gray-200 transition-all duration-300 ${isRefreshing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'
+                  }`}
               >
                 {isRefreshing ? (
                   <div className="w-5 h-5 border-2 border-neutral-300 border-t-transparent rounded-full animate-spin"></div>
@@ -473,7 +472,7 @@ const Users = () => {
               </button>
             </div>
           </div>
-          
+
           {/* Search and Filter Section */}
           <div className="mt-6 grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="md:col-span-2">
@@ -490,7 +489,7 @@ const Users = () => {
                 />
               </div>
             </div>
-            
+
             <div>
               <select
                 value={filterRole}
@@ -509,7 +508,7 @@ const Users = () => {
                 <option value="committeemember">Committee Member</option>
               </select>
             </div>
-            
+
             <div>
               <select
                 value={filterStatus}
@@ -527,7 +526,7 @@ const Users = () => {
         {/* Users Table */}
         <div className="overflow-x-auto rounded-xl border border-gray-200">
           <table className="min-w-full divide-y divide-white/10">
-            <thead className="bg-gray-50">
+            <thead className="bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid">
               <tr>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">User</th>
                 <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Role</th>
@@ -536,10 +535,10 @@ const Users = () => {
                 <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-gray-50/30 divide-y divide-white/10">
+            <tbody className="bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid/30 divide-y divide-white/10">
               {Array.isArray(filteredUsers) && filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50 transition-colors duration-200">
+                  <tr key={user._id} className="hover:bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid transition-colors duration-200">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
@@ -559,11 +558,10 @@ const Users = () => {
                       <div className="text-sm text-white capitalize">{user.role}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                        user.isVerified 
-                          ? 'bg-green-500/20 text-green-400 border border-green-500/30' 
-                          : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                      }`}>
+                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.isVerified
+                        ? 'bg-green-500/20 text-green-400 border border-green-500/30'
+                        : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
+                        }`}>
                         {user.isVerified ? 'Verified' : 'Pending'}
                       </span>
                     </td>
@@ -573,10 +571,7 @@ const Users = () => {
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex justify-end space-x-2">
                         <button
-                          onClick={() => {
-                            setEditingUser(user);
-                            setIsEditing(true);
-                          }}
+                          onClick={() => handleEdit(user)}
                           className="text-electric-600 hover:text-electric-500 transition-colors duration-200"
                           title="Edit User"
                         >
@@ -603,8 +598,8 @@ const Users = () => {
                       <UserIcon className="w-12 h-12 text-gray-500 mb-3" />
                       <h3 className="text-lg font-medium text-gray-800 mb-1">No users found</h3>
                       <p className="text-gray-500">
-                        {searchTerm || roleFilter !== 'all' || statusFilter !== 'all' 
-                          ? 'Try adjusting your search or filter criteria' 
+                        {searchTerm || roleFilter !== 'all' || statusFilter !== 'all'
+                          ? 'Try adjusting your search or filter criteria'
                           : 'There are currently no users in the system'}
                       </p>
                     </div>
@@ -629,11 +624,10 @@ const Users = () => {
               <button
                 onClick={() => paginate(currentPage - 1)}
                 disabled={currentPage === 1}
-                className={`px-4 py-2 rounded-lg ${
-                  currentPage === 1
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'glass-effect border border-gray-200 hover:bg-gray-100 text-white'
-                }`}
+                className={`px-4 py-2 rounded-lg ${currentPage === 1
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'glass-effect border border-gray-200 hover:bg-gray-100 text-white'
+                  }`}
               >
                 Previous
               </button>
@@ -641,11 +635,10 @@ const Users = () => {
                 <button
                   key={index + 1}
                   onClick={() => paginate(index + 1)}
-                  className={`px-4 py-2 rounded-lg ${
-                    currentPage === index + 1
-                      ? 'bg-gradient-electric text-white'
-                      : 'glass-effect border border-gray-200 hover:bg-gray-100 text-white'
-                  }`}
+                  className={`px-4 py-2 rounded-lg ${currentPage === index + 1
+                    ? 'bg-gradient-electric text-white'
+                    : 'glass-effect border border-gray-200 hover:bg-gray-100 text-white'
+                    }`}
                 >
                   {index + 1}
                 </button>
@@ -653,11 +646,10 @@ const Users = () => {
               <button
                 onClick={() => paginate(currentPage + 1)}
                 disabled={currentPage === totalPages}
-                className={`px-4 py-2 rounded-lg ${
-                  currentPage === totalPages
-                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                    : 'glass-effect border border-gray-200 hover:bg-gray-100 text-white'
-                }`}
+                className={`px-4 py-2 rounded-lg ${currentPage === totalPages
+                  ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  : 'glass-effect border border-gray-200 hover:bg-gray-100 text-white'
+                  }`}
               >
                 Next
               </button>
@@ -675,7 +667,7 @@ const Users = () => {
                 </div>
                 <h3 className="text-lg font-medium text-gray-800 mb-2">Confirm Deletion</h3>
                 <p className="text-gray-600 mb-6">
-                  Are you sure you want to delete user <span className="font-semibold text-gray-800">{deletingUser?.username}</span>? 
+                  Are you sure you want to delete user <span className="font-semibold text-gray-800">{deletingUser?.username}</span>?
                   This action cannot be undone.
                 </p>
                 <div className="flex justify-center space-x-3">
@@ -721,7 +713,7 @@ const Users = () => {
                   <XMarkIcon className="h-6 w-6" />
                 </button>
               </div>
-              
+
               <form onSubmit={handleUpdate}>
                 <div className="space-y-4">
                   <div>
@@ -732,12 +724,12 @@ const Users = () => {
                       type="text"
                       id="username"
                       value={editForm.username}
-                      onChange={(e) => setEditForm({...editForm, username: e.target.value})}
+                      onChange={(e) => setEditForm({ ...editForm, username: e.target.value })}
                       className="input-field w-full"
                       required
                     />
                   </div>
-                  
+
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-1">
                       Email
@@ -746,12 +738,12 @@ const Users = () => {
                       type="email"
                       id="email"
                       value={editForm.email}
-                      onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                      onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
                       className="input-field w-full"
                       required
                     />
                   </div>
-                  
+
                   {isCreating && (
                     <div>
                       <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-1">
@@ -761,13 +753,13 @@ const Users = () => {
                         type="password"
                         id="password"
                         value={editForm.password}
-                        onChange={(e) => setEditForm({...editForm, password: e.target.value})}
+                        onChange={(e) => setEditForm({ ...editForm, password: e.target.value })}
                         className="input-field w-full"
                         required
                       />
                     </div>
                   )}
-                  
+
                   <div>
                     <label htmlFor="role" className="block text-sm font-medium text-gray-600 mb-1">
                       Role
@@ -775,7 +767,7 @@ const Users = () => {
                     <select
                       id="role"
                       value={editForm.role}
-                      onChange={(e) => setEditForm({...editForm, role: e.target.value})}
+                      onChange={(e) => setEditForm({ ...editForm, role: e.target.value })}
                       className="input-field w-full"
                     >
                       <option value="user">User</option>
@@ -789,13 +781,30 @@ const Users = () => {
                       <option value="committeemember">Committee Member</option>
                     </select>
                   </div>
-                  
+
+                  {editForm.role === 'committeemember' && (
+                    <div>
+                      <label htmlFor="village" className="block text-sm font-medium text-gray-600 mb-1">
+                        Village
+                      </label>
+                      <input
+                        type="text"
+                        id="village"
+                        value={editForm.village}
+                        onChange={(e) => setEditForm({ ...editForm, village: e.target.value })}
+                        className="input-field w-full"
+                        placeholder="Enter village name"
+                        required
+                      />
+                    </div>
+                  )}
+
                   <div className="flex items-center">
                     <input
                       type="checkbox"
                       id="isVerified"
                       checked={editForm.isVerified}
-                      onChange={(e) => setEditForm({...editForm, isVerified: e.target.checked})}
+                      onChange={(e) => setEditForm({ ...editForm, isVerified: e.target.checked })}
                       className="h-4 w-4 text-electric-500 rounded border-neutral-600 bg-gray-100 focus:ring-electric-500"
                     />
                     <label htmlFor="isVerified" className="ml-2 block text-sm text-gray-600">
@@ -803,7 +812,7 @@ const Users = () => {
                     </label>
                   </div>
                 </div>
-                
+
                 <div className="mt-6 flex justify-end space-x-3">
                   <button
                     type="button"

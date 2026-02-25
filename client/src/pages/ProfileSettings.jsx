@@ -106,7 +106,7 @@ function ProfileSettings() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -114,7 +114,7 @@ function ProfileSettings() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid py-12">
         <div className="container mx-auto px-4">
           <Card className="max-w-md mx-auto p-6">
             <div className="text-red-400 text-center">
@@ -127,7 +127,7 @@ function ProfileSettings() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8 sm:py-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid py-8 sm:py-12">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-8 animate-fade-in-down">
           <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">

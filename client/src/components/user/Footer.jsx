@@ -16,17 +16,17 @@ function Footer() {
           {/* About */}
           <div>
             <h3 className="text-white text-lg font-semibold mb-4">About VSPS</h3>
-            <p className="text-gray-400 mb-4 leading-relaxed">
+            <p className="text-gray-300 mb-4 leading-relaxed font-medium">
               Your premier platform for organizing and streaming community events. Connect, celebrate, and share moments that matter.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="text-gray-400 hover:text-electric-600 transition-colors duration-300">
+              <a href="#" className="text-gray-300 hover:text-electric-600 transition-colors duration-300">
                 <FaTwitter className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-electric-600 transition-colors duration-300">
+              <a href="#" className="text-gray-300 hover:text-electric-600 transition-colors duration-300">
                 <FaInstagram className="w-5 h-5" />
               </a>
-              <a href="#" className="text-gray-400 hover:text-electric-600 transition-colors duration-300">
+              <a href="#" className="text-gray-300 hover:text-electric-600 transition-colors duration-300">
                 <FaYoutube className="w-5 h-5" />
               </a>
             </div>
@@ -37,17 +37,17 @@ function Footer() {
             <h3 className="text-white text-lg font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <Link to="/services" className="text-gray-400 hover:text-electric-600 transition-colors duration-300">
+                <Link to="/services" className="text-gray-300 hover:text-electric-600 transition-colors duration-300">
                   Our Services
                 </Link>
               </li>
               <li>
-                <Link to="/resources" className="text-gray-400 hover:text-electric-600 transition-colors duration-300">
+                <Link to="/resources" className="text-gray-300 hover:text-electric-600 transition-colors duration-300">
                   Planning Resources
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="text-gray-400 hover:text-electric-600 transition-colors duration-300">
+                <Link to="/faq" className="text-gray-300 hover:text-electric-600 transition-colors duration-300">
                   FAQ
                 </Link>
               </li>
@@ -76,7 +76,7 @@ function Footer() {
 
         <div className="border-t border-gray-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-400">© {currentYear} VSPS. All rights reserved.</p>
+            <p className="text-gray-200 font-medium">© {currentYear} VSPS. All rights reserved.</p>
           </div>
         </div>
       </div>

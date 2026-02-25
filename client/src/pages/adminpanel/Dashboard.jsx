@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  CalendarIcon, 
-  UserGroupIcon, 
-  AcademicCapIcon, 
+import {
+  CalendarIcon,
+  UserGroupIcon,
+  AcademicCapIcon,
   TrophyIcon,
   ArrowUpIcon,
   ArrowDownIcon,
@@ -41,18 +41,15 @@ const Dashboard = () => {
   const [stats, setStats] = useState({
     totalBookings: 0,
     pendingBookings: 0,
-    totalSamuhLagan: 0,
-    totalStudentAwards: 0,
-    totalTeamRegistrations: 0,
     recentBookings: [],
     upcomingEvents: [],
     pendingPayments: [],
     pendingBookingsList: [],
     revenue: {
-      monthly: 0,
-      yearly: 0,
-      monthlyBreakdown: [],
-      yearlyBreakdown: []
+      total: 0,
+      monthly: [],
+      pending: 0,
+      approved: 0
     },
     // New dashboard stats
     totalUsers: 0,
@@ -71,63 +68,50 @@ const Dashboard = () => {
 
   const fetchDashboardData = useCallback(async (retryCount = 0) => {
     const maxRetries = 3;
-    
+
     try {
       setLoading(true);
       setError(null);
-      
+
       console.log('Fetching dashboard data...');
-      
+
       // Fetch all dashboard data in parallel
-      const [dashboardStatsRes, bookingsRes, samuhLaganRes, studentAwardRes] = await Promise.all([
+      const [dashboardStatsRes, bookingsRes] = await Promise.all([
         axiosInstance.get('/api/users/dashboard-stats'),
-        axiosInstance.get('/api/bookings'),
-        axiosInstance.get('/api/bookings/samuh-lagan'),
-        axiosInstance.get('/api/bookings/student-awards')
-        // Removed team-registrations since the model was deleted
+        axiosInstance.get('/api/bookings')
       ]);
 
       console.log('All data fetched successfully');
-      
+
       // Process dashboard stats
       const dashboardStats = dashboardStatsRes.data;
 
       // Ensure arrays with proper fallbacks (Array Method Safety Pattern)
-      const bookings = Array.isArray(bookingsRes.data) ? bookingsRes.data : 
-                      Array.isArray(bookingsRes.data?.bookings) ? bookingsRes.data.bookings : 
-                      Array.isArray(bookingsRes.data?.data) ? bookingsRes.data.data : [];
-      
-      const samuhLagan = Array.isArray(samuhLaganRes.data) ? samuhLaganRes.data :
-                         Array.isArray(samuhLaganRes.data?.bookings) ? samuhLaganRes.data.bookings :
-                         Array.isArray(samuhLaganRes.data?.data) ? samuhLaganRes.data.data : [];
-      
-      const studentAwards = Array.isArray(studentAwardRes.data) ? studentAwardRes.data :
-                            Array.isArray(studentAwardRes.data?.awards) ? studentAwardRes.data.awards :
-                            Array.isArray(studentAwardRes.data?.data) ? studentAwardRes.data.data : [];
+      const bookings = Array.isArray(bookingsRes.data) ? bookingsRes.data :
+        Array.isArray(bookingsRes.data?.bookings) ? bookingsRes.data.bookings :
+          Array.isArray(bookingsRes.data?.data) ? bookingsRes.data.data : [];
 
       console.log('Data processed:', {
-        bookingsLength: bookings.length,
-        samuhLaganLength: samuhLagan.length,
-        studentAwardsLength: studentAwards.length
+        bookingsLength: bookings.length
       });
 
       // Calculate statistics
       const pendingBookings = bookings.filter(b => b.status === 'Pending');
-      
+
       // Get approved bookings that need payment confirmation
-      const pendingPayments = bookings.filter(b => 
+      const pendingPayments = bookings.filter(b =>
         b.status === 'Approved' && !b.paymentConfirmed
       ).map(booking => ({
         id: booking._id,
-        customerName: booking.firstName && booking.surname ? 
-          `${booking.firstName} ${booking.surname}` : 
+        customerName: booking.firstName && booking.surname ?
+          `${booking.firstName} ${booking.surname}` :
           booking.name || 'N/A',
         bookingType: booking.eventType,
         amount: booking.amount || 0,
         date: booking.date,
         createdAt: booking.createdAt
       }));
-      
+
       // Get recent bookings (last 5)
       const recentBookings = [...bookings]
         .sort((a, b) => new Date(b.date) - new Date(a.date))
@@ -145,9 +129,6 @@ const Dashboard = () => {
       setStats({
         totalBookings: bookings.length,
         pendingBookings: pendingBookings.length,
-        totalSamuhLagan: samuhLagan.length,
-        totalStudentAwards: studentAwards.length,
-        totalTeamRegistrations: 0, // Set to 0 since we removed team registrations
         recentBookings,
         upcomingEvents,
         pendingPayments,
@@ -167,7 +148,7 @@ const Dashboard = () => {
       console.log('Dashboard state updated successfully');
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
-      
+
       // Retry mechanism
       if (retryCount < maxRetries) {
         console.log(`Retrying... (${retryCount + 1}/${maxRetries})`);
@@ -176,7 +157,7 @@ const Dashboard = () => {
         }, 1000 * (retryCount + 1)); // Exponential backoff
         return;
       }
-      
+
       // Handle different types of errors
       if (error.response) {
         // The request was made and the server responded with a status code
@@ -208,65 +189,65 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboardData();
-    
+
     // Set up interval to refresh data every 5 minutes
     const interval = setInterval(() => {
       fetchDashboardData();
     }, 300000); // 5 minutes in milliseconds
-    
+
     return () => clearInterval(interval);
   }, [fetchDashboardData]);
 
   const calculateRevenue = (bookings) => {
     // Ensure bookings is always an array (Array Method Safety Pattern)
     const safeBookings = Array.isArray(bookings) ? bookings : [];
-    
+
     const now = new Date();
     const currentMonth = now.getMonth();
     const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
     const currentYear = now.getFullYear();
     const previousMonthYear = currentMonth === 0 ? currentYear - 1 : currentYear;
-    
+
     // Initialize monthly and yearly totals
     let monthlyRevenue = 0;
     let previousMonthlyRevenue = 0;
     let yearlyRevenue = 0;
     const monthlyBreakdown = Array(12).fill(0);
     const yearlyBreakdown = {};
-    
+
     safeBookings.forEach(booking => {
       if (booking && booking.status === 'Booked' && booking.paymentConfirmed) {
         const bookingDate = new Date(booking.date);
         const bookingMonth = bookingDate.getMonth();
         const bookingYear = bookingDate.getFullYear();
         const amount = booking.amount || 0;
-        
+
         // Add to yearly breakdown
         if (!yearlyBreakdown[bookingYear]) {
           yearlyBreakdown[bookingYear] = 0;
         }
         yearlyBreakdown[bookingYear] += amount;
-        
+
         // Add to monthly breakdown
         monthlyBreakdown[bookingMonth] += amount;
-        
+
         // Add to current year's total
         if (bookingYear === currentYear) {
           yearlyRevenue += amount;
         }
-        
+
         // Add to current month's total
         if (bookingYear === currentYear && bookingMonth === currentMonth) {
           monthlyRevenue += amount;
         }
-        
+
         // Add to previous month's total
         if (bookingYear === previousMonthYear && bookingMonth === previousMonth) {
           previousMonthlyRevenue += amount;
         }
       }
     });
-    
+
     // Calculate growth percentage
     let growthPercentage = 0;
     if (previousMonthlyRevenue > 0) {
@@ -274,7 +255,7 @@ const Dashboard = () => {
     } else if (monthlyRevenue > 0) {
       growthPercentage = 100; // If previous month was 0 but current isn't, show 100% growth
     }
-    
+
     return {
       monthly: monthlyRevenue,
       yearly: yearlyRevenue,
@@ -286,7 +267,7 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -294,7 +275,7 @@ const Dashboard = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-3 sm:p-6">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up">
           <div className="max-w-md w-full mx-auto text-center py-12">
             <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
@@ -353,12 +334,12 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-4 sm:p-6">
       {/* Main Content Container */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
         {/* Welcome Section with Modern Dark Design */}
         <div className="relative mb-8 overflow-hidden animate-fade-in-up">
-          <div className="glass-effect p-6 sm:p-8 relative rounded-2xl">
+          <div className="glass-effect p-6 sm:p-8 relative rounded-2xl border border-gray-200">
             <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-electric-400/20 to-neon-400/20 rounded-bl-full"></div>
             <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-secondary-400/20 to-electric-400/20 rounded-tr-full"></div>
             <div className="relative z-10">
@@ -379,7 +360,7 @@ const Dashboard = () => {
                   <button
                     onClick={handleRefresh}
                     disabled={isRefreshing}
-                    className={`p-2 rounded-lg bg-gray-50 hover:bg-gray-200/50 transition-colors border border-gray-200 ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`p-2 rounded-lg bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid hover:bg-gray-200/50 transition-colors border border-gray-200 ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`}
                     title="Refresh dashboard"
                   >
                     {isRefreshing ? (
@@ -416,8 +397,8 @@ const Dashboard = () => {
                   <div>
                     <p className="text-sm text-gray-500">Completion Rate</p>
                     <p className="text-lg font-bold text-gray-900">
-                      {stats.totalBookings > 0 
-                        ? Math.round((getBookingStatusCount('Booked') / stats.totalBookings) * 100) 
+                      {stats.totalBookings > 0
+                        ? Math.round((getBookingStatusCount('Booked') / stats.totalBookings) * 100)
                         : 0}%
                     </p>
                   </div>
@@ -428,8 +409,8 @@ const Dashboard = () => {
         </div>
 
         {/* Enhanced Revenue Stats */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-fade-in-up" style={{animationDelay: '0.1s'}}>
-          <div className="card-hover p-6 relative overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+          <div className="card-hover p-6 relative overflow-hidden border border-gray-200 rounded-xl">
             <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-neon opacity-20 rounded-bl-3xl"></div>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
@@ -462,7 +443,7 @@ const Dashboard = () => {
             </p>
           </div>
 
-          <div className="card-hover p-6 relative overflow-hidden">
+          <div className="card-hover p-6 relative overflow-hidden border border-gray-200 rounded-xl">
             <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-electric opacity-20 rounded-bl-3xl"></div>
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
@@ -497,8 +478,8 @@ const Dashboard = () => {
         </div>
 
         {/* Booking Analytics */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-          <div className="card-hover p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <div className="card-hover p-6 border border-gray-200 rounded-xl">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-gradient-secondary rounded-xl flex items-center justify-center shadow-lg">
@@ -510,56 +491,56 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between mb-1">
                   <span className="text-gray-600">Pending</span>
-                  <span className="text-white font-medium">{getBookingStatusCount('Pending')}</span>
+                  <span className="text-gray-900 font-medium">{getBookingStatusCount('Pending')}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-amber-500 h-2 rounded-full" 
-                    style={{width: `${calculatePercentage(getBookingStatusCount('Pending'), stats.totalBookings)}%`}}
+                  <div
+                    className="bg-amber-500 h-2 rounded-full"
+                    style={{ width: `${calculatePercentage(getBookingStatusCount('Pending'), stats.totalBookings)}%` }}
                   ></div>
                 </div>
               </div>
-              
+
               <div>
                 <div className="flex justify-between mb-1">
                   <span className="text-gray-600">Approved</span>
-                  <span className="text-white font-medium">{getBookingStatusCount('Approved')}</span>
+                  <span className="text-gray-900 font-medium">{getBookingStatusCount('Approved')}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-electric-500 h-2 rounded-full" 
-                    style={{width: `${calculatePercentage(getBookingStatusCount('Approved'), stats.totalBookings)}%`}}
+                  <div
+                    className="bg-electric-500 h-2 rounded-full"
+                    style={{ width: `${calculatePercentage(getBookingStatusCount('Approved'), stats.totalBookings)}%` }}
                   ></div>
                 </div>
               </div>
-              
+
               <div>
                 <div className="flex justify-between mb-1">
                   <span className="text-gray-600">Booked</span>
-                  <span className="text-white font-medium">{getBookingStatusCount('Booked')}</span>
+                  <span className="text-gray-900 font-medium">{getBookingStatusCount('Booked')}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-neon-500 h-2 rounded-full" 
-                    style={{width: `${calculatePercentage(getBookingStatusCount('Booked'), stats.totalBookings)}%`}}
+                  <div
+                    className="bg-neon-500 h-2 rounded-full"
+                    style={{ width: `${calculatePercentage(getBookingStatusCount('Booked'), stats.totalBookings)}%` }}
                   ></div>
                 </div>
               </div>
-              
+
               <div>
                 <div className="flex justify-between mb-1">
                   <span className="text-gray-600">Rejected</span>
-                  <span className="text-white font-medium">{getBookingStatusCount('Rejected')}</span>
+                  <span className="text-gray-900 font-medium">{getBookingStatusCount('Rejected')}</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div 
-                    className="bg-red-500 h-2 rounded-full" 
-                    style={{width: `${calculatePercentage(getBookingStatusCount('Rejected'), stats.totalBookings)}%`}}
+                  <div
+                    className="bg-red-500 h-2 rounded-full"
+                    style={{ width: `${calculatePercentage(getBookingStatusCount('Rejected'), stats.totalBookings)}%` }}
                   ></div>
                 </div>
               </div>
@@ -567,7 +548,7 @@ const Dashboard = () => {
           </div>
 
           {/* Recent Bookings */}
-          <div className="lg:col-span-2 card-hover p-6">
+          <div className="lg:col-span-2 card-hover p-6 border border-gray-200 rounded-xl">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
@@ -578,7 +559,7 @@ const Dashboard = () => {
                   <p className="text-sm text-gray-500">Latest booking requests</p>
                 </div>
               </div>
-              <button 
+              <button
                 onClick={() => navigate('/admin/booking-management')}
                 className="text-sm text-electric-600 hover:text-electric-500 font-medium flex items-center"
               >
@@ -586,11 +567,11 @@ const Dashboard = () => {
                 <ArrowRightIcon className="w-4 h-4 ml-1" />
               </button>
             </div>
-            
+
             {stats.recentBookings && stats.recentBookings.length > 0 ? (
               <div className="space-y-4">
                 {stats.recentBookings.slice(0, 5).map((booking) => (
-                  <div key={booking._id} className="flex items-center justify-between p-4 glass-effect rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors">
+                  <div key={booking._id} className="flex items-center justify-between p-4 glass-effect rounded-xl border border-gray-200 hover:bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid transition-colors">
                     <div className="flex items-center space-x-4">
                       <div className="w-10 h-10 rounded-full bg-gradient-electric flex items-center justify-center">
                         <CalendarIcon className="w-5 h-5 text-white" />
@@ -598,14 +579,14 @@ const Dashboard = () => {
                       <div>
                         <h3 className="font-medium text-gray-800">{booking.eventType}</h3>
                         <p className="text-sm text-gray-500">
-                          {booking.firstName && booking.surname 
-                            ? `${booking.firstName} ${booking.surname}` 
+                          {booking.firstName && booking.surname
+                            ? `${booking.firstName} ${booking.surname}`
                             : booking.name || 'N/A'}
                         </p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-white font-medium">₹{booking.amount || 0}</p>
+                      <p className="text-gray-900 font-medium">₹{booking.amount || 0}</p>
                       <p className="text-sm text-gray-500">
                         {new Date(booking.date).toLocaleDateString()}
                       </p>
@@ -623,8 +604,8 @@ const Dashboard = () => {
         </div>
 
         {/* User Roles Distribution */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-fade-in-up" style={{animationDelay: '0.3s'}}>
-          <div className="card-hover p-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+          <div className="card-hover p-6 border border-gray-200 rounded-xl">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-gradient-neon rounded-xl flex items-center justify-center shadow-lg">
@@ -636,7 +617,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
               <div className="text-center p-4 glass-effect rounded-xl border border-gray-200">
                 <div className="w-12 h-12 bg-electric-50 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -645,7 +626,7 @@ const Dashboard = () => {
                 <p className="text-2xl font-bold text-gray-900">{getUserRoleCount('admin')}</p>
                 <p className="text-sm text-gray-500">Admins</p>
               </div>
-              
+
               <div className="text-center p-4 glass-effect rounded-xl border border-gray-200">
                 <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
                   <UserIcon className="w-6 h-6 text-blue-400" />
@@ -653,7 +634,7 @@ const Dashboard = () => {
                 <p className="text-2xl font-bold text-gray-900">{getUserRoleCount('user')}</p>
                 <p className="text-sm text-gray-500">Users</p>
               </div>
-              
+
               <div className="text-center p-4 glass-effect rounded-xl border border-gray-200">
                 <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
                   <UsersIcon className="w-6 h-6 text-green-400" />
@@ -665,7 +646,7 @@ const Dashboard = () => {
           </div>
 
           {/* Upcoming Events */}
-          <div className="card-hover p-6">
+          <div className="card-hover p-6 border border-gray-200 rounded-xl">
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-gradient-secondary rounded-xl flex items-center justify-center shadow-lg">
@@ -677,7 +658,7 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-            
+
             {stats.upcomingEvents && stats.upcomingEvents.length > 0 ? (
               <div className="space-y-4">
                 {stats.upcomingEvents.slice(0, 3).map((event) => (
@@ -685,17 +666,17 @@ const Dashboard = () => {
                     <div>
                       <h3 className="font-medium text-gray-800">{event.eventType}</h3>
                       <p className="text-sm text-gray-500">
-                        {event.firstName && event.surname 
-                          ? `${event.firstName} ${event.surname}` 
+                        {event.firstName && event.surname
+                          ? `${event.firstName} ${event.surname}`
                           : event.name || 'N/A'}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-white font-medium">
+                      <p className="text-gray-900 font-medium">
                         {new Date(event.date).toLocaleDateString()}
                       </p>
                       <p className="text-sm text-gray-500">
-                        {new Date(event.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                        {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                   </div>

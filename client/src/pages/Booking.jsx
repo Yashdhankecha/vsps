@@ -47,6 +47,7 @@ function Booking() {
     villageName: ''
   });
   const [bookedEvents, setBookedEvents] = useState([]);
+  const [globalBookedDates, setGlobalBookedDates] = useState([]);
   const [error, setError] = useState(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -69,6 +70,9 @@ function Booking() {
     const token = localStorage.getItem('token');
     setIsAuthenticated(!!token);
 
+    // Always fetch global booked dates (public, no auth needed)
+    fetchGlobalBookedDates();
+
     if (token) {
       // Fetch user profile to get email
       const fetchUserProfile = async () => {
@@ -88,7 +92,7 @@ function Booking() {
 
       fetchUserProfile();
 
-      // Fetch bookings only when authenticated
+      // Fetch user's own bookings when authenticated
       fetchBookings();
     }
 
@@ -102,6 +106,17 @@ function Booking() {
 
     setIsLoading(false);
   }, [isAuthenticated]);
+
+  // Fetch global booked dates - public endpoint, no auth required
+  const fetchGlobalBookedDates = async () => {
+    try {
+      const response = await axios.get('/api/bookings/booked-dates');
+      const dates = response.data?.bookedDates || [];
+      setGlobalBookedDates(dates.map(d => new Date(d)));
+    } catch (error) {
+      console.error('Error fetching global booked dates:', error);
+    }
+  };
 
   const fetchBookings = async () => {
     try {
@@ -130,10 +145,17 @@ function Booking() {
   };
 
   const isDateBooked = (date) => {
-    return bookedEvents.some(event =>
-      format(date, 'yyyy-MM-dd') === format(event.start, 'yyyy-MM-dd') &&
+    const dateStr = format(date, 'yyyy-MM-dd');
+    // Check user's own bookings (Booked or Pending)
+    const userBooked = bookedEvents.some(event =>
+      format(event.start, 'yyyy-MM-dd') === dateStr &&
       (event.status === 'Booked' || event.status === 'Pending')
     );
+    // Check globally confirmed dates
+    const globalBooked = globalBookedDates.some(d =>
+      format(d, 'yyyy-MM-dd') === dateStr
+    );
+    return userBooked || globalBooked;
   };
 
   const handleDateSelect = (slotInfo) => {
@@ -285,6 +307,7 @@ function Booking() {
           villageName: ''
         });
         fetchBookings();
+        fetchGlobalBookedDates();
 
         // Hide the success popup after 3 seconds
         setTimeout(() => {
@@ -311,6 +334,8 @@ function Booking() {
         } else if (error.response.status === 401) {
           navigate('/auth');
           return;
+        } else if (error.response.status === 409) {
+          errorMessage = error.response.data.message || 'This date is already booked.';
         } else if (error.response.status >= 500) {
           errorMessage = 'Server error. Please try again later.';
         } else {
@@ -570,7 +595,7 @@ function Booking() {
   // Show loading state while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -795,7 +820,7 @@ function Booking() {
                         name="email"
                         value={formData.email}
                         disabled
-                        className="pl-10 w-full px-4 py-3 bg-gray-100 backdrop-blur-sm border border-gray-200 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300"
+                        className="pl-10 w-full px-4 py-3 bg-gray-100 backdrop-blur-sm border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300"
                         required
                       />
                     </div>
@@ -825,11 +850,11 @@ function Booking() {
                         name="villageName"
                         value={formData.villageName}
                         onChange={handleChange}
-                        className="pl-10 w-full px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
+                        className="pl-10 w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                         required
                       >
                         {villageOptions.map((option) => (
-                          <option key={option.value} value={option.value} className="bg-gray-100 text-white">
+                          <option key={option.value} value={option.value}>
                             {option.label}
                           </option>
                         ))}
@@ -852,14 +877,14 @@ function Booking() {
                       name="eventType"
                       value={formData.eventType}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
+                      className="w-full px-4 py-3 bg-white border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                       required
                     >
-                      <option value="" className="bg-gray-100 text-white">Select Event Type</option>
-                      <option value="wedding" className="bg-gray-100 text-white">Wedding</option>
-                      <option value="corporate" className="bg-gray-100 text-white">Corporate Event</option>
-                      <option value="birthday" className="bg-gray-100 text-white">Birthday Party</option>
-                      <option value="social" className="bg-gray-100 text-white">Social Gathering</option>
+                      <option value="">Select Event Type</option>
+                      <option value="wedding">Wedding</option>
+                      <option value="corporate">Corporate Event</option>
+                      <option value="birthday">Birthday Party</option>
+                      <option value="social">Social Gathering</option>
                     </select>
                     {formErrors.eventType && <p className="text-sm text-red-400 mt-1">{formErrors.eventType}</p>}
                   </div>
@@ -903,7 +928,7 @@ function Booking() {
                       accept=".pdf,.doc,.docx"
                       onChange={handleFileChange}
                       multiple
-                      className="w-full px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-electric file:text-white hover:file:opacity-90 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300"
+                      className="w-full px-4 py-3 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid backdrop-blur-sm border border-gray-300 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-electric file:text-white hover:file:opacity-90 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300"
                       required={formData.eventDocuments.length === 0}
                     />
                     {formErrors.eventDocuments && <p className="text-sm text-red-400 mt-1">{formErrors.eventDocuments}</p>}

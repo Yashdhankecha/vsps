@@ -43,6 +43,7 @@ import React from 'react';
 
 import ContactManagement from './pages/adminpanel/ContactManagement';
 import Reviews from './pages/adminpanel/Reviews';
+import FormResponses from './pages/adminpanel/FormResponses';
 
 // Committee Pages
 import CommitteeDashboard from './pages/committee/CommitteeDashboard';
@@ -215,7 +216,7 @@ function AppContent() {
     if (user.role === "superadmin") {
       return (
         <AdminLayoutProvider>
-          <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
+          <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid overflow-x-hidden">
             <AdminSidebar />
             <AdminPageContainer>
               <Routes>
@@ -226,6 +227,7 @@ function AppContent() {
                 <Route path="/admin/live-streams" element={<LiveStreams />} />
                 <Route path="/admin/users" element={<Users />} />
                 <Route path="/admin/form-management" element={<FormManagement />} />
+                <Route path="/admin/form-responses" element={<FormResponses />} />
                 <Route path="/admin/reviews" element={<Reviews />} />
                 {/* Add the missing route for booked dates calendar */}
                 <Route path="/admin/booked-dates" element={<BookedDatesCalendar />} />
@@ -242,7 +244,7 @@ function AppContent() {
       case "usermanager":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
+            <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -257,7 +259,7 @@ function AppContent() {
       case "contentmanager":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
+            <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -272,11 +274,12 @@ function AppContent() {
       case "formmanager":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
+            <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
                   <Route path="/admin/form-management" element={<FormManagement />} />
+                  <Route path="/admin/form-responses" element={<FormResponses />} />
                   <Route path="/admin/*" element={<Navigate to="/admin/form-management" />} />
                 </Routes>
               </AdminPageContainer>
@@ -287,7 +290,7 @@ function AppContent() {
       case "bookingmanager":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
+            <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -303,7 +306,7 @@ function AppContent() {
       case "contactmanager":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
+            <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -319,7 +322,7 @@ function AppContent() {
       case "committeemember":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
+            <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid overflow-x-hidden">
               <CommitteeMemberSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -340,7 +343,7 @@ function AppContent() {
         // Regular admin gets full access like super admin for backward compatibility
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
+            <div className="flex min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -351,7 +354,9 @@ function AppContent() {
                   <Route path="/admin/live-streams" element={<LiveStreams />} />
                   <Route path="/admin/users" element={<Users />} />
                   <Route path="/admin/form-management" element={<FormManagement />} />
+                  <Route path="/admin/form-responses" element={<FormResponses />} />
                   <Route path="/admin/reviews" element={<Reviews />} />
+                  <Route path="/admin/booked-dates" element={<BookedDatesCalendar />} />
                   <Route path="/admin/*" element={<Navigate to="/admin/dashboard" />} />
                 </Routes>
               </AdminPageContainer>
@@ -370,9 +375,9 @@ function AppContent() {
         renderAdminLayout()
       ) : (
         <>
-          {/* Show header and footer on all non-admin pages including auth */}
-          <Header />
-          <main className="flex-grow overflow-x-hidden">
+          {/* Hide header and footer on auth pages for a cleaner look */}
+          {!isAuthPage && <Header />}
+          <main className={`${!isAuthPage ? 'flex-grow' : 'min-h-screen'} overflow-x-hidden`}>
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/auth" element={<Auth />} />
@@ -434,7 +439,7 @@ function AppContent() {
               <Route path="*" element={<Navigate to="/" />} />
             </Routes>
           </main>
-          <Footer />
+          {!isAuthPage && <Footer />}
         </>
       )}
     </div>

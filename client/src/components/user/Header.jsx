@@ -85,8 +85,12 @@ function Header() {
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-md">
-              <FaVideo className="text-xl text-white" />
+            <div className="relative w-12 h-12 bg-white rounded-xl overflow-hidden flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-md border border-gray-100">
+              <img
+                src="/assets/mainlogo.jpeg"
+                alt="VSPS Logo"
+                className="w-full h-full object-cover"
+              />
             </div>
             <span className="text-3xl font-bold text-gradient group-hover:text-shimmer transition-all duration-300">
               VSPS

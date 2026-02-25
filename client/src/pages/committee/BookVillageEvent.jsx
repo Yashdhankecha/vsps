@@ -133,7 +133,7 @@ const BookVillageEvent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-4 sm:p-8">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
         {/* Header */}
         <div className="mb-8 sm:mb-10 animate-fade-in-up">
@@ -191,7 +191,7 @@ const BookVillageEvent = () => {
                   name="memberId"
                   value={formData.memberId}
                   onChange={handleMemberChange}
-                  className="input-field"
+                  className="input-field bg-white"
                   required
                 >
                   <option value="">Select a village member</option>
@@ -213,7 +213,7 @@ const BookVillageEvent = () => {
                   name="eventType"
                   value={formData.eventType}
                   onChange={handleChange}
-                  className="input-field"
+                  className="input-field bg-white"
                   required
                 >
                   <option value="wedding">Wedding</option>

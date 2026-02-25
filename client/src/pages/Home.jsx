@@ -87,20 +87,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { FaArrowLeft, FaArrowRight, FaCalendar, FaUsers, FaGem, FaClock, FaDownload, FaSearch } from 'react-icons/fa';
 import axios from '../utils/axiosConfig';
@@ -253,7 +239,7 @@ function Home() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -261,7 +247,7 @@ function Home() {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-50">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid">
         <div className="text-center max-w-md mx-auto px-6">
           <div className="w-24 h-24 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse border border-red-200">
             <svg className="w-12 h-12 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -384,15 +370,11 @@ function Home() {
 
             <div className="container mx-auto px-4 sm:px-6 relative z-10">
               <div className="text-center max-w-6xl mx-auto">
-                <div className="inline-block mb-4 sm:mb-6">
-                  <span className="px-3 sm:px-4 py-2 bg-electric-50 text-electric-700 rounded-full text-xs sm:text-sm font-semibold border border-electric-200">
-                    Welcome to VSPS
-                  </span>
-                </div>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 sm:mb-8 leading-tight px-2">
+
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 sm:mb-8 leading-tight px-2">
                   {homeContent.introduction.heading}
                 </h2>
-                <p className="text-lg sm:text-xl md:text-2xl text-gray-600 mb-12 sm:mb-16 leading-relaxed max-w-5xl mx-auto px-2">
+                <p className="text-lg sm:text-xl md:text-2xl text-gray-800 mb-12 sm:mb-16 leading-relaxed max-w-5xl mx-auto px-2">
                   {homeContent.introduction.description}
                 </p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 mb-12 sm:mb-16">
@@ -407,7 +389,7 @@ function Home() {
                       <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 sm:mb-4 group-hover:text-electric-600 transition-colors">
                         {highlight.title}
                       </h3>
-                      <p className="text-sm sm:text-base text-gray-600 leading-relaxed">{highlight.subtitle}</p>
+                      <p className="text-sm sm:text-base text-gray-700 font-medium leading-relaxed">{highlight.subtitle}</p>
                     </div>
                   ))}
                 </div>
@@ -452,15 +434,11 @@ function Home() {
                 </div>
                 <div className="space-y-6 sm:space-y-8 lg:space-y-10 order-1 lg:order-2">
                   <div>
-                    <div className="inline-block mb-3 sm:mb-4">
-                      <span className="px-3 sm:px-4 py-2 bg-neon-50 text-neon-700 rounded-full text-xs sm:text-sm font-semibold border border-neon-200">
-                        About Us
-                      </span>
-                    </div>
+
                     <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4 sm:mb-6">
                       {homeContent.about.heading}
                     </h2>
-                    <p className="text-lg sm:text-xl text-gray-600 leading-relaxed">
+                    <p className="text-lg sm:text-xl text-gray-800 leading-relaxed">
                       {homeContent.about.description}
                     </p>
                   </div>
@@ -495,15 +473,11 @@ function Home() {
 
             <div className="container mx-auto px-4 sm:px-6 relative z-10">
               <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-                <div className="inline-block mb-4 sm:mb-6">
-                  <span className="px-3 sm:px-4 py-2 bg-electric-50 text-electric-700 rounded-full text-xs sm:text-sm font-semibold border border-electric-200">
-                    Our Leadership
-                  </span>
-                </div>
-                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 sm:mb-8 leading-tight px-2">
+
+                <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-gray-900 mb-6 sm:mb-8 leading-tight px-2">
                   {homeContent.leadership.heading}
                 </h2>
-                <p className="text-lg sm:text-xl text-gray-600 max-w-5xl mx-auto leading-relaxed px-2">
+                <p className="text-lg sm:text-xl text-gray-800 max-w-5xl mx-auto leading-relaxed px-2 font-medium">
                   {homeContent.leadership.description}
                 </p>
               </div>
@@ -539,7 +513,7 @@ function Home() {
                       </div>
                     </div>
                     <div className="p-4 sm:p-6 lg:p-8">
-                      <p className="text-gray-600 leading-relaxed text-sm sm:text-base lg:text-lg">
+                      <p className="text-gray-800 leading-relaxed text-sm sm:text-base lg:text-lg font-medium">
                         {member.description}
                       </p>
                     </div>
@@ -550,7 +524,7 @@ function Home() {
               {homeContent.leadership.note && (
                 <div className="max-w-5xl mx-auto text-center px-2">
                   <div className="bg-white rounded-2xl p-6 sm:p-8 border border-gray-100 shadow-card">
-                    <p className="text-lg sm:text-xl text-gray-600 italic leading-relaxed">
+                    <p className="text-lg sm:text-xl text-gray-800 italic leading-relaxed font-semibold">
                       {homeContent.leadership.note}
                     </p>
                   </div>
@@ -570,15 +544,11 @@ function Home() {
 
             <div className="container mx-auto px-4 sm:px-6 relative z-10">
               <div className="text-center mb-12 sm:mb-16 lg:mb-20">
-                <div className="inline-block mb-4 sm:mb-6">
-                  <span className="px-3 sm:px-4 py-2 bg-sunset-50 text-sunset-700 rounded-full text-xs sm:text-sm font-semibold border border-sunset-200">
-                    Find Your Community Leaders
-                  </span>
-                </div>
+
                 <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6 sm:mb-8 leading-tight px-2">
                   Village Committee Members
                 </h2>
-                <p className="text-lg sm:text-xl text-gray-600 max-w-5xl mx-auto leading-relaxed px-2">
+                <p className="text-lg sm:text-xl text-gray-800 max-w-5xl mx-auto leading-relaxed px-2 font-medium">
                   Search for committee members in your village to get in touch with your local community leaders.
                 </p>
               </div>

@@ -78,11 +78,7 @@ function Services() {
         <div className="absolute inset-0 texture-diagonal opacity-10"></div>
         <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-white/5 blur-3xl"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-gray-200 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-gray-200">
-              Registration Forms
-            </span>
-          </div>
+
           <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
             Event Registration Portal
           </h1>
@@ -172,7 +168,7 @@ function Services() {
               our team is here to assist you every step of the way.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+              <div className="p-6 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid rounded-2xl border border-gray-200">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">Contact Support</h3>
                 <p className="text-gray-600 mb-4">Get help with technical issues or form questions</p>
                 <button
@@ -182,7 +178,7 @@ function Services() {
                   Contact Us
                 </button>
               </div>
-              <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+              <div className="p-6 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid rounded-2xl border border-gray-200">
                 <h3 className="text-xl font-bold text-gray-900 mb-3">View Guidelines</h3>
                 <p className="text-gray-600 mb-4">Access detailed information about each registration process</p>
                 <button

@@ -143,7 +143,7 @@ function SubmitReview() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center py-12">
         <div className="container mx-auto px-4">
           <Card className="max-w-2xl mx-auto p-12 glass-effect border border-gray-200 text-center">
             <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30">
@@ -163,15 +163,11 @@ function SubmitReview() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid py-12">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
-          <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-gray-200 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-gray-200">
-              Share Your Experience
-            </span>
-          </div>
+
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Share Your Experience</h1>
           <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Your feedback helps us improve and helps others make informed decisions.
@@ -225,7 +221,7 @@ function SubmitReview() {
                   name="eventType"
                   value={formData.eventType}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
+                  className="w-full px-4 py-3 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid backdrop-blur-sm border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                   required
                 >
                   <option value="">Select Event Type</option>
@@ -246,7 +242,7 @@ function SubmitReview() {
                   name="eventDate"
                   value={formData.eventDate}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
+                  className="w-full px-4 py-3 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid backdrop-blur-sm border border-gray-300 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                   required
                 />
               </div>
@@ -269,8 +265,8 @@ function SubmitReview() {
                   >
                     <FaStar
                       className={`text-3xl ${star <= (hoverRating || formData.rating)
-                          ? 'text-yellow-400'
-                          : 'text-gray-400'
+                        ? 'text-yellow-400'
+                        : 'text-gray-400'
                         }`}
                     />
                   </button>

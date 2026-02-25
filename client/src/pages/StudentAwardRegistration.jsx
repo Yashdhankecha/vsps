@@ -12,8 +12,13 @@ import {
   FaArrowLeft,
   FaAward,
   FaSchool,
-  FaFileUpload
+  FaFileUpload,
+  FaGraduationCap,
+  FaPhoneAlt,
+  FaMapMarkerAlt,
+  FaUserAlt
 } from 'react-icons/fa';
+import { Card, Input, Button } from '../components';
 
 const StudentAwardRegistration = () => {
   const navigate = useNavigate();
@@ -22,6 +27,7 @@ const StudentAwardRegistration = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   // Form Status State
   const [formStatus, setFormStatus] = useState({
@@ -77,14 +83,18 @@ const StudentAwardRegistration = () => {
       // Check if user has already submitted
       try {
         const accessRes = await axios.get('/api/admin/forms/can-access-form/studentAwardForm');
+        if (accessRes.data.hasSubmitted) {
+          setHasSubmitted(true);
+          setLoading(false);
+          return;
+        }
         if (!accessRes.data.canAccess) {
-          setError('You have already submitted this form.');
+          setError('Registration is currently closed.');
           setLoading(false);
           return;
         }
       } catch (err) {
         console.error('Error checking form access:', err);
-        // Don't block if just checking access fails, backend will block submission anyway.
       }
 
       // Pre-fill user data
@@ -164,157 +174,182 @@ const StudentAwardRegistration = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <FaSpinner className="animate-spin text-electric-500 text-4xl mx-auto mb-4" />
-          <p className="text-gray-600">Loading form...</p>
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center p-4">
+        <div className="text-center p-12 glass-effect rounded-[2rem] border border-gray-100 shadow-xl">
+          <FaSpinner className="animate-spin text-electric-500 text-5xl mx-auto mb-6" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Preparing Application Form</h2>
+          <p className="text-gray-600">Please wait while we load your secure session...</p>
         </div>
       </div>
     );
   }
 
-  if (success) {
+  if (success || hasSubmitted) {
     return (
-      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-        <div className="max-w-md w-full glass-effect p-8 rounded-2xl border border-gray-200 text-center shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full h-2 bg-gradient-electric"></div>
-          <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-500/20 border border-green-500/30 mb-6">
-            <FaCheckCircle className="h-10 w-10 text-green-400" />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid py-20 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <Card className="max-w-xl w-full p-12 text-center relative overflow-hidden animate-fade-in-up">
+          <div className="absolute top-0 left-0 w-full h-3 bg-gradient-electric"></div>
+          <div className="mx-auto flex items-center justify-center h-24 w-24 rounded-full bg-green-500/20 border-2 border-green-500/30 mb-8 shadow-lg shadow-green-500/10">
+            <FaCheckCircle className="h-12 w-12 text-green-400" />
           </div>
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">Application Submitted!</h2>
-          <p className="text-gray-600 mb-8">
-            Your application for the Student Saraswati Sanman has been successfully received. We will review your details and contact you shortly.
+          <h2 className="text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">
+            {success ? 'Application Submitted!' : 'Already Responded'}
+          </h2>
+          <p className="text-xl text-gray-600 mb-10 leading-relaxed">
+            {success
+              ? `Your application for the Student Saraswati Sanman has been successfully received. We will review your details and contact you shortly.`
+              : `You have already submitted an application for the Student Saraswati Sanman. Our committee is currently reviewing its details.`}
           </p>
           <div className="space-y-4">
-            <button
+            <Button
               onClick={() => navigate('/')}
-              className="w-full btn-ghost"
+              variant="primary"
+              size="lg"
+              className="w-full py-4 text-lg"
             >
               Return to Home
-            </button>
+            </Button>
+            <Button
+              onClick={() => navigate('/services')}
+              variant="ghost"
+              className="w-full py-4"
+            >
+              View More Services
+            </Button>
           </div>
-        </div>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
-        {/* Back Button */}
-        <button
-          onClick={() => navigate('/services')}
-          className="flex items-center text-gray-500 hover:text-gray-900 transition-colors mb-6 group"
-        >
-          <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
-          Back to Services
-        </button>
+        {/* Navigation & Header Section */}
+        <div className="mb-10 animate-fade-in-up">
+          <button
+            onClick={() => navigate('/services')}
+            className="flex items-center text-gray-500 hover:text-electric-500 transition-all mb-8 group bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-gray-200 hover:border-electric-200"
+          >
+            <FaArrowLeft className="mr-2 group-hover:-translate-x-2 transition-transform duration-300" />
+            <span className="font-bold uppercase tracking-wider text-xs">Back to Registration Portal</span>
+          </button>
 
-        {/* Header */}
-        <div className="glass-effect rounded-2xl p-8 mb-8 border border-gray-200 relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-electric opacity-10 rounded-bl-full pointer-events-none"></div>
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
-            <div>
-              <div className="flex items-center mb-3">
-                <div className="p-3 bg-gradient-electric rounded-lg shadow-lg shadow-electric-500/10 mr-4">
-                  <FaAward className="text-2xl text-white" />
-                </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Student Saraswati Sanman</h1>
-              </div>
-              <p className="text-gray-600 text-lg max-w-2xl">
-                Celebrating academic excellence. Register now to be recognized for your outstanding achievements.
-              </p>
-            </div>
+          <header className="glass-effect rounded-[2.5rem] p-10 border border-gray-200 relative overflow-hidden shadow-2xl">
+            <div className="absolute top-0 right-0 w-80 h-80 bg-gradient-electric opacity-[0.05] rounded-bl-full pointer-events-none -mr-20 -mt-20"></div>
+            <div className="absolute bottom-0 left-0 w-40 h-40 bg-gradient-neon opacity-[0.03] rounded-tr-full pointer-events-none -ml-10 -mb-10"></div>
 
-            {/* Timer & Date */}
-            <div className="mt-6 md:mt-0 flex flex-col items-end space-y-3">
-              {timeLeft && timeLeft !== 'EXPIRED' && (
-                <div className="flex items-center space-x-2 bg-electric-500/10 px-4 py-2 rounded-full border border-electric-500/20">
-                  <FaClock className="text-electric-600" />
-                  <span className="text-electric-500 font-mono font-medium">{timeLeft} left</span>
+            <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center relative z-10 gap-8">
+              <div className="flex-1">
+                <div className="flex items-center mb-5">
+                  <div className="p-4 bg-gradient-electric rounded-2xl shadow-xl shadow-electric-500/20 mr-6 transform -rotate-3 hover:rotate-0 transition-transform duration-500">
+                    <FaAward className="text-3xl text-white" />
+                  </div>
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-gray-900 tracking-tight leading-tight">
+                    Student Saraswati <span className="text-electric-600">Sanman</span>
+                  </h1>
                 </div>
-              )}
-              <div className="flex items-center space-x-2 text-gray-500 text-sm">
-                <FaCalendarAlt />
-                <span>Event Date: 12th Aug, 2026</span>
+                <p className="text-gray-500 text-lg sm:text-xl font-medium max-w-2xl leading-relaxed">
+                  Honoring scholarly achievements and celebrating excellence in education. Submit your academic credentials for our annual recognition ceremony.
+                </p>
+              </div>
+
+              {/* Status & Deadline Section */}
+              <div className="flex flex-col items-end space-y-4 shrink-0">
+                {timeLeft && timeLeft !== 'EXPIRED' && (
+                  <div className="flex items-center space-x-3 bg-neon-500/10 px-6 py-3 rounded-2xl border border-neon-500/20 shadow-sm animate-pulse">
+                    <FaClock className="text-neon-600 text-lg" />
+                    <div>
+                      <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Registration Closes In</p>
+                      <p className="text-neon-600 font-mono font-black text-lg">{timeLeft}</p>
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-center space-x-3 bg-white/80 px-6 py-3 rounded-2xl border border-gray-100 shadow-sm">
+                  <FaCalendarAlt className="text-electric-500 text-lg" />
+                  <div>
+                    <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter">Ceremony Date</p>
+                    <p className="text-gray-900 font-bold">12th Aug, 2026</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </header>
         </div>
 
         {error && (
-          <div className="mb-8 glass-effect bg-red-500/10 border border-red-500/20 p-4 rounded-xl flex items-center text-red-200">
-            <FaExclamationTriangle className="mr-3 text-xl flex-shrink-0" />
-            <p>{error}</p>
+          <div className="mb-10 animate-fade-in-up">
+            <div className="glass-effect bg-red-500/10 border border-red-500/20 p-6 rounded-2xl flex items-center text-red-600 shadow-lg">
+              <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center mr-5 shrink-0 border border-red-500/30">
+                <FaExclamationTriangle className="text-2xl" />
+              </div>
+              <div>
+                <h4 className="font-bold text-lg mb-1">Attention Required</h4>
+                <p className="font-medium text-red-500/80 leading-relaxed">{error}</p>
+              </div>
+            </div>
           </div>
         )}
 
-        {/* Form */}
-        <div className="glass-effect rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
-          <div className="p-1 bg-gradient-to-r from-electric-500 via-electric-500 to-electric-500 opacity-50"></div>
-          <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-8">
+        {/* Form Container */}
+        <div className="animate-fade-in-up transition-all duration-700 delay-100">
+          <Card className="rounded-[2.5rem] border-gray-200 shadow-2xl overflow-hidden p-0">
+            {/* Top accent bar */}
+            <div className="h-2 bg-gradient-to-r from-electric-500 via-neon-500 to-electric-500 opacity-80"></div>
 
-            {/* Student Details Section */}
-            <div>
-              <div className="flex items-center mb-6">
-                <div className="w-10 h-10 rounded-lg bg-gradient-electric flex items-center justify-center mr-4 shadow-lg shadow-electric-500/10">
-                  <FaUserGraduate className="text-white text-xl" />
+            <form onSubmit={handleSubmit} className="p-8 sm:p-12 space-y-12">
+
+              {/* Section 1: Personality Check */}
+              <section>
+                <div className="flex items-center mb-8">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-electric flex items-center justify-center mr-5 shadow-lg shadow-electric-500/10 transform rotate-3">
+                    <FaUserAlt className="text-white text-xl" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 tracking-tight">Student Particulars</h3>
+                    <p className="text-gray-400 text-sm font-medium">Personal identity and contact information</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">Student Information</h3>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="form-label">Student Name</label>
-                  <input
-                    type="text"
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <Input
+                    label="Student Name"
                     name="studentName"
                     value={formData.studentName}
                     onChange={handleChange}
                     required
-                    className="input-field"
-                    placeholder="First Name"
+                    placeholder="Candidate's First Name"
+                    variant="dark"
                   />
-                </div>
-                <div>
-                  <label className="form-label">Surname</label>
-                  <input
-                    type="text"
+                  <Input
+                    label="Surname"
                     name="surname"
                     value={formData.surname}
                     onChange={handleChange}
                     required
-                    className="input-field"
-                    placeholder="Last Name"
+                    placeholder="Legal Last Name"
+                    variant="dark"
                   />
-                </div>
-                <div>
-                  <label className="form-label">Father's Name</label>
-                  <input
-                    type="text"
+                  <Input
+                    label="Father's Name"
                     name="fatherName"
                     value={formData.fatherName}
                     onChange={handleChange}
                     required
-                    className="input-field"
                     placeholder="Father's Full Name"
+                    variant="dark"
                   />
-                </div>
-                <div>
-                  <label className="form-label">Village</label>
-                  <input
-                    type="text"
+                  <Input
+                    label="Native Village"
                     name="village"
                     value={formData.village}
                     onChange={handleChange}
                     required
-                    className="input-field"
-                    placeholder="Native Village"
+                    placeholder="Place of Origin"
+                    variant="dark"
                   />
-                </div>
-                <div>
-                  <label className="form-label">Mobile Number</label>
-                  <input
+                  <Input
+                    label="Mobile Number"
                     type="tel"
                     name="mobileNumber"
                     value={formData.mobileNumber}
@@ -323,48 +358,48 @@ const StudentAwardRegistration = () => {
                     maxLength={10}
                     minLength={10}
                     pattern="[0-9]{10}"
-                    title="Please enter exactly 10 digits"
-                    className="input-field"
-                    placeholder="10-digit Mobile Number"
+                    variant="dark"
+                    placeholder="10-digit primary contact"
                     onInput={(e) => {
                       e.target.value = e.target.value.replace(/[^0-9]/g, '');
                     }}
                   />
                 </div>
-              </div>
-            </div>
+              </section>
 
-            <div className="border-t border-gray-200 my-8"></div>
+              <div className="border-t border-gray-50"></div>
 
-            {/* Academic Details Section */}
-            <div>
-              <div className="flex items-center mb-6">
-                <div className="w-10 h-10 rounded-lg bg-gradient-secondary flex items-center justify-center mr-4 shadow-lg shadow-secondary-500/20">
-                  <FaSchool className="text-white text-xl" />
+              {/* Section 2: Academic Achievements */}
+              <section>
+                <div className="flex items-center mb-8">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-secondary flex items-center justify-center mr-5 shadow-lg shadow-secondary-500/20 transform -rotate-3">
+                    <FaGraduationCap className="text-white text-2xl" />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-bold text-gray-900 tracking-tight">Academic Milestone</h3>
+                    <p className="text-gray-400 text-sm font-medium">Educational credentials and performance stats</p>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold text-gray-900">Academic Details</h3>
-              </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="form-label">Standard/Grade</label>
-                  <select
-                    name="standard"
-                    value={formData.standard}
-                    onChange={handleChange}
-                    required
-                    className="input-field bg-gray-50"
-                  >
-                    <option value="" className="bg-gray-100 text-gray-500">Select Standard</option>
-                    <option value="10th" className="bg-gray-100">10th SSC</option>
-                    <option value="12th" className="bg-gray-100">12th HSC</option>
-                    <option value="Graduate" className="bg-gray-100">Graduate</option>
-                    <option value="Post-Graduate" className="bg-gray-100">Post-Graduate</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="form-label">Percentage/Percentile</label>
-                  <input
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                  <div className="w-full">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Academic Standard</label>
+                    <select
+                      name="standard"
+                      value={formData.standard}
+                      onChange={handleChange}
+                      required
+                      className="w-full px-4 py-3 bg-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-electric-500 transition-all font-medium border border-gray-200 hover:border-gray-300"
+                    >
+                      <option value="">Select Category</option>
+                      <option value="10th">10th SSC (Secondary)</option>
+                      <option value="12th">12th HSC (Higher Secondary)</option>
+                      <option value="Graduate">Bachelor's Degree (Graduate)</option>
+                      <option value="Post-Graduate">Master's Degree (Post-Graduate)</option>
+                    </select>
+                  </div>
+                  <Input
+                    label="Percentage / Percentile"
                     type="number"
                     name="percentile"
                     value={formData.percentile}
@@ -373,71 +408,113 @@ const StudentAwardRegistration = () => {
                     min="0"
                     max="100"
                     step="0.01"
-                    className="input-field"
-                    placeholder="e.g. 85.50"
+                    placeholder="e.g. 94.75"
+                    variant="dark"
                   />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="form-label">School/College Name</label>
-                  <input
-                    type="text"
-                    name="schoolName"
-                    value={formData.schoolName}
-                    onChange={handleChange}
-                    required
-                    className="input-field"
-                    placeholder="Full Name of Institution"
-                  />
-                </div>
-                <div className="md:col-span-2">
-                  <label className="form-label">Upload Result/Markhseet</label>
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-200 border-dashed rounded-xl hover:border-electric-500/50 transition-colors bg-gray-100/30">
-                    <div className="space-y-1 text-center">
-                      <FaFileUpload className="mx-auto h-12 w-12 text-gray-500" />
-                      <div className="flex text-sm text-gray-500">
-                        <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-electric-600 hover:text-electric-500 focus-within:outline-none">
-                          <span>Upload a file</span>
-                          <input id="file-upload" name="resultImage" type="file" className="sr-only" onChange={handleChange} required accept="image/*,.pdf" />
-                        </label>
-                        <p className="pl-1">or drag and drop</p>
-                      </div>
-                      <p className="text-xs text-gray-400">
-                        PNG, JPG, PDF up to 5MB
-                      </p>
-                      {formData.resultImage && (
-                        <p className="text-sm text-green-400 font-medium mt-2">
-                          Selected: {formData.resultImage.name}
+                  <div className="md:col-span-2">
+                    <Input
+                      label="Institution / School Name"
+                      name="schoolName"
+                      value={formData.schoolName}
+                      onChange={handleChange}
+                      required
+                      placeholder="Full Name of School or University"
+                      variant="dark"
+                    />
+                  </div>
+
+                  {/* File Upload Section */}
+                  <div className="md:col-span-2 mt-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-4">Credentials Verification (Markhseet/Result)</label>
+                    <div className="relative group">
+                      <input
+                        id="markhseet-upload"
+                        name="resultImage"
+                        type="file"
+                        className="sr-only"
+                        onChange={handleChange}
+                        required
+                        accept="image/*,.pdf"
+                      />
+                      <label
+                        htmlFor="markhseet-upload"
+                        className="flex flex-col items-center justify-center px-10 py-12 border-2 border-dashed border-gray-200 rounded-3xl bg-gray-50/50 hover:bg-white hover:border-electric-500/50 cursor-pointer transition-all duration-300 group"
+                      >
+                        <div className="w-16 h-16 bg-white rounded-2xl shadow-sm border border-gray-100 flex items-center justify-center mb-5 group-hover:scale-110 group-hover:shadow-lg transition-all duration-300">
+                          <FaFileUpload className="h-7 w-7 text-electric-600" />
+                        </div>
+                        <p className="text-lg font-bold text-gray-900 mb-1 group-hover:text-electric-600 transition-colors">
+                          {formData.resultImage ? 'Change Selected File' : 'Choose Document'}
                         </p>
-                      )}
+                        <p className="text-gray-400 text-sm font-medium mb-4">Click to browse or drag & drop</p>
+                        <span className="px-4 py-1.5 bg-white border border-gray-100 rounded-full text-[10px] font-black uppercase tracking-widest text-gray-400">
+                          PNG, JPG, PDF • MAX 5MB
+                        </span>
+
+                        {formData.resultImage && (
+                          <div className="mt-8 flex items-center px-4 py-2 bg-green-50 rounded-xl border border-green-100 animate-fade-in-up">
+                            <FaCheckCircle className="text-green-500 mr-3" />
+                            <span className="text-green-700 font-bold text-sm truncate max-w-[200px]">
+                              {formData.resultImage.name}
+                            </span>
+                          </div>
+                        )}
+                      </label>
                     </div>
                   </div>
                 </div>
+              </section>
+
+              {/* Declaration Card */}
+              <div className="bg-gray-50 border border-gray-200 rounded-3xl p-8 relative overflow-hidden group hover:border-electric-500/30 transition-colors">
+                <div className="absolute top-0 right-0 w-32 h-32 bg-electric-500/5 rounded-bl-full pointer-events-none group-hover:bg-electric-500/10 transition-colors"></div>
+                <label className="flex items-start cursor-pointer">
+                  <div className="relative flex items-center">
+                    <input
+                      type="checkbox"
+                      required
+                      className="peer h-6 w-6 rounded-lg border-gray-300 text-electric-500 focus:ring-electric-500 transition-all cursor-pointer"
+                    />
+                  </div>
+                  <span className="ml-5 text-sm sm:text-base text-gray-600 font-medium leading-relaxed select-none">
+                    I verify that all information provided is accurate and authentic. I understand my application is subject to verification by the committee and any discrepancies may lead to withdrawal of the nomination.
+                  </span>
+                </label>
               </div>
-            </div>
 
-            {/* Declaration */}
-            <div className="bg-gray-50 p-6 rounded-xl mb-6 border border-gray-200">
-              <label className="flex items-start">
-                <input type="checkbox" required className="mt-1 mr-3 h-4 w-4 rounded border-white/30 text-electric-500 focus:ring-electric-500 bg-gray-200" />
-                <span className="text-sm text-gray-600 leading-relaxed">
-                  I hereby declare that the information provided above is true and correct to the best of my knowledge. I understand that providing false information will result in disqualification.
-                </span>
-              </label>
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={submitting || (formStatus.endTime && new Date(formStatus.endTime) < new Date())}
-              className={`w-full btn-primary py-4 text-lg shadow-lg shadow-electric-500/25 ${submitting ? 'opacity-70 cursor-not-allowed' : ''}`}
-            >
-              {submitting ? (
-                <span className="flex items-center">
-                  <FaSpinner className="animate-spin mr-2" /> Submitting...
-                </span>
-              ) : 'Submit Application'}
-            </button>
-          </form>
+              {/* Action Section */}
+              <div className="pt-6">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  size="lg"
+                  disabled={submitting || (formStatus.endTime && new Date(formStatus.endTime) < new Date())}
+                  className={`w-full py-5 rounded-2xl text-xl font-bold shadow-2xl shadow-electric-500/30 relative overflow-hidden group ${submitting ? 'opacity-70' : ''}`}
+                >
+                  <div className="relative z-10 flex items-center justify-center space-x-3">
+                    {submitting ? (
+                      <>
+                        <FaSpinner className="animate-spin text-2xl" />
+                        <span>Processing Application...</span>
+                      </>
+                    ) : (
+                      <>
+                        <FaGraduationCap className="text-2xl group-hover:scale-125 transition-transform duration-300" />
+                        <span>Submit Application</span>
+                      </>
+                    )}
+                  </div>
+                  {/* Hover visual effect */}
+                  <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </Button>
+                {timeLeft === 'EXPIRED' && (
+                  <p className="text-center mt-4 text-red-500 font-bold text-sm">
+                    Registration is currently closed as the timer has expired.
+                  </p>
+                )}
+              </div>
+            </form>
+          </Card>
         </div>
       </div>
     </div>
@@ -445,3 +522,4 @@ const StudentAwardRegistration = () => {
 };
 
 export default StudentAwardRegistration;
+

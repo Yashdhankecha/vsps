@@ -43,9 +43,9 @@ const committeeController = {
   // Add a new member to the village (committee member can do this)
   addVillageMember: async (req, res) => {
     try {
-      // Only committee members and super admins can add village members
-      if (!['committeemember', 'superadmin'].includes(req.user.role)) {
-        return res.status(403).json({ message: 'Access denied. Committee members and super admins only.' });
+      // Only committee members, admins and super admins can add village members
+      if (!['committeemember', 'superadmin', 'admin'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Committee members and admins only.' });
       }
 
       const { username, email, phone, village } = req.body;
@@ -113,9 +113,9 @@ const committeeController = {
   // Book event for a village member (committee member can do this)
   bookEventForMember: async (req, res) => {
     try {
-      // Only committee members and super admins can book events for members
-      if (!['committeemember', 'superadmin'].includes(req.user.role)) {
-        return res.status(403).json({ message: 'Access denied. Committee members and super admins only.' });
+      // Only committee members, admins and super admins can book events for members
+      if (!['committeemember', 'superadmin', 'admin'].includes(req.user.role)) {
+        return res.status(403).json({ message: 'Access denied. Committee members and admins only.' });
       }
 
       const {
@@ -234,7 +234,7 @@ const committeeController = {
   // Get dashboard stats for committee member
   getDashboardStats: async (req, res) => {
     try {
-      if (!['committeemember', 'superadmin'].includes(req.user.role)) {
+      if (!['committeemember', 'superadmin', 'admin'].includes(req.user.role)) {
         return res.status(403).json({ message: 'Access denied.' });
       }
 

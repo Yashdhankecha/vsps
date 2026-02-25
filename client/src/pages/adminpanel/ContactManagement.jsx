@@ -90,7 +90,7 @@ const Avatar = ({ name, email }) => {
 
 const ContactCard = ({ contact, onView, onReply, onDelete, deletingId }) => {
   return (
-    <div className="glass-effect border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition-all duration-200">
+    <div className="glass-effect border border-gray-200 rounded-xl p-4 hover:bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid transition-all duration-200">
       <div className="flex justify-between items-start">
         <Avatar name={contact.name} email={contact.email} />
         <StatusBadge status={contact.status} />
@@ -140,7 +140,7 @@ const ContactCard = ({ contact, onView, onReply, onDelete, deletingId }) => {
       </div>
       
       {contact.reply && (
-        <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+        <div className="mt-3 p-3 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid rounded-lg border border-gray-200">
           <p className="text-xs text-gray-500 mb-1">Reply:</p>
           <p className="text-sm text-white line-clamp-2" title={contact.reply}>
             {contact.reply}
@@ -157,7 +157,7 @@ const ViewModal = ({ open, onClose, contact }) => {
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm p-4">
       <div className="glass-effect border border-gray-200 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 sticky top-0 bg-gray-50/80 backdrop-blur-sm z-10">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 sticky top-0 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid/80 backdrop-blur-sm z-10">
           <h3 className="text-lg font-semibold text-gray-800 flex items-center">
             <EyeIcon className="h-5 w-5 mr-2 text-blue-400" />
             Contact Details
@@ -199,7 +199,7 @@ const ViewModal = ({ open, onClose, contact }) => {
           
           <div>
             <label className="text-gray-500 text-sm block mb-1">Message</label>
-            <div className="mt-1 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="mt-1 p-4 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid rounded-lg border border-gray-200">
               <p className="text-white whitespace-pre-wrap">{contact.message}</p>
             </div>
           </div>
@@ -207,7 +207,7 @@ const ViewModal = ({ open, onClose, contact }) => {
           {contact.reply && (
             <div>
               <label className="text-gray-500 text-sm block mb-1">Reply</label>
-              <div className="mt-1 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="mt-1 p-4 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid rounded-lg border border-gray-200">
                 <p className="text-white whitespace-pre-wrap">{contact.reply}</p>
                 <p className="text-gray-500 text-xs mt-2">
                   Replied on: {new Date(contact.repliedAt).toLocaleString()}
@@ -217,7 +217,7 @@ const ViewModal = ({ open, onClose, contact }) => {
           )}
         </div>
         
-        <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 sticky bottom-0 bg-gray-50/80 backdrop-blur-sm">
+        <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 sticky bottom-0 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid/80 backdrop-blur-sm">
           <button 
             onClick={onClose} 
             className="btn-secondary"
@@ -251,7 +251,7 @@ const ReplyModal = ({ open, onClose, onSend, contact, isSending }) => {
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm p-4">
       <div className="glass-effect border border-gray-200 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 sticky top-0 bg-gray-50/80 backdrop-blur-sm z-10">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 sticky top-0 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid/80 backdrop-blur-sm z-10">
           <h3 className="text-lg font-semibold text-gray-800 flex items-center">
             <PaperAirplaneIcon className="h-5 w-5 mr-2 text-green-400" />
             Reply to {contact.name}
@@ -266,7 +266,7 @@ const ReplyModal = ({ open, onClose, onSend, contact, isSending }) => {
         
         <form onSubmit={handleSubmit}>
           <div className="p-6">
-            <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+            <div className="mb-6 p-4 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid rounded-lg border border-gray-200">
               <p className="text-gray-500 text-sm mb-2">Original Message:</p>
               <p className="text-white whitespace-pre-wrap">{contact.message}</p>
             </div>
@@ -283,7 +283,7 @@ const ReplyModal = ({ open, onClose, onSend, contact, isSending }) => {
             </div>
           </div>
           
-          <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 sticky bottom-0 bg-gray-50/80 backdrop-blur-sm">
+          <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 sticky bottom-0 bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid/80 backdrop-blur-sm">
             <button 
               type="button"
               onClick={onClose} 
@@ -416,7 +416,7 @@ const ContactManagement = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-6">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center p-4 sm:p-6">
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 animate-fade-in-up">
           <div className="flex justify-center items-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
@@ -427,7 +427,7 @@ const ContactManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-4 sm:p-6">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
         {/* Header Section */}
         <div className="mb-8 animate-fade-in-up">

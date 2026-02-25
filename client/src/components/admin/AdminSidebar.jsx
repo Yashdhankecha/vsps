@@ -75,6 +75,15 @@ const Sidebar = () => {
       roles: ['admin', 'superadmin', 'formmanager']
     },
     {
+      name: 'Form Responses',
+      icon: EnvelopeIcon, // Using EnvelopeIcon or clipboard for responses
+      path: '/admin/form-responses',
+      color: 'text-neon-700',
+      bgColor: 'bg-neon-50',
+      borderColor: 'border-neon-200',
+      roles: ['admin', 'superadmin', 'formmanager']
+    },
+    {
       name: 'Booking Management',
       icon: CalendarIcon,
       iconSolid: CalendarIconSolid,

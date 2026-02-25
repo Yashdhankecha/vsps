@@ -44,7 +44,7 @@ const VideoManagement = () => {
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid p-3 sm:p-6">
       {/* Main Content Container */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up">
       {/* Header Section */}

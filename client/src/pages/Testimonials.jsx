@@ -52,7 +52,7 @@ function Testimonials() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -65,11 +65,7 @@ function Testimonials() {
         <div className="absolute inset-0 texture-diagonal opacity-10"></div>
         <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-white/5 blur-3xl"></div>
         <div className="relative container mx-auto px-4 text-center">
-          <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-gray-200 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-gray-200">
-              Testimonials
-            </span>
-          </div>
+
           <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
             Client Testimonials
           </h1>
@@ -95,8 +91,8 @@ function Testimonials() {
                 key={type}
                 onClick={() => setFilter(type)}
                 className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${filter === type
-                    ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   }`}
               >
                 {type.charAt(0).toUpperCase() + type.slice(1)}
@@ -153,7 +149,7 @@ function Testimonials() {
           </div>
         ) : (
           <div className="text-center py-16">
-            <div className="bg-gray-50 backdrop-blur-xl rounded-2xl p-12 glass-effect border border-gray-200 max-w-2xl mx-auto">
+            <div className="bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid backdrop-blur-xl rounded-2xl p-12 glass-effect border border-gray-200 max-w-2xl mx-auto">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">No Testimonials Yet</h3>
               <p className="text-lg text-gray-600 mb-8">
                 Be the first to share your experience! Your feedback helps us improve and helps other clients make informed decisions.

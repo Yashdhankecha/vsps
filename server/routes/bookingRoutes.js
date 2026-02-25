@@ -81,6 +81,9 @@ const studentAwardUpload = multer({
 });
 
 
+// Public route: no auth - returns all confirmed/booked dates for calendar blocking
+router.get('/booked-dates', bookingController.getBookedDates);
+
 router.post('/submit', bookingController.submitBookingRequest);
 
 

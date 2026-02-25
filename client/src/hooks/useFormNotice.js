@@ -36,42 +36,50 @@ const useFormNotice = () => {
         const lastStatus = JSON.parse(localStorage.getItem(LAST_FORM_STATUS_KEY) || '{}');
         const activeFormsArray = [];
 
+        const token = localStorage.getItem('token');
         for (const form of forms) {
           try {
-            const response = await axios.get(`/api/admin/forms/check-form-visibility/${form.name}`);
+            const endpoint = token
+              ? `/api/admin/forms/can-access-form/${form.name}`
+              : `/api/admin/forms/check-form-visibility/${form.name}`;
+
+            const response = await axios.get(endpoint);
 
             if (!mounted) return;
 
-            const currentStatus = response.data.visible;
+            const data = response.data;
+            const isVisible = data.visible !== undefined ? data.visible : data.formStatus?.isCurrentlyActive;
+            const canAccess = data.canAccess !== undefined ? data.canAccess : isVisible;
+            const hasSubmitted = data.hasSubmitted || false;
+
             const wasActive = lastStatus[form.name];
 
-
-            if (currentStatus && !wasActive) {
-              try {
-                const notification = await createFormNotification(
-                  form.formType,
-                  `${form.title} is now open for registration. Click here to fill the form.`
-                );
-                if (notification) {
-                  console.log('Notification created successfully:', notification);
+            // Only show notice if form is visible AND user hasn't submitted
+            if (isVisible && !hasSubmitted) {
+              if (!wasActive) {
+                try {
+                  const notification = await createFormNotification(
+                    form.formType,
+                    `${form.title} is now open for registration. Click here to fill the form.`
+                  );
+                  if (notification) {
+                    console.log('Notification created successfully:', notification);
+                  }
+                } catch (notifError) {
+                  console.error('Error creating notification:', notifError);
                 }
-              } catch (notifError) {
-                console.error('Error creating notification:', notifError);
-
               }
-            }
 
-            lastStatus[form.name] = currentStatus;
-
-            if (currentStatus && mounted) {
               const formData = {
                 ...form,
                 message: `${form.title} is now open. Please fill the form before the deadline.`,
-                deadline: response.data.timing?.endTime
+                deadline: data.formStatus?.endTime
               };
 
               activeFormsArray.push(formData);
             }
+
+            lastStatus[form.name] = isVisible;
           } catch (formError) {
             console.error(`Error checking visibility for ${form.name}:`, formError);
             continue;

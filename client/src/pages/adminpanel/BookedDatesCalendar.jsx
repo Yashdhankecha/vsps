@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
@@ -7,82 +7,89 @@ import getDay from 'date-fns/getDay';
 import enUS from 'date-fns/locale/en-US';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import axiosInstance from '../../utils/axiosConfig';
-import { 
+import {
   CalendarIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  EyeIcon,
   XCircleIcon,
-  CheckCircleIcon,
   ClockIcon,
   UsersIcon,
-  MapPinIcon
+  FunnelIcon,
+  MagnifyingGlassIcon,
+  EnvelopeIcon,
+  PhoneIcon,
+  ChatBubbleLeftIcon
 } from '@heroicons/react/24/outline';
-import {
-  CalendarIcon as CalendarIconSolid
-} from '@heroicons/react/24/solid';
+import { CalendarIcon as CalendarIconSolid } from '@heroicons/react/24/solid';
 
-const locales = {
-  'en-US': enUS
+const locales = { 'en-US': enUS };
+const localizer = dateFnsLocalizer({ format, parse, startOfWeek, getDay, locales });
+
+// Professional, muted status colors
+const STATUS_CONFIG = {
+  Booked: {
+    label: 'Booked',
+    desc: 'Confirmed reservations',
+    bg: '#dc2626',
+    bgLight: '#fef2f2',
+    border: '#fecaca',
+    text: '#991b1b',
+    dot: '#dc2626',
+    gradient: 'linear-gradient(135deg, #dc2626, #b91c1c)',
+  },
+  Approved: {
+    label: 'Approved',
+    desc: 'Pending confirmation',
+    bg: '#2563eb',
+    bgLight: '#eff6ff',
+    border: '#bfdbfe',
+    text: '#1e40af',
+    dot: '#2563eb',
+    gradient: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+  },
+  Pending: {
+    label: 'Pending',
+    desc: 'Awaiting approval',
+    bg: '#d97706',
+    bgLight: '#fffbeb',
+    border: '#fde68a',
+    text: '#92400e',
+    dot: '#d97706',
+    gradient: 'linear-gradient(135deg, #d97706, #b45309)',
+  }
 };
-
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales,
-});
 
 const BookedDatesCalendar = () => {
   const [bookedEvents, setBookedEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [hoveredEvent, setHoveredEvent] = useState(null);
-  const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [activeFilters, setActiveFilters] = useState(['Booked', 'Approved', 'Pending']);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    fetchBookings();
-  }, []);
-
-  useEffect(() => {
-    console.log('Booked events updated:', bookedEvents);
-  }, [bookedEvents]);
+  useEffect(() => { fetchBookings(); }, []);
 
   const fetchBookings = async () => {
     try {
       setLoading(true);
       const response = await axiosInstance.get('/api/bookings');
-      console.log('API Response:', response);
-      
-      // Ensure bookings is always an array (Array Method Safety Pattern)
-      const bookingsData = Array.isArray(response.data) ? response.data : 
-                          Array.isArray(response.data?.bookings) ? response.data.bookings :
-                          Array.isArray(response.data?.data) ? response.data.data : [];
-      
-      console.log('Bookings Data:', bookingsData);
-      
-      // Filter out rejected bookings and transform remaining bookings into calendar events
+      const bookingsData = Array.isArray(response.data) ? response.data :
+        Array.isArray(response.data?.bookings) ? response.data.bookings :
+          Array.isArray(response.data?.data) ? response.data.data : [];
+
       const events = bookingsData
-        .filter(booking => {
-          const isValid = booking.status !== 'Rejected' && booking.date;
-          console.log('Processing booking:', booking, 'Valid:', isValid);
-          return isValid;
-        })
+        .filter(booking => booking.status !== 'Rejected' && booking.date)
         .map(booking => {
           const eventDate = new Date(booking.date);
-          console.log('Event date:', eventDate, 'Booking date:', booking.date);
-          
-          const event = {
-            title: format(eventDate, 'MMM d'),
+          return {
+            title: `${booking.firstName || ''} ${booking.surname || ''}`.trim() || 'N/A',
             start: eventDate,
             end: eventDate,
             allDay: true,
             status: booking.status || 'Pending',
             bookingId: booking._id,
-            customerName: booking.firstName && booking.surname ? 
-              `${booking.firstName} ${booking.surname}` : 
+            customerName: booking.firstName && booking.surname ?
+              `${booking.firstName} ${booking.surname}` :
               booking.name || 'N/A',
             eventType: booking.eventType || 'Unknown',
             guestCount: booking.guestCount || 0,
@@ -92,12 +99,8 @@ const BookedDatesCalendar = () => {
             phone: booking.phone || '',
             additionalNotes: booking.additionalNotes || ''
           };
-          
-          console.log('Created event:', event);
-          return event;
         });
-      
-      console.log('Final events array:', events);
+
       setBookedEvents(events);
       setError(null);
     } catch (error) {
@@ -108,149 +111,110 @@ const BookedDatesCalendar = () => {
     }
   };
 
-  const handleEventMouseEnter = (event, e) => {
-    const rect = e.target.getBoundingClientRect();
-    setTooltipPosition({
-      x: rect.left,
-      y: rect.top
+  // Filtered events based on active filters and search
+  const filteredEvents = useMemo(() => {
+    return bookedEvents.filter(event => {
+      const matchesFilter = activeFilters.includes(event.status);
+      const matchesSearch = searchQuery === '' ||
+        event.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        event.eventType.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesFilter && matchesSearch;
     });
-    setHoveredEvent(event);
-  };
+  }, [bookedEvents, activeFilters, searchQuery]);
 
-  const handleEventMouseLeave = () => {
-    setHoveredEvent(null);
+  // Stats
+  const stats = useMemo(() => ({
+    booked: bookedEvents.filter(e => e.status === 'Booked').length,
+    approved: bookedEvents.filter(e => e.status === 'Approved').length,
+    pending: bookedEvents.filter(e => e.status === 'Pending').length,
+    total: bookedEvents.length,
+  }), [bookedEvents]);
+
+  const toggleFilter = (status) => {
+    setActiveFilters(prev =>
+      prev.includes(status)
+        ? prev.filter(f => f !== status)
+        : [...prev, status]
+    );
   };
 
   const eventStyleGetter = (event) => {
-    const baseStyle = {
-      borderRadius: '4px',
-      opacity: 0.9,
-      color: 'white',
-      border: 'none',
-      display: 'block',
-      padding: '2px 4px',
-      fontSize: '0.75rem',
-      fontWeight: '500',
-      cursor: 'pointer',
-      textShadow: '0 1px 1px rgba(0,0,0,0.3)',
-      boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
-      lineHeight: '1.2',
-      height: '100%'
-    };
-
-    // The colored parts represent different booking statuses:
-    // Booked: Red color indicating confirmed bookings
-    // Approved: Blue color indicating approved but not yet booked
-    // Pending: Amber color indicating pending approval
-    const backgroundColor = 
-      event.status === 'Booked' ? '#dc2626' : // red
-      event.status === 'Approved' ? '#0ea5e9' : // electric blue
-      event.status === 'Pending' ? '#f59e0b' : // amber
-      '#6366f1'; // default indigo
-
+    const config = STATUS_CONFIG[event.status] || STATUS_CONFIG.Pending;
     return {
       style: {
-        ...baseStyle,
-        backgroundColor,
-        background: event.status === 'Booked' ? 'linear-gradient(135deg, #dc2626, #ef4444)' :
-                   event.status === 'Approved' ? 'linear-gradient(135deg, #0ea5e9, #2dd4bf)' :
-                   event.status === 'Pending' ? 'linear-gradient(135deg, #f59e0b, #fbbf24)' :
-                   'linear-gradient(135deg, #6366f1, #8b5cf6)',
-        minHeight: '30px',
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'center'
+        background: config.gradient,
+        borderRadius: '6px',
+        color: '#ffffff',
+        border: 'none',
+        padding: '2px 6px',
+        fontSize: '0.7rem',
+        fontWeight: '600',
+        cursor: 'pointer',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.12)',
+        lineHeight: '1.3',
+        transition: 'all 0.15s ease',
       }
     };
   };
 
-  const calendarCustomStyles = {
-    className: 'modern-dark-calendar',
-    style: {
-      height: '100%',
-      backgroundColor: 'transparent',
-      color: 'white',
-      fontFamily: 'Inter, system-ui, sans-serif'
-    }
-  };
-
   const calendarComponents = {
     toolbar: (props) => (
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 mb-3 bg-gradient-to-r from-electric-500/10 to-neon-500/10 rounded-md border border-gray-200 backdrop-blur-sm">
-        <div className="flex items-center justify-between sm:justify-start mb-2 sm:mb-0">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-3 px-4 mb-4 bg-gray-50 rounded-xl border border-gray-200">
+        <div className="flex items-center gap-3 mb-2 sm:mb-0">
           <button
             onClick={() => props.onNavigate('PREV')}
-            className="p-1 hover:bg-gray-100 rounded-sm transition-all duration-300 text-white font-medium hover:shadow-sm border border-gray-300 hover:border-white/30"
+            className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors text-gray-600 border border-gray-200"
           >
             <ChevronLeftIcon className="w-4 h-4" />
           </button>
-          <span className="text-base sm:text-lg font-bold text-gray-900 mx-2">
+          <span className="text-lg font-bold text-gray-900 min-w-[180px] text-center">
             {format(props.date, 'MMMM yyyy')}
           </span>
           <button
             onClick={() => props.onNavigate('NEXT')}
-            className="p-1 hover:bg-gray-100 rounded-sm transition-all duration-300 text-white font-medium hover:shadow-sm border border-gray-300 hover:border-white/30"
+            className="p-1.5 hover:bg-gray-200 rounded-lg transition-colors text-gray-600 border border-gray-200"
           >
             <ChevronRightIcon className="w-4 h-4" />
           </button>
         </div>
-        <div className="flex items-center space-x-2">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => props.onNavigate('TODAY')}
-            className="btn-secondary text-xs px-3 py-1"
+            className="text-xs px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100 font-medium transition-colors"
           >
             Today
           </button>
-          <select
-            value={props.view}
-            onChange={(e) => props.onView(e.target.value)}
-            className="input-field text-xs py-1 px-2"
-          >
-            <option value="month">Month</option>
-            <option value="week">Week</option>
-            <option value="day">Day</option>
-          </select>
         </div>
       </div>
     ),
     month: {
       dateHeader: ({ date }) => (
-        <div className="text-center font-medium text-gray-600 py-2 text-sm">
+        <div className="text-right font-medium text-gray-600 py-1 px-2 text-xs">
           {format(date, 'd')}
         </div>
       ),
-      event: ({ event }) => (
-        <div
-          onClick={(e) => handleEventClick(event, e)}
-          className="w-full h-full text-xs p-1 cursor-pointer overflow-hidden"
-        >
-          <div className="font-bold truncate text-sm">{event.title}</div>
-          <div className="truncate text-xs font-medium">{event.customerName}</div>
-          <div className="truncate text-xs">{event.eventType}</div>
-          <div className="flex items-center justify-between text-xs mt-1">
-            <span className="flex items-center">
-              <UsersIcon className="w-3 h-3 mr-1" />
-              {event.guestCount}
-            </span>
-            <span className={`px-1 py-0.5 rounded text-xs font-semibold ${
-              event.status === 'Booked' ? 'bg-red-500/30' : 
-              event.status === 'Approved' ? 'bg-electric-500/30' : 
-              'bg-amber-500/30'
-            }`}>
-              {event.status}
-            </span>
+      event: ({ event }) => {
+        const config = STATUS_CONFIG[event.status] || STATUS_CONFIG.Pending;
+        return (
+          <div
+            onClick={(e) => { e.stopPropagation(); setSelectedEvent(event); }}
+            className="w-full text-xs p-1 cursor-pointer overflow-hidden leading-tight"
+          >
+            <div className="font-semibold truncate">{event.customerName}</div>
+            <div className="truncate opacity-90 text-[0.6rem]">{event.eventType}</div>
           </div>
-        </div>
-      )
+        );
+      }
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-6">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 animate-fade-in-up">
-          <div className="flex justify-center items-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#f8f9fa' }}>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-12">
+          <div className="flex flex-col items-center">
+            <div className="animate-spin rounded-full h-10 w-10 border-2 border-gray-200 border-t-gray-600 mb-4"></div>
+            <span className="text-sm text-gray-500 font-medium">Loading calendar...</span>
           </div>
         </div>
       </div>
@@ -259,200 +223,253 @@ const BookedDatesCalendar = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="max-w-md w-full">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center animate-fade-in-up">
-            <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
-              <XCircleIcon className="w-8 h-8 text-red-400" />
-            </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Error Loading Calendar</h3>
-            <p className="text-gray-600 mb-6">{error}</p>
-            <button
-              onClick={fetchBookings}
-              className="btn-primary w-full"
-            >
-              Try Again
-            </button>
+      <div className="min-h-screen flex items-center justify-center p-6" style={{ background: '#f8f9fa' }}>
+        <div className="max-w-md w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center">
+          <div className="w-14 h-14 mx-auto mb-4 bg-red-50 rounded-full flex items-center justify-center border border-red-200">
+            <XCircleIcon className="w-7 h-7 text-red-500" />
           </div>
+          <h3 className="text-lg font-bold text-gray-900 mb-2">Error Loading Calendar</h3>
+          <p className="text-gray-500 text-sm mb-6">{error}</p>
+          <button
+            onClick={fetchBookings}
+            className="w-full py-2.5 px-4 bg-gray-900 text-white text-sm font-medium rounded-xl hover:bg-gray-800 transition-colors"
+          >
+            Try Again
+          </button>
         </div>
       </div>
     );
   }
 
-  const handleEventClick = (event, e) => {
-    setSelectedEvent(event);
-  };
-
-  const closeEventDetails = () => {
-    setSelectedEvent(null);
-  };
-
   return (
-    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
-      {/* Main Content Container */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
-      {/* Header Section */}
-      <div className="mb-2 sm:mb-3 animate-fade-in-up">
-        <div className="flex items-center space-x-1.5 mb-0.5">
-          <div className="w-6 h-6 bg-gradient-electric rounded-md flex items-center justify-center shadow-sm neon-glow">
-            <CalendarIconSolid className="w-3.5 h-3.5 text-white" />
+    <div className="min-h-screen p-4 sm:p-6" style={{ background: '#f8f9fa' }}>
+      {/* Header */}
+      <div className="mb-5">
+        <div className="flex items-center gap-3 mb-1">
+          <div className="w-9 h-9 bg-gray-900 rounded-xl flex items-center justify-center shadow-sm">
+            <CalendarIconSolid className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-base sm:text-lg font-bold text-gray-900">Booking Calendar</h1>
-            <p className="text-gray-600 text-[0.65rem]">View and manage scheduled bookings</p>
+            <h1 className="text-xl font-bold text-gray-900">Booking Calendar</h1>
+            <p className="text-gray-500 text-xs">View and manage all scheduled bookings</p>
           </div>
         </div>
       </div>
 
-      {/* Calendar Card */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-3 sm:p-4" style={{animationDelay: '0.1s'}}>
-        {/* Status Legend - Explains the colored parts */}
-        <div className="border-b border-gray-200 pb-2 sm:pb-3 mb-3">
-          <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">Booking Status Legend</h3>
-          <div className="flex flex-wrap gap-2 text-[0.65rem] justify-center">
-            <div className="flex items-center bg-red-500/20 px-2 py-1 rounded-md border border-red-500/30 shadow-sm">
-              <div className="w-2.5 h-2.5 rounded-full bg-red-500 mr-1.5"></div>
-              <span className="font-medium text-red-100">Booked - Confirmed reservations</span>
-            </div>
-            <div className="flex items-center bg-electric-500/20 px-2 py-1 rounded-md border border-electric-500/30 shadow-sm">
-              <div className="w-2.5 h-2.5 rounded-full bg-electric-500 mr-1.5"></div>
-              <span className="font-medium text-electric-100">Approved - Pending confirmation</span>
-            </div>
-            <div className="flex items-center bg-amber-500/20 px-2 py-1 rounded-md border border-amber-500/30 shadow-sm">
-              <div className="w-2.5 h-2.5 rounded-full bg-amber-500 mr-1.5"></div>
-              <span className="font-medium text-amber-100">Pending - Awaiting approval</span>
-            </div>
+      {/* Stats Row */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
+        <div className="bg-white rounded-xl border border-gray-200 p-3.5 shadow-sm">
+          <div className="text-2xl font-bold text-gray-900">{stats.total}</div>
+          <div className="text-xs text-gray-500 font-medium">Total Bookings</div>
+        </div>
+        {Object.entries(STATUS_CONFIG).map(([key, config]) => (
+          <div key={key} className="bg-white rounded-xl border border-gray-200 p-3.5 shadow-sm" style={{ borderLeft: `3px solid ${config.bg}` }}>
+            <div className="text-2xl font-bold" style={{ color: config.bg }}>{stats[key.toLowerCase()]}</div>
+            <div className="text-xs text-gray-500 font-medium">{config.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Filters & Search */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 mb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          {/* Status Filters */}
+          <div className="flex items-center gap-2">
+            <FunnelIcon className="w-4 h-4 text-gray-400" />
+            <span className="text-xs font-semibold text-gray-500 uppercase tracking-wide mr-1">Filter:</span>
+            {Object.entries(STATUS_CONFIG).map(([key, config]) => {
+              const isActive = activeFilters.includes(key);
+              return (
+                <button
+                  key={key}
+                  onClick={() => toggleFilter(key)}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all border"
+                  style={{
+                    background: isActive ? config.bgLight : '#ffffff',
+                    borderColor: isActive ? config.border : '#e5e7eb',
+                    color: isActive ? config.text : '#9ca3af',
+                    opacity: isActive ? 1 : 0.6,
+                  }}
+                >
+                  <div className="w-2 h-2 rounded-full" style={{ background: config.dot, opacity: isActive ? 1 : 0.4 }}></div>
+                  {config.label}
+                </button>
+              );
+            })}
+          </div>
+          {/* Search */}
+          <div className="relative">
+            <MagnifyingGlassIcon className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search bookings..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full sm:w-56 pl-9 pr-3 py-2 text-sm border border-gray-200 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:bg-white transition-all"
+            />
           </div>
         </div>
+        {/* Legend */}
+        <div className="flex flex-wrap gap-4 mt-3 pt-3 border-t border-gray-100">
+          {Object.entries(STATUS_CONFIG).map(([key, config]) => (
+            <div key={key} className="flex items-center gap-2 text-xs text-gray-600">
+              <div className="w-3 h-3 rounded" style={{ background: config.gradient }}></div>
+              <span><strong className="text-gray-800">{config.label}</strong> — {config.desc}</span>
+            </div>
+          ))}
+        </div>
+      </div>
 
-        {/* Calendar Container */}
-        <div className="calendar-container relative" style={{height: '500px', minHeight: '500px'}}>
-          <style jsx global>{`
-            .modern-dark-calendar {
-              background: transparent !important;
-              color: white !important;
+      {/* Calendar Card */}
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-5">
+        <div className="calendar-container relative" style={{ height: '560px', minHeight: '560px' }}>
+          <style>{`
+            .light-calendar {
+              background: #ffffff !important;
+              color: #1f2937 !important;
+              height: 100% !important;
+              font-family: Inter, system-ui, -apple-system, sans-serif;
+            }
+            .light-calendar .rbc-calendar {
+              background: #ffffff !important;
               height: 100% !important;
             }
-            .modern-dark-calendar .rbc-calendar {
-              background: transparent !important;
-              color: white !important;
-              height: 100% !important;
-            }
-            .modern-dark-calendar .rbc-header {
-              background: rgba(55, 65, 81, 0.3) !important;
-              color: white !important;
-              border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-              padding: 8px 4px !important;
+            .light-calendar .rbc-header {
+              background: #f9fafb !important;
+              color: #374151 !important;
+              border-bottom: 1px solid #e5e7eb !important;
+              padding: 10px 4px !important;
               font-weight: 600 !important;
               font-size: 0.8rem !important;
+              text-transform: uppercase;
+              letter-spacing: 0.025em;
             }
-            .modern-dark-calendar .rbc-month-view {
-              background: rgba(31, 41, 55, 0.3) !important;
-              border: 1px solid rgba(255, 255, 255, 0.1) !important;
-              border-radius: 8px !important;
+            .light-calendar .rbc-month-view {
+              background: #ffffff !important;
+              border: 1px solid #e5e7eb !important;
+              border-radius: 12px !important;
               overflow: hidden !important;
-              box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
-              height: calc(100% - 40px) !important;
+              height: calc(100% - 60px) !important;
             }
-            .modern-dark-calendar .rbc-day-bg {
-              background: rgba(31, 41, 55, 0.2) !important;
-              border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
-              border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
-              min-height: 60px !important;
+            .light-calendar .rbc-day-bg {
+              background: #ffffff !important;
+              border-right: 1px solid #f3f4f6 !important;
+              border-bottom: 1px solid #f3f4f6 !important;
+              min-height: 80px !important;
+              transition: background 0.15s ease;
             }
-            .modern-dark-calendar .rbc-day-bg:hover {
-              background: rgba(55, 65, 81, 0.4) !important;
+            .light-calendar .rbc-day-bg:hover {
+              background: #f9fafb !important;
             }
-            .modern-dark-calendar .rbc-today {
-              background: rgba(14, 165, 233, 0.15) !important;
+            .light-calendar .rbc-today {
+              background: #f0f9ff !important;
             }
-            .modern-dark-calendar .rbc-off-range-bg {
-              background: rgba(17, 24, 39, 0.1) !important;
+            .light-calendar .rbc-off-range-bg {
+              background: #fafafa !important;
             }
-            .modern-dark-calendar .rbc-date-cell {
+            .light-calendar .rbc-date-cell {
+              color: #374151 !important;
+              padding: 4px 8px !important;
+              font-size: 0.8rem !important;
+            }
+            .light-calendar .rbc-off-range {
               color: #d1d5db !important;
-              padding: 4px !important;
-              font-size: 0.8rem !important;
             }
-            .modern-dark-calendar .rbc-off-range {
-              color: #6b7280 !important;
+            .light-calendar .rbc-current {
+              color: #2563eb !important;
+              font-weight: 700 !important;
             }
-            .modern-dark-calendar .rbc-current {
-              color: #0ea5e9 !important;
-              font-weight: 600 !important;
+            .light-calendar .rbc-month-row {
+              min-height: 80px !important;
             }
-            @media (max-width: 640px) {
-              .modern-dark-calendar .rbc-header {
-                padding: 4px 2px !important;
-                font-size: 0.7rem !important;
-              }
-              .modern-dark-calendar .rbc-date-cell {
-                padding: 2px !important;
-                font-size: 0.6rem !important;
-              }
-              .modern-dark-calendar .rbc-month-row {
-                min-height: 40px !important;
-              }
-              .modern-dark-calendar .rbc-row-bg .rbc-day-bg {
-                min-height: 40px !important;
-              }
-              .modern-dark-calendar .rbc-event {
-                margin-bottom: 2px !important;
-              }
+            .light-calendar .rbc-row-bg .rbc-day-bg {
+              min-height: 80px !important;
             }
-            .modern-dark-calendar .rbc-row-content {
-              min-height: 60px !important;
-            }
-            .modern-dark-calendar .rbc-day-slot {
-              min-height: 60px !important;
-            }
-            /* Improve event visibility */
-            .modern-dark-calendar .rbc-event {
+            .light-calendar .rbc-event {
               border: none !important;
-              box-shadow: 0 2px 4px rgba(0,0,0,0.2) !important;
-              transition: all 0.2s ease !important;
-              margin-bottom: 2px !important;
+              transition: all 0.15s ease !important;
+              margin-bottom: 1px !important;
               overflow: hidden !important;
             }
-            .modern-dark-calendar .rbc-event:hover {
+            .light-calendar .rbc-event:hover {
               transform: translateY(-1px) !important;
-              box-shadow: 0 4px 8px rgba(0,0,0,0.3) !important;
+              box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
               z-index: 10 !important;
             }
-            /* Improve day cell contrast and height */
-            .modern-dark-calendar .rbc-month-row {
-              min-height: 70px !important;
+            .light-calendar .rbc-event-content {
+              font-size: 0.7rem !important;
+              line-height: 1.3 !important;
             }
-            .modern-dark-calendar .rbc-row-bg .rbc-day-bg {
-              min-height: 70px !important;
+            .light-calendar .rbc-row-content {
+              min-height: 80px !important;
             }
-            /* Ensure event text is visible */
-            .modern-dark-calendar .rbc-event-content {
-              font-size: 0.75rem !important;
-              line-height: 1.2 !important;
-              padding: 2px 4px !important;
+            .light-calendar .rbc-show-more {
+              color: #2563eb !important;
+              font-weight: 600 !important;
+              font-size: 0.7rem !important;
+              background: transparent !important;
             }
-            /* Improve date cell padding */
-            .modern-dark-calendar .rbc-date-cell {
-              padding: 4px 6px !important;
+            .light-calendar .rbc-month-row + .rbc-month-row {
+              border-top: 1px solid #e5e7eb !important;
+            }
+            /* Week and Day view */
+            .light-calendar .rbc-time-view {
+              border: 1px solid #e5e7eb !important;
+              border-radius: 12px !important;
+              overflow: hidden !important;
+            }
+            .light-calendar .rbc-time-header {
+              background: #f9fafb !important;
+            }
+            .light-calendar .rbc-time-content {
+              border-top: 1px solid #e5e7eb !important;
+            }
+            .light-calendar .rbc-timeslot-group {
+              border-bottom: 1px solid #f3f4f6 !important;
+            }
+            .light-calendar .rbc-time-slot {
+              color: #9ca3af !important;
+              font-size: 0.7rem !important;
+            }
+            .light-calendar .rbc-day-slot .rbc-time-slot {
+              border-top: 1px solid #f3f4f6 !important;
+            }
+            .light-calendar .rbc-allday-cell {
+              background: #f9fafb !important;
+            }
+            @media (max-width: 640px) {
+              .light-calendar .rbc-header {
+                padding: 6px 2px !important;
+                font-size: 0.65rem !important;
+              }
+              .light-calendar .rbc-date-cell {
+                padding: 2px 4px !important;
+                font-size: 0.65rem !important;
+              }
+              .light-calendar .rbc-month-row,
+              .light-calendar .rbc-row-bg .rbc-day-bg,
+              .light-calendar .rbc-row-content {
+                min-height: 50px !important;
+              }
             }
           `}</style>
-          
+
           <Calendar
             localizer={localizer}
-            events={bookedEvents}
+            events={filteredEvents}
             startAccessor="start"
             endAccessor="end"
             eventPropGetter={eventStyleGetter}
             components={calendarComponents}
-            {...calendarCustomStyles}
-            views={['month', 'week', 'day']}
+            className="light-calendar"
+            style={{ height: '100%', backgroundColor: '#ffffff', fontFamily: 'Inter, system-ui, sans-serif' }}
+            views={['month']}
             defaultView="month"
             popup={false}
             showMultiDayTimes
             step={60}
             timeslots={1}
-            onSelectEvent={handleEventClick}
+            onSelectEvent={(event) => setSelectedEvent(event)}
             tooltipAccessor={false}
           />
         </div>
@@ -460,180 +477,66 @@ const BookedDatesCalendar = () => {
 
       {/* Event Details Modal */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-xl border border-gray-300 backdrop-blur-lg">
-            <div className="flex justify-between items-start mb-4">
-              <h3 className="text-lg font-bold text-gray-900">Booking Details</h3>
-              <button 
-                onClick={closeEventDetails}
-                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
-              >
-                <XCircleIcon className="w-5 h-5 text-gray-500 hover:text-gray-900" />
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-2">
-                  <div className={`w-3 h-3 rounded-full ${
-                    selectedEvent.status === 'Booked' ? 'bg-red-500' :
-                    selectedEvent.status === 'Approved' ? 'bg-electric-500' :
-                    selectedEvent.status === 'Pending' ? 'bg-amber-500' :
-                    'bg-indigo-500'
-                  }`}></div>
-                  <span className={`text-sm font-semibold ${
-                    selectedEvent.status === 'Booked' ? 'text-red-300' :
-                    selectedEvent.status === 'Approved' ? 'text-electric-500' :
-                    selectedEvent.status === 'Pending' ? 'text-amber-300' :
-                    'text-indigo-300'
-                  }`}>
-                    {selectedEvent.status}
-                  </span>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/30 backdrop-blur-sm" onClick={() => setSelectedEvent(null)}>
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 max-w-md w-full max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+            {/* Modal Header with status color bar */}
+            <div className="p-5 pb-4" style={{ borderBottom: `3px solid ${(STATUS_CONFIG[selectedEvent.status] || STATUS_CONFIG.Pending).bg}` }}>
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900">Booking Details</h3>
+                  <p className="text-xs text-gray-500 mt-0.5">{format(new Date(selectedEvent.start), 'EEEE, MMMM d, yyyy')}</p>
                 </div>
-                <span className="text-xs text-gray-500">
-                  {format(new Date(selectedEvent.start), 'MMM d, yyyy')}
-                </span>
-              </div>
-              
-              <div className="border-t border-gray-200 pt-4">
-                <h4 className="font-bold text-gray-900 text-base mb-3">{selectedEvent.customerName}</h4>
-                <div className="space-y-3 text-sm text-gray-600">
-                  <div className="flex items-center space-x-3">
-                    <CalendarIcon className="w-5 h-5 text-electric-600 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-gray-800">Event Type</p>
-                      <p>{selectedEvent.eventType}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <ClockIcon className="w-5 h-5 text-neon-600 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-gray-800">Time</p>
-                      <p>{selectedEvent.startTime} - {selectedEvent.endTime}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <UsersIcon className="w-5 h-5 text-secondary-600 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium text-gray-800">Guests</p>
-                      <p>{selectedEvent.guestCount} guests</p>
-                    </div>
-                  </div>
-                  {selectedEvent.email && (
-                    <div className="flex items-center space-x-3">
-                      <svg className="w-5 h-5 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h-3l-4 4z"></path>
-                      </svg>
-                      <div>
-                        <p className="font-medium text-gray-800">Email</p>
-                        <p>{selectedEvent.email}</p>
-                      </div>
-                    </div>
-                  )}
-                  {selectedEvent.phone && (
-                    <div className="flex items-center space-x-3">
-                      <svg className="w-5 h-5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                      </svg>
-                      <div>
-                        <p className="font-medium text-gray-800">Phone</p>
-                        <p>{selectedEvent.phone}</p>
-                      </div>
-                    </div>
-                  )}
-                  {selectedEvent.additionalNotes && (
-                    <div className="pt-3 border-t border-gray-200">
-                      <div className="flex items-start space-x-3">
-                        <svg className="w-5 h-5 text-electric-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
-                        </svg>
-                        <div>
-                          <p className="font-medium text-electric-500 mb-1">Additional Notes</p>
-                          <p className="whitespace-pre-wrap">{selectedEvent.additionalNotes}</p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                <button
+                  onClick={() => setSelectedEvent(null)}
+                  className="p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+                >
+                  <XCircleIcon className="w-5 h-5 text-gray-400 hover:text-gray-600" />
+                </button>
               </div>
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Event Tooltip */}
-      {hoveredEvent && !selectedEvent && (
-        <div 
-          className="fixed z-40 pointer-events-none animate-fade-in"
-          style={{
-            left: `${tooltipPosition.x}px`,
-            top: `${tooltipPosition.y - 5}px`,
-            transform: 'translateY(-100%)',
-            maxHeight: '300px',
-            overflowY: 'auto'
-          }}
-        >
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 max-w-xs sm:max-w-sm p-3 shadow-xl border border-gray-300 backdrop-blur-lg">
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center space-x-2">
-                <div className={`w-3 h-3 rounded-full ${
-                  hoveredEvent.status === 'Booked' ? 'bg-red-500' :
-                  hoveredEvent.status === 'Approved' ? 'bg-electric-500' :
-                  hoveredEvent.status === 'Pending' ? 'bg-amber-500' :
-                  'bg-indigo-500'
-                }`}></div>
-                <span className={`text-sm font-semibold ${
-                  hoveredEvent.status === 'Booked' ? 'text-red-300' :
-                  hoveredEvent.status === 'Approved' ? 'text-electric-500' :
-                  hoveredEvent.status === 'Pending' ? 'text-amber-300' :
-                  'text-indigo-300'
-                }`}>
-                  {hoveredEvent.status}
+            <div className="p-5 space-y-4">
+              {/* Status Badge */}
+              <div className="flex items-center gap-2">
+                <span
+                  className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
+                  style={{
+                    background: (STATUS_CONFIG[selectedEvent.status] || STATUS_CONFIG.Pending).bgLight,
+                    color: (STATUS_CONFIG[selectedEvent.status] || STATUS_CONFIG.Pending).text,
+                    border: `1px solid ${(STATUS_CONFIG[selectedEvent.status] || STATUS_CONFIG.Pending).border}`,
+                  }}
+                >
+                  <div className="w-2 h-2 rounded-full" style={{ background: (STATUS_CONFIG[selectedEvent.status] || STATUS_CONFIG.Pending).dot }}></div>
+                  {selectedEvent.status}
                 </span>
               </div>
-              <span className="text-xs text-gray-500">
-                {format(new Date(hoveredEvent.start), 'MMM d, yyyy')}
-              </span>
-            </div>
-            <h4 className="font-bold text-gray-900 text-xs mb-1">{hoveredEvent.customerName}</h4>
-            <div className="space-y-1 text-xs text-gray-600">
-              <div className="flex items-center space-x-2">
-                <CalendarIcon className="w-4 h-4 text-electric-600 flex-shrink-0" />
-                <span className="font-medium">{hoveredEvent.eventType}</span>
+
+              {/* Customer Name */}
+              <div>
+                <h4 className="text-base font-bold text-gray-900">{selectedEvent.customerName}</h4>
               </div>
-              <div className="flex items-center space-x-2">
-                <ClockIcon className="w-4 h-4 text-neon-600 flex-shrink-0" />
-                <span>{hoveredEvent.startTime} - {hoveredEvent.endTime}</span>
+
+              {/* Details Grid */}
+              <div className="space-y-3">
+                <DetailRow icon={<CalendarIcon className="w-4 h-4 text-gray-400" />} label="Event Type" value={selectedEvent.eventType} />
+                <DetailRow icon={<ClockIcon className="w-4 h-4 text-gray-400" />} label="Time" value={`${selectedEvent.startTime} - ${selectedEvent.endTime}`} />
+                <DetailRow icon={<UsersIcon className="w-4 h-4 text-gray-400" />} label="Guests" value={`${selectedEvent.guestCount} guests`} />
+                {selectedEvent.email && (
+                  <DetailRow icon={<EnvelopeIcon className="w-4 h-4 text-gray-400" />} label="Email" value={selectedEvent.email} />
+                )}
+                {selectedEvent.phone && (
+                  <DetailRow icon={<PhoneIcon className="w-4 h-4 text-gray-400" />} label="Phone" value={selectedEvent.phone} />
+                )}
               </div>
-              <div className="flex items-center space-x-2">
-                <UsersIcon className="w-4 h-4 text-secondary-600 flex-shrink-0" />
-                <span>{hoveredEvent.guestCount} guests</span>
-              </div>
-              {hoveredEvent.email && (
-                <div className="flex items-center space-x-1.5">
-                  <svg className="w-3.5 h-3.5 text-blue-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h-3l-4 4z"></path>
-                  </svg>
-                  <span>{hoveredEvent.email}</span>
-                </div>
-              )}
-              {hoveredEvent.phone && (
-                <div className="flex items-center space-x-1.5">
-                  <svg className="w-3.5 h-3.5 text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
-                  </svg>
-                  <span>{hoveredEvent.phone}</span>
-                </div>
-              )}
-              {hoveredEvent.additionalNotes && (
-                <div className="pt-1.5 border-t border-gray-200">
-                  <div className="flex items-start space-x-1.5">
-                    <svg className="w-3.5 h-3.5 text-electric-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
-                    </svg>
+
+              {/* Notes */}
+              {selectedEvent.additionalNotes && (
+                <div className="pt-3 border-t border-gray-100">
+                  <div className="flex items-start gap-2">
+                    <ChatBubbleLeftIcon className="w-4 h-4 text-gray-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <p className="font-medium text-electric-500 text-xs mb-0.5">Notes:</p>
-                      <p className="whitespace-pre-wrap text-xs">{hoveredEvent.additionalNotes}</p>
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1">Notes</p>
+                      <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{selectedEvent.additionalNotes}</p>
                     </div>
                   </div>
                 </div>
@@ -643,8 +546,19 @@ const BookedDatesCalendar = () => {
         </div>
       )}
     </div>
-  </div>
-)
+  );
 };
+
+// Helper component for modal detail rows
+const DetailRow = ({ icon, label, value }) => (
+  <div className="flex items-center gap-3">
+    <div className="flex-shrink-0">{icon}</div>
+    <div>
+      <p className="text-xs text-gray-400 font-medium">{label}</p>
+      <p className="text-sm text-gray-900 font-medium">{value}</p>
+    </div>
+  </div>
+);
+
 
 export default BookedDatesCalendar;

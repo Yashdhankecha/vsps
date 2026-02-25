@@ -124,7 +124,7 @@ function Gallery() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100 texture-grid flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
           <div className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse border border-red-500/30">
             <svg className="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -151,11 +151,7 @@ function Gallery() {
         <div className="absolute inset-0 texture-diagonal opacity-10"></div>
         <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-white/5 blur-3xl"></div>
         <div className="relative container mx-auto px-4 text-center">
-          <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-gray-200 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-gray-200">
-              Our Gallery
-            </span>
-          </div>
+
           <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
             Event Gallery
           </h1>
@@ -176,8 +172,8 @@ function Gallery() {
                 <button
                   onClick={() => setActiveTab('photos')}
                   className={`flex items-center space-x-3 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${activeTab === 'photos'
-                      ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 border border-gray-200'
+                    ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 border border-gray-200'
                     }`}
                 >
                   <FaImage className="w-5 h-5" />
@@ -186,8 +182,8 @@ function Gallery() {
                 <button
                   onClick={() => setActiveTab('videos')}
                   className={`flex items-center space-x-3 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${activeTab === 'videos'
-                      ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
-                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 border border-gray-200'
+                    ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 border border-gray-200'
                     }`}
                 >
                   <FaVideo className="w-5 h-5" />
@@ -201,10 +197,10 @@ function Gallery() {
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
+                  className="px-4 py-3 bg-white border border-gray-300 text-gray-900 rounded-xl focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                 >
                   {categories.map((category) => (
-                    <option key={category} value={category} className="bg-gray-100 text-white">
+                    <option key={category} value={category}>
                       {category.charAt(0).toUpperCase() + category.slice(1)}
                     </option>
                   ))}
