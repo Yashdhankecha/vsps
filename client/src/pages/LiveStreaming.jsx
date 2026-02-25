@@ -62,7 +62,7 @@ function LiveStreaming() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-mesh">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-gray-50 to-slate-100 page-decoration">
       {/* Hero Section */}
       <div className="relative h-[300px] overflow-hidden">
         <img
@@ -70,11 +70,11 @@ function LiveStreaming() {
           alt="Live Streaming"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-neutral-900/90 to-neutral-800/90">
+        <div className="absolute inset-0 bg-gradient-to-r from-sky-600/90 to-neutral-800/90">
           <div className="container mx-auto h-full flex items-center px-4">
             <div className="text-white max-w-2xl">
               <h1 className="text-4xl font-bold mb-4">Live Event Streaming</h1>
-              <p className="text-lg text-neutral-200">
+              <p className="text-lg text-gray-700">
                 Experience our events from anywhere in the world. Watch live streams of ongoing events
                 or set reminders for upcoming broadcasts.
               </p>
@@ -86,9 +86,9 @@ function LiveStreaming() {
       <div className="container mx-auto px-4 py-12">
         {/* Live Events Section */}
         <div className="mb-16">
-          <h2 className="text-2xl font-bold text-white mb-6">Live Events</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Live Events</h2>
           {liveStream ? (
-            <Card className="glass-effect border border-white/10 overflow-hidden">
+            <Card className="glass-effect border border-gray-200 overflow-hidden">
               <div className="relative">
                 <div className="aspect-w-16 aspect-h-9">
                   <iframe
@@ -110,16 +110,16 @@ function LiveStreaming() {
               <div className="p-6">
                 <div className="flex justify-between items-start mb-4">
                   <div>
-                    <h3 className="text-xl font-semibold text-white mb-2">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">
                       {liveStream.title}
                     </h3>
-                    <p className="text-neutral-300">{liveStream.description}</p>
+                    <p className="text-gray-600">{liveStream.description}</p>
                   </div>
                   <div className="flex items-center space-x-2">
-                    <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                      <FaShare className="text-neutral-400 hover:text-white" />
+                    <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                      <FaShare className="text-gray-500 hover:text-gray-900" />
                     </button>
-                    <button className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                    <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                       <FaHeart className="text-red-500" />
                     </button>
                   </div>
@@ -127,23 +127,23 @@ function LiveStreaming() {
               </div>
             </Card>
           ) : (
-            <Card className="text-center p-12 glass-effect border border-white/10">
-              <FaPlay className="text-6xl text-neutral-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">No Live Events</h3>
-              <p className="text-neutral-400">No live events at the moment</p>
+            <Card className="text-center p-12 glass-effect border border-gray-200">
+              <FaPlay className="text-6xl text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">No Live Events</h3>
+              <p className="text-gray-500">No live events at the moment</p>
             </Card>
           )}
         </div>
 
         {/* Upcoming Events Section */}
         <div>
-          <h2 className="text-2xl font-bold text-white mb-6">Upcoming Streams</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Upcoming Streams</h2>
           {upcomingStreams.length > 0 ? (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {upcomingStreams.map((stream) => (
-                <Card 
+                <Card
                   key={stream.videoId}
-                  className="glass-effect border border-white/10 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
+                  className="glass-effect border border-gray-200 overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
                   hoverEffect={true}
                 >
                   <img
@@ -152,22 +152,22 @@ function LiveStreaming() {
                     className="w-full h-48 object-cover"
                   />
                   <div className="p-6">
-                    <h3 className="text-xl font-semibold text-white mb-2">
+                    <h3 className="text-xl font-semibold text-gray-800 mb-2">
                       {stream.title}
                     </h3>
-                    <p className="text-neutral-300 mb-4 line-clamp-2">{stream.description}</p>
+                    <p className="text-gray-600 mb-4 line-clamp-2">{stream.description}</p>
                     <div className="flex items-center justify-between mb-4">
-                      <div className="flex items-center text-neutral-400">
+                      <div className="flex items-center text-gray-500">
                         <FaCalendarAlt className="mr-2" />
                         <span className="text-sm">{new Date(stream.scheduledStartTime).toLocaleDateString()}</span>
                       </div>
-                      <div className="flex items-center text-neutral-400">
+                      <div className="flex items-center text-gray-500">
                         <FaClock className="mr-2" />
-                        <span className="text-sm">{new Date(stream.scheduledStartTime).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span>
+                        <span className="text-sm">{new Date(stream.scheduledStartTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                       </div>
                     </div>
-                    <Button 
-                      variant="primary" 
+                    <Button
+                      variant="primary"
                       className="w-full"
                       onClick={() => {
                         // Add reminder functionality here
@@ -187,10 +187,10 @@ function LiveStreaming() {
               ))}
             </div>
           ) : (
-            <Card className="text-center p-12 glass-effect border border-white/10">
-              <FaCalendarAlt className="text-6xl text-neutral-500 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-white mb-2">No Upcoming Streams</h3>
-              <p className="text-neutral-400">Check back later for upcoming events</p>
+            <Card className="text-center p-12 glass-effect border border-gray-200">
+              <FaCalendarAlt className="text-6xl text-gray-400 mx-auto mb-4" />
+              <h3 className="text-xl font-semibold text-gray-800 mb-2">No Upcoming Streams</h3>
+              <p className="text-gray-500">Check back later for upcoming events</p>
             </Card>
           )}
         </div>

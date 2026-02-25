@@ -42,14 +42,14 @@ const CommitteeDashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-8">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
       <div className="max-w-7xl mx-auto">
         {/* Welcome Section */}
         <div className="mb-6 sm:mb-8 animate-fade-in-up">
@@ -59,12 +59,12 @@ const CommitteeDashboard = () => {
                 <BuildingLibraryIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">Committee Dashboard</h1>
-                <p className="text-neutral-300 text-sm sm:text-base">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Committee Dashboard</h1>
+                <p className="text-gray-600 text-sm sm:text-base">
                   Welcome, {user?.username}! Manage your village members and events.
                 </p>
                 {user?.village && (
-                  <p className="text-electric-300 text-sm font-medium mt-1">
+                  <p className="text-electric-500 text-sm font-medium mt-1">
                     Village: {user.village}
                   </p>
                 )}
@@ -91,11 +91,11 @@ const CommitteeDashboard = () => {
             <div className="absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-neon opacity-20 rounded-bl-3xl"></div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-neutral-300 text-sm sm:text-base">Total Members</p>
-                <h3 className="text-2xl sm:text-3xl font-bold text-white mt-1">{stats.totalMembers}</h3>
+                <p className="text-gray-600 text-sm sm:text-base">Total Members</p>
+                <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{stats.totalMembers}</h3>
               </div>
               <div className="w-12 h-12 bg-neon-500/20 rounded-xl flex items-center justify-center">
-                <UsersIcon className="w-6 h-6 text-neon-400" />
+                <UsersIcon className="w-6 h-6 text-neon-600" />
               </div>
             </div>
           </div>
@@ -105,11 +105,11 @@ const CommitteeDashboard = () => {
             <div className="absolute top-0 right-0 w-12 h-12 sm:w-16 sm:h-16 bg-gradient-secondary opacity-20 rounded-bl-3xl"></div>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-neutral-300 text-sm sm:text-base">Pending Bookings</p>
-                <h3 className="text-2xl sm:text-3xl font-bold text-white mt-1">{stats.pendingBookings}</h3>
+                <p className="text-gray-600 text-sm sm:text-base">Pending Bookings</p>
+                <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 mt-1">{stats.pendingBookings}</h3>
               </div>
               <div className="w-12 h-12 bg-secondary-500/20 rounded-xl flex items-center justify-center">
-                <CalendarIcon className="w-6 h-6 text-secondary-400" />
+                <CalendarIcon className="w-6 h-6 text-secondary-600" />
               </div>
             </div>
           </div>
@@ -118,15 +118,15 @@ const CommitteeDashboard = () => {
         {/* Quick Actions */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           {/* Add Member Card */}
-          <div className="card-glass">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200">
             <div className="p-4 sm:p-6">
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-10 h-10 bg-gradient-neon rounded-lg flex items-center justify-center">
                   <UserPlusIcon className="w-5 h-5 text-white" />
                 </div>
-                <h3 className="text-lg sm:text-xl font-semibold text-white">Add New Member</h3>
+                <h3 className="text-lg sm:text-xl font-semibold text-gray-800">Add New Member</h3>
               </div>
-              <p className="text-neutral-300 mb-4">
+              <p className="text-gray-600 mb-4">
                 Register a new member from your village to the community platform.
               </p>
               <button

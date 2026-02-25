@@ -13,11 +13,11 @@ const Button = ({
   const baseClasses = 'inline-flex items-center justify-center font-semibold rounded-xl transition-all duration-300 transform focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900';
   
   const variantClasses = {
-    primary: 'bg-gradient-electric text-white hover:shadow-lg hover:shadow-electric-500/30 hover:scale-105 shadow-lg focus:ring-electric-500',
+    primary: 'bg-gradient-electric text-white hover:shadow-lg hover:shadow-electric-500/15 hover:scale-105 shadow-lg focus:ring-electric-500',
     secondary: 'bg-gradient-secondary text-white hover:shadow-lg hover:shadow-secondary-500/30 hover:scale-105 shadow-lg focus:ring-secondary-500',
     accent: 'bg-gradient-neon text-white hover:shadow-lg hover:shadow-neon-500/30 hover:scale-105 shadow-lg focus:ring-neon-500',
     outline: 'border-2 border-white text-white hover:bg-white hover:text-neutral-900 focus:ring-white',
-    ghost: 'text-neutral-300 hover:text-white hover:bg-white/10 border border-transparent hover:border-white/20 focus:ring-white/50',
+    ghost: 'text-gray-600 hover:text-gray-900 hover:bg-gray-100 border border-transparent hover:border-gray-300 focus:ring-white/50',
     danger: 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white hover:shadow-lg hover:shadow-red-500/30 focus:ring-red-500'
   };
   

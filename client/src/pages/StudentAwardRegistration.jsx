@@ -164,10 +164,10 @@ const StudentAwardRegistration = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <FaSpinner className="animate-spin text-electric-500 text-4xl mx-auto mb-4" />
-          <p className="text-neutral-300">Loading form...</p>
+          <p className="text-gray-600">Loading form...</p>
         </div>
       </div>
     );
@@ -175,14 +175,14 @@ const StudentAwardRegistration = () => {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-mesh py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-        <div className="max-w-md w-full glass-effect p-8 rounded-2xl border border-white/10 text-center shadow-2xl relative overflow-hidden">
+      <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div className="max-w-md w-full glass-effect p-8 rounded-2xl border border-gray-200 text-center shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full h-2 bg-gradient-electric"></div>
           <div className="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-500/20 border border-green-500/30 mb-6">
             <FaCheckCircle className="h-10 w-10 text-green-400" />
           </div>
-          <h2 className="text-3xl font-bold text-white mb-4">Application Submitted!</h2>
-          <p className="text-neutral-300 mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">Application Submitted!</h2>
+          <p className="text-gray-600 mb-8">
             Your application for the Student Saraswati Sanman has been successfully received. We will review your details and contact you shortly.
           </p>
           <div className="space-y-4">
@@ -199,29 +199,29 @@ const StudentAwardRegistration = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-4xl mx-auto">
         {/* Back Button */}
         <button
           onClick={() => navigate('/services')}
-          className="flex items-center text-neutral-400 hover:text-white transition-colors mb-6 group"
+          className="flex items-center text-gray-500 hover:text-gray-900 transition-colors mb-6 group"
         >
           <FaArrowLeft className="mr-2 group-hover:-translate-x-1 transition-transform" />
           Back to Services
         </button>
 
         {/* Header */}
-        <div className="glass-effect rounded-2xl p-8 mb-8 border border-white/10 relative overflow-hidden">
+        <div className="glass-effect rounded-2xl p-8 mb-8 border border-gray-200 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-electric opacity-10 rounded-bl-full pointer-events-none"></div>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center relative z-10">
             <div>
               <div className="flex items-center mb-3">
-                <div className="p-3 bg-gradient-electric rounded-lg shadow-lg shadow-electric-500/20 mr-4">
+                <div className="p-3 bg-gradient-electric rounded-lg shadow-lg shadow-electric-500/10 mr-4">
                   <FaAward className="text-2xl text-white" />
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold text-white">Student Saraswati Sanman</h1>
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900">Student Saraswati Sanman</h1>
               </div>
-              <p className="text-neutral-300 text-lg max-w-2xl">
+              <p className="text-gray-600 text-lg max-w-2xl">
                 Celebrating academic excellence. Register now to be recognized for your outstanding achievements.
               </p>
             </div>
@@ -230,11 +230,11 @@ const StudentAwardRegistration = () => {
             <div className="mt-6 md:mt-0 flex flex-col items-end space-y-3">
               {timeLeft && timeLeft !== 'EXPIRED' && (
                 <div className="flex items-center space-x-2 bg-electric-500/10 px-4 py-2 rounded-full border border-electric-500/20">
-                  <FaClock className="text-electric-400" />
-                  <span className="text-electric-300 font-mono font-medium">{timeLeft} left</span>
+                  <FaClock className="text-electric-600" />
+                  <span className="text-electric-500 font-mono font-medium">{timeLeft} left</span>
                 </div>
               )}
-              <div className="flex items-center space-x-2 text-neutral-400 text-sm">
+              <div className="flex items-center space-x-2 text-gray-500 text-sm">
                 <FaCalendarAlt />
                 <span>Event Date: 12th Aug, 2026</span>
               </div>
@@ -250,17 +250,17 @@ const StudentAwardRegistration = () => {
         )}
 
         {/* Form */}
-        <div className="glass-effect rounded-2xl shadow-2xl border border-white/10 overflow-hidden">
-          <div className="p-1 bg-gradient-to-r from-electric-500 via-purple-500 to-electric-500 opacity-50"></div>
+        <div className="glass-effect rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
+          <div className="p-1 bg-gradient-to-r from-electric-500 via-electric-500 to-electric-500 opacity-50"></div>
           <form onSubmit={handleSubmit} className="p-8 md:p-10 space-y-8">
 
             {/* Student Details Section */}
             <div>
               <div className="flex items-center mb-6">
-                <div className="w-10 h-10 rounded-lg bg-gradient-electric flex items-center justify-center mr-4 shadow-lg shadow-electric-500/20">
+                <div className="w-10 h-10 rounded-lg bg-gradient-electric flex items-center justify-center mr-4 shadow-lg shadow-electric-500/10">
                   <FaUserGraduate className="text-white text-xl" />
                 </div>
-                <h3 className="text-xl font-bold text-white">Student Information</h3>
+                <h3 className="text-xl font-bold text-gray-900">Student Information</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -334,7 +334,7 @@ const StudentAwardRegistration = () => {
               </div>
             </div>
 
-            <div className="border-t border-white/10 my-8"></div>
+            <div className="border-t border-gray-200 my-8"></div>
 
             {/* Academic Details Section */}
             <div>
@@ -342,7 +342,7 @@ const StudentAwardRegistration = () => {
                 <div className="w-10 h-10 rounded-lg bg-gradient-secondary flex items-center justify-center mr-4 shadow-lg shadow-secondary-500/20">
                   <FaSchool className="text-white text-xl" />
                 </div>
-                <h3 className="text-xl font-bold text-white">Academic Details</h3>
+                <h3 className="text-xl font-bold text-gray-900">Academic Details</h3>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -353,13 +353,13 @@ const StudentAwardRegistration = () => {
                     value={formData.standard}
                     onChange={handleChange}
                     required
-                    className="input-field bg-neutral-800/50"
+                    className="input-field bg-gray-50"
                   >
-                    <option value="" className="bg-neutral-800 text-neutral-400">Select Standard</option>
-                    <option value="10th" className="bg-neutral-800">10th SSC</option>
-                    <option value="12th" className="bg-neutral-800">12th HSC</option>
-                    <option value="Graduate" className="bg-neutral-800">Graduate</option>
-                    <option value="Post-Graduate" className="bg-neutral-800">Post-Graduate</option>
+                    <option value="" className="bg-gray-100 text-gray-500">Select Standard</option>
+                    <option value="10th" className="bg-gray-100">10th SSC</option>
+                    <option value="12th" className="bg-gray-100">12th HSC</option>
+                    <option value="Graduate" className="bg-gray-100">Graduate</option>
+                    <option value="Post-Graduate" className="bg-gray-100">Post-Graduate</option>
                   </select>
                 </div>
                 <div>
@@ -391,17 +391,17 @@ const StudentAwardRegistration = () => {
                 </div>
                 <div className="md:col-span-2">
                   <label className="form-label">Upload Result/Markhseet</label>
-                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-white/10 border-dashed rounded-xl hover:border-electric-500/50 transition-colors bg-neutral-800/30">
+                  <div className="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-200 border-dashed rounded-xl hover:border-electric-500/50 transition-colors bg-gray-100/30">
                     <div className="space-y-1 text-center">
-                      <FaFileUpload className="mx-auto h-12 w-12 text-neutral-400" />
-                      <div className="flex text-sm text-neutral-400">
-                        <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-electric-400 hover:text-electric-300 focus-within:outline-none">
+                      <FaFileUpload className="mx-auto h-12 w-12 text-gray-500" />
+                      <div className="flex text-sm text-gray-500">
+                        <label htmlFor="file-upload" className="relative cursor-pointer rounded-md font-medium text-electric-600 hover:text-electric-500 focus-within:outline-none">
                           <span>Upload a file</span>
                           <input id="file-upload" name="resultImage" type="file" className="sr-only" onChange={handleChange} required accept="image/*,.pdf" />
                         </label>
                         <p className="pl-1">or drag and drop</p>
                       </div>
-                      <p className="text-xs text-neutral-500">
+                      <p className="text-xs text-gray-400">
                         PNG, JPG, PDF up to 5MB
                       </p>
                       {formData.resultImage && (
@@ -416,10 +416,10 @@ const StudentAwardRegistration = () => {
             </div>
 
             {/* Declaration */}
-            <div className="bg-white/5 p-6 rounded-xl mb-6 border border-white/10">
+            <div className="bg-gray-50 p-6 rounded-xl mb-6 border border-gray-200">
               <label className="flex items-start">
-                <input type="checkbox" required className="mt-1 mr-3 h-4 w-4 rounded border-white/30 text-electric-500 focus:ring-electric-500 bg-neutral-700" />
-                <span className="text-sm text-neutral-300 leading-relaxed">
+                <input type="checkbox" required className="mt-1 mr-3 h-4 w-4 rounded border-white/30 text-electric-500 focus:ring-electric-500 bg-gray-200" />
+                <span className="text-sm text-gray-600 leading-relaxed">
                   I hereby declare that the information provided above is true and correct to the best of my knowledge. I understand that providing false information will result in disqualification.
                 </span>
               </label>

@@ -63,15 +63,15 @@ const VillageMembers = () => {
 
     if (loading) {
         return (
-            <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
                 <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gradient-mesh p-4 sm:p-8">
-            <div className="card-glass animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
+        <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
                 {/* Header */}
                 <div className="mb-8 sm:mb-10 animate-fade-in-up">
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -80,8 +80,8 @@ const VillageMembers = () => {
                                 <UsersIcon className="w-6 h-6 text-white" />
                             </div>
                             <div>
-                                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">My Village Members</h1>
-                                <p className="text-neutral-300 text-sm sm:text-base mt-1">
+                                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">My Village Members</h1>
+                                <p className="text-gray-600 text-sm sm:text-base mt-1">
                                     Manage members registered under {user?.village || 'your village'}
                                 </p>
                             </div>
@@ -110,13 +110,13 @@ const VillageMembers = () => {
                 <div className="mb-10 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
                     <div className="relative max-w-2xl">
                         <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <MagnifyingGlassIcon className="h-5 w-5 text-neutral-400" />
+                            <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
                         </div>
                         <input
                             type="text"
                             value={searchTerm}
                             onChange={handleSearchChange}
-                            className="input-field pl-12 py-3 w-full bg-black/20 focus:bg-black/30 transition-all duration-300 rounded-xl border-white/10 focus:border-electric-500/50"
+                            className="input-field pl-12 py-3 w-full bg-black/20 focus:bg-black/30 transition-all duration-300 rounded-xl border-gray-200 focus:border-electric-500/50"
                             placeholder="Search by name, email, or phone..."
                         />
                     </div>
@@ -125,10 +125,10 @@ const VillageMembers = () => {
                 {/* Members List */}
                 <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
                     {filteredMembers.length === 0 ? (
-                        <div className="text-center py-16 bg-white/5 rounded-2xl border border-white/5">
-                            <UsersIcon className="mx-auto h-16 w-16 text-neutral-500 mb-4" />
-                            <h3 className="text-xl font-medium text-white mb-2">No members found</h3>
-                            <p className="text-neutral-400">
+                        <div className="text-center py-16 bg-gray-50 rounded-2xl border border-white/5">
+                            <UsersIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+                            <h3 className="text-xl font-medium text-gray-800 mb-2">No members found</h3>
+                            <p className="text-gray-500">
                                 {searchTerm ? 'No members match your search criteria.' : 'There are no members registered in your village yet.'}
                             </p>
                         </div>
@@ -143,25 +143,25 @@ const VillageMembers = () => {
                                             </div>
                                         </div>
                                         <div className="flex-1 min-w-0 pt-1">
-                                            <h3 className="text-lg font-bold text-white truncate group-hover:text-electric-300 transition-colors">
+                                            <h3 className="text-lg font-bold text-gray-900 truncate group-hover:text-electric-500 transition-colors">
                                                 {member.username}
                                             </h3>
-                                            <p className="text-sm text-electric-300 font-medium mb-4">
+                                            <p className="text-sm text-electric-500 font-medium mb-4">
                                                 User ID: {member._id.substring(member._id.length - 6)}
                                             </p>
 
                                             <div className="space-y-3">
-                                                <div className="flex items-center text-sm text-neutral-300 bg-white/5 p-2 rounded-lg">
-                                                    <EnvelopeIcon className="flex-shrink-0 mr-3 h-4 w-4 text-secondary-400" />
+                                                <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                                                    <EnvelopeIcon className="flex-shrink-0 mr-3 h-4 w-4 text-secondary-600" />
                                                     <span className="truncate">{member.email}</span>
                                                 </div>
                                                 {member.phone && (
-                                                    <div className="flex items-center text-sm text-neutral-300 bg-white/5 p-2 rounded-lg">
-                                                        <PhoneIcon className="flex-shrink-0 mr-3 h-4 w-4 text-sunset-400" />
+                                                    <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                                                        <PhoneIcon className="flex-shrink-0 mr-3 h-4 w-4 text-sunset-600" />
                                                         <span className="truncate">{member.phone}</span>
                                                     </div>
                                                 )}
-                                                <div className="flex items-center text-sm text-neutral-300">
+                                                <div className="flex items-center text-sm text-gray-600">
                                                     <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold ${member.isVerified ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-red-500/20 text-red-400 border border-red-500/30'}`}>
                                                         {member.isVerified ? 'Verified' : 'Unverified'}
                                                     </span>
@@ -176,9 +176,9 @@ const VillageMembers = () => {
                 </div>
 
                 {/* Stats */}
-                <div className="mt-8 pt-6 border-t border-white/10 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+                <div className="mt-8 pt-6 border-t border-gray-200 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
                     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-                        <p className="text-neutral-300 text-sm">
+                        <p className="text-gray-600 text-sm">
                             Showing {filteredMembers.length} of {members.length} members
                         </p>
                         <button

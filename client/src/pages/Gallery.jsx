@@ -13,13 +13,13 @@ function Gallery() {
 
   const categories = ['all', 'weddings', 'corporate', 'birthdays', 'social', 'graduation', 'private'];
 
-  
+
   useEffect(() => {
     const fetchGalleryItems = async () => {
       try {
         setLoading(true);
         const items = await getGalleryItems(activeTab === 'photos' ? 'photo' : 'video');
-        
+
         setGalleryItems(prev => ({
           ...prev,
           [activeTab]: items
@@ -69,7 +69,7 @@ function Gallery() {
     }
   };
 
-  
+
   const handleImageClick = (item) => {
     setSelectedImage(item);
   };
@@ -79,12 +79,12 @@ function Gallery() {
     setSelectedImage(null);
   };
 
-  
+
   const ImageModal = () => {
     if (!selectedImage) return null;
 
     return (
-      <div 
+      <div
         className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
         onClick={handleCloseModal}
       >
@@ -98,7 +98,7 @@ function Gallery() {
           </button>
 
           {/* Image */}
-          <div 
+          <div
             className="relative"
             onClick={(e) => e.stopPropagation()}
           >
@@ -107,9 +107,9 @@ function Gallery() {
               alt={selectedImage.title}
               className="w-full h-auto max-h-[90vh] object-contain mx-auto"
             />
-            
+
             {/* Image details */}
-            <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-75 text-white p-4">
+            <div className="absolute bottom-0 left-0 right-0 bg-black/40 text-white p-4">
               <div className="flex items-center justify-between mt-2">
                 <span className="text-sm font-medium capitalize">
                   {selectedImage.category}
@@ -124,7 +124,7 @@ function Gallery() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto px-6">
           <div className="w-24 h-24 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-6 animate-pulse border border-red-500/30">
             <svg className="w-12 h-12 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -132,9 +132,9 @@ function Gallery() {
             </svg>
           </div>
           <h2 className="text-3xl font-bold text-red-400 mb-4">Oops! Something went wrong</h2>
-          <p className="text-lg text-neutral-300 mb-8 leading-relaxed">{error}</p>
-          <Button 
-            onClick={() => window.location.reload()} 
+          <p className="text-lg text-gray-600 mb-8 leading-relaxed">{error}</p>
+          <Button
+            onClick={() => window.location.reload()}
             variant="danger"
           >
             Try Again
@@ -145,13 +145,14 @@ function Gallery() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-gray-50 to-slate-100 page-decoration">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white py-20">
-        <div className="absolute inset-0 bg-gradient-mesh opacity-20"></div>
+      <div className="relative bg-gradient-hero text-white py-20 overflow-hidden">
+        <div className="absolute inset-0 texture-diagonal opacity-10"></div>
+        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-white/5 blur-3xl"></div>
         <div className="relative container mx-auto px-4 text-center">
           <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-white/10">
+            <span className="px-4 py-2 bg-gray-200 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-gray-200">
               Our Gallery
             </span>
           </div>
@@ -168,28 +169,26 @@ function Gallery() {
 
         {/* Tabs and Filters */}
         <div className="mb-12">
-          <div className="glass-effect rounded-2xl p-6 border border-white/10">
+          <div className="glass-effect rounded-2xl p-6 border border-gray-200">
             <div className="flex flex-col lg:flex-row justify-between items-center space-y-6 lg:space-y-0">
               {/* Media Type Tabs */}
               <div className="flex space-x-2">
                 <button
                   onClick={() => setActiveTab('photos')}
-                  className={`flex items-center space-x-3 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                    activeTab === 'photos'
+                  className={`flex items-center space-x-3 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${activeTab === 'photos'
                       ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
-                      : 'bg-white/10 text-neutral-300 hover:bg-white/20 hover:text-white border border-white/10'
-                  }`}
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 border border-gray-200'
+                    }`}
                 >
                   <FaImage className="w-5 h-5" />
                   <span>Photos</span>
                 </button>
                 <button
                   onClick={() => setActiveTab('videos')}
-                  className={`flex items-center space-x-3 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                    activeTab === 'videos'
+                  className={`flex items-center space-x-3 px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${activeTab === 'videos'
                       ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
-                      : 'bg-white/10 text-neutral-300 hover:bg-white/20 hover:text-white border border-white/10'
-                  }`}
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-gray-900 border border-gray-200'
+                    }`}
                 >
                   <FaVideo className="w-5 h-5" />
                   <span>Videos</span>
@@ -198,14 +197,14 @@ function Gallery() {
 
               {/* Category Filter */}
               <div className="flex items-center space-x-4">
-                <span className="text-neutral-300 font-medium">Filter by category:</span>
+                <span className="text-gray-600 font-medium">Filter by category:</span>
                 <select
                   value={selectedCategory}
                   onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="px-4 py-3 bg-neutral-800/50 backdrop-blur-sm border border-white/20 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
+                  className="px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                 >
                   {categories.map((category) => (
-                    <option key={category} value={category} className="bg-neutral-800 text-white">
+                    <option key={category} value={category} className="bg-gray-100 text-white">
                       {category.charAt(0).toUpperCase() + category.slice(1)}
                     </option>
                   ))}
@@ -225,7 +224,7 @@ function Gallery() {
             {filteredItems.map((item) => (
               <div
                 key={item._id}
-                className="group glass-effect rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2 border border-white/10"
+                className="group glass-effect rounded-2xl overflow-hidden hover:shadow-2xl transition-all duration-500 cursor-pointer transform hover:-translate-y-2 border border-gray-200"
                 onClick={() => handleImageClick(item)}
               >
                 <div className="relative overflow-hidden">
@@ -247,7 +246,7 @@ function Gallery() {
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="absolute bottom-4 left-4 right-4 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <span className="text-sm font-medium bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full border border-white/10">
+                    <span className="text-sm font-medium bg-gray-200 backdrop-blur-sm px-3 py-1 rounded-full border border-gray-200">
                       {item.category}
                     </span>
                   </div>
@@ -258,7 +257,7 @@ function Gallery() {
                       {item.category}
                     </span>
                     <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <span className="text-electric-400 text-sm font-medium">Click to view →</span>
+                      <span className="text-electric-600 text-sm font-medium">Click to view →</span>
                     </div>
                   </div>
                 </div>
@@ -270,11 +269,11 @@ function Gallery() {
         {/* Empty State */}
         {!loading && filteredItems.length === 0 && (
           <div className="text-center py-16">
-            <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mx-auto mb-6 border border-white/10">
-              <FaImage className="w-12 h-12 text-neutral-400" />
+            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6 border border-gray-200">
+              <FaImage className="w-12 h-12 text-gray-500" />
             </div>
-            <h3 className="text-2xl font-bold text-white mb-4">No Gallery Items Found</h3>
-            <p className="text-neutral-300 mb-6">No gallery items found for the selected category.</p>
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">No Gallery Items Found</h3>
+            <p className="text-gray-600 mb-6">No gallery items found for the selected category.</p>
             <Button
               onClick={() => setSelectedCategory('all')}
               variant="primary"

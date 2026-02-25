@@ -76,7 +76,7 @@ const IntroVideo = ({ onComplete }) => {
       {/* Skip button allows users to bypass if they want */}
       <button 
         onClick={onComplete}
-        className="absolute bottom-8 right-8 text-white/50 hover:text-white text-sm px-4 py-2 border border-white/30 rounded-full hover:bg-white/10 transition-all duration-300 z-50 uppercase tracking-widest"
+        className="absolute bottom-8 right-8 text-white/50 hover:text-gray-900 text-sm px-4 py-2 border border-white/30 rounded-full hover:bg-gray-100 transition-all duration-300 z-50 uppercase tracking-widest"
       >
         Skip Intro
       </button>

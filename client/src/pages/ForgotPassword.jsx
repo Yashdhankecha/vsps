@@ -124,15 +124,15 @@ function ForgotPassword() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gradient-mesh py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 glass-effect p-8 rounded-xl shadow-lg border border-white/10">
+    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 glass-effect p-8 rounded-xl shadow-lg border border-gray-200">
         {step === 'email' && (
           <>
             <div>
               <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
                 Reset your password
               </h2>
-              <p className="mt-2 text-center text-sm text-neutral-300">
+              <p className="mt-2 text-center text-sm text-gray-600">
                 Enter your email address and we'll send you an OTP to reset your password.
               </p>
             </div>
@@ -142,13 +142,13 @@ function ForgotPassword() {
                 <label htmlFor="email" className="sr-only">Email address</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                    <FaEnvelope className="h-5 w-5 text-neutral-400" />
+                    <FaEnvelope className="h-5 w-5 text-gray-500" />
                   </div>
                   <input
                     id="email"
                     type="email"
                     required
-                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-neutral-800/50 border border-white/20 placeholder-neutral-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500"
+                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-gray-50 border border-gray-300 placeholder-gray-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500"
                     placeholder="Email address"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
@@ -158,7 +158,7 @@ function ForgotPassword() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${
+                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/15 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${
                   isLoading ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
               >
@@ -174,9 +174,9 @@ function ForgotPassword() {
               <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
                 Enter OTP
               </h2>
-              <p className="mt-2 text-center text-sm text-neutral-300">
+              <p className="mt-2 text-center text-sm text-gray-600">
                 Please enter the 6-digit OTP sent to<br/>
-                <span className="font-medium text-electric-400">{email}</span>
+                <span className="font-medium text-electric-600">{email}</span>
               </p>
             </div>
             {error && <p className="text-red-400 text-center">{error}</p>}
@@ -190,14 +190,14 @@ function ForgotPassword() {
                     maxLength="1"
                     value={value}
                     onChange={(e) => handleOTPChange(index, e.target.value)}
-                    className="w-12 h-12 text-center text-xl font-semibold border rounded-lg focus:ring-2 focus:ring-electric-500 focus:border-electric-500 bg-neutral-800/50 border-white/20 text-white"
+                    className="w-12 h-12 text-center text-xl font-semibold border rounded-lg focus:ring-2 focus:ring-electric-500 focus:border-electric-500 bg-gray-50 border-gray-300 text-white"
                   />
                 ))}
               </div>
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${
+                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/15 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${
                   isLoading ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
               >
@@ -205,14 +205,14 @@ function ForgotPassword() {
               </button>
               <div className="text-center">
                 {resendTimer > 0 ? (
-                  <p className="text-sm text-neutral-400">
+                  <p className="text-sm text-gray-500">
                     Resend OTP in {resendTimer} seconds
                   </p>
                 ) : (
                   <button
                     type="button"
                     onClick={handleResendOTP}
-                    className="text-sm text-electric-400 hover:text-electric-300"
+                    className="text-sm text-electric-600 hover:text-electric-500"
                   >
                     Resend OTP
                   </button>
@@ -228,7 +228,7 @@ function ForgotPassword() {
               <h2 className="mt-6 text-center text-3xl font-extrabold text-white">
                 Set New Password
               </h2>
-              <p className="mt-2 text-center text-sm text-neutral-300">
+              <p className="mt-2 text-center text-sm text-gray-600">
                 Please enter your new password below.
               </p>
             </div>
@@ -238,13 +238,13 @@ function ForgotPassword() {
                 <label htmlFor="newPassword" className="sr-only">New Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                    <FaLock className="h-5 w-5 text-neutral-400" />
+                    <FaLock className="h-5 w-5 text-gray-500" />
                   </div>
                   <input
                     id="newPassword"
                     type="password"
                     required
-                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-neutral-800/50 border border-white/20 placeholder-neutral-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500"
+                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-gray-50 border border-gray-300 placeholder-gray-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500"
                     placeholder="New Password"
                     value={newPassword}
                     onChange={(e) => setNewPassword(e.target.value)}
@@ -255,13 +255,13 @@ function ForgotPassword() {
                 <label htmlFor="confirmPassword" className="sr-only">Confirm Password</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center">
-                    <FaLock className="h-5 w-5 text-neutral-400" />
+                    <FaLock className="h-5 w-5 text-gray-500" />
                   </div>
                   <input
                     id="confirmPassword"
                     type="password"
                     required
-                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-neutral-800/50 border border-white/20 placeholder-neutral-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500"
+                    className="appearance-none rounded-lg block w-full pl-10 px-3 py-3 bg-gray-50 border border-gray-300 placeholder-gray-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500"
                     placeholder="Confirm Password"
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
@@ -271,7 +271,7 @@ function ForgotPassword() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${
+                className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/15 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg ${
                   isLoading ? 'opacity-70 cursor-not-allowed' : ''
                 }`}
               >
@@ -282,7 +282,7 @@ function ForgotPassword() {
         )}
 
         <div className="text-center mt-4">
-          <Link to="/auth" className="text-sm text-electric-400 hover:text-electric-300 flex items-center justify-center">
+          <Link to="/auth" className="text-sm text-electric-600 hover:text-electric-500 flex items-center justify-center">
             <FaArrowLeft className="mr-2" />
             Back to Login
           </Link>

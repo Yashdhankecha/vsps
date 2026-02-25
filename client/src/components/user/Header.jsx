@@ -41,10 +41,6 @@ function Header() {
         { label: 'Book Event', path: '/booking' }
       ]
     },
-    // {
-    //   label: 'Live',
-    //   path: '/live-streaming'
-    // },
     {
       label: 'Gallery',
       path: '/gallery'
@@ -84,13 +80,13 @@ function Header() {
     location.pathname.startsWith('/ResetPassword');
 
   return (
-    <header className="bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white shadow-2xl relative z-50 backdrop-blur-xl border-b border-white/10">
+    <header className="bg-white/80 backdrop-blur-lg text-gray-800 shadow-soft relative z-50 border-b border-gray-200/60 sticky top-0">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center group-hover:bg-gradient-to-br group-hover:from-electric-500 group-hover:to-neon-500 transition-all duration-300 group-hover:scale-110 shadow-lg hover:shadow-electric-500/50">
-              <FaVideo className="text-xl" />
+            <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-md">
+              <FaVideo className="text-xl text-white" />
             </div>
             <span className="text-3xl font-bold text-gradient group-hover:text-shimmer transition-all duration-300">
               VSPS
@@ -109,10 +105,10 @@ function Header() {
                 {item.dropdown ? (
                   <div>
                     <button
-                      className={`px-4 py-3 rounded-xl transition-all duration-300 flex items-center space-x-2 font-semibold glass-effect
+                      className={`px-4 py-3 rounded-xl transition-all duration-300 flex items-center space-x-2 font-semibold
                         ${activeDropdown === index
-                          ? 'bg-electric-500/20 text-white shadow-lg transform scale-105 border-electric-500/30'
-                          : 'hover:bg-white/10 hover:scale-105 border-white/10'}`}
+                          ? 'bg-electric-50 text-electric-700 shadow-sm border border-electric-200'
+                          : 'hover:bg-gray-100 hover:scale-105 text-gray-700 border border-transparent'}`}
                     >
                       <span>{item.label}</span>
                       <svg
@@ -127,7 +123,7 @@ function Header() {
                     </button>
                     {/* Dropdown */}
                     <div
-                      className={`absolute left-0 mt-3 w-56 rounded-2xl shadow-2xl bg-neutral-800/95 backdrop-blur-xl border border-white/20 
+                      className={`absolute left-0 mt-3 w-56 rounded-2xl shadow-lg bg-white border border-gray-200 
                         ${activeDropdown === index ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'} 
                         transition-all duration-300 transform origin-top z-50`}
                     >
@@ -136,7 +132,7 @@ function Header() {
                           <Link
                             key={dropdownIndex}
                             to={dropdownItem.path}
-                            className="block px-6 py-3 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white transition-all duration-200 font-medium border-l-2 border-transparent hover:border-electric-400"
+                            className="block px-6 py-3 text-sm text-gray-600 hover:bg-electric-50 hover:text-electric-700 transition-all duration-200 font-medium border-l-2 border-transparent hover:border-electric-500"
                           >
                             {dropdownItem.label}
                           </Link>
@@ -147,10 +143,10 @@ function Header() {
                 ) : (
                   <Link
                     to={item.path}
-                    className={`px-4 py-3 rounded-xl transition-all duration-300 font-semibold glass-effect border
+                    className={`px-4 py-3 rounded-xl transition-all duration-300 font-semibold border
                       ${isActive(item.path)
-                        ? 'bg-electric-500/20 text-white shadow-lg transform scale-105 border-electric-500/30'
-                        : 'hover:bg-white/10 hover:scale-105 border-white/10'}`}
+                        ? 'bg-electric-50 text-electric-700 shadow-sm border-electric-200'
+                        : 'hover:bg-gray-100 hover:scale-105 text-gray-700 border-transparent'}`}
                   >
                     {item.label}
                   </Link>
@@ -165,39 +161,39 @@ function Header() {
                   <div className="relative" ref={profileDropdownRef}>
                     <button
                       onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
-                      className="ml-4 px-6 py-3 glass-effect rounded-2xl hover:bg-electric-500/20 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-lg hover:shadow-electric-500/30 border border-white/10 hover:border-electric-500/30"
+                      className="ml-4 px-6 py-3 rounded-2xl hover:bg-gray-100 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-sm border border-gray-200 hover:border-gray-300 text-gray-700"
                     >
                       <div className="w-8 h-8 bg-gradient-electric rounded-full flex items-center justify-center">
-                        <FaUser className="w-4 h-4" />
+                        <FaUser className="w-4 h-4 text-white" />
                       </div>
                       <span>{user.username || user.name || 'Profile'}</span>
                     </button>
                     {/* Profile Dropdown Menu */}
                     {isProfileDropdownOpen && (
-                      <div className="absolute right-0 mt-3 w-64 rounded-2xl shadow-2xl bg-neutral-800/95 backdrop-blur-xl border border-white/20 z-50">
+                      <div className="absolute right-0 mt-3 w-64 rounded-2xl shadow-lg bg-white border border-gray-200 z-50">
                         <div className="py-3">
-                          <div className="px-6 py-3 border-b border-white/10">
-                            <p className="text-sm text-neutral-400">Welcome back!</p>
-                            <p className="font-semibold text-white">{user.username || user.name || 'User Profile'}</p>
+                          <div className="px-6 py-3 border-b border-gray-100">
+                            <p className="text-sm text-gray-500">Welcome back!</p>
+                            <p className="font-semibold text-gray-900">{user.username || user.name || 'User Profile'}</p>
                           </div>
                           <Link
                             to="/profile-settings"
-                            className="block px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white font-medium transition-all duration-200"
+                            className="block px-6 py-4 text-sm text-gray-600 hover:bg-electric-50 hover:text-electric-700 font-medium transition-all duration-200"
                             onClick={() => setIsProfileDropdownOpen(false)}
                           >
                             Profile Settings
                           </Link>
                           <Link
                             to="/recently-booked"
-                            className="block px-6 py-4 text-sm text-neutral-300 hover:bg-gradient-to-r hover:from-electric-500/20 hover:to-neon-500/20 hover:text-white font-medium transition-all duration-200"
+                            className="block px-6 py-4 text-sm text-gray-600 hover:bg-electric-50 hover:text-electric-700 font-medium transition-all duration-200"
                             onClick={() => setIsProfileDropdownOpen(false)}
                           >
                             Recent Bookings
                           </Link>
-                          <div className="border-t border-white/10 mt-2">
+                          <div className="border-t border-gray-100 mt-2">
                             <button
                               onClick={handleLogout}
-                              className="block w-full text-left px-6 py-4 text-sm text-red-400 hover:bg-red-500/20 font-medium transition-all duration-200"
+                              className="block w-full text-left px-6 py-4 text-sm text-red-600 hover:bg-red-50 font-medium transition-all duration-200"
                             >
                               Logout
                             </button>
@@ -209,9 +205,9 @@ function Header() {
                 ) : (
                   <Link
                     to="/auth"
-                    className="ml-4 px-6 py-3 bg-gradient-electric rounded-2xl hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-lg"
+                    className="ml-4 px-6 py-3 bg-gradient-electric text-white rounded-2xl hover:shadow-lg hover:shadow-electric-500/10 transition-all duration-300 flex items-center space-x-3 font-semibold hover:scale-105 shadow-md"
                   >
-                    <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+                    <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
                       <FaUser className="w-4 h-4" />
                     </div>
                     <span>Sign In</span>
@@ -225,7 +221,7 @@ function Header() {
           {/* Mobile Menu Button */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-3 rounded-2xl hover:bg-white/10 transition-all duration-300 hover:scale-110"
+            className="lg:hidden p-3 rounded-2xl hover:bg-gray-100 transition-all duration-300 hover:scale-110 text-gray-700"
           >
             <div className="w-6 h-6 flex flex-col justify-center items-center">
               {isMenuOpen ? (
@@ -239,20 +235,20 @@ function Header() {
 
         {/* Mobile Menu */}
         {isMenuOpen && (
-          <nav className="lg:hidden py-6 border-t border-white/20 bg-gradient-to-b from-neutral-800/95 to-neutral-900/95 backdrop-blur-xl">
+          <nav className="lg:hidden py-6 border-t border-gray-200 bg-white">
             {/* Mobile Navigation Items */}
             <div className="px-6 space-y-2">
               {navigationItems.map((item, index) => (
                 <div key={index}>
                   {item.dropdown ? (
                     <div className="py-2">
-                      <div className="font-bold text-lg text-white mb-3 px-3">{item.label}</div>
+                      <div className="font-bold text-lg text-gray-900 mb-3 px-3">{item.label}</div>
                       <div className="ml-4 space-y-2">
                         {item.dropdown.map((dropdownItem, dropdownIndex) => (
                           <Link
                             key={dropdownIndex}
                             to={dropdownItem.path}
-                            className="block py-3 px-4 text-white/80 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-300 font-medium"
+                            className="block py-3 px-4 text-gray-600 hover:text-electric-700 hover:bg-electric-50 rounded-xl transition-all duration-300 font-medium"
                             onClick={() => setIsMenuOpen(false)}
                           >
                             {dropdownItem.label}
@@ -263,7 +259,7 @@ function Header() {
                   ) : (
                     <Link
                       to={item.path}
-                      className="block py-4 px-4 hover:bg-white/10 rounded-2xl transition-all duration-300 font-semibold text-white"
+                      className="block py-4 px-4 hover:bg-gray-100 rounded-2xl transition-all duration-300 font-semibold text-gray-800"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {item.label}
@@ -274,30 +270,30 @@ function Header() {
             </div>
             {/* Mobile Login/Signup (only show if not on auth page) */}
             {!isAuthPage && (
-              <div className="px-6 pt-6 border-t border-white/20">
+              <div className="px-6 pt-6 border-t border-gray-200">
                 {user ? (
                   <div className="space-y-3">
                     <div className="text-center mb-4">
-                      <p className="text-white/80 text-sm">Welcome back!</p>
-                      <p className="text-white font-bold">{user.username || user.name || 'User Profile'}</p>
+                      <p className="text-gray-500 text-sm">Welcome back!</p>
+                      <p className="text-gray-900 font-bold">{user.username || user.name || 'User Profile'}</p>
                     </div>
                     <Link
                       to="/profile-settings"
-                      className="block text-center px-6 py-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all duration-300 font-semibold text-white"
+                      className="block text-center px-6 py-4 bg-gray-100 rounded-2xl hover:bg-gray-200 transition-all duration-300 font-semibold text-gray-800"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Profile Settings
                     </Link>
                     <Link
                       to="/recently-booked"
-                      className="block text-center px-6 py-4 bg-white/10 rounded-2xl hover:bg-white/20 transition-all duration-300 font-semibold text-white"
+                      className="block text-center px-6 py-4 bg-gray-100 rounded-2xl hover:bg-gray-200 transition-all duration-300 font-semibold text-gray-800"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Recent Bookings
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="block w-full text-center px-6 py-4 bg-red-500/20 rounded-2xl hover:bg-red-500/30 transition-all duration-300 font-semibold text-red-200 hover:text-red-100"
+                      className="block w-full text-center px-6 py-4 bg-red-50 rounded-2xl hover:bg-red-100 transition-all duration-300 font-semibold text-red-600"
                     >
                       Logout
                     </button>
@@ -305,7 +301,7 @@ function Header() {
                 ) : (
                   <Link
                     to="/auth"
-                    className="flex items-center justify-center px-8 py-4 bg-gradient-to-r from-white/10 to-white/20 rounded-2xl hover:from-white/20 hover:to-white/30 transition-all duration-300 font-bold text-white shadow-lg"
+                    className="flex items-center justify-center px-8 py-4 bg-gradient-electric rounded-2xl transition-all duration-300 font-bold text-gray-900 shadow-md"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     <FaUser className="mr-3 w-5 h-5" />

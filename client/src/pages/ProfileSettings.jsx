@@ -106,7 +106,7 @@ function ProfileSettings() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -114,7 +114,7 @@ function ProfileSettings() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-mesh py-12">
+      <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <Card className="max-w-md mx-auto p-6">
             <div className="text-red-400 text-center">
@@ -127,20 +127,20 @@ function ProfileSettings() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh py-8 sm:py-12">
+    <div className="min-h-screen bg-gray-50 py-8 sm:py-12">
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-8 animate-fade-in-down">
-          <h1 className="text-3xl sm:text-4xl font-bold text-white mb-3">
+          <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-3">
             {profileData.username ? `${profileData.username}'s Profile` : 'Profile Settings'}
           </h1>
-          <p className="text-neutral-300 text-lg">Manage your account information</p>
+          <p className="text-gray-600 text-lg">Manage your account information</p>
         </div>
         
-        <div className="card-glass p-6 sm:p-8 animate-fade-in-up">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 sm:p-8 animate-fade-in-up">
           {/* Profile Photo Section */}
           <div className="flex flex-col items-center mb-8">
             <div className="relative group">
-              <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-electric-500/20 to-neon-500/20 border-4 border-white/20 shadow-xl">
+              <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-electric-500/20 to-neon-500/20 border-4 border-gray-300 shadow-xl">
                 {previewImage ? (
                   <img
                     src={previewImage}
@@ -157,7 +157,7 @@ function ProfileSettings() {
                   </div>
                 )}
               </div>
-              <label className="absolute bottom-2 right-2 bg-gradient-electric p-3 rounded-full cursor-pointer hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 transform hover:scale-110 shadow-lg group-hover:rotate-12">
+              <label className="absolute bottom-2 right-2 bg-gradient-electric p-3 rounded-full cursor-pointer hover:shadow-lg hover:shadow-electric-500/15 transition-all duration-300 transform hover:scale-110 shadow-lg group-hover:rotate-12">
                 <FaCamera className="text-white" />
                 <input
                   type="file"
@@ -167,14 +167,14 @@ function ProfileSettings() {
                 />
               </label>
             </div>
-            <p className="text-sm text-neutral-400 mt-3">Click camera icon to upload profile picture</p>
+            <p className="text-sm text-gray-500 mt-3">Click camera icon to upload profile picture</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Basic Information */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="block text-neutral-200 font-medium">Name</label>
+                <label className="block text-gray-700 font-medium">Name</label>
                 <Input
                   type="text"
                   name="username"
@@ -187,7 +187,7 @@ function ProfileSettings() {
               </div>
               
               <div className="space-y-2">
-                <label className="block text-neutral-200 font-medium">Email</label>
+                <label className="block text-gray-700 font-medium">Email</label>
                 <Input
                   type="email"
                   name="email"
@@ -200,7 +200,7 @@ function ProfileSettings() {
               </div>
               
               <div className="space-y-2">
-                <label className="block text-neutral-200 font-medium">Phone</label>
+                <label className="block text-gray-700 font-medium">Phone</label>
                 <Input
                   type="tel"
                   name="phone"
@@ -213,7 +213,7 @@ function ProfileSettings() {
               </div>
               
               <div className="space-y-2">
-                <label className="block text-neutral-200 font-medium">Location</label>
+                <label className="block text-gray-700 font-medium">Location</label>
                 <Input
                   type="text"
                   name="address"

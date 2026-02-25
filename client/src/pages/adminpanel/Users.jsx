@@ -316,7 +316,7 @@ const Users = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -324,14 +324,14 @@ const Users = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="max-w-md w-full">
-          <div className="card-glass p-8 text-center animate-fade-in-up">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center animate-fade-in-up">
             <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
               <XCircleIconSolid className="w-8 h-8 text-red-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Error Loading Users</h3>
-            <p className="text-neutral-300 mb-6">{error}</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Error Loading Users</h3>
+            <p className="text-gray-600 mb-6">{error}</p>
             <button
               onClick={fetchUsers}
               className="btn-primary w-full"
@@ -345,9 +345,9 @@ const Users = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
         {/* Notifications - Positioned absolutely within the container to avoid layout issues */}
         <div className="fixed top-6 right-6 z-50 space-y-3">
           {notifications.map((notification) => {
@@ -409,7 +409,7 @@ const Users = () => {
                   </div>
                   <button
                     onClick={() => closeNotification(notification.id)}
-                    className="flex-shrink-0 text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
+                    className="flex-shrink-0 text-gray-500 hover:text-gray-500 transition-colors duration-200"
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>
@@ -420,7 +420,7 @@ const Users = () => {
         </div>
 
         {/* Header Section - Responsive */}
-        <div className="border-b border-white/10 pb-6 mb-6">
+        <div className="border-b border-gray-200 pb-6 mb-6">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
             {/* Title and Stats */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -428,13 +428,13 @@ const Users = () => {
                 <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
                   <UserGroupIcon className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-white">User Management</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">User Management</h2>
               </div>
               
               {/* Stats Display */}
-              <div className="glass-effect px-4 py-2 rounded-lg border border-white/10">
-                <p className="text-sm text-neutral-300">
-                  Total Users: <span className="font-semibold text-white">{Array.isArray(users) ? users.length : 0}</span>
+              <div className="glass-effect px-4 py-2 rounded-lg border border-gray-200">
+                <p className="text-sm text-gray-600">
+                  Total Users: <span className="font-semibold text-gray-800">{Array.isArray(users) ? users.length : 0}</span>
                 </p>
               </div>
             </div>
@@ -460,8 +460,8 @@ const Users = () => {
               <button
                 onClick={handleRefresh}
                 disabled={isRefreshing}
-                className={`flex items-center space-x-2 px-4 py-2 glass-effect rounded-lg border border-white/10 transition-all duration-300 ${
-                  isRefreshing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-white/10'
+                className={`flex items-center space-x-2 px-4 py-2 glass-effect rounded-lg border border-gray-200 transition-all duration-300 ${
+                  isRefreshing ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'
                 }`}
               >
                 {isRefreshing ? (
@@ -479,7 +479,7 @@ const Users = () => {
             <div className="md:col-span-2">
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <MagnifyingGlassIcon className="h-5 w-5 text-neutral-400" />
+                  <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
                 </div>
                 <input
                   type="text"
@@ -525,21 +525,21 @@ const Users = () => {
         </div>
 
         {/* Users Table */}
-        <div className="overflow-x-auto rounded-xl border border-white/10">
+        <div className="overflow-x-auto rounded-xl border border-gray-200">
           <table className="min-w-full divide-y divide-white/10">
-            <thead className="bg-neutral-800/50">
+            <thead className="bg-gray-50">
               <tr>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">User</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Role</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Status</th>
-                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-neutral-300 uppercase tracking-wider">Joined</th>
-                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-neutral-300 uppercase tracking-wider">Actions</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">User</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Role</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Status</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">Joined</th>
+                <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-600 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-neutral-900/30 divide-y divide-white/10">
+            <tbody className="bg-gray-50/30 divide-y divide-white/10">
               {Array.isArray(filteredUsers) && filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
-                  <tr key={user._id} className="hover:bg-white/5 transition-colors duration-200">
+                  <tr key={user._id} className="hover:bg-gray-50 transition-colors duration-200">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0 h-10 w-10">
@@ -550,8 +550,8 @@ const Users = () => {
                           </div>
                         </div>
                         <div className="ml-4">
-                          <div className="text-sm font-medium text-white">{user.username}</div>
-                          <div className="text-sm text-neutral-400">{user.email}</div>
+                          <div className="text-sm font-medium text-gray-800">{user.username}</div>
+                          <div className="text-sm text-gray-500">{user.email}</div>
                         </div>
                       </div>
                     </td>
@@ -567,7 +567,7 @@ const Users = () => {
                         {user.isVerified ? 'Verified' : 'Pending'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-neutral-400">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {new Date(user.createdAt || Date.now()).toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
@@ -577,7 +577,7 @@ const Users = () => {
                             setEditingUser(user);
                             setIsEditing(true);
                           }}
-                          className="text-electric-400 hover:text-electric-300 transition-colors duration-200"
+                          className="text-electric-600 hover:text-electric-500 transition-colors duration-200"
                           title="Edit User"
                         >
                           <PencilIcon className="w-5 h-5" />
@@ -600,9 +600,9 @@ const Users = () => {
                 <tr>
                   <td colSpan="5" className="px-6 py-12 text-center">
                     <div className="flex flex-col items-center justify-center">
-                      <UserIcon className="w-12 h-12 text-neutral-600 mb-3" />
-                      <h3 className="text-lg font-medium text-white mb-1">No users found</h3>
-                      <p className="text-neutral-400">
+                      <UserIcon className="w-12 h-12 text-gray-500 mb-3" />
+                      <h3 className="text-lg font-medium text-gray-800 mb-1">No users found</h3>
+                      <p className="text-gray-500">
                         {searchTerm || roleFilter !== 'all' || statusFilter !== 'all' 
                           ? 'Try adjusting your search or filter criteria' 
                           : 'There are currently no users in the system'}
@@ -618,12 +618,12 @@ const Users = () => {
         {/* Pagination */}
         {Array.isArray(filteredUsers) && filteredUsers.length > 0 && (
           <div className="mt-6 flex items-center justify-between">
-            <div className="text-sm text-neutral-400">
-              Showing <span className="font-medium text-white">{indexOfFirstUser + 1}</span> to{' '}
-              <span className="font-medium text-white">
+            <div className="text-sm text-gray-500">
+              Showing <span className="font-medium text-gray-800">{indexOfFirstUser + 1}</span> to{' '}
+              <span className="font-medium text-gray-800">
                 {Math.min(indexOfLastUser, filteredUsers.length)}
               </span>{' '}
-              of <span className="font-medium text-white">{filteredUsers.length}</span> users
+              of <span className="font-medium text-gray-800">{filteredUsers.length}</span> users
             </div>
             <div className="flex space-x-2">
               <button
@@ -631,8 +631,8 @@ const Users = () => {
                 disabled={currentPage === 1}
                 className={`px-4 py-2 rounded-lg ${
                   currentPage === 1
-                    ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed'
-                    : 'glass-effect border border-white/10 hover:bg-white/10 text-white'
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'glass-effect border border-gray-200 hover:bg-gray-100 text-white'
                 }`}
               >
                 Previous
@@ -644,7 +644,7 @@ const Users = () => {
                   className={`px-4 py-2 rounded-lg ${
                     currentPage === index + 1
                       ? 'bg-gradient-electric text-white'
-                      : 'glass-effect border border-white/10 hover:bg-white/10 text-white'
+                      : 'glass-effect border border-gray-200 hover:bg-gray-100 text-white'
                   }`}
                 >
                   {index + 1}
@@ -655,8 +655,8 @@ const Users = () => {
                 disabled={currentPage === totalPages}
                 className={`px-4 py-2 rounded-lg ${
                   currentPage === totalPages
-                    ? 'bg-neutral-800 text-neutral-500 cursor-not-allowed'
-                    : 'glass-effect border border-white/10 hover:bg-white/10 text-white'
+                    ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    : 'glass-effect border border-gray-200 hover:bg-gray-100 text-white'
                 }`}
               >
                 Next
@@ -667,15 +667,15 @@ const Users = () => {
 
         {/* Delete Confirmation Modal */}
         {showDeleteConfirmation && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="card-glass p-6 max-w-md w-full animate-fade-in-up">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 max-w-md w-full animate-fade-in-up">
               <div className="text-center">
                 <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-500/20 border border-red-500/30 mb-4">
                   <ExclamationTriangleIconSolid className="h-6 w-6 text-red-400" />
                 </div>
-                <h3 className="text-lg font-medium text-white mb-2">Confirm Deletion</h3>
-                <p className="text-neutral-300 mb-6">
-                  Are you sure you want to delete user <span className="font-semibold text-white">{deletingUser?.username}</span>? 
+                <h3 className="text-lg font-medium text-gray-800 mb-2">Confirm Deletion</h3>
+                <p className="text-gray-600 mb-6">
+                  Are you sure you want to delete user <span className="font-semibold text-gray-800">{deletingUser?.username}</span>? 
                   This action cannot be undone.
                 </p>
                 <div className="flex justify-center space-x-3">
@@ -704,10 +704,10 @@ const Users = () => {
 
         {/* Edit/Create User Modal */}
         {(editingUser || isCreating) && (
-          <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-            <div className="card-glass p-6 max-w-md w-full animate-fade-in-up max-h-[90vh] overflow-y-auto">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 max-w-md w-full animate-fade-in-up max-h-[90vh] overflow-y-auto">
               <div className="flex justify-between items-center mb-6">
-                <h3 className="text-xl font-bold text-white">
+                <h3 className="text-xl font-bold text-gray-900">
                   {isCreating ? 'Create New User' : 'Edit User'}
                 </h3>
                 <button
@@ -716,7 +716,7 @@ const Users = () => {
                     setIsCreating(false);
                     setIsEditing(false);
                   }}
-                  className="text-neutral-400 hover:text-white transition-colors duration-200"
+                  className="text-gray-500 hover:text-gray-900 transition-colors duration-200"
                 >
                   <XMarkIcon className="h-6 w-6" />
                 </button>
@@ -725,7 +725,7 @@ const Users = () => {
               <form onSubmit={handleUpdate}>
                 <div className="space-y-4">
                   <div>
-                    <label htmlFor="username" className="block text-sm font-medium text-neutral-300 mb-1">
+                    <label htmlFor="username" className="block text-sm font-medium text-gray-600 mb-1">
                       Username
                     </label>
                     <input
@@ -739,7 +739,7 @@ const Users = () => {
                   </div>
                   
                   <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-neutral-300 mb-1">
+                    <label htmlFor="email" className="block text-sm font-medium text-gray-600 mb-1">
                       Email
                     </label>
                     <input
@@ -754,7 +754,7 @@ const Users = () => {
                   
                   {isCreating && (
                     <div>
-                      <label htmlFor="password" className="block text-sm font-medium text-neutral-300 mb-1">
+                      <label htmlFor="password" className="block text-sm font-medium text-gray-600 mb-1">
                         Password
                       </label>
                       <input
@@ -769,7 +769,7 @@ const Users = () => {
                   )}
                   
                   <div>
-                    <label htmlFor="role" className="block text-sm font-medium text-neutral-300 mb-1">
+                    <label htmlFor="role" className="block text-sm font-medium text-gray-600 mb-1">
                       Role
                     </label>
                     <select
@@ -796,9 +796,9 @@ const Users = () => {
                       id="isVerified"
                       checked={editForm.isVerified}
                       onChange={(e) => setEditForm({...editForm, isVerified: e.target.checked})}
-                      className="h-4 w-4 text-electric-500 rounded border-neutral-600 bg-neutral-800 focus:ring-electric-500"
+                      className="h-4 w-4 text-electric-500 rounded border-neutral-600 bg-gray-100 focus:ring-electric-500"
                     />
-                    <label htmlFor="isVerified" className="ml-2 block text-sm text-neutral-300">
+                    <label htmlFor="isVerified" className="ml-2 block text-sm text-gray-600">
                       Verified
                     </label>
                   </div>

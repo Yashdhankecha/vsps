@@ -129,7 +129,7 @@ const FormStatusCheck = ({ children, formType }) => {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-500 mx-auto"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-electric-500 mx-auto"></div>
           <p className="mt-4 text-gray-600">Checking form availability...</p>
         </div>
       </div>
@@ -200,7 +200,7 @@ function AppContent() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-500"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-electric-500"></div>
       </div>
     );
   }
@@ -215,7 +215,7 @@ function AppContent() {
     if (user.role === "superadmin") {
       return (
         <AdminLayoutProvider>
-          <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+          <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
             <AdminSidebar />
             <AdminPageContainer>
               <Routes>
@@ -242,7 +242,7 @@ function AppContent() {
       case "usermanager":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -257,7 +257,7 @@ function AppContent() {
       case "contentmanager":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -272,7 +272,7 @@ function AppContent() {
       case "formmanager":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -287,7 +287,7 @@ function AppContent() {
       case "bookingmanager":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -303,7 +303,7 @@ function AppContent() {
       case "contactmanager":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -319,7 +319,7 @@ function AppContent() {
       case "committeemember":
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
               <CommitteeMemberSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -340,7 +340,7 @@ function AppContent() {
         // Regular admin gets full access like super admin for backward compatibility
         return (
           <AdminLayoutProvider>
-            <div className="flex min-h-screen bg-gradient-mesh overflow-x-hidden">
+            <div className="flex min-h-screen bg-gray-50 overflow-x-hidden">
               <AdminSidebar />
               <AdminPageContainer>
                 <Routes>
@@ -365,7 +365,7 @@ function AppContent() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50 overflow-x-hidden">
+    <div className="min-h-screen flex flex-col bg-gradient-to-b from-slate-50 via-gray-50 to-slate-100 texture-grid overflow-x-hidden">
       {isAdminRoute ? (
         renderAdminLayout()
       ) : (

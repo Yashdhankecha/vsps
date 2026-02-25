@@ -61,8 +61,8 @@ const TestUpload = () => {
               file:mr-4 file:py-2 file:px-4
               file:rounded-full file:border-0
               file:text-sm file:font-semibold
-              file:bg-purple-50 file:text-purple-700
-              hover:file:bg-purple-100"
+              file:bg-electric-50 file:text-electric-700
+              hover:file:bg-electric-100"
           />
         </div>
 
@@ -83,7 +83,7 @@ const TestUpload = () => {
           className={`w-full py-2 px-4 rounded-md text-white font-medium
             ${loading || !selectedFile
               ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-purple-600 hover:bg-purple-700'
+              : 'bg-electric-600 hover:bg-electric-700'
             }`}
         >
           {loading ? 'Uploading...' : 'Upload to Cloudinary'}

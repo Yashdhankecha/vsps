@@ -584,10 +584,10 @@ const ContentManagement = () => {
   // Render content based on active tab
   const renderContent = () => {
     if (loading) return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center p-4 sm:p-6">
-        <div className="card-glass p-8 animate-fade-in-up">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 animate-fade-in-up">
           <div className="flex justify-center items-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
           </div>
         </div>
       </div>
@@ -623,7 +623,7 @@ const ContentManagement = () => {
                 });
                 setIsEditing(true);
               }}
-              className="flex items-center space-x-2 text-purple-600 hover:text-purple-700"
+              className="flex items-center space-x-2 text-electric-600 hover:text-electric-700"
             >
               <PencilIcon className="h-5 w-5" />
               <span>Edit Slider</span>
@@ -642,8 +642,8 @@ const ContentManagement = () => {
                     />
                   </div>
                   <div className="p-4">
-                    <h4 className="font-medium text-white">{slide.title}</h4>
-                    <p className="text-sm text-neutral-300 mt-1">{slide.description}</p>
+                    <h4 className="font-medium text-gray-800">{slide.title}</h4>
+                    <p className="text-sm text-gray-600 mt-1">{slide.description}</p>
                   </div>
                 </div>
               ))}
@@ -670,7 +670,7 @@ const ContentManagement = () => {
                 });
                 setIsEditing(true);
               }}
-              className="flex items-center space-x-2 text-purple-600 hover:text-purple-700"
+              className="flex items-center space-x-2 text-electric-600 hover:text-electric-700"
             >
               <PencilIcon className="h-5 w-5" />
               <span>Edit Introduction</span>
@@ -678,15 +678,15 @@ const ContentManagement = () => {
           </div>
           <div className="space-y-4">
             <div>
-              <h4 className="font-medium text-white">Heading</h4>
-              <p className="text-neutral-300">{homeContent?.introduction?.heading}</p>
+              <h4 className="font-medium text-gray-800">Heading</h4>
+              <p className="text-gray-600">{homeContent?.introduction?.heading}</p>
             </div>
             <div>
-              <h4 className="font-medium text-white">Description</h4>
-              <p className="text-neutral-300">{homeContent?.introduction?.description}</p>
+              <h4 className="font-medium text-gray-800">Description</h4>
+              <p className="text-gray-600">{homeContent?.introduction?.description}</p>
             </div>
             <div>
-              <h4 className="font-medium text-white">Highlights</h4>
+              <h4 className="font-medium text-gray-800">Highlights</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
                 {homeContent?.introduction?.highlights?.map((highlight, index) => (
                   <div key={index} className="glass-effect p-4 rounded-lg">
@@ -694,18 +694,18 @@ const ContentManagement = () => {
                       {getIconComponent(highlight.icon)}
                       <h5 className="font-medium">{highlight.title}</h5>
                     </div>
-                    <p className="text-sm text-neutral-300">{highlight.subtitle}</p>
+                    <p className="text-sm text-gray-600">{highlight.subtitle}</p>
                   </div>
                 ))}
               </div>
             </div>
             <div>
-              <h4 className="font-medium text-white">Download Section</h4>
+              <h4 className="font-medium text-gray-800">Download Section</h4>
               <div className="mt-2">
-                <p className="text-neutral-300">
+                <p className="text-gray-600">
                   Label: {homeContent?.introduction?.download?.label}
                 </p>
-                <p className="text-neutral-300">
+                <p className="text-gray-600">
                   File: {homeContent?.introduction?.download?.fileName}
                 </p>
               </div>
@@ -728,7 +728,7 @@ const ContentManagement = () => {
                 });
                 setIsEditing(true);
               }}
-              className="flex items-center space-x-2 text-purple-600 hover:text-purple-700"
+              className="flex items-center space-x-2 text-electric-600 hover:text-electric-700"
             >
               <PencilIcon className="h-5 w-5" />
               <span>Edit About</span>
@@ -745,20 +745,20 @@ const ContentManagement = () => {
             </div>
             <div className="space-y-4">
               <div>
-                <h4 className="font-medium text-white">Heading</h4>
-                <p className="text-neutral-300">{homeContent?.about?.heading}</p>
+                <h4 className="font-medium text-gray-800">Heading</h4>
+                <p className="text-gray-600">{homeContent?.about?.heading}</p>
               </div>
               <div>
-                <h4 className="font-medium text-white">Description</h4>
-                <p className="text-neutral-300">{homeContent?.about?.description}</p>
+                <h4 className="font-medium text-gray-800">Description</h4>
+                <p className="text-gray-600">{homeContent?.about?.description}</p>
               </div>
               <div>
-                <h4 className="font-medium text-white">Features</h4>
+                <h4 className="font-medium text-gray-800">Features</h4>
                 <div className="space-y-2 mt-2">
                   {homeContent?.about?.features?.map((feature, index) => (
                     <div key={index} className="glass-effect p-3 rounded-lg">
-                      <h5 className="font-medium text-white">{feature.title}</h5>
-                      <p className="text-sm text-neutral-300">{feature.description}</p>
+                      <h5 className="font-medium text-gray-800">{feature.title}</h5>
+                      <p className="text-sm text-gray-600">{feature.description}</p>
                     </div>
                   ))}
                 </div>
@@ -782,7 +782,7 @@ const ContentManagement = () => {
                 });
                 setIsEditing(true);
               }}
-              className="flex items-center space-x-2 text-purple-600 hover:text-purple-700"
+              className="flex items-center space-x-2 text-electric-600 hover:text-electric-700"
             >
               <PencilIcon className="h-5 w-5" />
               <span>Edit Leadership</span>
@@ -790,15 +790,15 @@ const ContentManagement = () => {
           </div>
           <div className="space-y-4">
             <div>
-              <h4 className="font-medium text-white">Heading</h4>
-              <p className="text-neutral-300">{homeContent?.leadership?.heading}</p>
+              <h4 className="font-medium text-gray-800">Heading</h4>
+              <p className="text-gray-600">{homeContent?.leadership?.heading}</p>
             </div>
             <div>
-              <h4 className="font-medium text-white">Description</h4>
-              <p className="text-neutral-300">{homeContent?.leadership?.description}</p>
+              <h4 className="font-medium text-gray-800">Description</h4>
+              <p className="text-gray-600">{homeContent?.leadership?.description}</p>
             </div>
             <div>
-              <h4 className="font-medium text-white">Team Members</h4>
+              <h4 className="font-medium text-gray-800">Team Members</h4>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-2">
                 {homeContent?.leadership?.members?.map((member, index) => (
                   <div key={index} className="glass-effect p-4 rounded-lg">
@@ -808,16 +808,16 @@ const ContentManagement = () => {
                       className="w-full h-48 object-cover rounded-lg mb-3"
                       onError={handleImageError}
                     />
-                    <h5 className="font-medium text-white">{member.name}</h5>
-                    <p className="text-sm text-neutral-300">{member.position}</p>
-                    <p className="text-sm text-neutral-300 mt-2">{member.description}</p>
+                    <h5 className="font-medium text-gray-800">{member.name}</h5>
+                    <p className="text-sm text-gray-600">{member.position}</p>
+                    <p className="text-sm text-gray-600 mt-2">{member.description}</p>
                   </div>
                 ))}
               </div>
             </div>
             <div>
-              <h4 className="font-medium text-white">Note</h4>
-              <p className="text-neutral-300">{homeContent?.leadership?.note}</p>
+              <h4 className="font-medium text-gray-800">Note</h4>
+              <p className="text-gray-600">{homeContent?.leadership?.note}</p>
             </div>
           </div>
         </div>
@@ -851,7 +851,7 @@ const ContentManagement = () => {
               });
               setIsAdding(true);
             }}
-            className="flex items-center space-x-2 text-purple-600 hover:text-purple-700"
+            className="flex items-center space-x-2 text-electric-600 hover:text-electric-700"
           >
             <PlusIcon className="h-5 w-5" />
             <span>Add New Category</span>
@@ -871,13 +871,13 @@ const ContentManagement = () => {
                     });
                     setIsEditing(true);
                   }}
-                  className="p-1.5 bg-neutral-700 rounded-full shadow"
+                  className="p-1.5 bg-gray-200 rounded-full shadow"
                 >
                   <PencilIcon className="h-4 w-4 text-blue-400" />
                 </button>
                 <button
                   onClick={() => handleDelete('event-category', category._id)}
-                  className="p-1.5 bg-neutral-700 rounded-full shadow"
+                  className="p-1.5 bg-gray-200 rounded-full shadow"
                 >
                   <TrashIcon className="h-4 w-4 text-red-400" />
                 </button>
@@ -889,35 +889,35 @@ const ContentManagement = () => {
                 onError={handleImageError}
               />
               <h4 className="font-semibold mb-2">{category.title}</h4>
-              <p className="text-sm text-neutral-300 mb-2">{category.description}</p>
+              <p className="text-sm text-gray-600 mb-2">{category.description}</p>
               <div className="grid grid-cols-2 gap-2 text-sm">
                 <div>
-                  <span className="text-neutral-400">Capacity:</span>
+                  <span className="text-gray-500">Capacity:</span>
                   <span className="ml-1 text-white">{category.capacity}</span>
                 </div>
                 <div>
-                  <span className="text-neutral-400">Order:</span>
+                  <span className="text-gray-500">Order:</span>
                   <span className="ml-1 text-white">{category.order}</span>
                 </div>
               </div>
               <div className="mt-2">
                 <span className={`text-xs px-2 py-1 rounded-full ${
-                  category.isActive ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
+                  category.isActive ? 'bg-green-500/20 text-green-300 border border-green-500/30' : 'bg-neutral-500/20 text-gray-600 border border-neutral-500/30'
                 }`}>
                   {category.isActive ? 'Active' : 'Inactive'}
                 </span>
               </div>
               <div className="mt-3">
-                <h5 className="text-sm font-medium text-white mb-2">Pricing:</h5>
-                <div className="text-sm text-neutral-300">
+                <h5 className="text-sm font-medium text-gray-800 mb-2">Pricing:</h5>
+                <div className="text-sm text-gray-600">
                   <p>Samaj Member: {category.membershipPricing?.samajMember || 'Not set'}</p>
                   <p>Non-Samaj Member: {category.membershipPricing?.nonSamajMember || 'Not set'}</p>
                 </div>
               </div>
               {category.features && category.features.length > 0 && (
                 <div className="mt-3">
-                  <h5 className="text-sm font-medium text-white mb-2">Features:</h5>
-                  <ul className="text-sm text-neutral-300 list-disc list-inside">
+                  <h5 className="text-sm font-medium text-gray-800 mb-2">Features:</h5>
+                  <ul className="text-sm text-gray-600 list-disc list-inside">
                     {category.features.map((feature, index) => (
                       <li key={`${category._id}-feature-${index}`}>{feature}</li>
                     ))}
@@ -970,13 +970,13 @@ const ContentManagement = () => {
                     });
                     setIsEditing(true);
                   }}
-                  className="p-1.5 bg-neutral-700 rounded-full shadow"
+                  className="p-1.5 bg-gray-200 rounded-full shadow"
                 >
                   <PencilIcon className="h-4 w-4 text-blue-400" />
                 </button>
                 <button 
                   onClick={() => handleDelete('gallery', item._id)}
-                  className="p-1.5 bg-neutral-700 rounded-full shadow"
+                  className="p-1.5 bg-gray-200 rounded-full shadow"
                 >
                   <TrashIcon className="h-4 w-4 text-red-400" />
                 </button>
@@ -984,10 +984,10 @@ const ContentManagement = () => {
             </div>
             <div className="p-4">
               <div className="flex justify-between items-center">
-                <span className="text-sm font-medium bg-purple-500/20 text-purple-300 border border-purple-500/30 px-3 py-1 rounded-full capitalize">
+                <span className="text-sm font-medium bg-electric-50 text-electric-500 border border-electric-200 px-3 py-1 rounded-full capitalize">
                   {item.category}
                 </span>
-                <span className="text-xs text-neutral-400">
+                <span className="text-xs text-gray-500">
                   {item.type === 'photo' ? 'Photo' : 'Video'}
                 </span>
               </div>
@@ -1007,7 +1007,7 @@ const ContentManagement = () => {
           });
           setIsAdding(true);
         }}
-        className="flex items-center space-x-2 text-purple-600 hover:text-purple-700"
+        className="flex items-center space-x-2 text-electric-600 hover:text-electric-700"
       >
         <PlusIcon className="h-5 w-5" />
         <span>Add New {galleryTab === 'photos' ? 'Photo' : 'Video'}</span>
@@ -1022,10 +1022,10 @@ const ContentManagement = () => {
     const contentType = editingItem._contentType;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-        <div className="bg-neutral-800 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-neutral-700">
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center p-4">
+        <div className="bg-gray-100 rounded-lg p-6 w-full max-w-2xl max-h-[90vh] overflow-y-auto border border-gray-200">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold text-white">
+              <h3 className="text-xl font-semibold text-gray-800">
               {isAdding ? 'Add' : 'Edit'} {contentType.replace('-', ' ')}
               </h3>
               <button
@@ -1034,7 +1034,7 @@ const ContentManagement = () => {
                   setIsAdding(false);
                   setEditingItem(null);
                 }}
-              className="text-neutral-400 hover:text-white"
+              className="text-gray-500 hover:text-gray-900"
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
@@ -1047,9 +1047,9 @@ const ContentManagement = () => {
                 <input type="hidden" name="slideCount" value={editingItem.slides?.length || 0} />
                 <div className="space-y-6">
                   {editingItem.slides?.map((slide, index) => (
-                    <div key={index} className="border rounded-lg p-4 space-y-4 border-neutral-700 bg-neutral-900/50">
+                    <div key={index} className="border rounded-lg p-4 space-y-4 border-gray-200 bg-gray-50/50">
                       <div className="flex justify-between items-center">
-                        <h4 className="text-lg font-medium text-white">Slide {index + 1}</h4>
+                        <h4 className="text-lg font-medium text-gray-800">Slide {index + 1}</h4>
                         <button
                           type="button"
                           onClick={() => {
@@ -1064,29 +1064,29 @@ const ContentManagement = () => {
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-white">Title</label>
+                        <label className="block text-sm font-medium text-gray-800">Title</label>
                         <input
                           type="text"
                           name={`slides[${index}].title`}
                           defaultValue={slide.title}
-                          className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                          className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                           required
                         />
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-white">Description</label>
+                        <label className="block text-sm font-medium text-gray-800">Description</label>
                         <textarea
                           name={`slides[${index}].description`}
                           defaultValue={slide.description}
-                          className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                          className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                           rows="2"
                           required
                         />
                       </div>
                       
                       <div>
-                        <label className="block text-sm font-medium text-white">Image</label>
+                        <label className="block text-sm font-medium text-gray-800">Image</label>
                         <input
                           type="file"
                           name={`slides[${index}].image`}
@@ -1148,7 +1148,7 @@ const ContentManagement = () => {
                           type="checkbox"
                           name={`slides[${index}].isActive`}
                           defaultChecked={slide.isActive}
-                          className="h-4 w-4 text-electric-500 focus:ring-electric-500 border-neutral-600 rounded bg-neutral-700"
+                          className="h-4 w-4 text-electric-500 focus:ring-electric-500 border-neutral-600 rounded bg-gray-200"
                         />
                         <label className="ml-2 block text-sm text-white">
                           Active
@@ -1179,27 +1179,27 @@ const ContentManagement = () => {
             {contentType === 'hero-slide' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-white">Title</label>
+                  <label className="block text-sm font-medium text-gray-800">Title</label>
                   <input
                     type="text"
                     name="title"
                     defaultValue={editingItem.title || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Description</label>
+                  <label className="block text-sm font-medium text-gray-800">Description</label>
                   <textarea
                     name="description"
                     defaultValue={editingItem.description || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     rows="3"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Image</label>
+                  <label className="block text-sm font-medium text-gray-800">Image</label>
                   <input
                     type="file"
                     name="image"
@@ -1266,12 +1266,12 @@ const ContentManagement = () => {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Order</label>
+                  <label className="block text-sm font-medium text-gray-800">Order</label>
                   <input
                     type="number"
                     name="order"
                     defaultValue={editingItem.order || 0}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     min="0"
                   />
                 </div>
@@ -1291,58 +1291,58 @@ const ContentManagement = () => {
             {contentType === 'introduction' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-white">Heading</label>
+                  <label className="block text-sm font-medium text-gray-800">Heading</label>
                   <input
                     type="text"
                     name="heading"
                     defaultValue={editingItem.heading || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Description</label>
+                  <label className="block text-sm font-medium text-gray-800">Description</label>
                   <textarea
                     name="description"
                     defaultValue={editingItem.description || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     rows="4"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Highlights</label>
+                  <label className="block text-sm font-medium text-gray-800">Highlights</label>
                   <input type="hidden" name="highlightCount" value={editingItem.highlights?.length || 0} />
                   <div className="space-y-4 mt-2">
                     {editingItem.highlights?.map((highlight, index) => (
                       <div key={index} className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4 glass-effect rounded-lg">
                         <div>
-                          <label className="block text-sm font-medium text-white">Icon</label>
+                          <label className="block text-sm font-medium text-gray-800">Icon</label>
                           <input
                             type="text"
                             name={`highlights[${index}].icon`}
                             defaultValue={highlight.icon}
-                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                             required
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white">Title</label>
+                          <label className="block text-sm font-medium text-gray-800">Title</label>
                           <input
                             type="text"
                             name={`highlights[${index}].title`}
                             defaultValue={highlight.title}
-                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                             required
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white">Subtitle</label>
+                          <label className="block text-sm font-medium text-gray-800">Subtitle</label>
                           <input
                             type="text"
                             name={`highlights[${index}].subtitle`}
                             defaultValue={highlight.subtitle}
-                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                             required
                           />
                         </div>
@@ -1351,7 +1351,7 @@ const ContentManagement = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Download Section</label>
+                  <label className="block text-sm font-medium text-gray-800">Download Section</label>
                   <div className="mt-2 space-y-4">
                     <div>
                       <label className="block text-sm text-white">Download Label</label>
@@ -1359,7 +1359,7 @@ const ContentManagement = () => {
                         type="text"
                         name="downloadLabel"
                         defaultValue={editingItem.download?.label || 'Download PDF'}
-                        className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                        className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                       />
                     </div>
                     <div>
@@ -1371,7 +1371,7 @@ const ContentManagement = () => {
                         className="mt-1 block w-full"
                       />
                       {editingItem.download?.fileName && (
-                        <p className="mt-2 text-sm text-neutral-300">
+                        <p className="mt-2 text-sm text-gray-600">
                           Current file: {editingItem.download.fileName}
                         </p>
                       )}
@@ -1385,27 +1385,27 @@ const ContentManagement = () => {
             {contentType === 'about' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-white">Heading</label>
+                  <label className="block text-sm font-medium text-gray-800">Heading</label>
                   <input
                     type="text"
                     name="heading"
                     defaultValue={editingItem.heading || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Description</label>
+                  <label className="block text-sm font-medium text-gray-800">Description</label>
                   <textarea
                     name="description"
                     defaultValue={editingItem.description || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     rows="4"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Image</label>
+                  <label className="block text-sm font-medium text-gray-800">Image</label>
                   <input
                     type="file"
                     name="image"
@@ -1421,28 +1421,28 @@ const ContentManagement = () => {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Features</label>
+                  <label className="block text-sm font-medium text-gray-800">Features</label>
                   <input type="hidden" name="featureCount" value={editingItem.features?.length || 0} />
                   <div className="space-y-4 mt-2">
                     {editingItem.features?.map((feature, index) => (
                       <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 glass-effect rounded-lg">
                         <div>
-                          <label className="block text-sm font-medium text-white">Title</label>
+                          <label className="block text-sm font-medium text-gray-800">Title</label>
                           <input
                             type="text"
                             name={`features[${index}].title`}
                             defaultValue={feature.title}
-                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                             required
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white">Description</label>
+                          <label className="block text-sm font-medium text-gray-800">Description</label>
                           <input
                             type="text"
                             name={`features[${index}].description`}
                             defaultValue={feature.description}
-                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                             required
                           />
                         </div>
@@ -1468,72 +1468,72 @@ const ContentManagement = () => {
             {contentType === 'leadership' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-white">Heading</label>
+                  <label className="block text-sm font-medium text-gray-800">Heading</label>
                   <input
                     type="text"
                     name="heading"
                     defaultValue={editingItem.heading || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Description</label>
+                  <label className="block text-sm font-medium text-gray-800">Description</label>
                   <textarea
                     name="description"
                     defaultValue={editingItem.description || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     rows="4"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Note</label>
+                  <label className="block text-sm font-medium text-gray-800">Note</label>
                   <textarea
                     name="note"
                     defaultValue={editingItem.note || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     rows="2"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Team Members</label>
+                  <label className="block text-sm font-medium text-gray-800">Team Members</label>
                   <input type="hidden" name="memberCount" value={editingItem.members?.length || 0} />
                   <div className="space-y-4 mt-2">
                     {editingItem.members?.map((member, index) => (
                       <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 glass-effect rounded-lg">
                         <div>
-                          <label className="block text-sm font-medium text-white">Name</label>
+                          <label className="block text-sm font-medium text-gray-800">Name</label>
                           <input
                             type="text"
                             name={`members[${index}].name`}
                             defaultValue={member.name}
-                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                             required
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-medium text-white">Position</label>
+                          <label className="block text-sm font-medium text-gray-800">Position</label>
                           <input
                             type="text"
                             name={`members[${index}].title`}
                             defaultValue={member.position}
-                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                             required
                           />
                         </div>
                         <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-white">Description</label>
+                          <label className="block text-sm font-medium text-gray-800">Description</label>
                           <textarea
                             name={`members[${index}].description`}
                             defaultValue={member.description}
-                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                            className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                             rows="2"
                             required
                           />
                         </div>
                         <div className="md:col-span-2">
-                          <label className="block text-sm font-medium text-white">Image</label>
+                          <label className="block text-sm font-medium text-gray-800">Image</label>
                           <input
                             type="file"
                             name={`members[${index}].image`}
@@ -1630,47 +1630,47 @@ const ContentManagement = () => {
             {contentType === 'event-category' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-white">Title</label>
+                  <label className="block text-sm font-medium text-gray-800">Title</label>
                   <input
                     type="text"
                     name="title"
                     defaultValue={editingItem.title || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Description</label>
+                  <label className="block text-sm font-medium text-gray-800">Description</label>
                   <textarea
                     name="description"
                     defaultValue={editingItem.description || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     rows="3"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Icon</label>
+                  <label className="block text-sm font-medium text-gray-800">Icon</label>
                   <input
                     type="text"
                     name="icon"
                     defaultValue={editingItem.icon || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Capacity</label>
+                  <label className="block text-sm font-medium text-gray-800">Capacity</label>
                   <input
                     type="text"
                     name="capacity"
                     defaultValue={editingItem.capacity || ''}
-                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-neutral-800 text-white"
+                    className="mt-1 block w-full rounded-md border-neutral-600 shadow-sm focus:border-electric-500 focus:ring-electric-500 bg-gray-100 text-white"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Image</label>
+                  <label className="block text-sm font-medium text-gray-800">Image</label>
                   <input
                     type="file"
                     name="image"
@@ -1722,10 +1722,10 @@ const ContentManagement = () => {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Membership Pricing</label>
+                  <label className="block text-sm font-medium text-gray-800">Membership Pricing</label>
                   <div className="grid grid-cols-2 gap-4 mt-2">
                     <div>
-                      <label className="block text-sm text-neutral-300">Samaj Member</label>
+                      <label className="block text-sm text-gray-600">Samaj Member</label>
                       <input
                         type="text"
                         name="samajMember"
@@ -1735,7 +1735,7 @@ const ContentManagement = () => {
                       />
                     </div>
                     <div>
-                      <label className="block text-sm text-neutral-300">Non-Samaj Member</label>
+                      <label className="block text-sm text-gray-600">Non-Samaj Member</label>
                       <input
                         type="text"
                         name="nonSamajMember"
@@ -1747,7 +1747,7 @@ const ContentManagement = () => {
                   </div>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Features</label>
+                  <label className="block text-sm font-medium text-gray-800">Features</label>
                   <div className="space-y-4 mt-2">
                     {editingItem.features?.map((feature, index) => (
                       <div key={index} className="flex items-center gap-2">
@@ -1794,7 +1794,7 @@ const ContentManagement = () => {
                   <label className="ml-2 block text-sm text-white">Active</label>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Order</label>
+                  <label className="block text-sm font-medium text-gray-800">Order</label>
                   <input
                     type="number"
                     name="order"
@@ -1810,7 +1810,7 @@ const ContentManagement = () => {
             {contentType === 'gallery' && (
               <>
                 <div>
-                  <label className="block text-sm font-medium text-white">File</label>
+                  <label className="block text-sm font-medium text-gray-800">File</label>
                   <input
                     type="file"
                     name="file"
@@ -1820,7 +1820,7 @@ const ContentManagement = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Category</label>
+                  <label className="block text-sm font-medium text-gray-800">Category</label>
                   <select
                     name="category"
                     defaultValue={editingItem?.category || 'weddings'}
@@ -1836,7 +1836,7 @@ const ContentManagement = () => {
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-white">Type</label>
+                  <label className="block text-sm font-medium text-gray-800">Type</label>
                   <select
                     name="type"
                     defaultValue={editingItem?.type || 'photo'}
@@ -1858,7 +1858,7 @@ const ContentManagement = () => {
                     setIsAdding(false);
                     setEditingItem(null);
                   }}
-                className="px-4 py-2 glass-effect rounded-lg hover:bg-neutral-700"
+                className="px-4 py-2 glass-effect rounded-lg hover:bg-gray-200"
                 >
                   Cancel
                 </button>
@@ -1879,15 +1879,15 @@ const ContentManagement = () => {
   const getIconComponent = (iconName) => {
     switch (iconName) {
       case 'fa-calendar':
-        return <FaCalendar className="text-2xl text-purple-600" />;
+        return <FaCalendar className="text-2xl text-electric-600" />;
       case 'fa-users':
-        return <FaUsers className="text-2xl text-purple-600" />;
+        return <FaUsers className="text-2xl text-electric-600" />;
       case 'fa-gem':
-        return <FaGem className="text-2xl text-purple-600" />;
+        return <FaGem className="text-2xl text-electric-600" />;
       case 'fa-clock':
-        return <FaClock className="text-2xl text-purple-600" />;
+        return <FaClock className="text-2xl text-electric-600" />;
       case 'fa-download':
-        return <FaDownload className="text-2xl text-purple-600" />;
+        return <FaDownload className="text-2xl text-electric-600" />;
       default:
         return null;
     }
@@ -1915,17 +1915,17 @@ const ContentManagement = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
         {/* Header Section - Responsive */}
-        <div className="border-b border-white/10 pb-6 mb-6">
+        <div className="border-b border-gray-200 pb-6 mb-6">
           <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
                 <PencilIcon className="w-6 h-6 text-white" />
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-white">Content Management</h2>
+              <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Content Management</h2>
             </div>
             
             <div className="flex flex-wrap gap-2 justify-center sm:justify-end">
@@ -1993,7 +1993,7 @@ const ContentManagement = () => {
                 className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
                   activeTab === type.id
                     ? 'bg-gradient-electric text-white shadow-lg neon-glow'
-                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                    : 'glass-effect text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-electric-500/50'
                 }`}
               >
                 {type.name}

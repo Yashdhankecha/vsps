@@ -236,10 +236,10 @@ const FormManagement = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-mesh p-4 sm:p-6">
-        <div className="card-glass p-8 animate-fade-in-up">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4 sm:p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 animate-fade-in-up">
           <div className="flex justify-center items-center h-32">
-            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
           </div>
         </div>
       </div>
@@ -252,9 +252,9 @@ const FormManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
         {/* Header Section */}
         <div className="mb-6 sm:mb-8 animate-fade-in-up">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -263,8 +263,8 @@ const FormManagement = () => {
                 <CogIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">Form Management</h1>
-                <p className="text-neutral-300 text-sm sm:text-base">Configure registration form timers</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Form Management</h1>
+                <p className="text-gray-600 text-sm sm:text-base">Configure registration form timers</p>
               </div>
             </div>
             <button
@@ -291,10 +291,10 @@ const FormManagement = () => {
           <div className="glass-effect border border-neon-500/30 bg-neon-500/10 p-6 mb-8 rounded-xl animate-fade-in-up">
             <div className="flex items-center space-x-3">
               <div className="flex-shrink-0">
-                <CheckCircleIconSolid className="h-6 w-6 text-neon-400" />
+                <CheckCircleIconSolid className="h-6 w-6 text-neon-600" />
               </div>
               <div>
-                <p className="text-neon-300 font-medium">{success}</p>
+                <p className="text-neon-500 font-medium">{success}</p>
               </div>
             </div>
           </div>
@@ -307,31 +307,31 @@ const FormManagement = () => {
             <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">Samuh Lagan</h2>
             <div className="space-y-3 sm:space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="font-medium text-neutral-300 text-sm sm:text-base mb-1 sm:mb-0 sm:mr-2">Status:</span>
+                <span className="font-medium text-gray-600 text-sm sm:text-base mb-1 sm:mb-0 sm:mr-2">Status:</span>
                 <span className={`font-semibold text-sm sm:text-base ${getFormStatus(forms.samuhLagan).color === 'text-red-500' ? 'text-red-400' :
-                  getFormStatus(forms.samuhLagan).color === 'text-green-500' ? 'text-neon-400' :
-                    getFormStatus(forms.samuhLagan).color === 'text-orange-500' ? 'text-sunset-400' :
-                      'text-electric-400'
+                  getFormStatus(forms.samuhLagan).color === 'text-green-500' ? 'text-neon-600' :
+                    getFormStatus(forms.samuhLagan).color === 'text-orange-500' ? 'text-sunset-600' :
+                      'text-electric-600'
                   }`}>
                   {getFormStatus(forms.samuhLagan).text}
                 </span>
               </div>
               <div className="flex flex-col space-y-2">
-                <div className="flex items-center text-neutral-300 text-sm">
-                  <CalendarIcon className="w-4 h-4 mr-2 text-neon-400 flex-shrink-0" />
+                <div className="flex items-center text-gray-600 text-sm">
+                  <CalendarIcon className="w-4 h-4 mr-2 text-neon-600 flex-shrink-0" />
                   <span className="truncate">Event: {formatDate(forms.samuhLagan?.eventDate)}</span>
                 </div>
-                <div className="flex items-center text-neutral-300 text-sm">
-                  <ClockIcon className="w-4 h-4 mr-2 text-electric-400 flex-shrink-0" />
+                <div className="flex items-center text-gray-600 text-sm">
+                  <ClockIcon className="w-4 h-4 mr-2 text-electric-600 flex-shrink-0" />
                   <span className="truncate">Start: {formatDateTime(forms.samuhLagan?.startTime)}</span>
                 </div>
-                <div className="flex items-center text-neutral-300 text-sm">
-                  <ClockIcon className="w-4 h-4 mr-2 text-secondary-400 flex-shrink-0" />
+                <div className="flex items-center text-gray-600 text-sm">
+                  <ClockIcon className="w-4 h-4 mr-2 text-secondary-600 flex-shrink-0" />
                   <span className="truncate">End: {formatDateTime(forms.samuhLagan?.endTime)}</span>
                 </div>
               </div>
               {forms.samuhLagan?.lastUpdated && (
-                <div className="text-xs sm:text-sm text-neutral-400 border-t border-white/10 pt-2 sm:pt-3 mt-2 sm:mt-3">
+                <div className="text-xs sm:text-sm text-gray-500 border-t border-gray-200 pt-2 sm:pt-3 mt-2 sm:mt-3">
                   Updated: {formatDateTime(forms.samuhLagan.lastUpdated)}
                 </div>
               )}
@@ -344,31 +344,31 @@ const FormManagement = () => {
             <h2 className="text-lg sm:text-xl font-semibold mb-3 sm:mb-4 text-white">Student Awards</h2>
             <div className="space-y-3 sm:space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center">
-                <span className="font-medium text-neutral-300 text-sm sm:text-base mb-1 sm:mb-0 sm:mr-2">Status:</span>
+                <span className="font-medium text-gray-600 text-sm sm:text-base mb-1 sm:mb-0 sm:mr-2">Status:</span>
                 <span className={`font-semibold text-sm sm:text-base ${getFormStatus(forms.studentAwards).color === 'text-red-500' ? 'text-red-400' :
-                  getFormStatus(forms.studentAwards).color === 'text-green-500' ? 'text-neon-400' :
-                    getFormStatus(forms.studentAwards).color === 'text-orange-500' ? 'text-sunset-400' :
-                      'text-electric-400'
+                  getFormStatus(forms.studentAwards).color === 'text-green-500' ? 'text-neon-600' :
+                    getFormStatus(forms.studentAwards).color === 'text-orange-500' ? 'text-sunset-600' :
+                      'text-electric-600'
                   }`}>
                   {getFormStatus(forms.studentAwards).text}
                 </span>
               </div>
               <div className="flex flex-col space-y-2">
-                <div className="flex items-center text-neutral-300 text-sm">
-                  <CalendarIcon className="w-4 h-4 mr-2 text-secondary-400 flex-shrink-0" />
+                <div className="flex items-center text-gray-600 text-sm">
+                  <CalendarIcon className="w-4 h-4 mr-2 text-secondary-600 flex-shrink-0" />
                   <span className="truncate">Event: {formatDate(forms.studentAwards?.eventDate)}</span>
                 </div>
-                <div className="flex items-center text-neutral-300 text-sm">
-                  <ClockIcon className="w-4 h-4 mr-2 text-electric-400 flex-shrink-0" />
+                <div className="flex items-center text-gray-600 text-sm">
+                  <ClockIcon className="w-4 h-4 mr-2 text-electric-600 flex-shrink-0" />
                   <span className="truncate">Start: {formatDateTime(forms.studentAwards?.startTime)}</span>
                 </div>
-                <div className="flex items-center text-neutral-300 text-sm">
-                  <ClockIcon className="w-4 h-4 mr-2 text-secondary-400 flex-shrink-0" />
+                <div className="flex items-center text-gray-600 text-sm">
+                  <ClockIcon className="w-4 h-4 mr-2 text-secondary-600 flex-shrink-0" />
                   <span className="truncate">End: {formatDateTime(forms.studentAwards?.endTime)}</span>
                 </div>
               </div>
               {forms.studentAwards?.lastUpdated && (
-                <div className="text-xs sm:text-sm text-neutral-400 border-t border-white/10 pt-2 sm:pt-3 mt-2 sm:mt-3">
+                <div className="text-xs sm:text-sm text-gray-500 border-t border-gray-200 pt-2 sm:pt-3 mt-2 sm:mt-3">
                   Updated: {formatDateTime(forms.studentAwards.lastUpdated)}
                 </div>
               )}
@@ -379,15 +379,15 @@ const FormManagement = () => {
         </div>
 
         {/* Form Timer Settings */}
-        <div className="card-glass animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-4 sm:pb-6 mb-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-200 pb-4 sm:pb-6 mb-6">
             <div className="flex items-center space-x-3 mb-2 sm:mb-0">
               <div className="w-8 h-8 bg-gradient-electric rounded-lg flex items-center justify-center neon-glow">
                 <ClockIcon className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-xl sm:text-2xl font-semibold text-white">Set Form Timer</h2>
-                <p className="text-neutral-300 text-sm">Configure form availability</p>
+                <h2 className="text-xl sm:text-2xl font-semibold text-gray-800">Set Form Timer</h2>
+                <p className="text-gray-600 text-sm">Configure form availability</p>
               </div>
             </div>
           </div>
@@ -452,7 +452,7 @@ const FormManagement = () => {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-white/10">
+            <div className="pt-4 border-t border-gray-200">
               <button
                 type="submit"
                 disabled={loading}

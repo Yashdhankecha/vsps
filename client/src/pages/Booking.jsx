@@ -492,10 +492,10 @@ function Booking() {
     const isPast = date < new Date(new Date().setHours(0, 0, 0, 0));
 
     // Add a class for booked dates to improve styling
-    let className = `transition-all duration-300 ${isHovered && !isBooked && !isPast ? 'bg-violet-200 cursor-pointer hover:bg-violet-300 hover:scale-105 hover:shadow-md' : ''
-      } ${isSelected ? 'bg-violet-300 font-bold ring-2 ring-violet-600 ring-opacity-70 scale-105 shadow-md' : ''
+    let className = `transition-all duration-300 ${isHovered && !isBooked && !isPast ? 'bg-sky-100 cursor-pointer hover:bg-sky-200 hover:scale-105 hover:shadow-md' : ''
+      } ${isSelected ? 'bg-sky-200 font-bold ring-2 ring-electric-600 ring-opacity-70 scale-105 shadow-md' : ''
       } ${isBooked ? 'bg-red-100 cursor-not-allowed booked' : ''
-      } ${isToday ? 'font-bold text-violet-700 ring-1 ring-violet-400' : ''
+      } ${isToday ? 'font-bold text-electric-700 ring-1 ring-electric-400' : ''
       } ${isPast ? 'bg-gray-100 cursor-not-allowed opacity-50' : ''
       }`;
 
@@ -535,19 +535,19 @@ function Booking() {
 
   const calendarComponents = {
     toolbar: (props) => (
-      <div className="flex justify-between items-center mb-6 p-3 bg-gradient-to-r from-violet-50 to-purple-50 rounded-xl">
+      <div className="flex justify-between items-center mb-6 p-3 bg-gradient-to-r from-sky-50 to-electric-50 rounded-xl">
         <button
           onClick={() => props.onNavigate('PREV')}
-          className="p-2 hover:bg-white rounded-lg transition-all duration-300 text-violet-700 font-medium hover:shadow-sm"
+          className="p-2 hover:bg-white rounded-lg transition-all duration-300 text-electric-700 font-medium hover:shadow-sm"
         >
           ←
         </button>
-        <span className="text-xl font-bold text-violet-900">
+        <span className="text-xl font-bold text-gray-900">
           {format(props.date, 'yyyy')}
         </span>
         <button
           onClick={() => props.onNavigate('NEXT')}
-          className="p-2 hover:bg-white rounded-lg transition-all duration-300 text-violet-700 font-medium hover:shadow-sm"
+          className="p-2 hover:bg-white rounded-lg transition-all duration-300 text-electric-700 font-medium hover:shadow-sm"
         >
           →
         </button>
@@ -555,7 +555,7 @@ function Booking() {
     ),
     month: {
       header: ({ date }) => (
-        <div className="text-center font-bold text-violet-900 py-3 text-lg">
+        <div className="text-center font-bold text-gray-900 py-3 text-lg">
           {format(date, 'MMMM')}
         </div>
       ),
@@ -570,17 +570,17 @@ function Booking() {
   // Show loading state while checking authentication
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-mesh">
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-gray-50 to-slate-100 page-decoration">
       {/* Document Viewer Modal */}
       {showDocumentViewer && selectedDocument && (
-        <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-6 max-w-4xl w-full mx-4 max-h-[90vh] overflow-hidden flex flex-col">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-lg font-medium">{selectedDocumentType} Viewer</h3>
@@ -614,14 +614,14 @@ function Booking() {
 
       {/* Success Popup */}
       {showSuccessPopup && (
-        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-          <div className="glass-effect rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all animate-fade-in-up border border-white/10 shadow-2xl">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="glass-effect rounded-2xl p-8 max-w-md w-full mx-4 transform transition-all animate-fade-in-up border border-gray-200 shadow-2xl">
             <div className="text-center">
               <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30">
                 <FaCheckCircle className="text-green-400 text-4xl" />
               </div>
-              <h3 className="text-2xl font-bold text-white mb-4">Booking Request Submitted!</h3>
-              <p className="text-neutral-300 mb-8 leading-relaxed">
+              <h3 className="text-2xl font-bold text-gray-900 mb-4">Booking Request Submitted!</h3>
+              <p className="text-gray-600 mb-8 leading-relaxed">
                 Your booking request has been submitted successfully. We'll review it and get back to you shortly.
               </p>
               <Button
@@ -643,7 +643,7 @@ function Booking() {
           alt="Venue"
           className="w-full h-full object-cover"
         />
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
           <div className="text-center text-white">
             <h1 className="text-4xl md:text-5xl font-bold mb-4">Book Your Event</h1>
             <p className="text-xl max-w-2xl mx-auto">
@@ -659,13 +659,13 @@ function Booking() {
 
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <div className="glass-effect rounded-2xl p-6 border border-white/10">
+          <div className="glass-effect rounded-2xl p-6 border border-gray-200">
             <div className="mb-6">
-              <h3 className="text-xl font-bold text-white mb-4">Select Your Date</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-4">Select Your Date</h3>
               <div className="flex flex-wrap gap-4 text-sm">
-                <div className="flex items-center bg-violet-500/20 px-3 py-2 rounded-lg border border-violet-500/30">
+                <div className="flex items-center bg-electric-500/15 px-3 py-2 rounded-lg border border-electric-200">
                   <div className="w-3 h-3 rounded-full bg-violet-500 mr-2"></div>
-                  <span className="font-medium text-violet-300">Available</span>
+                  <span className="font-medium text-electric-600">Available</span>
                 </div>
                 <div className="flex items-center bg-red-500/20 px-3 py-2 rounded-lg border border-red-500/30">
                   <div className="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
@@ -729,14 +729,14 @@ function Booking() {
           {/* Booking Form Section - Improved mobile design */}
           <div className="lg:col-span-1">
             {showForm ? (
-              <div className="glass-effect rounded-2xl p-6 border border-white/10">
-                <div className="mb-6 p-4 bg-gradient-electric rounded-xl border border-white/10">
+              <div className="glass-effect rounded-2xl p-6 border border-gray-200">
+                <div className="mb-6 p-4 bg-gradient-electric rounded-xl border border-gray-200">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h2 className="text-2xl font-bold text-white mb-2">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-2">
                         Selected Date:
                       </h2>
-                      <div className="text-3xl font-bold text-white">
+                      <div className="text-3xl font-bold text-gray-900">
                         {selectedDate && format(selectedDate, 'MMMM d, yyyy')}
                       </div>
                       <div className="mt-2 text-lg text-white">
@@ -783,19 +783,19 @@ function Booking() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-neutral-200 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Email
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaEnvelope className="text-neutral-400" />
+                        <FaEnvelope className="text-gray-500" />
                       </div>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         disabled
-                        className="pl-10 w-full px-4 py-3 bg-neutral-900/70 backdrop-blur-sm border border-neutral-700 rounded-xl text-white placeholder-neutral-500 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300"
+                        className="pl-10 w-full px-4 py-3 bg-gray-100 backdrop-blur-sm border border-gray-200 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300"
                         required
                       />
                     </div>
@@ -814,52 +814,52 @@ function Booking() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-neutral-200 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Village Name (for Samaj Verification)
                     </label>
                     <div className="relative">
                       <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <FaMapMarkerAlt className="text-neutral-400" />
+                        <FaMapMarkerAlt className="text-gray-500" />
                       </div>
                       <select
                         name="villageName"
                         value={formData.villageName}
                         onChange={handleChange}
-                        className="pl-10 w-full px-4 py-3 bg-neutral-800/50 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
+                        className="pl-10 w-full px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                         required
                       >
                         {villageOptions.map((option) => (
-                          <option key={option.value} value={option.value} className="bg-neutral-800 text-white">
+                          <option key={option.value} value={option.value} className="bg-gray-100 text-white">
                             {option.label}
                           </option>
                         ))}
                       </select>
                       <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                        <FaChevronDown className="text-neutral-400" />
+                        <FaChevronDown className="text-gray-500" />
                       </div>
                     </div>
                     {formErrors.villageName && <p className="text-sm text-red-400 mt-1">{formErrors.villageName}</p>}
-                    <p className="mt-1 text-sm text-neutral-400">
+                    <p className="mt-1 text-sm text-gray-500">
                       Select your village to verify Samaj membership and get appropriate pricing.
                     </p>
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-neutral-200 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Event Type
                     </label>
                     <select
                       name="eventType"
                       value={formData.eventType}
                       onChange={handleChange}
-                      className="w-full px-4 py-3 bg-neutral-800/50 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
+                      className="w-full px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                       required
                     >
-                      <option value="" className="bg-neutral-800 text-white">Select Event Type</option>
-                      <option value="wedding" className="bg-neutral-800 text-white">Wedding</option>
-                      <option value="corporate" className="bg-neutral-800 text-white">Corporate Event</option>
-                      <option value="birthday" className="bg-neutral-800 text-white">Birthday Party</option>
-                      <option value="social" className="bg-neutral-800 text-white">Social Gathering</option>
+                      <option value="" className="bg-gray-100 text-white">Select Event Type</option>
+                      <option value="wedding" className="bg-gray-100 text-white">Wedding</option>
+                      <option value="corporate" className="bg-gray-100 text-white">Corporate Event</option>
+                      <option value="birthday" className="bg-gray-100 text-white">Birthday Party</option>
+                      <option value="social" className="bg-gray-100 text-white">Social Gathering</option>
                     </select>
                     {formErrors.eventType && <p className="text-sm text-red-400 mt-1">{formErrors.eventType}</p>}
                   </div>
@@ -880,21 +880,21 @@ function Booking() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-semibold text-neutral-200 mb-2">
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                       Event Documents
                     </label>
                     <div className="mb-2">
-                      <p className="text-sm text-neutral-400 mb-2">
+                      <p className="text-sm text-gray-500 mb-2">
                         Please upload one or more of the following documents:
                       </p>
-                      <ul className="text-sm text-neutral-400 list-disc pl-5 mb-3">
+                      <ul className="text-sm text-gray-500 list-disc pl-5 mb-3">
                         <li>Government-issued ID (Aadhar Card, PAN Card, or Passport)</li>
                         <li>Event invitation or announcement</li>
                         <li>Organization letterhead (for corporate events)</li>
                         <li>Birth certificate (for birthday parties)</li>
                         <li>Marriage certificate (for weddings)</li>
                       </ul>
-                      <p className="text-sm text-neutral-400 mb-2">
+                      <p className="text-sm text-gray-500 mb-2">
                         Accepted formats: PDF, DOC, DOCX (Max size: 5MB per file)
                       </p>
                     </div>
@@ -903,25 +903,25 @@ function Booking() {
                       accept=".pdf,.doc,.docx"
                       onChange={handleFileChange}
                       multiple
-                      className="w-full px-4 py-3 bg-neutral-800/50 backdrop-blur-sm border border-white/20 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-electric file:text-white hover:file:opacity-90 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300"
+                      className="w-full px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-gradient-electric file:text-white hover:file:opacity-90 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300"
                       required={formData.eventDocuments.length === 0}
                     />
                     {formErrors.eventDocuments && <p className="text-sm text-red-400 mt-1">{formErrors.eventDocuments}</p>}
 
                     {formData.eventDocuments.length > 0 && (
                       <div className="mt-4">
-                        <h4 className="text-sm font-medium text-neutral-200 mb-2">Uploaded Documents:</h4>
+                        <h4 className="text-sm font-medium text-gray-700 mb-2">Uploaded Documents:</h4>
                         <ul className="space-y-2">
                           {formData.eventDocuments.map((doc, index) => (
-                            <li key={index} className="flex items-center justify-between glass-effect p-2 rounded-lg border border-white/10">
-                              <span className="text-sm text-neutral-300 truncate">
+                            <li key={index} className="flex items-center justify-between glass-effect p-2 rounded-lg border border-gray-200">
+                              <span className="text-sm text-gray-600 truncate">
                                 {doc.split('/').pop()} ({formData.documentTypes[index]})
                               </span>
                               <div className="flex space-x-2">
                                 <button
                                   type="button"
                                   onClick={() => viewDocument(doc, formData.documentTypes[index])}
-                                  className="text-electric-400 hover:text-electric-300 flex items-center"
+                                  className="text-electric-600 hover:text-electric-500 flex items-center"
                                 >
                                   <FaEye className="mr-1" /> View
                                 </button>
@@ -968,13 +968,13 @@ function Booking() {
                 </form>
               </div>
             ) : (
-              <div className="glass-effect rounded-2xl p-6 border border-white/10">
+              <div className="glass-effect rounded-2xl p-6 border border-gray-200">
                 <div className="text-center">
-                  <FaCalendarAlt className="text-6xl text-electric-400 mx-auto mb-4" />
-                  <h2 className="text-2xl font-bold text-white mb-2">
+                  <FaCalendarAlt className="text-6xl text-electric-600 mx-auto mb-4" />
+                  <h2 className="text-2xl font-bold text-gray-900 mb-2">
                     Select a Date
                   </h2>
-                  <p className="text-neutral-300">
+                  <p className="text-gray-600">
                     Click on your preferred date in the calendar to start your booking
                   </p>
                   {!isAuthenticated && (

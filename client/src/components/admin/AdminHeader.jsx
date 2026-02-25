@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { 
-  BellIcon, 
-  MagnifyingGlassIcon, 
+import {
+  BellIcon,
+  MagnifyingGlassIcon,
   UserCircleIcon,
   ChevronDownIcon,
   CogIcon,
@@ -66,25 +66,25 @@ const AdminHeader = () => {
   const unreadCount = notifications.filter(n => n.unread).length;
 
   return (
-    <header className="glass-effect border-b border-white/10 sticky top-0 z-40 backdrop-blur-xl">
+    <header className="bg-white/80 backdrop-blur-lg border-b border-gray-200/60 sticky top-0 z-40 shadow-sm">
       <div className="flex items-center justify-between px-6 py-4">
         {/* Left Section - Page Title & Search */}
         <div className="flex items-center space-x-6">
           <div>
-            <h1 className="text-2xl font-bold text-white">{getPageTitle()}</h1>
-            <p className="text-sm text-neutral-300">Welcome back, {userName}</p>
+            <h1 className="text-2xl font-bold text-gray-900">{getPageTitle()}</h1>
+            <p className="text-sm text-gray-500">Welcome back, {userName}</p>
           </div>
-          
+
           {/* Search Bar */}
           <div className="hidden lg:block">
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <MagnifyingGlassIcon className="h-5 w-5 text-neutral-400" />
+                <MagnifyingGlassIcon className="h-5 w-5 text-gray-400" />
               </div>
               <input
                 type="text"
                 placeholder="Search..."
-                className="w-64 pl-10 pr-4 py-2 bg-neutral-800/50 border border-white/20 text-white placeholder-neutral-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-200"
+                className="w-64 pl-10 pr-4 py-2 bg-gray-50 border border-gray-300 text-gray-800 placeholder-gray-400 rounded-xl focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-200"
               />
             </div>
           </div>
@@ -96,7 +96,7 @@ const AdminHeader = () => {
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2 text-neutral-400 hover:text-white hover:bg-white/10 rounded-xl transition-all duration-200"
+              className="relative p-2 text-gray-500 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-all duration-200"
             >
               <BellIcon className="h-6 w-6" />
               {unreadCount > 0 && (
@@ -105,30 +105,30 @@ const AdminHeader = () => {
                 </span>
               )}
             </button>
-            
+
             {/* Notifications Dropdown */}
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 glass-effect rounded-2xl shadow-2xl border border-white/20 py-2 z-50 animate-fade-in-down">
-                <div className="px-4 py-3 border-b border-white/10">
-                  <h3 className="text-lg font-semibold text-white">Notifications</h3>
-                  <p className="text-sm text-neutral-300">{unreadCount} unread messages</p>
+              <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-50 animate-fade-in-down">
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>
+                  <p className="text-sm text-gray-500">{unreadCount} unread messages</p>
                 </div>
                 <div className="max-h-64 overflow-y-auto">
                   {notifications.map((notification) => (
-                    <div key={notification.id} className={`px-4 py-3 hover:bg-white/5 transition-colors duration-200 ${notification.unread ? 'bg-electric-500/10' : ''}`}>
+                    <div key={notification.id} className={`px-4 py-3 hover:bg-gray-50 transition-colors duration-200 ${notification.unread ? 'bg-electric-50' : ''}`}>
                       <div className="flex items-start space-x-3">
-                        <div className={`w-2 h-2 rounded-full mt-2 ${notification.unread ? 'bg-electric-500' : 'bg-neutral-500'}`}></div>
+                        <div className={`w-2 h-2 rounded-full mt-2 ${notification.unread ? 'bg-electric-500' : 'bg-gray-400'}`}></div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-white">{notification.title}</p>
-                          <p className="text-sm text-neutral-300">{notification.message}</p>
-                          <p className="text-xs text-neutral-400 mt-1">{notification.time}</p>
+                          <p className="text-sm font-medium text-gray-900">{notification.title}</p>
+                          <p className="text-sm text-gray-600">{notification.message}</p>
+                          <p className="text-xs text-gray-400 mt-1">{notification.time}</p>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="px-4 py-3 border-t border-white/10">
-                  <button className="text-sm text-electric-400 hover:text-electric-300 font-medium">
+                <div className="px-4 py-3 border-t border-gray-100">
+                  <button className="text-sm text-electric-600 hover:text-electric-500 font-medium">
                     View all notifications
                   </button>
                 </div>
@@ -140,45 +140,45 @@ const AdminHeader = () => {
           <div className="relative">
             <button
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="flex items-center space-x-3 p-2 rounded-xl hover:bg-white/10 transition-all duration-200"
+              className="flex items-center space-x-3 p-2 rounded-xl hover:bg-gray-100 transition-all duration-200"
             >
               <div className="w-8 h-8 bg-gradient-electric rounded-lg flex items-center justify-center">
                 <span className="text-white font-semibold text-sm">{userName.charAt(0).toUpperCase()}</span>
               </div>
               <div className="hidden md:block text-left">
-                <p className="text-sm font-medium text-white">{userName}</p>
-                <p className="text-xs text-neutral-300">Administrator</p>
+                <p className="text-sm font-medium text-gray-900">{userName}</p>
+                <p className="text-xs text-gray-500">Administrator</p>
               </div>
-              <ChevronDownIcon className="h-4 w-4 text-neutral-400" />
+              <ChevronDownIcon className="h-4 w-4 text-gray-400" />
             </button>
-            
+
             {/* Profile Dropdown */}
             {showProfileMenu && (
-              <div className="absolute right-0 mt-2 w-56 glass-effect rounded-2xl shadow-2xl border border-white/20 py-2 z-50 animate-fade-in-down">
-                <div className="px-4 py-3 border-b border-white/10">
-                  <p className="text-sm font-medium text-white">{userName}</p>
-                  <p className="text-xs text-neutral-300">admin@vsps.com</p>
+              <div className="absolute right-0 mt-2 w-56 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-50 animate-fade-in-down">
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <p className="text-sm font-medium text-gray-900">{userName}</p>
+                  <p className="text-xs text-gray-500">admin@vsps.com</p>
                 </div>
-                
+
                 <div className="py-2">
-                  <button className="flex items-center w-full px-4 py-2 text-sm text-neutral-300 hover:bg-white/5 hover:text-white transition-colors duration-200">
+                  <button className="flex items-center w-full px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200">
                     <UserCircleIcon className="h-4 w-4 mr-3" />
                     Profile Settings
                   </button>
-                  <Link to="/admin/settings" className="flex items-center w-full px-4 py-2 text-sm text-neutral-300 hover:bg-white/5 hover:text-white transition-colors duration-200">
+                  <Link to="/admin/settings" className="flex items-center w-full px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200">
                     <CogIcon className="h-4 w-4 mr-3" />
                     Preferences
                   </Link>
-                  <button className="flex items-center w-full px-4 py-2 text-sm text-neutral-300 hover:bg-white/5 hover:text-white transition-colors duration-200">
+                  <button className="flex items-center w-full px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors duration-200">
                     <QuestionMarkCircleIcon className="h-4 w-4 mr-3" />
                     Help & Support
                   </button>
                 </div>
-                
-                <div className="border-t border-white/10 py-2">
-                  <button 
+
+                <div className="border-t border-gray-100 py-2">
+                  <button
                     onClick={handleLogout}
-                    className="flex items-center w-full px-4 py-2 text-sm text-red-400 hover:bg-red-500/20 hover:text-red-300 transition-colors duration-200"
+                    className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200"
                   >
                     <ArrowRightOnRectangleIcon className="h-4 w-4 mr-3" />
                     Sign Out

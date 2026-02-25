@@ -70,8 +70,8 @@ const AddVillageMember = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-8">
-      <div className="card-glass animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
         {/* Header */}
         <div className="mb-6 sm:mb-8 animate-fade-in-up">
           <div className="flex items-center space-x-3 mb-2">
@@ -79,12 +79,12 @@ const AddVillageMember = () => {
               <UserPlusIcon className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white">Add Village Member</h1>
-              <p className="text-neutral-300 text-sm sm:text-base">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Add Village Member</h1>
+              <p className="text-gray-600 text-sm sm:text-base">
                 Register a new member from your village
               </p>
               {user?.village && (
-                <p className="text-electric-300 text-sm font-medium mt-1">
+                <p className="text-electric-500 text-sm font-medium mt-1">
                   Village: {user.village}
                 </p>
               )}
@@ -104,9 +104,9 @@ const AddVillageMember = () => {
         )}
 
         {success && (
-          <div className="glass-effect border border-neon-500/30 bg-neon-500/10 text-neon-300 px-6 py-4 rounded-xl mb-6 animate-fade-in-up">
+          <div className="glass-effect border border-neon-500/30 bg-neon-500/10 text-neon-500 px-6 py-4 rounded-xl mb-6 animate-fade-in-up">
             <div className="flex items-center space-x-3">
-              <svg className="w-5 h-5 text-neon-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-5 h-5 text-neon-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
               <span className="font-medium">{success}</span>
@@ -115,7 +115,7 @@ const AddVillageMember = () => {
         )}
 
         {/* Add Member Form */}
-        <div className="card-glass animate-fade-in-up p-8" style={{ animationDelay: '0.1s' }}>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-8" style={{ animationDelay: '0.1s' }}>
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               {/* Username */}
@@ -177,7 +177,7 @@ const AddVillageMember = () => {
             </div>
 
             {/* Submit Button */}
-            <div className="pt-4 border-t border-white/10">
+            <div className="pt-4 border-t border-gray-200">
               <button
                 type="submit"
                 disabled={loading}
@@ -201,23 +201,23 @@ const AddVillageMember = () => {
         </div>
 
         {/* Instructions */}
-        <div className="card-glass mt-6 animate-fade-in-up p-8" style={{ animationDelay: '0.2s' }}>
-          <h3 className="text-lg font-semibold text-white mb-3">Instructions</h3>
-          <ul className="space-y-2 text-neutral-300 text-sm">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 mt-6 animate-fade-in-up p-8" style={{ animationDelay: '0.2s' }}>
+          <h3 className="text-lg font-semibold text-gray-800 mb-3">Instructions</h3>
+          <ul className="space-y-2 text-gray-600 text-sm">
             <li className="flex items-start space-x-2">
-              <span className="text-electric-400 mt-1">•</span>
+              <span className="text-electric-600 mt-1">•</span>
               <span>Fill in the member's details to register them on the platform</span>
             </li>
             <li className="flex items-start space-x-2">
-              <span className="text-electric-400 mt-1">•</span>
+              <span className="text-electric-600 mt-1">•</span>
               <span>The member will receive an email with their login credentials</span>
             </li>
             <li className="flex items-start space-x-2">
-              <span className="text-electric-400 mt-1">•</span>
+              <span className="text-electric-600 mt-1">•</span>
               <span>You can only add members from your assigned village</span>
             </li>
             <li className="flex items-start space-x-2">
-              <span className="text-electric-400 mt-1">•</span>
+              <span className="text-electric-600 mt-1">•</span>
               <span>All fields except phone number are required</span>
             </li>
           </ul>

@@ -39,7 +39,7 @@ function ServiceInquiryForm({ serviceName, onClose }) {
   // If user is not authenticated, show login prompt
   if (!user) {
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
         <div className="bg-white rounded-xl p-8 max-w-md w-full m-4">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
             Login Required
@@ -53,7 +53,7 @@ function ServiceInquiryForm({ serviceName, onClose }) {
                 onClose();
                 navigate('/auth');
               }}
-              className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors"
+              className="flex-1 bg-electric-600 text-white py-2 px-4 rounded-lg hover:bg-electric-700 transition-colors"
             >
               Login
             </button>
@@ -70,7 +70,7 @@ function ServiceInquiryForm({ serviceName, onClose }) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div className="bg-white rounded-xl p-8 max-w-md w-full m-4">
         <h2 className="text-2xl font-bold text-gray-900 mb-6">
           Inquire About {serviceName}
@@ -96,7 +96,7 @@ function ServiceInquiryForm({ serviceName, onClose }) {
                   name="name"
                   value={formData.name}
                   onChange={handleChange}
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-electric-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -115,7 +115,7 @@ function ServiceInquiryForm({ serviceName, onClose }) {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-electric-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -134,7 +134,7 @@ function ServiceInquiryForm({ serviceName, onClose }) {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-electric-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -153,7 +153,7 @@ function ServiceInquiryForm({ serviceName, onClose }) {
                   name="eventDate"
                   value={formData.eventDate}
                   onChange={handleChange}
-                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-electric-500 focus:border-transparent"
                   required
                 />
               </div>
@@ -167,7 +167,7 @@ function ServiceInquiryForm({ serviceName, onClose }) {
                 name="servicePackage"
                 value={formData.servicePackage}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-electric-500 focus:border-transparent"
                 required
               >
                 <option value="">Select a package</option>
@@ -186,14 +186,14 @@ function ServiceInquiryForm({ serviceName, onClose }) {
                 value={formData.requirements}
                 onChange={handleChange}
                 rows="4"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-electric-500 focus:border-transparent"
               ></textarea>
             </div>
 
             <div className="flex space-x-4">
               <button
                 type="submit"
-                className="flex-1 bg-purple-600 text-white py-2 px-4 rounded-lg hover:bg-purple-700 transition-colors"
+                className="flex-1 bg-electric-600 text-white py-2 px-4 rounded-lg hover:bg-electric-700 transition-colors"
               >
                 Submit Inquiry
               </button>

@@ -43,15 +43,15 @@ function EventCategories() {
       setLoading(true);
       setError(null);
       console.log('Fetching categories from: /api/content/events/categories');
-      
+
       const response = await axiosInstance.get('/api/content/events/categories');
       console.log('API Response:', response.data);
-      
+
       // Check if response is HTML (indicates wrong endpoint)
       if (typeof response.data === 'string' && response.data.includes('<!doctype html>')) {
         throw new Error('Backend server not running - received HTML instead of JSON');
       }
-      
+
       if (response.data.success) {
         setCategories(response.data.data);
         setLastUpdate(new Date().toISOString());
@@ -60,10 +60,10 @@ function EventCategories() {
       }
     } catch (error) {
       console.error('Error fetching categories:', error);
-      
+
       // Provide more specific error messages
       let errorMessage = 'Failed to fetch categories';
-      
+
       if (typeof error.response?.data === 'string' && error.response.data.includes('<!doctype html>')) {
         errorMessage = 'Backend server not running - please start the server on port 3000';
       } else if (error.message.includes('Backend server not running')) {
@@ -79,7 +79,7 @@ function EventCategories() {
       } else {
         errorMessage = error.message || 'An unexpected error occurred';
       }
-      
+
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -93,12 +93,12 @@ function EventCategories() {
         // Compare the new data with current data
         const newData = response.data.data;
         const hasChanges = JSON.stringify(newData) !== JSON.stringify(categories);
-        
+
         if (hasChanges) {
           console.log('Updates detected, refreshing categories...');
           setCategories(newData);
           setLastUpdate(new Date().toISOString());
-          
+
           // If the currently selected category was updated, refresh it
           if (selectedCategory) {
             const updatedCategory = newData.find(cat => cat._id === selectedCategory._id);
@@ -127,7 +127,7 @@ function EventCategories() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -135,7 +135,7 @@ function EventCategories() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-mesh py-12">
+      <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="text-center">
             <Card className="max-w-md mx-auto p-6">
@@ -145,7 +145,7 @@ function EventCategories() {
                 </svg>
               </div>
               <h1 className="text-xl font-bold text-red-400 mb-2">Unable to Load Categories</h1>
-              <p className="text-neutral-300 mb-4">{error}</p>
+              <p className="text-gray-600 mb-4">{error}</p>
               <div className="space-y-2">
                 <Button
                   onClick={fetchCategories}
@@ -154,7 +154,7 @@ function EventCategories() {
                 >
                   Try Again
                 </Button>
-                <p className="text-sm text-neutral-400">Check if backend server is running on port 3000</p>
+                <p className="text-sm text-gray-500">Check if backend server is running on port 3000</p>
               </div>
             </Card>
           </div>
@@ -164,22 +164,22 @@ function EventCategories() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh py-12">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-gray-50 to-slate-100 page-decoration py-12">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-4">Event Categories</h1>
-          <p className="text-lg text-neutral-300 max-w-2xl mx-auto">
-            Explore our versatile venue options for different types of events. 
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Event Categories</h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+            Explore our versatile venue options for different types of events.
             Select a category to learn more about our specialized services.
           </p>
-          <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-neutral-400">
+          <div className="mt-4 flex items-center justify-center space-x-2 text-sm text-gray-500">
             <span>Last updated: {lastUpdate ? new Date(lastUpdate).toLocaleString() : 'Never'}</span>
             <button
               onClick={() => {
                 fetchCategories();
                 toast.success('Categories refreshed');
               }}
-              className="ml-2 p-2 text-electric-400 hover:text-electric-300 focus:outline-none"
+              className="ml-2 p-2 text-electric-600 hover:text-electric-500 focus:outline-none"
               title="Refresh categories"
             >
               <svg
@@ -210,7 +210,7 @@ function EventCategories() {
                   </svg>
                 </div>
                 <h3 className="text-lg font-medium text-yellow-300 mb-2">No Categories Available</h3>
-                <p className="text-neutral-300 mb-4">There are currently no event categories configured.</p>
+                <p className="text-gray-600 mb-4">There are currently no event categories configured.</p>
                 <Button
                   onClick={fetchCategories}
                   variant="primary"
@@ -223,11 +223,10 @@ function EventCategories() {
             categories.map((category) => {
               const IconComponent = iconMap[category.icon] || FaHeart;
               return (
-                <Card 
+                <Card
                   key={category._id}
-                  className={`p-6 cursor-pointer transform transition-all duration-300 hover:shadow-xl ${
-                    selectedCategory?._id === category._id ? 'ring-2 ring-electric-500 border-electric-500' : 'border-white/10'
-                  }`}
+                  className={`p-6 cursor-pointer transform transition-all duration-300 hover:shadow-xl ${selectedCategory?._id === category._id ? 'ring-2 ring-electric-500 border-electric-500' : 'border-gray-200'
+                    }`}
                   hoverEffect={true}
                   onClick={() => setSelectedCategory(category)}
                 >
@@ -235,8 +234,8 @@ function EventCategories() {
                     <IconComponent className="text-4xl text-white" />
                   </div>
                   <h3 className="text-xl font-semibold text-center mb-2 text-white">{category.title}</h3>
-                  <p className="text-neutral-300 text-center mb-2">{category.description}</p>
-                  <p className="text-sm text-neutral-400 text-center">Capacity: {category.capacity}</p>
+                  <p className="text-gray-600 text-center mb-2">{category.description}</p>
+                  <p className="text-sm text-gray-500 text-center">Capacity: {category.capacity}</p>
                 </Card>
               );
             })
@@ -247,19 +246,19 @@ function EventCategories() {
           <Card className="p-8 mb-12 animate-fade-in">
             <div className="max-w-4xl mx-auto">
               <h2 className="text-3xl font-bold text-center mb-6 text-white">{selectedCategory.title}</h2>
-              
+
               <div className="mb-8">
                 <h3 className="text-xl font-semibold text-center mb-4 text-white">Venue Pricing</h3>
                 <div className="grid grid-cols-2 gap-6 max-w-2xl mx-auto">
                   <Card className="p-6 text-center bg-gradient-electric">
-                    <h4 className="font-medium text-white mb-2">Samaj Member</h4>
-                    <p className="text-2xl font-bold text-white">
+                    <h4 className="font-medium text-gray-800 mb-2">Samaj Member</h4>
+                    <p className="text-2xl font-bold text-gray-900">
                       {selectedCategory.membershipPricing.samajMember}
                     </p>
                   </Card>
                   <Card className="p-6 text-center bg-gradient-neon">
-                    <h4 className="font-medium text-white mb-2">Non-Samaj Member</h4>
-                    <p className="text-2xl font-bold text-white">
+                    <h4 className="font-medium text-gray-800 mb-2">Non-Samaj Member</h4>
+                    <p className="text-2xl font-bold text-gray-900">
                       {selectedCategory.membershipPricing.nonSamajMember}
                     </p>
                   </Card>
@@ -270,7 +269,7 @@ function EventCategories() {
                 <h3 className="text-xl font-semibold mb-4 text-white">Features</h3>
                 <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {selectedCategory.features.map((feature, index) => (
-                    <li key={index} className="flex items-center text-neutral-300">
+                    <li key={index} className="flex items-center text-gray-600">
                       <span className="w-2 h-2 bg-electric-500 rounded-full mr-2"></span>
                       {feature}
                     </li>
@@ -283,11 +282,10 @@ function EventCategories() {
                   <h3 className="text-xl font-semibold mb-4 text-white">Available Packages</h3>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {selectedCategory.packages.map((pkg, index) => (
-                      <Card 
+                      <Card
                         key={index}
-                        className={`p-6 ${
-                          pkg.isPopular ? 'border-electric-500 shadow-lg' : 'border-white/10'
-                        }`}
+                        className={`p-6 ${pkg.isPopular ? 'border-electric-500 shadow-lg' : 'border-gray-200'
+                          }`}
                       >
                         {pkg.isPopular && (
                           <div className="bg-gradient-electric text-white text-xs font-bold px-3 py-1 rounded-full inline-block mb-2">
@@ -295,10 +293,10 @@ function EventCategories() {
                           </div>
                         )}
                         <h4 className="text-lg font-semibold mb-2 text-white">{pkg.name}</h4>
-                        <p className="text-2xl font-bold text-electric-400 mb-4">{pkg.price}</p>
+                        <p className="text-2xl font-bold text-electric-600 mb-4">{pkg.price}</p>
                         <ul className="space-y-2">
                           {pkg.includes.map((item, i) => (
-                            <li key={i} className="flex items-start text-neutral-300">
+                            <li key={i} className="flex items-start text-gray-600">
                               <span className="text-green-400 mr-2">✓</span>
                               {item}
                             </li>
@@ -311,7 +309,7 @@ function EventCategories() {
               )}
 
               <div className="mt-8 text-center">
-                <Button 
+                <Button
                   onClick={() => handleBookNow(selectedCategory.title)}
                   variant="primary"
                 >
@@ -323,10 +321,10 @@ function EventCategories() {
         )}
 
         <div className="text-center">
-          <p className="text-lg text-neutral-300 mb-6">
+          <p className="text-lg text-gray-600 mb-6">
             Need a custom package or have specific requirements?
           </p>
-          <Button 
+          <Button
             onClick={handleContactClick}
             variant="primary"
           >

@@ -48,7 +48,7 @@ const Notification = ({ message, type, onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="flex-shrink-0 text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
+            className="flex-shrink-0 text-gray-500 hover:text-gray-500 transition-colors duration-200"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
@@ -81,8 +81,8 @@ const Avatar = ({ name, email }) => {
         {initial}
       </div>
       <div>
-        <div className="font-medium text-white">{name || 'Unknown'}</div>
-        <div className="text-xs text-neutral-400">{email}</div>
+        <div className="font-medium text-gray-800">{name || 'Unknown'}</div>
+        <div className="text-xs text-gray-500">{email}</div>
       </div>
     </div>
   );
@@ -90,20 +90,20 @@ const Avatar = ({ name, email }) => {
 
 const ContactCard = ({ contact, onView, onReply, onDelete, deletingId }) => {
   return (
-    <div className="glass-effect border border-white/10 rounded-xl p-4 hover:bg-white/5 transition-all duration-200">
+    <div className="glass-effect border border-gray-200 rounded-xl p-4 hover:bg-gray-50 transition-all duration-200">
       <div className="flex justify-between items-start">
         <Avatar name={contact.name} email={contact.email} />
         <StatusBadge status={contact.status} />
       </div>
       
       <div className="mt-3">
-        <p className="text-neutral-300 text-sm line-clamp-2" title={contact.message}>
+        <p className="text-gray-600 text-sm line-clamp-2" title={contact.message}>
           {contact.message}
         </p>
       </div>
       
       <div className="mt-4 flex justify-between items-center">
-        <span className="text-xs text-neutral-500">
+        <span className="text-xs text-gray-400">
           {new Date(contact.createdAt).toLocaleDateString()}
         </span>
         
@@ -140,8 +140,8 @@ const ContactCard = ({ contact, onView, onReply, onDelete, deletingId }) => {
       </div>
       
       {contact.reply && (
-        <div className="mt-3 p-3 bg-neutral-800/50 rounded-lg border border-white/10">
-          <p className="text-xs text-neutral-400 mb-1">Reply:</p>
+        <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+          <p className="text-xs text-gray-500 mb-1">Reply:</p>
           <p className="text-sm text-white line-clamp-2" title={contact.reply}>
             {contact.reply}
           </p>
@@ -156,15 +156,15 @@ const ViewModal = ({ open, onClose, contact }) => {
   
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm p-4">
-      <div className="glass-effect border border-white/10 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 sticky top-0 bg-neutral-900/80 backdrop-blur-sm z-10">
-          <h3 className="text-lg font-semibold text-white flex items-center">
+      <div className="glass-effect border border-gray-200 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 sticky top-0 bg-gray-50/80 backdrop-blur-sm z-10">
+          <h3 className="text-lg font-semibold text-gray-800 flex items-center">
             <EyeIcon className="h-5 w-5 mr-2 text-blue-400" />
             Contact Details
           </h3>
           <button 
             onClick={onClose} 
-            className="text-neutral-400 hover:text-white transition-colors duration-200"
+            className="text-gray-500 hover:text-gray-900 transition-colors duration-200"
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -173,43 +173,43 @@ const ViewModal = ({ open, onClose, contact }) => {
         <div className="p-6 space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="text-neutral-400 text-sm block mb-1">Name</label>
+              <label className="text-gray-500 text-sm block mb-1">Name</label>
               <p className="text-white font-medium">{contact.name}</p>
             </div>
             <div>
-              <label className="text-neutral-400 text-sm block mb-1">Email</label>
+              <label className="text-gray-500 text-sm block mb-1">Email</label>
               <p className="text-white font-medium">{contact.email}</p>
             </div>
             <div>
-              <label className="text-neutral-400 text-sm block mb-1">Phone</label>
+              <label className="text-gray-500 text-sm block mb-1">Phone</label>
               <p className="text-white font-medium">{contact.phone || 'Not provided'}</p>
             </div>
             <div>
-              <label className="text-neutral-400 text-sm block mb-1">Status</label>
+              <label className="text-gray-500 text-sm block mb-1">Status</label>
               <StatusBadge status={contact.status} />
             </div>
           </div>
           
           <div>
-            <label className="text-neutral-400 text-sm block mb-1">Received</label>
+            <label className="text-gray-500 text-sm block mb-1">Received</label>
             <p className="text-white">
               {new Date(contact.createdAt).toLocaleString()}
             </p>
           </div>
           
           <div>
-            <label className="text-neutral-400 text-sm block mb-1">Message</label>
-            <div className="mt-1 p-4 bg-neutral-800/50 rounded-lg border border-white/10">
+            <label className="text-gray-500 text-sm block mb-1">Message</label>
+            <div className="mt-1 p-4 bg-gray-50 rounded-lg border border-gray-200">
               <p className="text-white whitespace-pre-wrap">{contact.message}</p>
             </div>
           </div>
           
           {contact.reply && (
             <div>
-              <label className="text-neutral-400 text-sm block mb-1">Reply</label>
-              <div className="mt-1 p-4 bg-neutral-800/50 rounded-lg border border-white/10">
+              <label className="text-gray-500 text-sm block mb-1">Reply</label>
+              <div className="mt-1 p-4 bg-gray-50 rounded-lg border border-gray-200">
                 <p className="text-white whitespace-pre-wrap">{contact.reply}</p>
-                <p className="text-neutral-400 text-xs mt-2">
+                <p className="text-gray-500 text-xs mt-2">
                   Replied on: {new Date(contact.repliedAt).toLocaleString()}
                 </p>
               </div>
@@ -217,7 +217,7 @@ const ViewModal = ({ open, onClose, contact }) => {
           )}
         </div>
         
-        <div className="px-6 py-4 flex justify-end gap-3 border-t border-white/10 sticky bottom-0 bg-neutral-900/80 backdrop-blur-sm">
+        <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 sticky bottom-0 bg-gray-50/80 backdrop-blur-sm">
           <button 
             onClick={onClose} 
             className="btn-secondary"
@@ -250,15 +250,15 @@ const ReplyModal = ({ open, onClose, onSend, contact, isSending }) => {
   
   return (
     <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 backdrop-blur-sm p-4">
-      <div className="glass-effect border border-white/10 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 sticky top-0 bg-neutral-900/80 backdrop-blur-sm z-10">
-          <h3 className="text-lg font-semibold text-white flex items-center">
+      <div className="glass-effect border border-gray-200 rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 sticky top-0 bg-gray-50/80 backdrop-blur-sm z-10">
+          <h3 className="text-lg font-semibold text-gray-800 flex items-center">
             <PaperAirplaneIcon className="h-5 w-5 mr-2 text-green-400" />
             Reply to {contact.name}
           </h3>
           <button 
             onClick={onClose} 
-            className="text-neutral-400 hover:text-white transition-colors duration-200"
+            className="text-gray-500 hover:text-gray-900 transition-colors duration-200"
           >
             <XMarkIcon className="w-6 h-6" />
           </button>
@@ -266,13 +266,13 @@ const ReplyModal = ({ open, onClose, onSend, contact, isSending }) => {
         
         <form onSubmit={handleSubmit}>
           <div className="p-6">
-            <div className="mb-6 p-4 bg-neutral-800/50 rounded-lg border border-white/10">
-              <p className="text-neutral-400 text-sm mb-2">Original Message:</p>
+            <div className="mb-6 p-4 bg-gray-50 rounded-lg border border-gray-200">
+              <p className="text-gray-500 text-sm mb-2">Original Message:</p>
               <p className="text-white whitespace-pre-wrap">{contact.message}</p>
             </div>
             
             <div>
-              <label className="text-neutral-300 text-sm block mb-2">Your Reply</label>
+              <label className="text-gray-600 text-sm block mb-2">Your Reply</label>
               <textarea
                 value={reply}
                 onChange={e => setReply(e.target.value)}
@@ -283,7 +283,7 @@ const ReplyModal = ({ open, onClose, onSend, contact, isSending }) => {
             </div>
           </div>
           
-          <div className="px-6 py-4 flex justify-end gap-3 border-t border-white/10 sticky bottom-0 bg-neutral-900/80 backdrop-blur-sm">
+          <div className="px-6 py-4 flex justify-end gap-3 border-t border-gray-200 sticky bottom-0 bg-gray-50/80 backdrop-blur-sm">
             <button 
               type="button"
               onClick={onClose} 
@@ -416,8 +416,8 @@ const ContactManagement = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center p-4 sm:p-6">
-        <div className="card-glass p-8 animate-fade-in-up">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 animate-fade-in-up">
           <div className="flex justify-center items-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
           </div>
@@ -427,8 +427,8 @@ const ContactManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6">
-      <div className="card-glass animate-fade-in-up p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
         {/* Header Section */}
         <div className="mb-8 animate-fade-in-up">
           <div className="flex items-center space-x-3 mb-2">
@@ -436,8 +436,8 @@ const ContactManagement = () => {
               <EnvelopeIcon className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white">Contact Management</h1>
-              <p className="text-neutral-300 text-base sm:text-lg">View, reply to, and manage user contact messages</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Contact Management</h1>
+              <p className="text-gray-600 text-base sm:text-lg">View, reply to, and manage user contact messages</p>
             </div>
           </div>
         </div>
@@ -450,7 +450,7 @@ const ContactManagement = () => {
         />
         
         {/* Filters and Search */}
-        <div className="glass-effect rounded-xl shadow-lg p-4 border border-white/10 mb-6">
+        <div className="glass-effect rounded-xl shadow-lg p-4 border border-gray-200 mb-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="flex-1">
               <input
@@ -477,40 +477,40 @@ const ContactManagement = () => {
         
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-          <div className="glass-effect border border-white/10 rounded-xl p-4">
+          <div className="glass-effect border border-gray-200 rounded-xl p-4">
             <div className="flex items-center">
               <div className="p-2 bg-blue-500/20 rounded-lg">
                 <EnvelopeIcon className="h-6 w-6 text-blue-400" />
               </div>
               <div className="ml-3">
-                <p className="text-sm text-neutral-400">Total Messages</p>
-                <p className="text-xl font-bold text-white">{Array.isArray(contacts) ? contacts.length : 0}</p>
+                <p className="text-sm text-gray-500">Total Messages</p>
+                <p className="text-xl font-bold text-gray-900">{Array.isArray(contacts) ? contacts.length : 0}</p>
               </div>
             </div>
           </div>
           
-          <div className="glass-effect border border-white/10 rounded-xl p-4">
+          <div className="glass-effect border border-gray-200 rounded-xl p-4">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-500/20 rounded-lg">
                 <ArrowsRightLeftIcon className="h-6 w-6 text-yellow-400" />
               </div>
               <div className="ml-3">
-                <p className="text-sm text-neutral-400">Pending</p>
-                <p className="text-xl font-bold text-white">
+                <p className="text-sm text-gray-500">Pending</p>
+                <p className="text-xl font-bold text-gray-900">
                   {Array.isArray(contacts) ? contacts.filter(c => c.status === 'pending').length : 0}
                 </p>
               </div>
             </div>
           </div>
           
-          <div className="glass-effect border border-white/10 rounded-xl p-4">
+          <div className="glass-effect border border-gray-200 rounded-xl p-4">
             <div className="flex items-center">
               <div className="p-2 bg-green-500/20 rounded-lg">
                 <CheckCircleIcon className="h-6 w-6 text-green-400" />
               </div>
               <div className="ml-3">
-                <p className="text-sm text-neutral-400">Replied</p>
-                <p className="text-xl font-bold text-white">
+                <p className="text-sm text-gray-500">Replied</p>
+                <p className="text-xl font-bold text-gray-900">
                   {Array.isArray(contacts) ? contacts.filter(c => c.status === 'replied').length : 0}
                 </p>
               </div>
@@ -519,12 +519,12 @@ const ContactManagement = () => {
         </div>
         
         {/* Main Content */}
-        <div className="glass-effect rounded-xl shadow-lg p-6 border border-white/10">
+        <div className="glass-effect rounded-xl shadow-lg p-6 border border-gray-200">
           {filteredContacts.length === 0 ? (
             <div className="py-12 text-center">
-              <EnvelopeIcon className="w-16 h-16 mx-auto mb-4 text-neutral-500" />
-              <h3 className="text-lg font-medium text-white mb-1">No contacts found</h3>
-              <p className="text-neutral-400">
+              <EnvelopeIcon className="w-16 h-16 mx-auto mb-4 text-gray-400" />
+              <h3 className="text-lg font-medium text-gray-800 mb-1">No contacts found</h3>
+              <p className="text-gray-500">
                 {searchTerm || statusFilter !== 'all' 
                   ? 'No contacts match your search criteria' 
                   : 'No contact messages found'}

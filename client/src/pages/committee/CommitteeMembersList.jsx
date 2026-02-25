@@ -61,15 +61,15 @@ const CommitteeMembersList = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-8">
-      <div className="card-glass animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
         {/* Header */}
         <div className="mb-8 sm:mb-10 animate-fade-in-up">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -78,8 +78,8 @@ const CommitteeMembersList = () => {
                 <MagnifyingGlassIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight">Committee Members</h1>
-                <p className="text-neutral-300 trace-wide text-sm sm:text-base mt-1">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">Committee Members</h1>
+                <p className="text-gray-600 trace-wide text-sm sm:text-base mt-1">
                   Search and view committee members from different villages
                 </p>
               </div>
@@ -102,13 +102,13 @@ const CommitteeMembersList = () => {
         <div className="mb-10 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
           <div className="relative max-w-2xl">
             <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <MagnifyingGlassIcon className="h-5 w-5 text-neutral-400" />
+              <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
             </div>
             <input
               type="text"
               value={searchTerm}
               onChange={handleSearchChange}
-              className="input-field pl-12 py-3 w-full bg-black/20 focus:bg-black/30 transition-all duration-300 rounded-xl border-white/10 focus:border-electric-500/50"
+              className="input-field pl-12 py-3 w-full bg-black/20 focus:bg-black/30 transition-all duration-300 rounded-xl border-gray-200 focus:border-electric-500/50"
               placeholder="Search by name, email, or village..."
             />
           </div>
@@ -117,10 +117,10 @@ const CommitteeMembersList = () => {
         {/* Members List */}
         <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           {filteredMembers.length === 0 ? (
-            <div className="text-center py-16 bg-white/5 rounded-2xl border border-white/5">
-              <MagnifyingGlassIcon className="mx-auto h-16 w-16 text-neutral-500 mb-4" />
-              <h3 className="text-xl font-medium text-white mb-2">No committee members found</h3>
-              <p className="text-neutral-400">
+            <div className="text-center py-16 bg-gray-50 rounded-2xl border border-white/5">
+              <MagnifyingGlassIcon className="mx-auto h-16 w-16 text-gray-400 mb-4" />
+              <h3 className="text-xl font-medium text-gray-800 mb-2">No committee members found</h3>
+              <p className="text-gray-500">
                 {searchTerm ? 'No members match your search criteria.' : 'There are no committee members to display.'}
               </p>
             </div>
@@ -135,32 +135,32 @@ const CommitteeMembersList = () => {
                       </div>
                     </div>
                     <div className="flex-1 min-w-0 pt-1">
-                      <h3 className="text-lg font-bold text-white truncate group-hover:text-electric-300 transition-colors">
+                      <h3 className="text-lg font-bold text-gray-900 truncate group-hover:text-electric-500 transition-colors">
                         {member.username}
                       </h3>
-                      <p className="text-sm text-electric-300 font-medium mb-4">
+                      <p className="text-sm text-electric-500 font-medium mb-4">
                         {member.role === 'committeemember' ? 'Committee Member' : member.role}
                       </p>
 
                       <div className="space-y-3">
-                        <div className="flex items-center text-sm text-neutral-300 bg-white/5 p-2 rounded-lg">
-                          <BuildingLibraryIcon className="flex-shrink-0 mr-3 h-4 w-4 text-neon-400" />
+                        <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                          <BuildingLibraryIcon className="flex-shrink-0 mr-3 h-4 w-4 text-neon-600" />
                           <span className="truncate font-medium">{member.village || 'N/A'}</span>
                         </div>
-                        <div className="flex items-center text-sm text-neutral-300 bg-white/5 p-2 rounded-lg">
-                          <EnvelopeIcon className="flex-shrink-0 mr-3 h-4 w-4 text-secondary-400" />
+                        <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                          <EnvelopeIcon className="flex-shrink-0 mr-3 h-4 w-4 text-secondary-600" />
                           <span className="truncate">{member.email}</span>
                         </div>
                         {member.phone && (
-                          <div className="flex items-center text-sm text-neutral-300 bg-white/5 p-2 rounded-lg">
-                            <PhoneIcon className="flex-shrink-0 mr-3 h-4 w-4 text-sunset-400" />
+                          <div className="flex items-center text-sm text-gray-600 bg-gray-50 p-2 rounded-lg">
+                            <PhoneIcon className="flex-shrink-0 mr-3 h-4 w-4 text-sunset-600" />
                             <span className="truncate">{member.phone}</span>
                           </div>
                         )}
                       </div>
 
                       <div className="mt-5 pt-4 border-t border-white/5 flex gap-3">
-                        <button className="flex-1 px-4 py-2 bg-white/5 hover:bg-white/10 text-white text-sm font-medium rounded-lg transition-colors border border-white/10">
+                        <button className="flex-1 px-4 py-2 bg-gray-50 hover:bg-gray-100 text-white text-sm font-medium rounded-lg transition-colors border border-gray-200">
                           Contact
                         </button>
                         <button className="flex-1 px-4 py-2 bg-gradient-electric text-white text-sm font-medium rounded-lg hover:shadow-lg transition-all shadow-md">
@@ -176,9 +176,9 @@ const CommitteeMembersList = () => {
         </div>
 
         {/* Stats */}
-        <div className="mt-8 pt-6 border-t border-white/10 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+        <div className="mt-8 pt-6 border-t border-gray-200 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-neutral-300 text-sm">
+            <p className="text-gray-600 text-sm">
               Showing {filteredMembers.length} of {members.length} committee members
             </p>
             <button

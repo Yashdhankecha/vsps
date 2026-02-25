@@ -133,8 +133,8 @@ const BookVillageEvent = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-8">
-      <div className="card-glass animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
         {/* Header */}
         <div className="mb-8 sm:mb-10 animate-fade-in-up">
           <div className="flex items-center space-x-3 mb-2">
@@ -142,12 +142,12 @@ const BookVillageEvent = () => {
               <CalendarDaysIcon className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-white">Book Village Event</h1>
-              <p className="text-neutral-300 text-sm sm:text-base">
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Book Village Event</h1>
+              <p className="text-gray-600 text-sm sm:text-base">
                 Schedule an event for a village member
               </p>
               {user?.village && (
-                <p className="text-electric-300 text-sm font-medium mt-1">
+                <p className="text-electric-500 text-sm font-medium mt-1">
                   Village: {user.village}
                 </p>
               )}
@@ -167,9 +167,9 @@ const BookVillageEvent = () => {
         )}
 
         {success && (
-          <div className="glass-effect border border-neon-500/30 bg-neon-500/10 text-neon-300 px-6 py-4 rounded-xl mb-6 animate-fade-in-up">
+          <div className="glass-effect border border-neon-500/30 bg-neon-500/10 text-neon-500 px-6 py-4 rounded-xl mb-6 animate-fade-in-up">
             <div className="flex items-center space-x-3">
-              <svg className="w-5 h-5 text-neon-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-5 h-5 text-neon-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
               <span className="font-medium">{success}</span>
@@ -178,7 +178,7 @@ const BookVillageEvent = () => {
         )}
 
         {/* Book Event Form */}
-        <div className="card-glass animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Select Member */}
@@ -296,9 +296,9 @@ const BookVillageEvent = () => {
                   name="isSamajMember"
                   checked={formData.isSamajMember}
                   onChange={handleChange}
-                  className="w-4 h-4 text-electric-500 bg-neutral-700 border-neutral-600 rounded focus:ring-electric-500"
+                  className="w-4 h-4 text-electric-500 bg-gray-200 border-neutral-600 rounded focus:ring-electric-500"
                 />
-                <label className="ml-2 text-sm font-medium text-neutral-300">
+                <label className="ml-2 text-sm font-medium text-gray-600">
                   Is Samaj Member
                 </label>
               </div>
@@ -395,7 +395,7 @@ const BookVillageEvent = () => {
             </div>
 
             {/* Submit Button */}
-            <div className="pt-4 border-t border-white/10">
+            <div className="pt-4 border-t border-gray-200">
               <button
                 type="submit"
                 disabled={loading}
@@ -419,23 +419,23 @@ const BookVillageEvent = () => {
         </div>
 
         {/* Instructions */}
-        <div className="card-glass mt-8 animate-fade-in-up p-6 sm:p-8" style={{ animationDelay: '0.2s' }}>
-          <h3 className="text-lg font-semibold text-white mb-3">Instructions</h3>
-          <ul className="space-y-2 text-neutral-300 text-sm">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 mt-8 animate-fade-in-up p-6 sm:p-8" style={{ animationDelay: '0.2s' }}>
+          <h3 className="text-lg font-semibold text-gray-800 mb-3">Instructions</h3>
+          <ul className="space-y-2 text-gray-600 text-sm">
             <li className="flex items-start space-x-2">
-              <span className="text-electric-400 mt-1">•</span>
+              <span className="text-electric-600 mt-1">•</span>
               <span>Select a village member from the dropdown to book an event for them</span>
             </li>
             <li className="flex items-start space-x-2">
-              <span className="text-electric-400 mt-1">•</span>
+              <span className="text-electric-600 mt-1">•</span>
               <span>Member details will auto-fill once you select a member</span>
             </li>
             <li className="flex items-start space-x-2">
-              <span className="text-electric-400 mt-1">•</span>
+              <span className="text-electric-600 mt-1">•</span>
               <span>You can only book events for members in your assigned village</span>
             </li>
             <li className="flex items-start space-x-2">
-              <span className="text-electric-400 mt-1">•</span>
+              <span className="text-electric-600 mt-1">•</span>
               <span>All required fields must be filled before submitting</span>
             </li>
           </ul>

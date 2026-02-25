@@ -33,11 +33,11 @@ function ResetPassword() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gradient-mesh py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 glass-effect p-8 rounded-xl shadow-lg border border-white/10">
+    <div className="min-h-[calc(100vh-200px)] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8 glass-effect p-8 rounded-xl shadow-lg border border-gray-200">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-white">Reset Password</h2>
-          <p className="mt-2 text-center text-sm text-neutral-300">
+          <p className="mt-2 text-center text-sm text-gray-600">
             Enter your new password.
           </p>
         </div>
@@ -51,21 +51,21 @@ function ResetPassword() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaLock className="h-5 w-5 text-neutral-400" />
+                  <FaLock className="h-5 w-5 text-gray-500" />
                 </div>
                 <input
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 bg-neutral-800/50 border border-white/20 placeholder-neutral-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 bg-gray-50 border border-gray-300 placeholder-gray-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
                   placeholder="New Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-white"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-900"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
@@ -82,21 +82,21 @@ function ResetPassword() {
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <FaLock className="h-5 w-5 text-neutral-400" />
+                  <FaLock className="h-5 w-5 text-gray-500" />
                 </div>
                 <input
                   id="confirmPassword"
                   name="confirmPassword"
                   type={showConfirmPassword ? "text" : "password"}
                   required
-                  className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 bg-neutral-800/50 border border-white/20 placeholder-neutral-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-lg relative block w-full pl-10 pr-10 px-3 py-3 bg-gray-50 border border-gray-300 placeholder-gray-400 text-white focus:outline-none focus:ring-electric-500 focus:border-electric-500 focus:z-10 sm:text-sm"
                   placeholder="Confirm Password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
                 <button
                   type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-neutral-400 hover:text-white"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-900"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                 >
                   {showConfirmPassword ? (
@@ -110,13 +110,13 @@ function ResetPassword() {
           </div>
           <button
             type="submit"
-            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/30 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
+            className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-electric hover:shadow-lg hover:shadow-electric-500/15 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-neutral-900 focus:ring-electric-500 transition-all duration-300 transform hover:scale-105 shadow-lg"
           >
             Reset Password
           </button>
         </form>
         <div className="mt-6 text-center">
-          <Link to="/auth" className="font-medium text-electric-400 hover:text-electric-300 flex items-center justify-center">
+          <Link to="/auth" className="font-medium text-electric-600 hover:text-electric-500 flex items-center justify-center">
             <FaArrowLeft className="mr-2" />
             Back to Login
           </Link>

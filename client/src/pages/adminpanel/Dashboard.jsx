@@ -286,22 +286,22 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-mesh p-3 sm:p-6">
-        <div className="card-glass animate-fade-in-up">
+      <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up">
           <div className="max-w-md w-full mx-auto text-center py-12">
             <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
               <XCircleIcon className="w-8 h-8 text-red-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Error Loading Dashboard</h3>
-            <p className="text-neutral-300 mb-6">{error}</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Error Loading Dashboard</h3>
+            <p className="text-gray-600 mb-6">{error}</p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <button
                 onClick={fetchDashboardData}
@@ -353,9 +353,9 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
         {/* Welcome Section with Modern Dark Design */}
         <div className="relative mb-8 overflow-hidden animate-fade-in-up">
           <div className="glass-effect p-6 sm:p-8 relative rounded-2xl">
@@ -367,55 +367,55 @@ const Dashboard = () => {
                   <ChartBarIconSolid className="w-7 h-7 text-white" />
                 </div>
                 <div className="flex-1">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-white">Dashboard Overview</h1>
-                  <p className="text-neutral-300 text-base sm:text-lg">Welcome back! Here's what's happening today.</p>
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Dashboard Overview</h1>
+                  <p className="text-gray-600 text-base sm:text-lg">Welcome back! Here's what's happening today.</p>
                 </div>
                 <div className="flex items-center space-x-2">
                   {lastUpdated && (
-                    <span className="text-xs text-neutral-400 hidden sm:block">
+                    <span className="text-xs text-gray-500 hidden sm:block">
                       Last updated: {lastUpdated.toLocaleTimeString()}
                     </span>
                   )}
                   <button
                     onClick={handleRefresh}
                     disabled={isRefreshing}
-                    className={`p-2 rounded-lg bg-neutral-800/50 hover:bg-neutral-700/50 transition-colors border border-white/10 ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    className={`p-2 rounded-lg bg-gray-50 hover:bg-gray-200/50 transition-colors border border-gray-200 ${isRefreshing ? 'opacity-50 cursor-not-allowed' : ''}`}
                     title="Refresh dashboard"
                   >
                     {isRefreshing ? (
                       <div className="w-5 h-5 border-2 border-neutral-300 border-t-transparent rounded-full animate-spin"></div>
                     ) : (
-                      <ArrowTrendingUpIcon className="w-5 h-5 text-neutral-300" />
+                      <ArrowTrendingUpIcon className="w-5 h-5 text-gray-600" />
                     )}
                   </button>
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-neon-500/20 rounded-lg flex items-center justify-center border border-neon-500/30 shadow-lg shadow-neon-500/20">
-                    <ArrowTrendingUpIcon className="w-5 h-5 text-neon-400" />
+                  <div className="w-8 h-8 bg-neon-500/20 rounded-lg flex items-center justify-center border border-neon-500/30 shadow-lg shadow-neon-500/10">
+                    <ArrowTrendingUpIcon className="w-5 h-5 text-neon-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-neutral-400">Today's Revenue</p>
-                    <p className="text-lg font-bold text-white">₹{stats.totalRevenue.toLocaleString()}</p>
+                    <p className="text-sm text-gray-500">Today's Revenue</p>
+                    <p className="text-lg font-bold text-gray-900">₹{stats.totalRevenue.toLocaleString()}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-electric-500/20 rounded-lg flex items-center justify-center border border-electric-500/30 shadow-lg shadow-electric-500/20">
-                    <UsersIcon className="w-5 h-5 text-electric-400" />
+                  <div className="w-8 h-8 bg-electric-500/20 rounded-lg flex items-center justify-center border border-electric-500/30 shadow-lg shadow-electric-500/10">
+                    <UsersIcon className="w-5 h-5 text-electric-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-neutral-400">Active Users</p>
-                    <p className="text-lg font-bold text-white">{stats.totalUsers}</p>
+                    <p className="text-sm text-gray-500">Active Users</p>
+                    <p className="text-lg font-bold text-gray-900">{stats.totalUsers}</p>
                   </div>
                 </div>
                 <div className="flex items-center space-x-3">
                   <div className="w-8 h-8 bg-secondary-500/20 rounded-lg flex items-center justify-center border border-secondary-500/30 shadow-lg shadow-secondary-500/20">
-                    <SparklesIcon className="w-5 h-5 text-secondary-400" />
+                    <SparklesIcon className="w-5 h-5 text-secondary-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-neutral-400">Completion Rate</p>
-                    <p className="text-lg font-bold text-white">
+                    <p className="text-sm text-gray-500">Completion Rate</p>
+                    <p className="text-lg font-bold text-gray-900">
                       {stats.totalBookings > 0 
                         ? Math.round((getBookingStatusCount('Booked') / stats.totalBookings) * 100) 
                         : 0}%
@@ -434,16 +434,16 @@ const Dashboard = () => {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-neon-500/20 rounded-xl flex items-center justify-center border border-neon-500/30">
-                  <CurrencyDollarIconSolid className="w-7 h-7 text-neon-400" />
+                  <CurrencyDollarIconSolid className="w-7 h-7 text-neon-600" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">Monthly Revenue</h2>
-                  <p className="text-sm text-neutral-400">Current month performance</p>
+                  <h2 className="text-xl font-bold text-gray-900">Monthly Revenue</h2>
+                  <p className="text-sm text-gray-500">Current month performance</p>
                 </div>
               </div>
             </div>
             <div className="flex items-baseline space-x-3 mb-4">
-              <span className="text-3xl sm:text-4xl font-bold text-white">
+              <span className="text-3xl sm:text-4xl font-bold text-gray-900">
                 ₹{stats.revenue.monthly.toLocaleString()}
               </span>
               <div className="flex items-center space-x-1">
@@ -457,7 +457,7 @@ const Dashboard = () => {
                 </span>
               </div>
             </div>
-            <p className="text-neutral-400 text-sm">
+            <p className="text-gray-500 text-sm">
               Compared to last month
             </p>
           </div>
@@ -467,16 +467,16 @@ const Dashboard = () => {
             <div className="flex items-center justify-between mb-6">
               <div className="flex items-center space-x-3">
                 <div className="w-12 h-12 bg-electric-500/20 rounded-xl flex items-center justify-center border border-electric-500/30">
-                  <UserGroupIconSolid className="w-7 h-7 text-electric-400" />
+                  <UserGroupIconSolid className="w-7 h-7 text-electric-600" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">User Growth</h2>
-                  <p className="text-sm text-neutral-400">New users this month</p>
+                  <h2 className="text-xl font-bold text-gray-900">User Growth</h2>
+                  <p className="text-sm text-gray-500">New users this month</p>
                 </div>
               </div>
             </div>
             <div className="flex items-baseline space-x-3 mb-4">
-              <span className="text-3xl sm:text-4xl font-bold text-white">
+              <span className="text-3xl sm:text-4xl font-bold text-gray-900">
                 {stats.recentUsers}
               </span>
               <div className="flex items-center space-x-1">
@@ -490,7 +490,7 @@ const Dashboard = () => {
                 </span>
               </div>
             </div>
-            <p className="text-neutral-400 text-sm">
+            <p className="text-gray-500 text-sm">
               {stats.totalUsers} total users
             </p>
           </div>
@@ -505,8 +505,8 @@ const Dashboard = () => {
                   <CalendarIconSolid className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">Booking Stats</h2>
-                  <p className="text-sm text-neutral-400">Current status breakdown</p>
+                  <h2 className="text-xl font-bold text-gray-900">Booking Stats</h2>
+                  <p className="text-sm text-gray-500">Current status breakdown</p>
                 </div>
               </div>
             </div>
@@ -514,10 +514,10 @@ const Dashboard = () => {
             <div className="space-y-4">
               <div>
                 <div className="flex justify-between mb-1">
-                  <span className="text-neutral-300">Pending</span>
+                  <span className="text-gray-600">Pending</span>
                   <span className="text-white font-medium">{getBookingStatusCount('Pending')}</span>
                 </div>
-                <div className="w-full bg-neutral-700 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
                     className="bg-amber-500 h-2 rounded-full" 
                     style={{width: `${calculatePercentage(getBookingStatusCount('Pending'), stats.totalBookings)}%`}}
@@ -527,10 +527,10 @@ const Dashboard = () => {
               
               <div>
                 <div className="flex justify-between mb-1">
-                  <span className="text-neutral-300">Approved</span>
+                  <span className="text-gray-600">Approved</span>
                   <span className="text-white font-medium">{getBookingStatusCount('Approved')}</span>
                 </div>
-                <div className="w-full bg-neutral-700 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
                     className="bg-electric-500 h-2 rounded-full" 
                     style={{width: `${calculatePercentage(getBookingStatusCount('Approved'), stats.totalBookings)}%`}}
@@ -540,10 +540,10 @@ const Dashboard = () => {
               
               <div>
                 <div className="flex justify-between mb-1">
-                  <span className="text-neutral-300">Booked</span>
+                  <span className="text-gray-600">Booked</span>
                   <span className="text-white font-medium">{getBookingStatusCount('Booked')}</span>
                 </div>
-                <div className="w-full bg-neutral-700 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
                     className="bg-neon-500 h-2 rounded-full" 
                     style={{width: `${calculatePercentage(getBookingStatusCount('Booked'), stats.totalBookings)}%`}}
@@ -553,10 +553,10 @@ const Dashboard = () => {
               
               <div>
                 <div className="flex justify-between mb-1">
-                  <span className="text-neutral-300">Rejected</span>
+                  <span className="text-gray-600">Rejected</span>
                   <span className="text-white font-medium">{getBookingStatusCount('Rejected')}</span>
                 </div>
-                <div className="w-full bg-neutral-700 rounded-full h-2">
+                <div className="w-full bg-gray-200 rounded-full h-2">
                   <div 
                     className="bg-red-500 h-2 rounded-full" 
                     style={{width: `${calculatePercentage(getBookingStatusCount('Rejected'), stats.totalBookings)}%`}}
@@ -574,13 +574,13 @@ const Dashboard = () => {
                   <DocumentChartBarIcon className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">Recent Bookings</h2>
-                  <p className="text-sm text-neutral-400">Latest booking requests</p>
+                  <h2 className="text-xl font-bold text-gray-900">Recent Bookings</h2>
+                  <p className="text-sm text-gray-500">Latest booking requests</p>
                 </div>
               </div>
               <button 
                 onClick={() => navigate('/admin/booking-management')}
-                className="text-sm text-electric-400 hover:text-electric-300 font-medium flex items-center"
+                className="text-sm text-electric-600 hover:text-electric-500 font-medium flex items-center"
               >
                 View All
                 <ArrowRightIcon className="w-4 h-4 ml-1" />
@@ -590,14 +590,14 @@ const Dashboard = () => {
             {stats.recentBookings && stats.recentBookings.length > 0 ? (
               <div className="space-y-4">
                 {stats.recentBookings.slice(0, 5).map((booking) => (
-                  <div key={booking._id} className="flex items-center justify-between p-4 glass-effect rounded-xl border border-white/10 hover:bg-white/5 transition-colors">
+                  <div key={booking._id} className="flex items-center justify-between p-4 glass-effect rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors">
                     <div className="flex items-center space-x-4">
                       <div className="w-10 h-10 rounded-full bg-gradient-electric flex items-center justify-center">
                         <CalendarIcon className="w-5 h-5 text-white" />
                       </div>
                       <div>
-                        <h3 className="font-medium text-white">{booking.eventType}</h3>
-                        <p className="text-sm text-neutral-400">
+                        <h3 className="font-medium text-gray-800">{booking.eventType}</h3>
+                        <p className="text-sm text-gray-500">
                           {booking.firstName && booking.surname 
                             ? `${booking.firstName} ${booking.surname}` 
                             : booking.name || 'N/A'}
@@ -606,7 +606,7 @@ const Dashboard = () => {
                     </div>
                     <div className="text-right">
                       <p className="text-white font-medium">₹{booking.amount || 0}</p>
-                      <p className="text-sm text-neutral-400">
+                      <p className="text-sm text-gray-500">
                         {new Date(booking.date).toLocaleDateString()}
                       </p>
                     </div>
@@ -615,8 +615,8 @@ const Dashboard = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <DocumentTextIcon className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
-                <p className="text-neutral-400">No recent bookings</p>
+                <DocumentTextIcon className="w-12 h-12 text-gray-500 mx-auto mb-3" />
+                <p className="text-gray-500">No recent bookings</p>
               </div>
             )}
           </div>
@@ -631,35 +631,35 @@ const Dashboard = () => {
                   <UserGroupIcon className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">User Roles</h2>
-                  <p className="text-sm text-neutral-400">Distribution across the platform</p>
+                  <h2 className="text-xl font-bold text-gray-900">User Roles</h2>
+                  <p className="text-sm text-gray-500">Distribution across the platform</p>
                 </div>
               </div>
             </div>
             
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-              <div className="text-center p-4 glass-effect rounded-xl border border-white/10">
-                <div className="w-12 h-12 bg-purple-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <ShieldCheckIcon className="w-6 h-6 text-purple-400" />
+              <div className="text-center p-4 glass-effect rounded-xl border border-gray-200">
+                <div className="w-12 h-12 bg-electric-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <ShieldCheckIcon className="w-6 h-6 text-electric-600" />
                 </div>
-                <p className="text-2xl font-bold text-white">{getUserRoleCount('admin')}</p>
-                <p className="text-sm text-neutral-400">Admins</p>
+                <p className="text-2xl font-bold text-gray-900">{getUserRoleCount('admin')}</p>
+                <p className="text-sm text-gray-500">Admins</p>
               </div>
               
-              <div className="text-center p-4 glass-effect rounded-xl border border-white/10">
+              <div className="text-center p-4 glass-effect rounded-xl border border-gray-200">
                 <div className="w-12 h-12 bg-blue-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
                   <UserIcon className="w-6 h-6 text-blue-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">{getUserRoleCount('user')}</p>
-                <p className="text-sm text-neutral-400">Users</p>
+                <p className="text-2xl font-bold text-gray-900">{getUserRoleCount('user')}</p>
+                <p className="text-sm text-gray-500">Users</p>
               </div>
               
-              <div className="text-center p-4 glass-effect rounded-xl border border-white/10">
+              <div className="text-center p-4 glass-effect rounded-xl border border-gray-200">
                 <div className="w-12 h-12 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-3">
                   <UsersIcon className="w-6 h-6 text-green-400" />
                 </div>
-                <p className="text-2xl font-bold text-white">{getUserRoleCount('committeemember')}</p>
-                <p className="text-sm text-neutral-400">Committee</p>
+                <p className="text-2xl font-bold text-gray-900">{getUserRoleCount('committeemember')}</p>
+                <p className="text-sm text-gray-500">Committee</p>
               </div>
             </div>
           </div>
@@ -672,8 +672,8 @@ const Dashboard = () => {
                   <CalendarIcon className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold text-white">Upcoming Events</h2>
-                  <p className="text-sm text-neutral-400">Next scheduled bookings</p>
+                  <h2 className="text-xl font-bold text-gray-900">Upcoming Events</h2>
+                  <p className="text-sm text-gray-500">Next scheduled bookings</p>
                 </div>
               </div>
             </div>
@@ -681,10 +681,10 @@ const Dashboard = () => {
             {stats.upcomingEvents && stats.upcomingEvents.length > 0 ? (
               <div className="space-y-4">
                 {stats.upcomingEvents.slice(0, 3).map((event) => (
-                  <div key={event._id} className="flex items-center justify-between p-4 glass-effect rounded-xl border border-white/10">
+                  <div key={event._id} className="flex items-center justify-between p-4 glass-effect rounded-xl border border-gray-200">
                     <div>
-                      <h3 className="font-medium text-white">{event.eventType}</h3>
-                      <p className="text-sm text-neutral-400">
+                      <h3 className="font-medium text-gray-800">{event.eventType}</h3>
+                      <p className="text-sm text-gray-500">
                         {event.firstName && event.surname 
                           ? `${event.firstName} ${event.surname}` 
                           : event.name || 'N/A'}
@@ -694,7 +694,7 @@ const Dashboard = () => {
                       <p className="text-white font-medium">
                         {new Date(event.date).toLocaleDateString()}
                       </p>
-                      <p className="text-sm text-neutral-400">
+                      <p className="text-sm text-gray-500">
                         {new Date(event.date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
                       </p>
                     </div>
@@ -703,8 +703,8 @@ const Dashboard = () => {
               </div>
             ) : (
               <div className="text-center py-8">
-                <CalendarIcon className="w-12 h-12 text-neutral-600 mx-auto mb-3" />
-                <p className="text-neutral-400">No upcoming events</p>
+                <CalendarIcon className="w-12 h-12 text-gray-500 mx-auto mb-3" />
+                <p className="text-gray-500">No upcoming events</p>
               </div>
             )}
           </div>

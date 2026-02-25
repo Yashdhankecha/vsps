@@ -116,15 +116,15 @@ const VillagerApproval = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-8">
-      <div className="card-glass animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-8">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up max-w-7xl mx-auto p-6 sm:p-10">
         {/* Header */}
         <div className="mb-8 sm:mb-10 animate-fade-in-up">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
@@ -133,12 +133,12 @@ const VillagerApproval = () => {
                 <CheckBadgeIcon className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold text-white">Villager Approval</h1>
-                <p className="text-neutral-300 text-sm sm:text-base">
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Villager Approval</h1>
+                <p className="text-gray-600 text-sm sm:text-base">
                   Approve or reject villagers from your village
                 </p>
                 {user?.village && (
-                  <p className="text-electric-300 text-sm font-medium mt-1">
+                  <p className="text-electric-500 text-sm font-medium mt-1">
                     Village: {user.village}
                   </p>
                 )}
@@ -165,9 +165,9 @@ const VillagerApproval = () => {
         )}
 
         {success && (
-          <div className="glass-effect border border-neon-500/30 bg-neon-500/10 text-neon-300 px-6 py-4 rounded-xl mb-6 animate-fade-in-up">
+          <div className="glass-effect border border-neon-500/30 bg-neon-500/10 text-neon-500 px-6 py-4 rounded-xl mb-6 animate-fade-in-up">
             <div className="flex items-center space-x-3">
-              <svg className="w-5 h-5 text-neon-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="w-5 h-5 text-neon-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
               </svg>
               <span className="font-medium">{success}</span>
@@ -179,7 +179,7 @@ const VillagerApproval = () => {
         <div className="mb-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <svg className="h-5 w-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
               </svg>
             </div>
@@ -197,9 +197,9 @@ const VillagerApproval = () => {
         <div className="animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
           {filteredVillagers.length === 0 ? (
             <div className="text-center py-12">
-              <UserGroupIcon className="mx-auto h-12 w-12 text-neutral-400" />
-              <h3 className="mt-2 text-lg font-medium text-white">No villagers to approve</h3>
-              <p className="mt-1 text-neutral-300">
+              <UserGroupIcon className="mx-auto h-12 w-12 text-gray-500" />
+              <h3 className="mt-2 text-lg font-medium text-gray-800">No villagers to approve</h3>
+              <p className="mt-1 text-gray-600">
                 {searchTerm ? 'No villagers match your search criteria.' : 'There are no villagers awaiting approval in your village.'}
               </p>
             </div>
@@ -214,25 +214,25 @@ const VillagerApproval = () => {
                       </div>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-lg font-semibold text-white truncate">
+                      <h3 className="text-lg font-semibold text-gray-800 truncate">
                         {villager.username}
                       </h3>
-                      <p className="text-sm text-electric-300 font-medium">
+                      <p className="text-sm text-electric-500 font-medium">
                         Unapproved Villager
                       </p>
 
                       <div className="mt-3 space-y-2">
-                        <div className="flex items-center text-sm text-neutral-300">
-                          <BuildingLibraryIcon className="flex-shrink-0 mr-2 h-4 w-4 text-neon-400" />
+                        <div className="flex items-center text-sm text-gray-600">
+                          <BuildingLibraryIcon className="flex-shrink-0 mr-2 h-4 w-4 text-neon-600" />
                           <span className="truncate">{villager.village}</span>
                         </div>
-                        <div className="flex items-center text-sm text-neutral-300">
-                          <EnvelopeIcon className="flex-shrink-0 mr-2 h-4 w-4 text-secondary-400" />
+                        <div className="flex items-center text-sm text-gray-600">
+                          <EnvelopeIcon className="flex-shrink-0 mr-2 h-4 w-4 text-secondary-600" />
                           <span className="truncate">{villager.email}</span>
                         </div>
                         {villager.phone && (
-                          <div className="flex items-center text-sm text-neutral-300">
-                            <PhoneIcon className="flex-shrink-0 mr-2 h-4 w-4 text-sunset-400" />
+                          <div className="flex items-center text-sm text-gray-600">
+                            <PhoneIcon className="flex-shrink-0 mr-2 h-4 w-4 text-sunset-600" />
                             <span className="truncate">{villager.phone}</span>
                           </div>
                         )}
@@ -265,9 +265,9 @@ const VillagerApproval = () => {
         </div>
 
         {/* Stats */}
-        <div className="mt-8 pt-6 border-t border-white/10 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
+        <div className="mt-8 pt-6 border-t border-gray-200 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-neutral-300 text-sm">
+            <p className="text-gray-600 text-sm">
               Showing {filteredVillagers.length} of {villagers.length} villagers awaiting approval
             </p>
           </div>

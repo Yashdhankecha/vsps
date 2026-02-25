@@ -143,17 +143,17 @@ function SubmitReview() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center py-12">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12">
         <div className="container mx-auto px-4">
-          <Card className="max-w-2xl mx-auto p-12 glass-effect border border-white/10 text-center">
+          <Card className="max-w-2xl mx-auto p-12 glass-effect border border-gray-200 text-center">
             <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6 border border-green-500/30">
               <FaCheck className="text-green-400 text-3xl" />
             </div>
-            <h2 className="text-3xl font-bold text-white mb-4">Thank You!</h2>
-            <p className="text-lg text-neutral-300 mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Thank You!</h2>
+            <p className="text-lg text-gray-600 mb-8">
               Your review has been submitted successfully. It will be visible on our testimonials page after approval.
             </p>
-            <p className="text-neutral-400">
+            <p className="text-gray-500">
               Redirecting to testimonials page...
             </p>
           </Card>
@@ -163,24 +163,24 @@ function SubmitReview() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
       <div className="container mx-auto px-4">
         {/* Header */}
         <div className="text-center mb-12">
           <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-white/10">
+            <span className="px-4 py-2 bg-gray-200 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-gray-200">
               Share Your Experience
             </span>
           </div>
-          <h1 className="text-4xl font-bold text-white mb-4">Share Your Experience</h1>
-          <p className="text-lg text-neutral-300 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Share Your Experience</h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
             Your feedback helps us improve and helps others make informed decisions.
             Tell us about your experience at our venue.
           </p>
         </div>
 
         {/* Review Form */}
-        <Card className="max-w-2xl mx-auto p-8 glass-effect border border-white/10">
+        <Card className="max-w-2xl mx-auto p-8 glass-effect border border-gray-200">
           {error && (
             <div className="bg-red-500/20 border border-red-500/30 rounded-xl p-4 mb-6">
               <p className="text-red-400 font-medium">{error}</p>
@@ -217,7 +217,7 @@ function SubmitReview() {
             {/* Event Details */}
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="eventType" className="block text-sm font-semibold text-neutral-200 mb-2">
+                <label htmlFor="eventType" className="block text-sm font-semibold text-gray-700 mb-2">
                   Event Type
                 </label>
                 <select
@@ -225,7 +225,7 @@ function SubmitReview() {
                   name="eventType"
                   value={formData.eventType}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-neutral-800/50 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
+                  className="w-full px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                   required
                 >
                   <option value="">Select Event Type</option>
@@ -237,7 +237,7 @@ function SubmitReview() {
                 </select>
               </div>
               <div>
-                <label htmlFor="eventDate" className="block text-sm font-semibold text-neutral-200 mb-2">
+                <label htmlFor="eventDate" className="block text-sm font-semibold text-gray-700 mb-2">
                   Event Date
                 </label>
                 <input
@@ -246,7 +246,7 @@ function SubmitReview() {
                   name="eventDate"
                   value={formData.eventDate}
                   onChange={handleChange}
-                  className="w-full px-4 py-3 bg-neutral-800/50 backdrop-blur-sm border border-white/20 rounded-xl text-white placeholder-neutral-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
+                  className="w-full px-4 py-3 bg-gray-50 backdrop-blur-sm border border-gray-300 rounded-xl text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-electric-500 focus:border-electric-500 transition-all duration-300 font-medium"
                   required
                 />
               </div>
@@ -254,7 +254,7 @@ function SubmitReview() {
 
             {/* Rating */}
             <div>
-              <label className="block text-sm font-semibold text-neutral-200 mb-3">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
                 Overall Rating
               </label>
               <div className="flex space-x-2">
@@ -270,14 +270,14 @@ function SubmitReview() {
                     <FaStar
                       className={`text-3xl ${star <= (hoverRating || formData.rating)
                           ? 'text-yellow-400'
-                          : 'text-neutral-500'
+                          : 'text-gray-400'
                         }`}
                     />
                   </button>
                 ))}
               </div>
               {formData.rating > 0 && (
-                <p className="text-neutral-400 text-sm mt-2">
+                <p className="text-gray-500 text-sm mt-2">
                   {formData.rating} star{formData.rating !== 1 ? 's' : ''}
                 </p>
               )}
@@ -311,13 +311,13 @@ function SubmitReview() {
 
             {/* Image Upload */}
             <div>
-              <label className="block text-sm font-semibold text-neutral-200 mb-3">
+              <label className="block text-sm font-semibold text-gray-700 mb-3">
                 Add Photos (Optional - Max 5 images)
               </label>
-              <div className="border-2 border-dashed border-white/20 rounded-2xl p-8 text-center bg-neutral-800/20 backdrop-blur-xl">
-                <FaCamera className="text-4xl text-neutral-400 mx-auto mb-4" />
-                <p className="text-neutral-300 mb-2">Drag and drop your photos here</p>
-                <p className="text-sm text-neutral-400 mb-4">or</p>
+              <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-100/20 backdrop-blur-xl">
+                <FaCamera className="text-4xl text-gray-500 mx-auto mb-4" />
+                <p className="text-gray-600 mb-2">Drag and drop your photos here</p>
+                <p className="text-sm text-gray-500 mb-4">or</p>
                 <label className="cursor-pointer">
                   <Button variant="ghost" type="button">
                     Browse Files
@@ -330,7 +330,7 @@ function SubmitReview() {
                     className="hidden"
                   />
                 </label>
-                <p className="text-xs text-neutral-500 mt-2">
+                <p className="text-xs text-gray-400 mt-2">
                   Supported formats: JPG, PNG, GIF (Max 5 images)
                 </p>
               </div>

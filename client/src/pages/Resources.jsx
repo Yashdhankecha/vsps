@@ -88,13 +88,14 @@ function Resources() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-mesh">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-gray-50 to-slate-100 page-decoration">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white py-20">
-        <div className="absolute inset-0 bg-gradient-mesh opacity-20"></div>
+      <div className="relative bg-gradient-hero text-white py-20 overflow-hidden">
+        <div className="absolute inset-0 texture-diagonal opacity-10"></div>
+        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-white/5 blur-3xl"></div>
         <div className="relative container mx-auto px-4 text-center">
           <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-white/10">
+            <span className="px-4 py-2 bg-gray-200 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-gray-200">
               Resources
             </span>
           </div>
@@ -102,7 +103,7 @@ function Resources() {
             Planning Resources
           </h1>
           <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed">
-            Access our collection of guides, templates, and articles to help plan your perfect event. 
+            Access our collection of guides, templates, and articles to help plan your perfect event.
             Everything you need to make your celebration a success.
           </p>
         </div>
@@ -112,16 +113,15 @@ function Resources() {
 
         {/* Category Filter */}
         <div className="flex flex-wrap justify-center gap-2 mb-16">
-          <div className="glass-effect rounded-2xl p-2 border border-white/10">
+          <div className="glass-effect rounded-2xl p-2 border border-gray-200">
             {categories.map((category) => (
               <button
                 key={category.id}
                 onClick={() => setSelectedCategory(category.id)}
-                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${
-                  selectedCategory === category.id
+                className={`px-6 py-3 rounded-xl font-semibold transition-all duration-300 ${selectedCategory === category.id
                     ? 'bg-gradient-electric text-white shadow-lg transform scale-105'
-                    : 'text-neutral-300 hover:bg-white/10 hover:text-white'
-                }`}
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                  }`}
               >
                 {category.label}
               </button>
@@ -132,9 +132,9 @@ function Resources() {
         {/* Resources Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
           {filteredResources.map((resource) => (
-            <Card 
+            <Card
               key={resource.id}
-              className="p-8 glass-effect border border-white/10 hover:shadow-xl hover:-translate-y-2 transition-all duration-500"
+              className="p-8 glass-effect border border-gray-200 hover:shadow-xl hover:-translate-y-2 transition-all duration-500"
               hoverEffect={true}
             >
               <div className="flex items-center mb-6">
@@ -142,11 +142,11 @@ function Resources() {
                   <resource.icon className="text-3xl text-white" />
                 </div>
                 <div className="ml-4 flex-1">
-                  <h3 className="text-xl font-bold text-white group-hover:text-electric-400 transition-colors mb-2">{resource.title}</h3>
-                  <p className="text-sm text-neutral-400 font-medium">{resource.type} • {resource.size}</p>
+                  <h3 className="text-xl font-bold text-gray-900 group-hover:text-electric-600 transition-colors mb-2">{resource.title}</h3>
+                  <p className="text-sm text-gray-500 font-medium">{resource.type} • {resource.size}</p>
                 </div>
               </div>
-              <p className="text-neutral-300 mb-6 leading-relaxed">{resource.description}</p>
+              <p className="text-gray-600 mb-6 leading-relaxed">{resource.description}</p>
               <Button variant="primary" className="w-full">
                 <FaDownload className="mr-2" />
                 Download Resource
@@ -156,14 +156,14 @@ function Resources() {
         </div>
 
         {/* Call to Action */}
-        <Card className="text-center p-12 glass-effect border border-white/10">
-          <h3 className="text-3xl font-bold text-white mb-4">
+        <Card className="text-center p-12 glass-effect border border-gray-200">
+          <h3 className="text-3xl font-bold text-gray-900 mb-4">
             Need Personalized Assistance?
           </h3>
-          <p className="text-lg text-neutral-300 mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
             Our event planning experts are here to help you create the perfect event. Get personalized guidance and support for your special occasion.
           </p>
-          <Button 
+          <Button
             onClick={handleContactClick}
             variant="primary"
             size="lg"

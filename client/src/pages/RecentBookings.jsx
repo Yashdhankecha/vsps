@@ -19,12 +19,12 @@ const DocumentViewer = ({ documentUrl, documentType, onClose }) => {
   
   return (
     <div className="fixed inset-0 bg-black/75 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-      <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-white/10">
-        <div className="flex justify-between items-center p-4 border-b border-white/10">
-          <h3 className="text-lg font-medium text-white">{documentType} Viewer</h3>
+      <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col border border-gray-200">
+        <div className="flex justify-between items-center p-4 border-b border-gray-200">
+          <h3 className="text-lg font-medium text-gray-800">{documentType} Viewer</h3>
           <button
             onClick={onClose}
-            className="text-neutral-400 hover:text-white transition-colors"
+            className="text-gray-500 hover:text-gray-900 transition-colors"
           >
             <FaTimes className="h-6 w-6" />
           </button>
@@ -40,7 +40,7 @@ const DocumentViewer = ({ documentUrl, documentType, onClose }) => {
               e.target.parentElement.innerHTML = `
                 <div class="text-center p-4">
                   <p class="text-red-400 mb-2">Error loading image</p>
-                  <a href="${documentUrl}" target="_blank" class="text-electric-400 hover:text-electric-300 underline">Open in new tab</a>
+                  <a href="${documentUrl}" target="_blank" class="text-electric-600 hover:text-electric-500 underline">Open in new tab</a>
                 </div>
               `;
             }}
@@ -111,7 +111,7 @@ const RecentBookings = () => {
       case 'Approved':
         return 'bg-blue-500/20 text-blue-300 border border-blue-500/30';
       default:
-        return 'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30';
+        return 'bg-neutral-500/20 text-gray-600 border border-neutral-500/30';
     }
   };
 
@@ -147,7 +147,7 @@ const RecentBookings = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
@@ -155,16 +155,16 @@ const RecentBookings = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-mesh py-12">
+      <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4">
-          <Card className="max-w-md mx-auto p-6 glass-effect border border-white/10">
+          <Card className="max-w-md mx-auto p-6 glass-effect border border-gray-200">
             <div className="text-center">
               <div className="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-500/30">
                 <FaTimesCircle className="h-8 w-8 text-red-400" />
               </div>
               <h3 className="text-lg font-bold text-red-400 mb-2">Error loading bookings</h3>
-              <p className="text-neutral-300 mb-4">{error}</p>
-              <p className="text-sm text-neutral-400 mb-6">Please check your authentication and try again.</p>
+              <p className="text-gray-600 mb-4">{error}</p>
+              <p className="text-sm text-gray-500 mb-6">Please check your authentication and try again.</p>
               <Button 
                 onClick={fetchUserBookings} 
                 variant="primary"
@@ -179,7 +179,7 @@ const RecentBookings = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
       {showDocumentViewer && (
         <DocumentViewer
           documentUrl={selectedDocument}
@@ -194,18 +194,18 @@ const RecentBookings = () => {
 
       <div className="container mx-auto px-4 max-w-4xl">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Recent Bookings</h1>
-          <p className="text-neutral-300">View and manage your event bookings</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Recent Bookings</h1>
+          <p className="text-gray-600">View and manage your event bookings</p>
         </div>
         
         {bookings.length === 0 ? (
-          <Card className="text-center p-12 glass-effect border border-white/10">
+          <Card className="text-center p-12 glass-effect border border-gray-200">
             <div className="max-w-md mx-auto">
-              <div className="w-20 h-20 bg-neutral-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <FaCalendar className="h-10 w-10 text-neutral-400" />
+              <div className="w-20 h-20 bg-gray-200/50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <FaCalendar className="h-10 w-10 text-gray-500" />
               </div>
-              <h3 className="text-xl font-bold text-white mb-3">No Bookings Yet</h3>
-              <p className="text-neutral-300 mb-6">You haven't made any bookings yet.</p>
+              <h3 className="text-xl font-bold text-gray-900 mb-3">No Bookings Yet</h3>
+              <p className="text-gray-600 mb-6">You haven't made any bookings yet.</p>
               <Button 
                 variant="primary"
                 onClick={() => window.location.href = '/booking'}
@@ -219,13 +219,13 @@ const RecentBookings = () => {
             {bookings.map((booking) => (
               <Card 
                 key={booking._id} 
-                className="p-6 glass-effect border border-white/10 hover:shadow-xl transition-all duration-300"
+                className="p-6 glass-effect border border-gray-200 hover:shadow-xl transition-all duration-300"
                 hoverEffect={true}
               >
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-4">
                   <div>
-                    <h3 className="text-xl font-bold text-white mb-1">{booking.eventType}</h3>
-                    <p className="text-neutral-300">Booking ID: {booking._id}</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">{booking.eventType}</h3>
+                    <p className="text-gray-600">Booking ID: {booking._id}</p>
                   </div>
                   <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(booking.status)}`}>
                     {getStatusIcon(booking.status)}
@@ -234,40 +234,40 @@ const RecentBookings = () => {
                 </div>
                 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                  <div className="flex items-center text-neutral-300">
-                    <FaCalendar className="mr-3 text-electric-400" />
+                  <div className="flex items-center text-gray-600">
+                    <FaCalendar className="mr-3 text-electric-600" />
                     <div>
-                      <p className="text-sm text-neutral-400">Date</p>
-                      <p className="font-medium text-white">{new Date(booking.date).toLocaleDateString()}</p>
+                      <p className="text-sm text-gray-500">Date</p>
+                      <p className="font-medium text-gray-800">{new Date(booking.date).toLocaleDateString()}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center text-neutral-300">
-                    <FaUsers className="mr-3 text-electric-400" />
+                  <div className="flex items-center text-gray-600">
+                    <FaUsers className="mr-3 text-electric-600" />
                     <div>
-                      <p className="text-sm text-neutral-400">Guests</p>
-                      <p className="font-medium text-white">{booking.guestCount}</p>
+                      <p className="text-sm text-gray-500">Guests</p>
+                      <p className="font-medium text-gray-800">{booking.guestCount}</p>
                     </div>
                   </div>
                   
-                  <div className="flex items-center text-neutral-300">
-                    <FaClock className="mr-3 text-electric-400" />
+                  <div className="flex items-center text-gray-600">
+                    <FaClock className="mr-3 text-electric-600" />
                     <div>
-                      <p className="text-sm text-neutral-400">Submitted</p>
-                      <p className="font-medium text-white">{new Date(booking.createdAt).toLocaleDateString()}</p>
+                      <p className="text-sm text-gray-500">Submitted</p>
+                      <p className="font-medium text-gray-800">{new Date(booking.createdAt).toLocaleDateString()}</p>
                     </div>
                   </div>
                 </div>
                 
                 {booking.eventDocuments && booking.eventDocuments.length > 0 && (
-                  <div className="border-t border-white/10 pt-4">
-                    <h4 className="font-medium text-white mb-3">Documents</h4>
+                  <div className="border-t border-gray-200 pt-4">
+                    <h4 className="font-medium text-gray-800 mb-3">Documents</h4>
                     <div className="flex flex-wrap gap-2">
                       {booking.eventDocuments.map((doc, index) => (
                         <button
                           key={index}
                           onClick={() => handleViewDocument(doc.url, doc.type)}
-                          className="inline-flex items-center px-3 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors border border-white/10"
+                          className="inline-flex items-center px-3 py-2 bg-gray-100 text-white rounded-lg hover:bg-gray-200 transition-colors border border-gray-200"
                         >
                           <FaFileAlt className="mr-2" />
                           <span className="text-sm">{doc.type || `Document ${index + 1}`}</span>

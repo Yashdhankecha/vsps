@@ -38,7 +38,7 @@ const Sidebar = () => {
       icon: HomeIcon,
       iconSolid: HomeIconSolid,
       path: '/committee/dashboard',
-      color: 'text-electric-400',
+      color: 'text-electric-600',
       bgColor: 'bg-electric-500/20',
       borderColor: 'border-electric-500/30',
       roles: ['committeemember', 'superadmin']
@@ -48,7 +48,7 @@ const Sidebar = () => {
       icon: UsersIcon,
       iconSolid: UsersIconSolid,
       path: '/committee/add-member',
-      color: 'text-secondary-400',
+      color: 'text-secondary-600',
       bgColor: 'bg-secondary-500/20',
       borderColor: 'border-secondary-500/30',
       roles: ['committeemember', 'superadmin']
@@ -66,7 +66,7 @@ const Sidebar = () => {
       name: 'Committee Members',
       icon: MagnifyingGlassIcon,
       path: '/committee/members',
-      color: 'text-sunset-400',
+      color: 'text-sunset-600',
       bgColor: 'bg-sunset-500/20',
       borderColor: 'border-sunset-500/30',
       roles: ['committeemember', 'superadmin']
@@ -104,14 +104,14 @@ const Sidebar = () => {
         className={`
           fixed top-0 left-0 h-screen bg-black/90 md:bg-transparent z-50
           transition-all duration-300 ease-in-out 
-          border-r border-white/10 backdrop-blur-xl flex flex-col
+          border-r border-gray-200 backdrop-blur-xl flex flex-col
           ${sidebarExpanded ? 'translate-x-0 w-72' : '-translate-x-full md:translate-x-0 md:w-20'}
         `}
       >
         {/* Mobile Close Button */}
         <button
           onClick={toggleSidebar}
-          className="absolute right-4 top-4 p-2 text-white/50 hover:text-white md:hidden"
+          className="absolute right-4 top-4 p-2 text-white/50 hover:text-gray-900 md:hidden"
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -121,24 +121,24 @@ const Sidebar = () => {
         {/* Desktop Toggle Button */}
         <button
           onClick={toggleSidebar}
-          className="hidden md:flex absolute -right-3 top-8 w-6 h-6 glass-effect border border-white/20 rounded-full items-center justify-center text-neutral-400 hover:text-white hover:bg-white/10 transition-all duration-200 shadow-lg z-10"
+          className="hidden md:flex absolute -right-3 top-8 w-6 h-6 glass-effect border border-gray-300 rounded-full items-center justify-center text-gray-500 hover:text-gray-900 hover:bg-gray-100 transition-all duration-200 shadow-lg z-10"
         >
           {sidebarExpanded ? <ChevronLeftIcon className="w-4 h-4" /> : <ChevronRightIcon className="w-4 h-4" />}
         </button>
 
         {/* Header */}
-        <div className="p-6 border-b border-white/10 mt-8 md:mt-0">
+        <div className="p-6 border-b border-gray-200 mt-8 md:mt-0">
           <div className="flex items-center space-x-3">
             <div className={`w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg transition-all duration-300 ${!sidebarExpanded && 'mx-auto'}`}>
               <ShieldCheckIcon className="w-6 h-6 text-white" />
             </div>
             {sidebarExpanded && (
               <div className="animate-fade-in-right overflow-hidden whitespace-nowrap">
-                <h2 className="text-xl font-bold text-white">
+                <h2 className="text-xl font-bold text-gray-900">
                   {user?.role === 'superadmin' ? 'Super Admin' :
                     user?.role === 'committeemember' ? 'Committee' : 'Admin'}
                 </h2>
-                <p className="text-xs text-neutral-300 font-medium">Dashboard</p>
+                <p className="text-xs text-gray-600 font-medium">Dashboard</p>
               </div>
             )}
           </div>
@@ -146,7 +146,7 @@ const Sidebar = () => {
           {sidebarExpanded && user?.village && (
             <div className="mt-4 animate-fade-in-right md:block">
               <div className="px-3 py-1.5 bg-electric-500/10 border border-electric-500/20 rounded-lg">
-                <p className="text-xs text-electric-300 font-medium truncate">
+                <p className="text-xs text-electric-500 font-medium truncate">
                   Village: {user.village}
                 </p>
               </div>
@@ -168,7 +168,7 @@ const Sidebar = () => {
                 title={!sidebarExpanded ? item.name : ''}
                 className={`group flex items-center px-4 py-3 rounded-xl transition-all duration-200 relative overflow-hidden border ${active
                   ? `${item.bgColor} ${item.color} ${item.borderColor} shadow-lg font-semibold`
-                  : 'text-neutral-300 hover:bg-white/5 hover:text-white font-medium border-transparent hover:border-white/10'
+                  : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium border-transparent hover:border-gray-200'
                   } ${!sidebarExpanded && 'justify-center'}`}
                 style={{
                   animationDelay: `${index * 0.05}s`
@@ -192,11 +192,11 @@ const Sidebar = () => {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-white/10">
+        <div className="p-4 border-t border-gray-200">
           <button
             onClick={handleLogout}
             title={!sidebarExpanded ? 'Logout' : ''}
-            className={`group flex items-center w-full px-4 py-3 rounded-xl text-neutral-300 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 ${!sidebarExpanded && 'justify-center'}`}
+            className={`group flex items-center w-full px-4 py-3 rounded-xl text-gray-600 hover:bg-red-500/10 hover:text-red-400 transition-all duration-200 ${!sidebarExpanded && 'justify-center'}`}
           >
             <ArrowRightOnRectangleIcon className="w-5 h-5 flex-shrink-0" />
             {sidebarExpanded && (

@@ -26,7 +26,7 @@ const Notification = ({ message, type, onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="flex-shrink-0 text-neutral-400 hover:text-neutral-600 transition-colors duration-200"
+            className="flex-shrink-0 text-gray-500 hover:text-gray-500 transition-colors duration-200"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
@@ -41,9 +41,9 @@ const RejectionModal = ({ onClose, onSubmit, bookingType }) => {
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
-      <div className="glass-effect border border-white/10 rounded-xl shadow-2xl max-w-md w-full mx-4 animate-fade-in-up">
-        <div className="px-6 py-4 border-b border-white/10">
-          <h3 className="text-lg font-semibold text-white">
+      <div className="glass-effect border border-gray-200 rounded-xl shadow-2xl max-w-md w-full mx-4 animate-fade-in-up">
+        <div className="px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-800">
             Enter Rejection Reason for {bookingType || 'Booking'}
           </h3>
         </div>
@@ -56,7 +56,7 @@ const RejectionModal = ({ onClose, onSubmit, bookingType }) => {
             placeholder="Please provide a reason for rejection..."
           />
         </div>
-        <div className="px-6 py-4 flex justify-end space-x-3 border-t border-white/10">
+        <div className="px-6 py-4 flex justify-end space-x-3 border-t border-gray-200">
           <button
             onClick={onClose}
             className="btn-secondary"
@@ -103,10 +103,10 @@ const DocumentViewer = ({ documentUrl, documentType, onClose }) => {
   }
   
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-      <div className="card-glass rounded-lg p-6 max-w-6xl w-full mx-4 max-h-[95vh] overflow-hidden flex flex-col border border-white/10">
+    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 rounded-lg p-6 max-w-6xl w-full mx-4 max-h-[95vh] overflow-hidden flex flex-col border border-gray-200">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-medium text-white">{documentType} Viewer</h3>
+          <h3 className="text-xl font-medium text-gray-800">{documentType} Viewer</h3>
           <div className="flex space-x-2">
             <button 
               onClick={() => {
@@ -124,14 +124,14 @@ const DocumentViewer = ({ documentUrl, documentType, onClose }) => {
             </button>
             <button
               onClick={onClose}
-              className="text-neutral-400 hover:text-white"
+              className="text-gray-500 hover:text-gray-900"
             >
               <XMarkIcon className="h-6 w-6" />
             </button>
           </div>
         </div>
         <div className="flex-1 overflow-hidden">
-          <div className="w-full h-full flex items-center justify-center bg-neutral-800/50">
+          <div className="w-full h-full flex items-center justify-center bg-gray-50">
             <img 
               src={documentUrl} 
               alt={documentType} 
@@ -160,7 +160,7 @@ function CollapsibleSection({ title, children, defaultOpen = false }) {
   return (
     <div className="mb-4 border rounded-lg">
       <button
-        className="w-full flex justify-between items-center px-4 py-2 bg-neutral-800/50 hover:bg-neutral-700/50 rounded-t-lg focus:outline-none"
+        className="w-full flex justify-between items-center px-4 py-2 bg-gray-50 hover:bg-gray-200/50 rounded-t-lg focus:outline-none"
         onClick={() => setOpen(!open)}
         type="button"
       >
@@ -840,22 +840,22 @@ const BookingManagement = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-purple-500"></div>
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center p-4">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
         <div className="max-w-md w-full">
-          <div className="card-glass p-8 text-center animate-fade-in-up">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center animate-fade-in-up">
             <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
               <XMarkIcon className="w-8 h-8 text-red-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Error Loading Bookings</h3>
-            <p className="text-neutral-300 mb-6">{error}</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Error Loading Bookings</h3>
+            <p className="text-gray-600 mb-6">{error}</p>
             <button
               onClick={() => {
                 fetchBookings();
@@ -873,9 +873,9 @@ const BookingManagement = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6 flex flex-col">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6 flex flex-col">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up flex-grow flex flex-col p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up flex-grow flex flex-col p-6">
         {notification && (
           <Notification
             message={notification.message}
@@ -923,7 +923,7 @@ const BookingManagement = () => {
 
       {/* Main Content */}
         {/* Header Section - Responsive */}
-        <div className="border-b border-white/10 pb-6 mb-6 flex-shrink-0">
+        <div className="border-b border-gray-200 pb-6 mb-6 flex-shrink-0">
           <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4">
             {/* Title and Stats */}
             <div className="flex flex-col sm:flex-row sm:items-center gap-4">
@@ -931,18 +931,18 @@ const BookingManagement = () => {
                 <div className="w-10 h-10 bg-gradient-electric rounded-xl flex items-center justify-center shadow-lg neon-glow">
                   <DocumentIcon className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-xl sm:text-2xl font-bold text-white">Booking Management</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Booking Management</h2>
               </div>
               
               {/* Stats Display */}
-              <div className="glass-effect px-4 py-2 rounded-lg border border-white/10">
+              <div className="glass-effect px-4 py-2 rounded-lg border border-gray-200">
                 <div className="text-center">
-                  <div className="text-sm font-medium text-neutral-300">
+                  <div className="text-sm font-medium text-gray-600">
                     {activeCategory === 'all' ? 'Event Bookings' :
                      activeCategory === 'samuh-lagan' ? 'Samuh Lagan' :
                      'Student Award'}
                   </div>
-                  <div className="text-lg font-bold text-electric-400">
+                  <div className="text-lg font-bold text-electric-600">
                     {activeCategory === 'all' ? safeBookings.length :
                      activeCategory === 'samuh-lagan' ? (Array.isArray(samuhLaganRequests) ? samuhLaganRequests.length : 0) :
                      (Array.isArray(studentAwardRequests) ? studentAwardRequests.length : 0)}
@@ -1000,7 +1000,7 @@ const BookingManagement = () => {
                 className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
                   activeCategory === 'all' 
                     ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
-                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                    : 'glass-effect text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-electric-500/50'
                 }`}
               >
                 <span className="hidden sm:inline">Event Bookings</span>
@@ -1011,7 +1011,7 @@ const BookingManagement = () => {
                 className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
                   activeCategory === 'samuh-lagan' 
                     ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
-                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                    : 'glass-effect text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-electric-500/50'
                 }`}
               >
                 <span className="hidden sm:inline">Samuh Lagan</span>
@@ -1022,7 +1022,7 @@ const BookingManagement = () => {
                 className={`px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-all duration-200 ${
                   activeCategory === 'student-award' 
                     ? 'bg-gradient-electric text-white shadow-lg neon-glow' 
-                    : 'glass-effect text-neutral-300 hover:text-white border border-white/10 hover:border-electric-500/50'
+                    : 'glass-effect text-gray-600 hover:text-gray-900 border border-gray-200 hover:border-electric-500/50'
                 }`}
               >
                 <span className="hidden sm:inline">Student Award</span>
@@ -1041,14 +1041,14 @@ const BookingManagement = () => {
                 <div className="flex flex-col space-y-3">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-semibold text-white">{request.name}</h3>
-                      <p className="text-sm text-neutral-300">{request.schoolName}</p>
+                      <h3 className="font-semibold text-gray-800">{request.name}</h3>
+                      <p className="text-sm text-gray-600">{request.schoolName}</p>
                     </div>
                     <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                       request.status === 'approved' ? 'bg-accent-500/20 text-accent-400 border border-accent-500/30' :
-                      request.status === 'pending' ? 'bg-secondary-500/20 text-secondary-400 border border-secondary-500/30' :
+                      request.status === 'pending' ? 'bg-secondary-500/20 text-secondary-600 border border-secondary-500/30' :
                       request.status === 'rejected' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-                      'bg-neutral-500/20 text-neutral-400 border border-neutral-500/30'
+                      'bg-neutral-500/20 text-gray-500 border border-neutral-500/30'
                     }`}>
                       {request.status}
                     </span>
@@ -1056,11 +1056,11 @@ const BookingManagement = () => {
                   
                   <div className="grid grid-cols-2 gap-4 text-sm">
                     <div>
-                      <span className="text-neutral-400">Percentage:</span>
+                      <span className="text-gray-500">Percentage:</span>
                       <span className="text-white ml-2">{request.totalPercentage}%</span>
                     </div>
                     <div>
-                      <span className="text-neutral-400">Rank:</span>
+                      <span className="text-gray-500">Rank:</span>
                       <span className="text-white ml-2">{request.rank}</span>
                     </div>
                   </div>
@@ -1133,28 +1133,28 @@ const BookingManagement = () => {
           <div className="hidden sm:block overflow-x-auto flex-grow">
             <table className="w-full min-w-full">
               <thead>
-                <tr className="border-b border-white/10">
-                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">Student Name</th>
-                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">School</th>
-                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">Percentage</th>
-                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">Rank</th>
-                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">Status</th>
-                  <th className="py-4 px-4 text-left text-sm font-medium text-neutral-300">Actions</th>
+                <tr className="border-b border-gray-200">
+                  <th className="py-4 px-4 text-left text-sm font-medium text-gray-600">Student Name</th>
+                  <th className="py-4 px-4 text-left text-sm font-medium text-gray-600">School</th>
+                  <th className="py-4 px-4 text-left text-sm font-medium text-gray-600">Percentage</th>
+                  <th className="py-4 px-4 text-left text-sm font-medium text-gray-600">Rank</th>
+                  <th className="py-4 px-4 text-left text-sm font-medium text-gray-600">Status</th>
+                  <th className="py-4 px-4 text-left text-sm font-medium text-gray-600">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {(Array.isArray(studentAwardRequests) ? studentAwardRequests : []).map((request) => (
-                  <tr key={request._id} className="border-b border-white/5 hover:bg-white/10 transition-colors duration-200">
+                  <tr key={request._id} className="border-b border-white/5 hover:bg-gray-100 transition-colors duration-200">
                     <td className="py-4 px-4 text-white">{request.name}</td>
-                    <td className="py-4 px-4 text-neutral-300">{request.schoolName}</td>
-                    <td className="py-4 px-4 text-neutral-300">{request.totalPercentage}%</td>
-                    <td className="py-4 px-4 text-neutral-300">{request.rank}</td>
+                    <td className="py-4 px-4 text-gray-600">{request.schoolName}</td>
+                    <td className="py-4 px-4 text-gray-600">{request.totalPercentage}%</td>
+                    <td className="py-4 px-4 text-gray-600">{request.rank}</td>
                     <td className="py-4 px-4">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium ${
                         request.status === 'approved' ? 'bg-accent-500/20 text-accent-400 border border-accent-500/30' :
-                        request.status === 'pending' ? 'bg-secondary-500/20 text-secondary-400 border border-secondary-500/30' :
+                        request.status === 'pending' ? 'bg-secondary-500/20 text-secondary-600 border border-secondary-500/30' :
                         request.status === 'rejected' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-                        'bg-neutral-500/20 text-neutral-400 border border-neutral-500/30'
+                        'bg-neutral-500/20 text-gray-500 border border-neutral-500/30'
                       }`}>
                         {request.status}
                       </span>
@@ -1191,7 +1191,7 @@ const BookingManagement = () => {
                         )}
                         <button 
                           onClick={() => handleViewBooking(request)} 
-                          className="p-2 text-electric-400 hover:bg-electric-500/20 rounded-lg transition-colors duration-200"
+                          className="p-2 text-electric-600 hover:bg-electric-500/20 rounded-lg transition-colors duration-200"
                           title="View Details"
                         >
                           <EyeIcon className="h-5 w-5" />
@@ -1230,7 +1230,7 @@ const BookingManagement = () => {
             </thead>
             <tbody>
               {samuhLaganRequests.map((request) => (
-                <tr key={request._id} className="border-b hover:bg-white/10">
+                <tr key={request._id} className="border-b hover:bg-gray-100">
                   <td className="py-4 px-2">{request.bride.name}</td>
                   <td className="py-4 px-2">{request.groom.name}</td>
                   <td className="py-4 px-2">
@@ -1242,7 +1242,7 @@ const BookingManagement = () => {
                       request.status === 'approved' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
                       request.status === 'pending' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
                       request.status === 'rejected' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
-                      'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
+                      'bg-neutral-500/20 text-gray-600 border border-neutral-500/30'
                     }`}>
                       {request.status}
                     </span>
@@ -1333,7 +1333,7 @@ const BookingManagement = () => {
         </div>
       ) : (
         filteredBookings.length === 0 ? (
-          <div className="text-center py-8 text-neutral-400 flex-grow flex items-center justify-center">
+          <div className="text-center py-8 text-gray-500 flex-grow flex items-center justify-center">
             No bookings found
           </div>
         ) : (
@@ -1350,7 +1350,7 @@ const BookingManagement = () => {
               </thead>
               <tbody>
                 {filteredBookings.map((booking) => (
-                  <tr key={booking._id} className="border-b hover:bg-white/10">
+                  <tr key={booking._id} className="border-b hover:bg-gray-100">
                     <td className="py-4 px-2">{booking.firstName && booking.surname ? `${booking.firstName} ${booking.surname}` : 'N/A'}</td>
                     <td className="py-4 px-2">{booking.eventType}</td>
                     <td className="py-4 px-2">
@@ -1362,7 +1362,7 @@ const BookingManagement = () => {
                         booking.status === 'Approved' ? 'bg-blue-500/20 text-blue-300 border border-blue-500/30' :
                         booking.status === 'Pending' ? 'bg-yellow-500/20 text-yellow-300 border border-yellow-500/30' :
                         booking.status === 'Rejected' ? 'bg-red-500/20 text-red-300 border border-red-500/30' :
-                        'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
+                        'bg-neutral-500/20 text-gray-600 border border-neutral-500/30'
                       }`}>
                         {booking.status}
                       </span>
@@ -1464,9 +1464,9 @@ const BookingManagement = () => {
 
       {selectedBooking && (
         <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50 backdrop-blur-sm p-4 animate-fade-in">
-          <div className="card-glass rounded-xl p-6 max-w-4xl w-full md:w-11/12 lg:w-3/4 h-[85vh] overflow-y-auto border border-white/10 shadow-2xl relative animate-scale-in flex flex-col" style={{boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'}}>
-            <div className="flex justify-between items-center mb-6 pr-10 pb-4 border-b border-white/10">
-              <h2 className="text-2xl font-semibold text-white">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 rounded-xl p-6 max-w-4xl w-full md:w-11/12 lg:w-3/4 h-[85vh] overflow-y-auto border border-gray-200 shadow-2xl relative animate-scale-in flex flex-col" style={{boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)'}}>
+            <div className="flex justify-between items-center mb-6 pr-10 pb-4 border-b border-gray-200">
+              <h2 className="text-2xl font-semibold text-gray-800">
                 {isEditing ? 'Edit Booking' : 'Booking Details'}
               </h2>
               <button
@@ -1475,7 +1475,7 @@ const BookingManagement = () => {
                   setIsEditing(false);
                   setEditedData(null);
                 }}
-                className="text-neutral-400 hover:text-white bg-neutral-800/50 hover:bg-red-500/20 rounded-full p-2 transition-all duration-200 absolute top-4 right-4 ring-1 ring-white/10 hover:ring-white/20"
+                className="text-gray-500 hover:text-gray-900 bg-gray-50 hover:bg-red-500/20 rounded-full p-2 transition-all duration-200 absolute top-4 right-4 ring-1 ring-white/10 hover:ring-white/20"
                 aria-label="Close"
               >
                 <XMarkIcon className="h-6 w-6" />
@@ -1486,11 +1486,11 @@ const BookingManagement = () => {
               <>
                 {selectedBooking.eventType !== 'Samuh Lagan' && selectedBooking.eventType !== 'Student Award Registration' && (
                     <>
-                      <div className="border-b border-white/10 pb-4 flex-grow">
+                      <div className="border-b border-gray-200 pb-4 flex-grow">
                         <h3 className="text-lg font-medium mb-4 text-white">Customer Information</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-white">First Name</label>
+                            <label className="block text-sm font-medium text-gray-800">First Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -1499,11 +1499,11 @@ const BookingManagement = () => {
                                 className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1 text-neutral-300">{selectedBooking.firstName}</p>
+                              <p className="mt-1 text-gray-600">{selectedBooking.firstName}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Surname</label>
+                            <label className="block text-sm font-medium text-gray-800">Surname</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -1512,11 +1512,11 @@ const BookingManagement = () => {
                                 className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1 text-neutral-300">{selectedBooking.surname}</p>
+                              <p className="mt-1 text-gray-600">{selectedBooking.surname}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Email</label>
+                            <label className="block text-sm font-medium text-gray-800">Email</label>
                             {isEditing ? (
                               <input
                                 type="email"
@@ -1525,11 +1525,11 @@ const BookingManagement = () => {
                                 className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1 text-neutral-300">{selectedBooking.email}</p>
+                              <p className="mt-1 text-gray-600">{selectedBooking.email}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Phone</label>
+                            <label className="block text-sm font-medium text-gray-800">Phone</label>
                             {isEditing ? (
                               <input
                                 type="tel"
@@ -1538,16 +1538,16 @@ const BookingManagement = () => {
                                 className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1 text-neutral-300">{selectedBooking.phone}</p>
+                              <p className="mt-1 text-gray-600">{selectedBooking.phone}</p>
                             )}
                           </div>
                         </div>
                       </div>
-                      <div className="border-b border-white/10 pb-4">
+                      <div className="border-b border-gray-200 pb-4">
                         <h3 className="text-lg font-medium mb-4 text-white">Event Details</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-white">Event Type</label>
+                            <label className="block text-sm font-medium text-gray-800">Event Type</label>
                             {isEditing ? (
                               <select
                                 value={editedData.eventType}
@@ -1560,11 +1560,11 @@ const BookingManagement = () => {
                                 <option value="social">Social Gathering</option>
                               </select>
                             ) : (
-                              <p className="mt-1 text-neutral-300">{selectedBooking.eventType}</p>
+                              <p className="mt-1 text-gray-600">{selectedBooking.eventType}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Guest Count</label>
+                            <label className="block text-sm font-medium text-gray-800">Guest Count</label>
                             {isEditing ? (
                               <input
                                 type="number"
@@ -1573,11 +1573,11 @@ const BookingManagement = () => {
                                 className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1 text-neutral-300">{selectedBooking.guestCount}</p>
+                              <p className="mt-1 text-gray-600">{selectedBooking.guestCount}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Date</label>
+                            <label className="block text-sm font-medium text-gray-800">Date</label>
                             {isEditing ? (
                               <input
                                 type="date"
@@ -1586,11 +1586,11 @@ const BookingManagement = () => {
                                 className="mt-1 block w-full rounded-md input-field"
                               />
                             ) : (
-                              <p className="mt-1 text-neutral-300">{new Date(selectedBooking.date).toLocaleDateString()}</p>
+                              <p className="mt-1 text-gray-600">{new Date(selectedBooking.date).toLocaleDateString()}</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Time</label>
+                            <label className="block text-sm font-medium text-gray-800">Time</label>
                             <div className="grid grid-cols-2 gap-2">
                               {isEditing ? (
                                 <>
@@ -1608,13 +1608,13 @@ const BookingManagement = () => {
                                   />
                                 </>
                               ) : (
-                                <p className="mt-1 text-neutral-300">{`${selectedBooking.startTime} - ${selectedBooking.endTime}`}</p>
+                                <p className="mt-1 text-gray-600">{`${selectedBooking.startTime} - ${selectedBooking.endTime}`}</p>
                               )}
                             </div>
                           </div>
                         </div>
                       </div>
-                      <div className="border-b border-white/10 pb-4">
+                      <div className="border-b border-gray-200 pb-4">
                         <h3 className="text-lg font-medium mb-4 text-white">Event Document</h3>
                         {selectedBooking.eventDocument ? (
                           <div className="space-y-2">
@@ -1635,7 +1635,7 @@ const BookingManagement = () => {
                                   link.click();
                                   document.body.removeChild(link);
                                 }}
-                                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-electric hover:from-electric-600 hover:to-electric-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electric-500"
+                                className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-gray-800 bg-gradient-electric hover:from-electric-600 hover:to-electric-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-electric-500"
                               >
                                 <DocumentIcon className="h-5 w-5 mr-2" />
                                 View Document
@@ -1665,21 +1665,21 @@ const BookingManagement = () => {
                                       });
                                     }
                                   }}
-                                  className="block w-full text-sm text-neutral-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500/20 file:text-blue-300 hover:file:bg-blue-500/30"
+                                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500/20 file:text-blue-300 hover:file:bg-blue-500/30"
                                 />
                               )}
                             </div>
-                            <div className="text-sm text-neutral-400">
+                            <div className="text-sm text-gray-500">
                               <p>Document Name: {selectedBooking.eventDocument.split('/').pop()}</p>
                               <p>Document Type: {selectedBooking.eventDocument.split('.').pop().toUpperCase()}</p>
                             </div>
                           </div>
                         ) : (
-                          <p className="text-neutral-400">No document uploaded</p>
+                          <p className="text-gray-500">No document uploaded</p>
                         )}
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-white">Additional Notes</label>
+                        <label className="block text-sm font-medium text-gray-800">Additional Notes</label>
                         {isEditing ? (
                           <textarea
                             value={editedData.additionalNotes}
@@ -1688,7 +1688,7 @@ const BookingManagement = () => {
                             className="mt-1 block w-full rounded-md input-field"
                           />
                         ) : (
-                          <p className="mt-1 text-neutral-300">{selectedBooking.additionalNotes}</p>
+                          <p className="mt-1 text-gray-600">{selectedBooking.additionalNotes}</p>
                         )}
                       </div>
                     </>
@@ -1699,7 +1699,7 @@ const BookingManagement = () => {
                       <CollapsibleSection title="Bride Information" defaultOpen={true}>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-white">Name</label>
+                            <label className="block text-sm font-medium text-gray-800">Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -1715,15 +1715,15 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Photo</label>
+                            <label className="block text-sm font-medium text-gray-800">Photo</label>
                             {selectedBooking.bride?.photo ? (
                               <img src={selectedBooking.bride.photo} alt="Bride" className="h-24 w-24 rounded-lg mt-1" />
                             ) : (
-                              <p className="mt-1 text-neutral-400">No photo uploaded</p>
+                              <p className="mt-1 text-gray-500">No photo uploaded</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Father's Name</label>
+                            <label className="block text-sm font-medium text-gray-800">Father's Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -1739,7 +1739,7 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Mother's Name</label>
+                            <label className="block text-sm font-medium text-gray-800">Mother's Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -1755,7 +1755,7 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Age</label>
+                            <label className="block text-sm font-medium text-gray-800">Age</label>
                             {isEditing ? (
                               <input
                                 type="number"
@@ -1771,7 +1771,7 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Contact Number</label>
+                            <label className="block text-sm font-medium text-gray-800">Contact Number</label>
                             {isEditing ? (
                               <input
                                 type="tel"
@@ -1787,7 +1787,7 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Email</label>
+                            <label className="block text-sm font-medium text-gray-800">Email</label>
                             {isEditing ? (
                               <input
                                 type="email"
@@ -1803,7 +1803,7 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Address</label>
+                            <label className="block text-sm font-medium text-gray-800">Address</label>
                             {isEditing ? (
                               <textarea
                                 value={editedData.bride?.address || ''}
@@ -1819,12 +1819,12 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div className="col-span-2">
-                            <label className="block text-sm font-medium text-white">Documents</label>
+                            <label className="block text-sm font-medium text-gray-800">Documents</label>
                             {selectedBooking.bride?.documents && selectedBooking.bride.documents.length > 0 ? (
                               <div className="mt-2 space-y-2">
                                 {selectedBooking.bride.documents.map((doc, index) => (
                                   <div key={index} className="flex items-center space-x-2">
-                                    <DocumentIcon className="h-5 w-5 text-neutral-400" />
+                                    <DocumentIcon className="h-5 w-5 text-gray-500" />
                                     <a 
                                       href={doc} 
                                       target="_blank" 
@@ -1837,7 +1837,7 @@ const BookingManagement = () => {
                                 ))}
                               </div>
                             ) : (
-                              <p className="mt-1 text-neutral-400">No documents uploaded</p>
+                              <p className="mt-1 text-gray-500">No documents uploaded</p>
                             )}
                           </div>
                         </div>
@@ -1845,7 +1845,7 @@ const BookingManagement = () => {
                       <CollapsibleSection title="Groom Information">
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-white">Name</label>
+                            <label className="block text-sm font-medium text-gray-800">Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -1861,15 +1861,15 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Photo</label>
+                            <label className="block text-sm font-medium text-gray-800">Photo</label>
                             {selectedBooking.groom?.photo ? (
                               <img src={selectedBooking.groom.photo} alt="Groom" className="h-24 w-24 rounded-lg mt-1" />
                             ) : (
-                              <p className="mt-1 text-neutral-400">No photo uploaded</p>
+                              <p className="mt-1 text-gray-500">No photo uploaded</p>
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Father's Name</label>
+                            <label className="block text-sm font-medium text-gray-800">Father's Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -1885,7 +1885,7 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Mother's Name</label>
+                            <label className="block text-sm font-medium text-gray-800">Mother's Name</label>
                             {isEditing ? (
                               <input
                                 type="text"
@@ -1901,7 +1901,7 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Age</label>
+                            <label className="block text-sm font-medium text-gray-800">Age</label>
                             {isEditing ? (
                               <input
                                 type="number"
@@ -1917,7 +1917,7 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Contact Number</label>
+                            <label className="block text-sm font-medium text-gray-800">Contact Number</label>
                             {isEditing ? (
                               <input
                                 type="tel"
@@ -1933,7 +1933,7 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Email</label>
+                            <label className="block text-sm font-medium text-gray-800">Email</label>
                             {isEditing ? (
                               <input
                                 type="email"
@@ -1949,7 +1949,7 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Address</label>
+                            <label className="block text-sm font-medium text-gray-800">Address</label>
                             {isEditing ? (
                               <textarea
                                 value={editedData.groom?.address || ''}
@@ -1965,12 +1965,12 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div className="col-span-2">
-                            <label className="block text-sm font-medium text-white">Documents</label>
+                            <label className="block text-sm font-medium text-gray-800">Documents</label>
                             {selectedBooking.groom?.documents && selectedBooking.groom.documents.length > 0 ? (
                               <div className="mt-2 space-y-2">
                                 {selectedBooking.groom.documents.map((doc, index) => (
                                   <div key={index} className="flex items-center space-x-2">
-                                    <DocumentIcon className="h-5 w-5 text-neutral-400" />
+                                    <DocumentIcon className="h-5 w-5 text-gray-500" />
                                     <a 
                                       href={doc} 
                                       target="_blank" 
@@ -1983,7 +1983,7 @@ const BookingManagement = () => {
                                 ))}
                               </div>
                             ) : (
-                              <p className="mt-1 text-neutral-400">No documents uploaded</p>
+                              <p className="mt-1 text-gray-500">No documents uploaded</p>
                             )}
                           </div>
                         </div>
@@ -1991,7 +1991,7 @@ const BookingManagement = () => {
                       <CollapsibleSection title="Ceremony Details">
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-white">Ceremony Date</label>
+                            <label className="block text-sm font-medium text-gray-800">Ceremony Date</label>
                             {isEditing ? (
                               <input
                                 type="date"
@@ -2007,19 +2007,19 @@ const BookingManagement = () => {
                             )}
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Status</label>
+                            <label className="block text-sm font-medium text-gray-800">Status</label>
                             <span className={`px-2 py-1 rounded-full text-sm ${
                               selectedBooking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
                               selectedBooking.status === 'approved' ? 'bg-blue-100 text-blue-800' :
                               selectedBooking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                               selectedBooking.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                              'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
+                              'bg-neutral-500/20 text-gray-600 border border-neutral-500/30'
                             }`}>
                               {selectedBooking.status}
                             </span>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Payment Status</label>
+                            <label className="block text-sm font-medium text-gray-800">Payment Status</label>
                             <span className={`px-2 py-1 rounded-full text-sm ${
                               selectedBooking.paymentStatus === 'paid' ? 'bg-green-100 text-green-800' :
                               'bg-yellow-100 text-yellow-800'
@@ -2029,7 +2029,7 @@ const BookingManagement = () => {
                           </div>
                           {selectedBooking.rejectionReason && (
                             <div className="col-span-2">
-                              <label className="block text-sm font-medium text-white">Rejection Reason</label>
+                              <label className="block text-sm font-medium text-gray-800">Rejection Reason</label>
                               <p className="mt-1 text-red-600">{selectedBooking.rejectionReason}</p>
                             </div>
                           )}
@@ -2044,51 +2044,51 @@ const BookingManagement = () => {
                         <h3 className="text-lg font-medium mb-4">Student Award Details</h3>
                         <div className="grid grid-cols-2 gap-4">
                           <div>
-                            <label className="block text-sm font-medium text-white">Name</label>
+                            <label className="block text-sm font-medium text-gray-800">Name</label>
                             <p className="mt-1">{selectedBooking.name}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">School Name</label>
+                            <label className="block text-sm font-medium text-gray-800">School Name</label>
                             <p className="mt-1">{selectedBooking.schoolName}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Standard</label>
+                            <label className="block text-sm font-medium text-gray-800">Standard</label>
                             <p className="mt-1">{selectedBooking.standard}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Board Name</label>
+                            <label className="block text-sm font-medium text-gray-800">Board Name</label>
                             <p className="mt-1">{selectedBooking.boardName}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Exam Year</label>
+                            <label className="block text-sm font-medium text-gray-800">Exam Year</label>
                             <p className="mt-1">{selectedBooking.examYear}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Total Percentage</label>
+                            <label className="block text-sm font-medium text-gray-800">Total Percentage</label>
                             <p className="mt-1">{selectedBooking.totalPercentage}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Rank</label>
+                            <label className="block text-sm font-medium text-gray-800">Rank</label>
                             <p className="mt-1">{selectedBooking.rank}</p>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Marksheet</label>
-                            <a href={selectedBooking.marksheet} target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">View Marksheet</a>
+                            <label className="block text-sm font-medium text-gray-800">Marksheet</label>
+                            <a href={selectedBooking.marksheet} target="_blank" rel="noopener noreferrer" className="text-electric-600 hover:underline">View Marksheet</a>
                           </div>
                           <div>
-                            <label className="block text-sm font-medium text-white">Status</label>
+                            <label className="block text-sm font-medium text-gray-800">Status</label>
                             <span className={`px-2 py-1 rounded-full text-sm ${
                               selectedBooking.status === 'approved' ? 'bg-green-100 text-green-800' :
                               selectedBooking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                               selectedBooking.status === 'rejected' ? 'bg-red-100 text-red-800' :
-                              'bg-neutral-500/20 text-neutral-300 border border-neutral-500/30'
+                              'bg-neutral-500/20 text-gray-600 border border-neutral-500/30'
                             }`}>
                               {selectedBooking.status}
                             </span>
                           </div>
                           {selectedBooking.rejectionReason && (
                             <div className="col-span-2">
-                              <label className="block text-sm font-medium text-white">Rejection Reason</label>
+                              <label className="block text-sm font-medium text-gray-800">Rejection Reason</label>
                               <p className="mt-1 text-red-600">{selectedBooking.rejectionReason}</p>
                             </div>
                           )}
@@ -2115,7 +2115,7 @@ const BookingManagement = () => {
                             setIsEditing(false);
                             setEditedData(null);
                           }}
-                          className="px-4 py-2 border border-white/20 rounded-md hover:bg-white/10 text-white"
+                          className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-100 text-white"
                         >
                           Cancel
                         </button>
@@ -2143,16 +2143,16 @@ const BookingManagement = () => {
 
 const DeleteConfirmationModal = ({ onClose, onConfirm }) => (
   <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
-    <div className="glass-effect border border-white/10 rounded-xl shadow-2xl max-w-md w-full mx-4 animate-fade-in-up">
-      <div className="px-6 py-4 border-b border-white/10">
-        <h3 className="text-lg font-semibold text-white">Confirm Deletion</h3>
+    <div className="glass-effect border border-gray-200 rounded-xl shadow-2xl max-w-md w-full mx-4 animate-fade-in-up">
+      <div className="px-6 py-4 border-b border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-800">Confirm Deletion</h3>
       </div>
       <div className="px-6 py-4">
-        <p className="text-neutral-300">
+        <p className="text-gray-600">
           Are you sure you want to delete this registration? This action cannot be undone.
         </p>
       </div>
-      <div className="px-6 py-4 flex justify-end space-x-3 border-t border-white/10">
+      <div className="px-6 py-4 flex justify-end space-x-3 border-t border-gray-200">
         <button
           onClick={onClose}
           className="btn-secondary"

@@ -65,20 +65,21 @@ function Services() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-gray-100 flex items-center justify-center">
         <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-mesh">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-gray-50 to-slate-100 page-decoration">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-neutral-900 via-neutral-800 to-neutral-900 text-white py-20">
-        <div className="absolute inset-0 bg-gradient-mesh opacity-20"></div>
+      <div className="relative bg-gradient-hero text-white py-20 overflow-hidden">
+        <div className="absolute inset-0 texture-diagonal opacity-10"></div>
+        <div className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full bg-white/5 blur-3xl"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-block mb-6">
-            <span className="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-white/10">
+            <span className="px-4 py-2 bg-gray-200 text-white rounded-full text-sm font-semibold backdrop-blur-sm border border-gray-200">
               Registration Forms
             </span>
           </div>
@@ -86,7 +87,7 @@ function Services() {
             Event Registration Portal
           </h1>
           <p className="text-xl md:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed">
-            Access our specialized registration forms for various community events, programs, and competitions. 
+            Access our specialized registration forms for various community events, programs, and competitions.
             Join us in celebrating tradition, recognizing excellence, and building community connections.
           </p>
         </div>
@@ -96,8 +97,8 @@ function Services() {
         {/* Forms Section */}
         <div className="mb-20">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">Available Registration Forms</h2>
-            <p className="text-lg text-neutral-300 max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Available Registration Forms</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
               Select the appropriate form below to register for our upcoming events and programs
             </p>
           </div>
@@ -105,24 +106,24 @@ function Services() {
             {forms.map((form, index) => (
               <div
                 key={index}
-                className="group glass-effect rounded-2xl p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-white/10 h-full flex flex-col"
+                className="group glass-effect rounded-2xl p-8 hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-200 h-full flex flex-col"
               >
                 <div className="text-center mb-6">
                   <div className="w-16 h-16 bg-gradient-electric rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
                     {form.icon}
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3 group-hover:text-electric-400 transition-colors">
+                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-electric-600 transition-colors">
                     {form.title}
                   </h3>
-                  <p className="text-neutral-300 mb-6 leading-relaxed">{form.description}</p>
-                  
+                  <p className="text-gray-600 mb-6 leading-relaxed">{form.description}</p>
+
                   {/* Features List */}
                   <div className="text-left mb-6">
                     <ul className="space-y-2">
                       {form.features.map((feature, featureIndex) => (
                         <li key={featureIndex} className="flex items-start">
                           <FaCheckCircle className="text-green-400 mt-1 mr-2 flex-shrink-0" />
-                          <span className="text-sm text-neutral-300">{feature}</span>
+                          <span className="text-sm text-gray-600">{feature}</span>
                         </li>
                       ))}
                     </ul>
@@ -144,14 +145,14 @@ function Services() {
                   {form.isActive ? (
                     <button
                       onClick={() => navigate(form.route)}
-                      className="w-full bg-gradient-electric text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 font-semibold transform hover:scale-105 shadow-lg"
+                      className="w-full bg-gradient-electric text-white px-6 py-3 rounded-xl hover:shadow-lg hover:shadow-electric-500/15 transition-all duration-300 font-semibold transform hover:scale-105 shadow-lg"
                     >
                       Open Registration Form
                     </button>
                   ) : (
                     <button
                       disabled
-                      className="w-full bg-neutral-700 text-neutral-400 px-6 py-3 rounded-xl cursor-not-allowed font-semibold"
+                      className="w-full bg-gray-200 text-gray-500 px-6 py-3 rounded-xl cursor-not-allowed font-semibold"
                     >
                       Form Currently Unavailable
                     </button>
@@ -163,28 +164,28 @@ function Services() {
         </div>
 
         {/* Additional Information Section */}
-        <div className="glass-effect rounded-3xl p-8 md:p-12 border border-white/10">
+        <div className="glass-effect rounded-3xl p-8 md:p-12 border border-gray-200">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Need Assistance?</h2>
-            <p className="text-lg text-neutral-300 mb-8">
-              If you have questions about any of our registration forms or need help with the submission process, 
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">Need Assistance?</h2>
+            <p className="text-lg text-gray-600 mb-8">
+              If you have questions about any of our registration forms or need help with the submission process,
               our team is here to assist you every step of the way.
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
-                <h3 className="text-xl font-bold text-white mb-3">Contact Support</h3>
-                <p className="text-neutral-300 mb-4">Get help with technical issues or form questions</p>
-                <button 
+              <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                <h3 className="text-xl font-bold text-gray-900 mb-3">Contact Support</h3>
+                <p className="text-gray-600 mb-4">Get help with technical issues or form questions</p>
+                <button
                   onClick={() => navigate('/contact')}
-                  className="px-6 py-2 bg-gradient-electric text-white rounded-lg hover:shadow-lg hover:shadow-electric-500/30 transition-all duration-300 font-medium"
+                  className="px-6 py-2 bg-gradient-electric text-white rounded-lg hover:shadow-lg hover:shadow-electric-500/15 transition-all duration-300 font-medium"
                 >
                   Contact Us
                 </button>
               </div>
-              <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
-                <h3 className="text-xl font-bold text-white mb-3">View Guidelines</h3>
-                <p className="text-neutral-300 mb-4">Access detailed information about each registration process</p>
-                <button 
+              <div className="p-6 bg-gray-50 rounded-2xl border border-gray-200">
+                <h3 className="text-xl font-bold text-gray-900 mb-3">View Guidelines</h3>
+                <p className="text-gray-600 mb-4">Access detailed information about each registration process</p>
+                <button
                   onClick={() => navigate('/resources')}
                   className="px-6 py-2 bg-gradient-secondary text-white rounded-lg hover:shadow-lg hover:shadow-secondary-500/30 transition-all duration-300 font-medium"
                 >

@@ -176,20 +176,20 @@ const BookedDatesCalendar = () => {
 
   const calendarComponents = {
     toolbar: (props) => (
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 mb-3 bg-gradient-to-r from-electric-500/10 to-neon-500/10 rounded-md border border-white/10 backdrop-blur-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-2 mb-3 bg-gradient-to-r from-electric-500/10 to-neon-500/10 rounded-md border border-gray-200 backdrop-blur-sm">
         <div className="flex items-center justify-between sm:justify-start mb-2 sm:mb-0">
           <button
             onClick={() => props.onNavigate('PREV')}
-            className="p-1 hover:bg-white/10 rounded-sm transition-all duration-300 text-white font-medium hover:shadow-sm border border-white/20 hover:border-white/30"
+            className="p-1 hover:bg-gray-100 rounded-sm transition-all duration-300 text-white font-medium hover:shadow-sm border border-gray-300 hover:border-white/30"
           >
             <ChevronLeftIcon className="w-4 h-4" />
           </button>
-          <span className="text-base sm:text-lg font-bold text-white mx-2">
+          <span className="text-base sm:text-lg font-bold text-gray-900 mx-2">
             {format(props.date, 'MMMM yyyy')}
           </span>
           <button
             onClick={() => props.onNavigate('NEXT')}
-            className="p-1 hover:bg-white/10 rounded-sm transition-all duration-300 text-white font-medium hover:shadow-sm border border-white/20 hover:border-white/30"
+            className="p-1 hover:bg-gray-100 rounded-sm transition-all duration-300 text-white font-medium hover:shadow-sm border border-gray-300 hover:border-white/30"
           >
             <ChevronRightIcon className="w-4 h-4" />
           </button>
@@ -215,7 +215,7 @@ const BookedDatesCalendar = () => {
     ),
     month: {
       dateHeader: ({ date }) => (
-        <div className="text-center font-medium text-neutral-300 py-2 text-sm">
+        <div className="text-center font-medium text-gray-600 py-2 text-sm">
           {format(date, 'd')}
         </div>
       ),
@@ -247,8 +247,8 @@ const BookedDatesCalendar = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center p-4 sm:p-6">
-        <div className="card-glass p-8 animate-fade-in-up">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4 sm:p-6">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 animate-fade-in-up">
           <div className="flex justify-center items-center h-32">
             <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-electric-500"></div>
           </div>
@@ -259,14 +259,14 @@ const BookedDatesCalendar = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-mesh flex items-center justify-center">
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="max-w-md w-full">
-          <div className="card-glass p-8 text-center animate-fade-in-up">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 text-center animate-fade-in-up">
             <div className="w-16 h-16 mx-auto mb-6 bg-red-500/20 rounded-full flex items-center justify-center border border-red-500/30">
               <XCircleIcon className="w-8 h-8 text-red-400" />
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">Error Loading Calendar</h3>
-            <p className="text-neutral-300 mb-6">{error}</p>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Error Loading Calendar</h3>
+            <p className="text-gray-600 mb-6">{error}</p>
             <button
               onClick={fetchBookings}
               className="btn-primary w-full"
@@ -288,9 +288,9 @@ const BookedDatesCalendar = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-mesh p-4 sm:p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       {/* Main Content Container */}
-      <div className="card-glass animate-fade-in-up p-6">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-6">
       {/* Header Section */}
       <div className="mb-2 sm:mb-3 animate-fade-in-up">
         <div className="flex items-center space-x-1.5 mb-0.5">
@@ -298,17 +298,17 @@ const BookedDatesCalendar = () => {
             <CalendarIconSolid className="w-3.5 h-3.5 text-white" />
           </div>
           <div>
-            <h1 className="text-base sm:text-lg font-bold text-white">Booking Calendar</h1>
-            <p className="text-neutral-300 text-[0.65rem]">View and manage scheduled bookings</p>
+            <h1 className="text-base sm:text-lg font-bold text-gray-900">Booking Calendar</h1>
+            <p className="text-gray-600 text-[0.65rem]">View and manage scheduled bookings</p>
           </div>
         </div>
       </div>
 
       {/* Calendar Card */}
-      <div className="card-glass animate-fade-in-up p-3 sm:p-4" style={{animationDelay: '0.1s'}}>
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 animate-fade-in-up p-3 sm:p-4" style={{animationDelay: '0.1s'}}>
         {/* Status Legend - Explains the colored parts */}
-        <div className="border-b border-white/10 pb-2 sm:pb-3 mb-3">
-          <h3 className="text-base sm:text-lg font-bold text-white mb-3">Booking Status Legend</h3>
+        <div className="border-b border-gray-200 pb-2 sm:pb-3 mb-3">
+          <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-3">Booking Status Legend</h3>
           <div className="flex flex-wrap gap-2 text-[0.65rem] justify-center">
             <div className="flex items-center bg-red-500/20 px-2 py-1 rounded-md border border-red-500/30 shadow-sm">
               <div className="w-2.5 h-2.5 rounded-full bg-red-500 mr-1.5"></div>
@@ -460,15 +460,15 @@ const BookedDatesCalendar = () => {
 
       {/* Event Details Modal */}
       {selectedEvent && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-fade-in">
-          <div className="card-glass max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-xl border border-white/20 backdrop-blur-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 shadow-xl border border-gray-300 backdrop-blur-lg">
             <div className="flex justify-between items-start mb-4">
-              <h3 className="text-lg font-bold text-white">Booking Details</h3>
+              <h3 className="text-lg font-bold text-gray-900">Booking Details</h3>
               <button 
                 onClick={closeEventDetails}
-                className="p-1 rounded-full hover:bg-white/10 transition-colors"
+                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
               >
-                <XCircleIcon className="w-5 h-5 text-neutral-400 hover:text-white" />
+                <XCircleIcon className="w-5 h-5 text-gray-500 hover:text-gray-900" />
               </button>
             </div>
             
@@ -483,39 +483,39 @@ const BookedDatesCalendar = () => {
                   }`}></div>
                   <span className={`text-sm font-semibold ${
                     selectedEvent.status === 'Booked' ? 'text-red-300' :
-                    selectedEvent.status === 'Approved' ? 'text-electric-300' :
+                    selectedEvent.status === 'Approved' ? 'text-electric-500' :
                     selectedEvent.status === 'Pending' ? 'text-amber-300' :
                     'text-indigo-300'
                   }`}>
                     {selectedEvent.status}
                   </span>
                 </div>
-                <span className="text-xs text-neutral-400">
+                <span className="text-xs text-gray-500">
                   {format(new Date(selectedEvent.start), 'MMM d, yyyy')}
                 </span>
               </div>
               
-              <div className="border-t border-white/10 pt-4">
-                <h4 className="font-bold text-white text-base mb-3">{selectedEvent.customerName}</h4>
-                <div className="space-y-3 text-sm text-neutral-300">
+              <div className="border-t border-gray-200 pt-4">
+                <h4 className="font-bold text-gray-900 text-base mb-3">{selectedEvent.customerName}</h4>
+                <div className="space-y-3 text-sm text-gray-600">
                   <div className="flex items-center space-x-3">
-                    <CalendarIcon className="w-5 h-5 text-electric-400 flex-shrink-0" />
+                    <CalendarIcon className="w-5 h-5 text-electric-600 flex-shrink-0" />
                     <div>
-                      <p className="font-medium text-white">Event Type</p>
+                      <p className="font-medium text-gray-800">Event Type</p>
                       <p>{selectedEvent.eventType}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <ClockIcon className="w-5 h-5 text-neon-400 flex-shrink-0" />
+                    <ClockIcon className="w-5 h-5 text-neon-600 flex-shrink-0" />
                     <div>
-                      <p className="font-medium text-white">Time</p>
+                      <p className="font-medium text-gray-800">Time</p>
                       <p>{selectedEvent.startTime} - {selectedEvent.endTime}</p>
                     </div>
                   </div>
                   <div className="flex items-center space-x-3">
-                    <UsersIcon className="w-5 h-5 text-secondary-400 flex-shrink-0" />
+                    <UsersIcon className="w-5 h-5 text-secondary-600 flex-shrink-0" />
                     <div>
-                      <p className="font-medium text-white">Guests</p>
+                      <p className="font-medium text-gray-800">Guests</p>
                       <p>{selectedEvent.guestCount} guests</p>
                     </div>
                   </div>
@@ -525,7 +525,7 @@ const BookedDatesCalendar = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2h-3l-4 4z"></path>
                       </svg>
                       <div>
-                        <p className="font-medium text-white">Email</p>
+                        <p className="font-medium text-gray-800">Email</p>
                         <p>{selectedEvent.email}</p>
                       </div>
                     </div>
@@ -536,19 +536,19 @@ const BookedDatesCalendar = () => {
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
                       </svg>
                       <div>
-                        <p className="font-medium text-white">Phone</p>
+                        <p className="font-medium text-gray-800">Phone</p>
                         <p>{selectedEvent.phone}</p>
                       </div>
                     </div>
                   )}
                   {selectedEvent.additionalNotes && (
-                    <div className="pt-3 border-t border-white/10">
+                    <div className="pt-3 border-t border-gray-200">
                       <div className="flex items-start space-x-3">
-                        <svg className="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg className="w-5 h-5 text-electric-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
                         </svg>
                         <div>
-                          <p className="font-medium text-purple-300 mb-1">Additional Notes</p>
+                          <p className="font-medium text-electric-500 mb-1">Additional Notes</p>
                           <p className="whitespace-pre-wrap">{selectedEvent.additionalNotes}</p>
                         </div>
                       </div>
@@ -573,7 +573,7 @@ const BookedDatesCalendar = () => {
             overflowY: 'auto'
           }}
         >
-          <div className="card-glass max-w-xs sm:max-w-sm p-3 shadow-xl border border-white/20 backdrop-blur-lg">
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 max-w-xs sm:max-w-sm p-3 shadow-xl border border-gray-300 backdrop-blur-lg">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center space-x-2">
                 <div className={`w-3 h-3 rounded-full ${
@@ -584,29 +584,29 @@ const BookedDatesCalendar = () => {
                 }`}></div>
                 <span className={`text-sm font-semibold ${
                   hoveredEvent.status === 'Booked' ? 'text-red-300' :
-                  hoveredEvent.status === 'Approved' ? 'text-electric-300' :
+                  hoveredEvent.status === 'Approved' ? 'text-electric-500' :
                   hoveredEvent.status === 'Pending' ? 'text-amber-300' :
                   'text-indigo-300'
                 }`}>
                   {hoveredEvent.status}
                 </span>
               </div>
-              <span className="text-xs text-neutral-400">
+              <span className="text-xs text-gray-500">
                 {format(new Date(hoveredEvent.start), 'MMM d, yyyy')}
               </span>
             </div>
-            <h4 className="font-bold text-white text-xs mb-1">{hoveredEvent.customerName}</h4>
-            <div className="space-y-1 text-xs text-neutral-300">
+            <h4 className="font-bold text-gray-900 text-xs mb-1">{hoveredEvent.customerName}</h4>
+            <div className="space-y-1 text-xs text-gray-600">
               <div className="flex items-center space-x-2">
-                <CalendarIcon className="w-4 h-4 text-electric-400 flex-shrink-0" />
+                <CalendarIcon className="w-4 h-4 text-electric-600 flex-shrink-0" />
                 <span className="font-medium">{hoveredEvent.eventType}</span>
               </div>
               <div className="flex items-center space-x-2">
-                <ClockIcon className="w-4 h-4 text-neon-400 flex-shrink-0" />
+                <ClockIcon className="w-4 h-4 text-neon-600 flex-shrink-0" />
                 <span>{hoveredEvent.startTime} - {hoveredEvent.endTime}</span>
               </div>
               <div className="flex items-center space-x-2">
-                <UsersIcon className="w-4 h-4 text-secondary-400 flex-shrink-0" />
+                <UsersIcon className="w-4 h-4 text-secondary-600 flex-shrink-0" />
                 <span>{hoveredEvent.guestCount} guests</span>
               </div>
               {hoveredEvent.email && (
@@ -626,13 +626,13 @@ const BookedDatesCalendar = () => {
                 </div>
               )}
               {hoveredEvent.additionalNotes && (
-                <div className="pt-1.5 border-t border-white/10">
+                <div className="pt-1.5 border-t border-gray-200">
                   <div className="flex items-start space-x-1.5">
-                    <svg className="w-3.5 h-3.5 text-purple-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <svg className="w-3.5 h-3.5 text-electric-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"></path>
                     </svg>
                     <div>
-                      <p className="font-medium text-purple-300 text-xs mb-0.5">Notes:</p>
+                      <p className="font-medium text-electric-500 text-xs mb-0.5">Notes:</p>
                       <p className="whitespace-pre-wrap text-xs">{hoveredEvent.additionalNotes}</p>
                     </div>
                   </div>
