@@ -1,7 +1,6 @@
 # 🚀 Samaj Portal Deployment Guide
 
 ## Pre-Deployment Checklist
-
 ### ✅ Backend Requirements
 - [ ] Node.js v16+ installed
 - [ ] MongoDB connection established
