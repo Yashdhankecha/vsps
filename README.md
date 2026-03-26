@@ -1,4 +1,4 @@
-# VSPS — Van Sol Samaj Pariyojana (Community Hall Management System)
+# VSPS — Vanasol Satavis Patidar Samaj (Community Hall Management System)
 
 A full-stack web application for managing a community hall (Sabhagruh) — covering hall bookings, Samuh Lagan registrations, event management, content administration, committee operations, student awards, and more.
 
